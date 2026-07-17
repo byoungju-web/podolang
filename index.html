@@ -1,1 +1,277 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>포도랑 · 실시간 통역</title>
+<meta name="description" content="말하면 바로 통역됩니다. 전화 통역까지.">
+<meta name="theme-color" content="#ffffff">
+<style>
+  :root{ --bg:#fff; --fg:#111; --sub:#8a8a8e; --line:#ebebed; --grape:#5b2c83; --rec:#c0392b; }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  html,body{margin:0;background:var(--bg);color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+    font-size:16px;-webkit-text-size-adjust:100%}
+  #app{height:100dvh;display:flex;flex-direction:column;overflow:hidden}
 
+  header{flex:0 0 auto;height:52px;display:flex;align-items:center;gap:8px;padding:0 14px;border-bottom:1px solid var(--line)}
+  header h1{flex:1;margin:0;font-size:17px;font-weight:700;letter-spacing:-.3px}
+  .ico{width:34px;height:34px;border:0;background:none;display:grid;place-items:center;border-radius:9px;color:var(--fg)}
+  .ico:active{background:#f2f2f4}
+  .ico svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+
+  .tabs{flex:0 0 auto;display:flex;border-bottom:1px solid var(--line)}
+  .tab{flex:1;padding:11px 0;text-align:center;border:0;background:none;font:inherit;font-size:14px;color:var(--sub)}
+  .tab.on{color:var(--fg);font-weight:700;box-shadow:inset 0 -2px 0 var(--fg)}
+
+  main{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px}
+
+  .langbar{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+  .langbar select{flex:1;border:1px solid var(--line);border-radius:11px;padding:11px;font:inherit;font-size:15px;background:#fafafa;outline:none}
+  .swap{width:36px;height:36px;border:1px solid var(--line);border-radius:10px;background:#fff;flex:0 0 auto;display:grid;place-items:center}
+  .swap svg{width:16px;height:16px;fill:none;stroke:var(--fg);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+  .turn{border:1px solid var(--line);border-radius:14px;padding:13px;margin-bottom:10px}
+  .turn .src{font-size:13px;color:var(--sub);margin-bottom:6px;line-height:1.5;word-break:break-word}
+  .turn .dst{font-size:17px;line-height:1.55;font-weight:600;word-break:break-word}
+  .turn .foot{display:flex;align-items:center;gap:8px;margin-top:9px}
+  .turn .foot small{color:var(--sub);font-size:11px;flex:1}
+  .mini{border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 10px;font:inherit;font-size:12px;color:var(--fg)}
+
+  .empty{padding:56px 24px;text-align:center;color:var(--sub);font-size:14px;line-height:1.7}
+  .empty b{display:block;color:var(--fg);font-size:16px;margin-bottom:6px}
+
+  footer{flex:0 0 auto;border-top:1px solid var(--line);padding:14px 14px calc(14px + env(safe-area-inset-bottom));text-align:center}
+  .mic{width:76px;height:76px;border-radius:38px;border:0;background:var(--fg);color:#fff;display:grid;place-items:center;margin:0 auto}
+  .mic svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .mic.rec{background:var(--rec);animation:pulse 1.2s infinite}
+  .mic:disabled{opacity:.35}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+  .micLabel{font-size:12px;color:var(--sub);margin-top:9px;min-height:16px}
+
+  .fld{margin-bottom:12px}
+  .fld label{display:block;font-size:12px;color:var(--sub);margin-bottom:5px}
+  .fld input,.fld select{width:100%;border:1px solid var(--line);border-radius:11px;padding:11px 12px;font:inherit;font-size:15px;background:#fafafa;outline:none}
+  .fld input:focus{border-color:#c9c9cc;background:#fff}
+  .hint{font-size:12px;color:var(--sub);margin-top:5px;line-height:1.55}
+  .btn{width:100%;padding:13px;border-radius:12px;border:0;background:var(--fg);color:#fff;font:inherit;font-weight:600;font-size:15px}
+  .btn.ghost{background:#f2f2f4;color:var(--fg);margin-top:8px}
+  .btn:disabled{opacity:.35}
+  .ver{text-align:center;color:#c9c9cc;font-size:11px;padding:18px}
+
+  .sheet{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;z-index:50}
+  .sheet.on{display:block}
+  .card{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:18px 18px 0 0;
+    padding:18px 18px calc(18px + env(safe-area-inset-bottom));max-height:84dvh;overflow-y:auto}
+  .card h2{margin:0 0 14px;font-size:16px}
+  .toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:#111;color:#fff;
+    padding:10px 16px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:99;max-width:82%;text-align:center;line-height:1.4}
+  .toast.on{opacity:1}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>포도랑</h1>
+    <button class="ico" onclick="openSet()" aria-label="설정">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.6 1.6 0 00-2.7 1.1V21a2 2 0 11-4 0v-.1A1.6 1.6 0 006.6 19l-.1.1a2 2 0 11-2.8-2.8l.1-.1A1.6 1.6 0 003 13.6a2 2 0 110-4 1.6 1.6 0 001.5-1.1 1.6 1.6 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.6 1.6 0 001.8.3H9a1.6 1.6 0 001-1.5V2a2 2 0 114 0v.1a1.6 1.6 0 001 1.5 1.6 1.6 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.6 1.6 0 00-.3 1.8V9a1.6 1.6 0 001.5 1H22a2 2 0 110 4h-.1a1.6 1.6 0 00-1.5 1z"/></svg>
+    </button>
+  </header>
+
+  <div class="tabs">
+    <button class="tab on" id="tabTalk" onclick="tab('talk')">마주보고 통역</button>
+    <button class="tab" id="tabCall" onclick="tab('call')">전화 통역</button>
+  </div>
+
+  <main id="main"></main>
+
+  <footer id="foot">
+    <button class="mic" id="mic" aria-label="녹음">
+      <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 00-3 3v7a3 3 0 006 0V5a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v3"/></svg>
+    </button>
+    <div class="micLabel" id="micLabel">누르고 있는 동안 말하세요</div>
+  </footer>
+</div>
+
+<div class="sheet" id="sheet" onclick="if(event.target===this)closeSheet()"><div class="card" id="card"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const VER='v1.0.0';
+const API_DEFAULT='https://api.podolang.kr';
+const K={api:'podolang_api', from:'podolang_from', to:'podolang_to', hist:'podolang_hist', tel:'podolang_tel'};
+const LANGS=[['KO','한국어'],['TH','태국어'],['EN','영어'],['JA','일본어'],['ZH','중국어'],['VI','베트남어'],['ES','스페인어'],['ID','인도네시아어']];
+const $=s=>document.querySelector(s);
+let mode='talk', rec=null, chunks=[], busy=false;
+
+const load=(k,d)=>{try{const v=localStorage.getItem(k);return v!==null?JSON.parse(v):d}catch(e){return d}};
+const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+let api=load(K.api,API_DEFAULT);
+let from=load(K.from,'KO'), to=load(K.to,'TH');
+let hist=load(K.hist,[]);
+const url=p=>api.replace(/\/$/,'')+p;
+
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const langName=c=>(LANGS.find(l=>l[0]===c)||[c,c])[1];
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2400)}
+const opts=sel=>LANGS.map(([c,n])=>`<option value="${c}" ${c===sel?'selected':''}>${n}</option>`).join('');
+
+/* ---------- 탭 ---------- */
+function tab(m){
+  mode=m;
+  $('#tabTalk').classList.toggle('on',m==='talk');
+  $('#tabCall').classList.toggle('on',m==='call');
+  $('#foot').hidden = m!=='talk';
+  render();
+}
+function render(){ mode==='talk'?renderTalk():renderCall(); }
+
+/* ---------- 마주보고 통역 ---------- */
+function renderTalk(){
+  const list = hist.length ? hist.map((h,i)=>`
+    <div class="turn">
+      <div class="src">${esc(h.src)}</div>
+      <div class="dst">${esc(h.dst)}</div>
+      <div class="foot">
+        <small>${langName(h.from)} → ${langName(h.to)}${h.engine?' · '+esc(h.engine):''}</small>
+        ${h.audio?`<button class="mini" onclick="play(${i})">다시 듣기</button>`:''}
+        <button class="mini" onclick="copyOne(${i})">복사</button>
+      </div>
+    </div>`).join('')
+    : `<div class="empty"><b>마이크를 누르고 말하세요</b>말이 끝나면 손을 떼세요.<br>번역된 음성이 바로 나옵니다.</div>`;
+
+  $('#main').innerHTML = `
+    <div class="langbar">
+      <select id="selFrom" onchange="setLang()">${opts(from)}</select>
+      <button class="swap" onclick="swap()" aria-label="언어 바꾸기">
+        <svg viewBox="0 0 24 24"><path d="M7 16H3m0 0l3-3m-3 3l3 3M17 8h4m0 0l-3-3m3 3l-3 3"/></svg>
+      </button>
+      <select id="selTo" onchange="setLang()">${opts(to)}</select>
+    </div>
+    ${list}
+    ${hist.length?`<button class="btn ghost" onclick="clearHist()">기록 지우기</button>`:''}
+    <div class="ver">포도랑 ${VER}</div>`;
+}
+function setLang(){ from=$('#selFrom').value; to=$('#selTo').value; save(K.from,from); save(K.to,to); }
+function swap(){ const t=from; from=to; to=t; save(K.from,from); save(K.to,to); render(); }
+function clearHist(){ if(!confirm('통역 기록을 모두 지웁니다.'))return; hist=[]; save(K.hist,hist); render(); }
+function copyOne(i){ navigator.clipboard.writeText(hist[i].dst).then(()=>toast('복사했습니다')); }
+function play(i){ new Audio('data:audio/mpeg;base64,'+hist[i].audio).play(); }
+
+/* ---------- 녹음 ---------- */
+const mic=$('#mic');
+['mousedown','touchstart'].forEach(e=>mic.addEventListener(e,ev=>{ev.preventDefault();start()},{passive:false}));
+['mouseup','touchend','touchcancel','mouseleave'].forEach(e=>mic.addEventListener(e,ev=>{ev.preventDefault();stop()},{passive:false}));
+
+async function start(){
+  if(busy||rec) return;
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    chunks=[];
+    rec = new MediaRecorder(stream);
+    rec.ondataavailable = e => { if(e.data.size) chunks.push(e.data); };
+    rec.onstop = () => { stream.getTracks().forEach(t=>t.stop()); done(); };
+    rec.start();
+    mic.classList.add('rec');
+    $('#micLabel').textContent='듣고 있습니다…';
+  }catch(e){ toast('마이크를 사용할 수 없습니다. 브라우저 권한을 확인하세요.'); }
+}
+function stop(){
+  if(!rec || rec.state==='inactive') return;
+  rec.stop(); rec=null;
+  mic.classList.remove('rec');
+  $('#micLabel').textContent='번역 중…';
+}
+async function done(){
+  const blob = new Blob(chunks, {type:'audio/webm'});
+  if(blob.size < 1200){ $('#micLabel').textContent='누르고 있는 동안 말하세요'; return; }
+  busy=true; mic.disabled=true;
+  const fd = new FormData();
+  fd.append('audio', blob, 'audio.webm');
+  fd.append('sourceLang', from);
+  fd.append('targetLang', to);
+  try{
+    const res = await fetch(url('/api/podolang'), {method:'POST', body:fd});
+    const d = await res.json();
+    if(d.error) throw new Error(d.error);
+    hist.unshift({src:d.original, dst:d.translated, from, to, engine:d.engine, audio:d.audioBase64, at:Date.now()});
+    hist = hist.slice(0,30);
+    try{ save(K.hist,hist); }catch(e){ hist=hist.slice(0,10); save(K.hist,hist); }
+    render();
+    if(d.audioBase64) new Audio('data:audio/mpeg;base64,'+d.audioBase64).play();
+  }catch(e){ toast(e.message||'통역에 실패했습니다'); }
+  busy=false; mic.disabled=false;
+  $('#micLabel').textContent='누르고 있는 동안 말하세요';
+}
+
+/* ---------- 전화 통역 ---------- */
+function renderCall(){
+  $('#main').innerHTML = `
+    <div class="fld">
+      <label>상대 전화번호</label>
+      <input id="cNum" type="tel" inputmode="tel" placeholder="+66812345678" value="${esc(load(K.tel,''))}">
+      <div class="hint">국가번호부터 넣으세요. 한국은 +8210…</div>
+    </div>
+    <div class="langbar">
+      <select id="cFrom">${opts(from)}</select>
+      <div style="width:36px;text-align:center;color:var(--sub)">→</div>
+      <select id="cTo">${opts(to)}</select>
+    </div>
+    <button class="btn" id="callBtn" onclick="callStart()">통역 전화 걸기</button>
+    <div class="hint" style="margin-top:12px">상대에게 전화가 갑니다. 한 사람이 말하고 잠깐 멈추면 번역된 음성이 재생됩니다. 번갈아 말하는 방식입니다.</div>
+    <div id="callLog" style="margin-top:14px"></div>
+    <div class="ver">포도랑 ${VER}</div>`;
+}
+async function callStart(){
+  const num=$('#cNum').value.trim();
+  if(!/^\+\d{8,15}$/.test(num)){ toast('번호를 +82… 처럼 국가번호부터 넣어주세요'); return; }
+  save(K.tel,num);
+  const b=$('#callBtn'); b.disabled=true; b.textContent='연결 중…';
+  try{
+    const res = await fetch(url('/api/call/start'),{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({to:num, fromLang:$('#cFrom').value, toLang:$('#cTo').value, userId:'me'})
+    });
+    const d=await res.json();
+    if(d.error) throw new Error(d.error);
+    $('#callLog').innerHTML=`<div class="turn"><div class="src">통화 ID ${esc(d.callSid)}</div><div class="dst">${esc(d.message||'연결했습니다')}</div></div>`;
+  }catch(e){ toast(e.message||'전화를 걸지 못했습니다'); }
+  b.disabled=false; b.textContent='통역 전화 걸기';
+}
+
+/* ---------- 설정 ---------- */
+function openSet(){
+  $('#card').innerHTML=`
+    <h2>설정</h2>
+    <div class="fld">
+      <label>서버 주소</label>
+      <input id="sApi" placeholder="${API_DEFAULT}" value="${esc(api)}">
+      <div class="hint">기본값 그대로 두면 됩니다. API 키는 서버에만 있고 이 폰에는 저장되지 않습니다.</div>
+    </div>
+    <button class="btn" onclick="saveSet()">저장</button>
+    <button class="btn ghost" onclick="checkApi()">연결 확인</button>
+    <button class="btn ghost" onclick="resetApi()">기본값으로</button>
+    <div class="ver">포도랑 ${VER}</div>`;
+  $('#sheet').classList.add('on');
+}
+function closeSheet(){ $('#sheet').classList.remove('on'); }
+function saveSet(){ api=$('#sApi').value.trim()||API_DEFAULT; save(K.api,api); closeSheet(); toast('저장했습니다'); }
+function resetApi(){ $('#sApi').value=API_DEFAULT; }
+async function checkApi(){
+  const u=($('#sApi').value.trim()||API_DEFAULT).replace(/\/$/,'');
+  try{
+    const d=await (await fetch(u+'/api/health')).json();
+    if(!d.ok) throw new Error();
+    const off=Object.entries(d.keys).filter(([,v])=>!v).map(([k])=>k);
+    toast(off.length?'연결됨 · 키 없음: '+off.join(', '):'연결됨 · 키 모두 있음');
+  }catch(e){ toast('연결하지 못했습니다'); }
+}
+
+if(window.visualViewport){
+  visualViewport.addEventListener('resize',()=>{ $('#app').style.height=visualViewport.height+'px'; });
+}
+tab('talk');
+</script>
+</body>
+</html>
