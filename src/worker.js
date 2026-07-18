@@ -224,18 +224,21 @@ export default {
 
 /* ---------------- 재시도 ---------------- */
 
-async function retry(fn, tries = 3) {
+async function retry(fn, tries = 6) {
   let last;
   for (let i = 0; i < tries; i++) {
     try { return await fn(); }
     catch (e) {
       last = e;
       const m = (e.message || '').toLowerCase();
-      const retryable = m.includes('not supported') || m.includes('region')
-        || m.includes('territory') || m.includes('rate limit')
+      const regionBlocked = m.includes('not supported') || m.includes('region')
+        || m.includes('territory') || m.includes('unsupported_country')
+        || m.includes('request_forbidden') || m.includes('403');
+      const retryable = regionBlocked || m.includes('rate limit')
         || m.includes('timeout') || m.includes('503') || m.includes('502');
       if (!retryable || i === tries - 1) throw e;
-      await new Promise(r => setTimeout(r, 400 * (i + 1)));
+      const wait = regionBlocked ? 700 * (i + 1) : 400 * (i + 1);
+      await new Promise(r => setTimeout(r, wait));
     }
   }
   throw last;
