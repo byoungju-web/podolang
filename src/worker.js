@@ -385,7 +385,7 @@ const LCODE = { KO:'ko', TH:'th', EN:'en', JA:'ja', ZH:'zh', VI:'vi', ES:'es', I
 const LMAP  = { KO:'ko-KR', TH:'th-TH', EN:'en-US', JA:'ja-JP', ZH:'zh-CN', VI:'vi-VN', ES:'es-ES', ID:'id-ID' };
 const sttLang = l => LMAP[l] || 'en-US';
 const sayLang = l => LMAP[l] || 'en-US';
-const sayVoice = l => ({ KO:'Polly.Seoyeon', TH:'Polly.Ayutthaya', JA:'Polly.Mizuki', ZH:'Polly.Zhiyu', ES:'Polly.Lupe' })[l] || 'Polly.Joanna';
+const sayVoice = l => ({ KO:'Polly.Seoyeon', JA:'Polly.Mizuki', ZH:'Polly.Zhiyu', EN:'Polly.Joanna', ES:'Polly.Lupe', TH:'Google.th-TH-Standard-A', VI:'Google.vi-VN-Standard-A', ID:'Google.id-ID-Standard-A' })[l] || 'Polly.Joanna';
 
 const escXml = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;' }[c]));
 
