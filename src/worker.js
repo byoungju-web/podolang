@@ -1,16 +1,16 @@
 /**
  * 🍇 PODOLANG by BJ LEE - 실시간 통역 + Twilio 전화 통역 API
- * Cloudflare Workers · v1.1
+ * Cloudflare Workers · v1.2
  * © 2026 BJ LEE. All Rights Reserved.
  *
- * v1.1 변경점
- *  - 태국어/베트남어 음성: multilingual_v2 미지원 → eleven_v3 자동 전환
- *  - 음성 실패 시 에러를 숨기지 않고 audioError로 반환
- *  - OpenAI 지역 차단(Country not supported) 발생 시 자동 재시도
- *  - 목소리 ID가 없으면 계정의 첫 목소리로 자동 대체
+ * v1.2 변경점
+ *  - 기본 목소리를 계정에 실제로 있는 Sarah 로 교체 (Rachel 은 계정에 없음)
+ *  - 음성 모델 캐스케이드: v3 → turbo → flash → multilingual 순으로 되는 것 사용
+ *  - /api/test?lang=TH 진단 주소 추가 (브라우저에서 바로 확인)
  */
 
-const VOICE_DEFAULT = '21m00Tcm4TlvDq8ikWAM';
+// 계정에 실제로 있는 목소리 (Sarah). 없으면 첫 번째 목소리로 자동 대체됨
+const VOICE_DEFAULT = 'EXAVITQu4vr4xnSDxMaL';
 
 // eleven_multilingual_v2 가 지원하는 29개 언어 (태국어·베트남어 없음)
 const V2_LANGS = ['EN','JA','ZH','DE','HI','FR','KO','PT','IT','ES','ID','NL','TR',
@@ -35,7 +35,7 @@ export default {
       // 0. 상태 확인
       if (url.pathname === '/api/health') {
         return json({
-          ok: true, app: 'podolang', version: '1.1',
+          ok: true, app: 'podolang', version: '1.2',
           keys: {
             openai: !!env.OPENAI_API_KEY,
             deepl: !!env.DEEPL_API_KEY,
@@ -45,7 +45,7 @@ export default {
         }, 200, H);
       }
 
-      // 0-1. 목소리 목록 (문제 생겼을 때 확인용)
+      // 0-1. 목소리 목록
       if (url.pathname === '/api/voices') {
         const r = await fetch('https://api.elevenlabs.io/v1/voices', {
           headers: { 'xi-api-key': env.ELEVENLABS_API_KEY }
@@ -53,8 +53,25 @@ export default {
         const d = await r.json();
         return json({
           count: d.voices?.length || 0,
-          voices: (d.voices || []).slice(0, 20).map(v => ({ id: v.voice_id, name: v.name }))
+          voices: (d.voices || []).map(v => ({ id: v.voice_id, name: v.name }))
         }, 200, H);
+      }
+
+      // 0-2. 음성 진단 — 브라우저에서 /api/test?lang=TH 열면 모델별 결과가 보입니다
+      if (url.pathname === '/api/test') {
+        const lang = (url.searchParams.get('lang') || 'TH').toUpperCase();
+        const text = url.searchParams.get('text') || (lang === 'TH' ? 'สวัสดีครับ ทดสอบเสียง' : 'Hello, this is a test.');
+        const vid = url.searchParams.get('voice') || VOICE_DEFAULT;
+        const results = [];
+        for (const m of modelsFor(lang)) {
+          try {
+            const buf = await ttsCall(env, text, vid, m, lang);
+            results.push({ model: m, ok: true, bytes: buf.byteLength });
+          } catch (e) {
+            results.push({ model: m, ok: false, status: e.status || null, error: e.message });
+          }
+        }
+        return json({ lang, voice: vid, results }, 200, H);
       }
 
       // 1. 음성 -> 텍스트
@@ -197,7 +214,7 @@ export default {
         return new Response('OK');
       }
 
-      return new Response('🍇 PodoLang API by BJ LEE · v1.1', { headers: H });
+      return new Response('🍇 PodoLang API by BJ LEE · v1.2', { headers: H });
 
     } catch (e) {
       return json({ error: e.message || '처리 중 오류가 발생했습니다.' }, 500, H);
@@ -207,14 +224,11 @@ export default {
 
 /* ---------------- 재시도 ---------------- */
 
-// Cloudflare 노드가 OpenAI 미지원 지역에 잡히면 지역 에러가 납니다.
-// 일시적인 경우가 많아 몇 번 다시 시도합니다.
 async function retry(fn, tries = 3) {
   let last;
   for (let i = 0; i < tries; i++) {
-    try {
-      return await fn();
-    } catch (e) {
+    try { return await fn(); }
+    catch (e) {
       last = e;
       const m = (e.message || '').toLowerCase();
       const retryable = m.includes('not supported') || m.includes('region')
@@ -250,7 +264,6 @@ async function transcribe(env, audio, sourceLang) {
   });
 }
 
-// DeepL 미지원 언어(태국어·베트남어 등)는 자동으로 GPT로 넘어감
 async function translate(env, text, sourceLang, targetLang) {
   const DEEPL = ['BG','CS','DA','DE','EL','EN','ES','ET','FI','FR','HU','ID','IT','JA','KO',
                  'LT','LV','NB','NL','PL','PT','RO','RU','SK','SL','SV','TR','UK','ZH','AR'];
@@ -293,46 +306,67 @@ async function translate(env, text, sourceLang, targetLang) {
   });
 }
 
-// 태국어·베트남어는 multilingual_v2 에 없어서 eleven_v3 로 보냅니다.
-async function speak(env, text, voiceId, lang) {
+/* ---------------- 음성 ---------------- */
+
+// 태국어·베트남어는 multilingual_v2 에 없으므로 v3 부터 시도합니다.
+function modelsFor(lang) {
+  return V2_LANGS.includes(lang)
+    ? ['eleven_multilingual_v2', 'eleven_flash_v2_5']
+    : ['eleven_v3', 'eleven_turbo_v2_5', 'eleven_flash_v2_5', 'eleven_multilingual_v2'];
+}
+
+async function ttsCall(env, text, voiceId, model, lang) {
   if (!env.ELEVENLABS_API_KEY) throw new Error('ElevenLabs 키가 없습니다.');
-  const L = (lang || 'EN').toUpperCase();
-  const model = V2_LANGS.includes(L) ? 'eleven_multilingual_v2' : 'eleven_v3';
+  const body = { text, model_id: model, voice_settings: { stability: 0.5, similarity_boost: 0.75 } };
+  // multilingual_v2 는 language_code 를 받지 않습니다
+  if (model !== 'eleven_multilingual_v2' && LCODE[lang]) body.language_code = LCODE[lang];
 
-  const call = async (vid) => {
-    const body = { text, model_id: model, voice_settings: { stability: 0.5, similarity_boost: 0.75 } };
-    const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${vid}`, {
-      method: 'POST',
-      headers: { 'xi-api-key': env.ELEVENLABS_API_KEY, 'Content-Type': 'application/json', 'Accept': 'audio/mpeg' },
-      body: JSON.stringify(body)
-    });
-    if (!res.ok) {
-      let msg = `${res.status}`;
-      try {
-        const e = await res.json();
-        msg = e.detail?.message || e.detail?.status || JSON.stringify(e.detail || e);
-      } catch (_) {}
-      const err = new Error(`음성 생성 실패(${model}): ${msg}`);
-      err.status = res.status;
-      throw err;
+  const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+    method: 'POST',
+    headers: { 'xi-api-key': env.ELEVENLABS_API_KEY, 'Content-Type': 'application/json', 'Accept': 'audio/mpeg' },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    let msg = `HTTP ${res.status}`;
+    try {
+      const e = await res.json();
+      msg = e.detail?.message || e.detail?.status || JSON.stringify(e.detail || e);
+    } catch (_) {
+      try { msg = await res.text(); } catch (__) {}
     }
-    return await res.arrayBuffer();
-  };
-
-  try {
-    return { audio: await call(voiceId || VOICE_DEFAULT), model };
-  } catch (e) {
-    // 목소리 ID가 계정에 없으면 첫 번째 목소리로 다시 시도
-    if (e.status === 400 || e.status === 404) {
-      const vr = await fetch('https://api.elevenlabs.io/v1/voices', {
-        headers: { 'xi-api-key': env.ELEVENLABS_API_KEY }
-      });
-      const vd = await vr.json();
-      const first = vd.voices?.[0]?.voice_id;
-      if (first) return { audio: await call(first), model };
-    }
-    throw e;
+    const err = new Error(`${model}: ${msg}`);
+    err.status = res.status;
+    throw err;
   }
+  return await res.arrayBuffer();
+}
+
+async function speak(env, text, voiceId, lang) {
+  const L = (lang || 'EN').toUpperCase();
+  let vid = voiceId || VOICE_DEFAULT;
+  const errors = [];
+
+  for (let attempt = 0; attempt < 2; attempt++) {
+    let switched = false;
+    for (const m of modelsFor(L)) {
+      try {
+        return { audio: await ttsCall(env, text, vid, m, L), model: m };
+      } catch (e) {
+        errors.push(e.message);
+        // 목소리가 없으면 계정의 첫 목소리로 바꿔서 한 번 더
+        if ((e.status === 400 || e.status === 404) && attempt === 0) {
+          const vr = await fetch('https://api.elevenlabs.io/v1/voices', {
+            headers: { 'xi-api-key': env.ELEVENLABS_API_KEY }
+          });
+          const vd = await vr.json();
+          const first = vd.voices?.[0]?.voice_id;
+          if (first && first !== vid) { vid = first; switched = true; break; }
+        }
+      }
+    }
+    if (!switched) break;
+  }
+  throw new Error('음성 생성 실패 · ' + errors.join(' | '));
 }
 
 /* ---------------- 유틸 ---------------- */
@@ -347,7 +381,8 @@ function toBase64(buf) {
   return btoa(bin);
 }
 
-const LMAP = { KO:'ko-KR', TH:'th-TH', EN:'en-US', JA:'ja-JP', ZH:'zh-CN', VI:'vi-VN', ES:'es-ES', ID:'id-ID' };
+const LCODE = { KO:'ko', TH:'th', EN:'en', JA:'ja', ZH:'zh', VI:'vi', ES:'es', ID:'id' };
+const LMAP  = { KO:'ko-KR', TH:'th-TH', EN:'en-US', JA:'ja-JP', ZH:'zh-CN', VI:'vi-VN', ES:'es-ES', ID:'id-ID' };
 const sttLang = l => LMAP[l] || 'en-US';
 const sayLang = l => LMAP[l] || 'en-US';
 const sayVoice = l => ({ KO:'Polly.Seoyeon', TH:'Polly.Ayutthaya', JA:'Polly.Mizuki', ZH:'Polly.Zhiyu', ES:'Polly.Lupe' })[l] || 'Polly.Joanna';
