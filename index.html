@@ -272,6 +272,11 @@ const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
 let api=load(K.api,API_DEFAULT);
 let from=load(K.from,'KO'), to=load(K.to,'TH');
 let hist=load(K.hist,[]);
+// 예전 버전이 저장해둔 무거운 음성 데이터가 남아있으면 정리해서 용량을 즉시 회수
+if(hist.some(h=>h && h.audio)){
+  hist = hist.map(({audio, ...rest}) => rest);
+  try{ localStorage.setItem(K.hist, JSON.stringify(hist)); }catch(e){ try{localStorage.removeItem(K.hist);}catch(_){ } hist=[]; }
+}
 const url=p=>api.replace(/\/$/,'')+p;
 
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -300,7 +305,7 @@ function renderTalk(){
       <div class="dst">${esc(h.dst)}</div>
       <div class="foot">
         <small>${langName(h.from)} → ${langName(h.to)}${h.engine?' · '+esc(h.engine):''}</small>
-        ${h.audio?`<button class="mini" onclick="play(${i})">다시 듣기</button>`:''}
+        ${h._audio?`<button class="mini" onclick="play(${i})">다시 듣기</button>`:''}
         <button class="mini" onclick="copyOne(${i})">복사</button>
       </div>
     </div>`).join('')
@@ -320,9 +325,9 @@ function renderTalk(){
 }
 function setLang(){ from=$('#selFrom').value; to=$('#selTo').value; save(K.from,from); save(K.to,to); }
 function swap(){ const t=from; from=to; to=t; save(K.from,from); save(K.to,to); render(); }
-function clearHist(){ if(!confirm('통역 기록을 모두 지웁니다.'))return; hist=[]; save(K.hist,hist); render(); }
+function clearHist(){ if(!confirm('통역 기록을 모두 지웁니다.'))return; hist=[]; saveHist(); render(); }
 function copyOne(i){ navigator.clipboard.writeText(hist[i].dst).then(()=>toast('복사했습니다')); }
-function play(i){ new Audio('data:audio/mpeg;base64,'+hist[i].audio).play(); }
+function play(i){ if(hist[i]&&hist[i]._audio) new Audio('data:audio/mpeg;base64,'+hist[i]._audio).play(); }
 
 /* ---------- 녹음 ---------- */
 const mic=$('#mic');
@@ -360,14 +365,28 @@ async function done(){
     const res = await fetch(url('/api/podolang'), {method:'POST', body:fd});
     const d = await res.json();
     if(d.error) throw new Error(d.error);
-    hist.unshift({src:d.original, dst:d.translated, from, to, engine:d.engine, audio:d.audioBase64, at:Date.now()});
-    hist = hist.slice(0,30);
-    try{ save(K.hist,hist); }catch(e){ hist=hist.slice(0,10); save(K.hist,hist); }
+    // 음성(base64)은 저장하지 않는다. 저장 용량 초과 방지.
+    // 방금 통역한 것만 이번 세션 동안 메모리에서 다시 듣기 가능.
+    const item = {src:d.original, dst:d.translated, from, to, engine:d.engine, at:Date.now()};
+    if(d.audioBase64) item._audio = d.audioBase64;   // 메모리에만 (저장 안 됨)
+    hist.unshift(item);
+    hist = hist.slice(0,20);
+    saveHist();
     render();
     if(d.audioBase64) new Audio('data:audio/mpeg;base64,'+d.audioBase64).play();
   }catch(e){ toast(e.message||'통역에 실패했습니다'); }
   busy=false; mic.disabled=false;
   $('#micLabel').textContent='누르고 있는 동안 말하세요';
+}
+
+// 저장할 때 음성(_audio)은 빼고 텍스트만 저장. 실패해도 통역은 계속되게.
+function saveHist(){
+  try{
+    const slim = hist.map(({_audio, ...rest}) => rest);
+    localStorage.setItem(K.hist, JSON.stringify(slim));
+  }catch(e){
+    try{ localStorage.removeItem(K.hist); }catch(_){}
+  }
 }
 
 /* ---------- 전화 통역 ---------- */
