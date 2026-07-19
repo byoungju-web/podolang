@@ -180,7 +180,7 @@
     <p class="sub">Shopify 상품명 번역, 현지 가격 환율, <b>Stripe</b> 결제, 인스타 해시태그까지.<br>OpenClaw가 Latenode 1000개 앱 연결보다 빠르게 처리합니다.</p>
 
     <div class="input-box">
-      <input id="shop-url" type="text" value="https://myshop.myshopify.com" spellcheck="false" autocomplete="off" placeholder="https://myshop.myshopify.com">
+      <input id="shop-url" type="text" value="https://myshop.com" spellcheck="false" autocomplete="off" placeholder="https://myshop.com">
       <button id="run-btn">🚀 30개국 복제 시작</button>
     </div>
     <div class="hint">POST api.podolang.kr/api/clone · 실패 시 로컬 시뮬레이션으로 폴백</div>
@@ -290,7 +290,15 @@ const sleep = ms => new Promise(r=>setTimeout(r,ms));
 const reduced = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
 const k = v => reduced ? Math.max(1, v*0.12) : v;
 
-function hostOf(u){ try{ return new URL(u).hostname || 'myshop.com'; }catch(e){ return (u||'myshop.com').replace(/^https?:\/\//,'').split('/')[0] || 'myshop.com'; } }
+// URL → 깔끔한 호스트명. myshop.myshopify.com → myshop.com, www. 제거
+function cleanHost(u){
+  let h;
+  try{ h = new URL(u).hostname; }
+  catch(e){ h = String(u||'myshop.com').replace(/^https?:\/\//,'').split('/')[0]; }
+  h = (h||'myshop.com').toLowerCase().replace(/^www\./,'');
+  if(h.endsWith('.myshopify.com')) h = h.split('.')[0] + '.com';   // 스토어명만 남기고 .com
+  return h || 'myshop.com';
+}
 function fmtPrice(rate){
   const v = BASE_PRICE * rate;
   if (v < 1000 && rate < 100) return v.toFixed(2);
@@ -298,7 +306,7 @@ function fmtPrice(rate){
 }
 // 로컬 폴백 스토어 (Worker 응답과 동일한 형태)
 function localStores(url){
-  const host = hostOf(url);
+  const host = cleanHost(url);
   return COUNTRIES.map(c => ({
     flag:c.f, code:c.c, name:c.n, lang:c.l, currency:c.cur,
     price:fmtPrice(c.r), domain:`${c.c.toLowerCase()}.${host}`,
@@ -333,7 +341,7 @@ function countUp(el){
 async function run(){
   if(running) return;
   running=true;
-  const url = urlIn.value.trim() || 'https://myshop.myshopify.com';
+  const url = urlIn.value.trim() || 'https://myshop.com';
   runBtn.disabled=true; urlIn.disabled=true; runBtn.textContent='배포 중…'; done.classList.remove('show');
 
   // 실제 Worker API 호출 (백그라운드) — 실패해도 폴백
@@ -344,7 +352,7 @@ async function run(){
 
   // 터미널 로그 스트리밍
   deploy.classList.add('show');
-  const host = hostOf(url);
+  const host = cleanHost(url);
   term.innerHTML = `<div class="cmd"><span class="p">$</span> podoclone deploy <span class="u">${host}</span><span class="cur"></span></div>`;
   deploy.scrollIntoView({behavior:'smooth', block:'nearest'});
   await sleep(k(450));
