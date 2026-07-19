@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>🍇 PODOCLONE — 자주 묻는 질문 | podolang.kr/faq</title>
+<meta name="description" content="PodoClone 사용 방법과 좋은 점. Shopify 링크 하나로 30개국 스토어를 1분 안에.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  :root{
+    --paper:#ffffff;
+    --ink:#0b0b0c;
+    --ink-2:#2e2e31;
+    --ink-3:#5f5f65;
+    --line:#e6e6e2;
+    --wash:#f5f5f2;
+    --sans:'Pretendard',-apple-system,BlinkMacSystemFont,system-ui,'Apple SD Gothic Neo',sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,'SF Mono','Menlo','Consolas',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:var(--sans);
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.6;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+    background-image:radial-gradient(rgba(11,11,12,.05) 1px, transparent 1px);
+    background-size:22px 22px;
+    background-position:-1px -1px;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:0 20px}
+
+  nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 0 18px;
+    border-bottom:1.5px solid var(--ink);flex-wrap:wrap;max-width:1120px;margin:0 auto}
+  .navwrap{padding:0 20px}
+  .logo{font-weight:900;font-size:20px;letter-spacing:-.5px;display:flex;align-items:center;gap:8px}
+  .logo a{color:var(--ink);text-decoration:none}
+  .tabs{display:flex;gap:4px;border:1.5px solid var(--ink);border-radius:11px;padding:3px;background:var(--paper)}
+  .tabs a{padding:8px 15px;border-radius:8px;font-size:14px;font-weight:700;text-decoration:none;color:var(--ink-3)}
+  .tabs a.active{background:var(--ink);color:#fff}
+
+  .head{padding:52px 0 8px;text-align:center}
+  .kicker{font-family:var(--mono);font-size:13px;letter-spacing:2px;color:var(--ink-3);text-transform:uppercase;margin-bottom:18px;font-weight:600}
+  h1{font-size:clamp(30px,7vw,50px);font-weight:900;letter-spacing:-1.5px;line-height:1}
+  .lead{color:var(--ink-2);font-size:clamp(16px,4vw,19px);margin-top:18px;line-height:1.6}
+
+  .section{margin-top:52px}
+  .section > h2{font-size:24px;font-weight:900;letter-spacing:-.5px;display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .section > h2 .bar{width:14px;height:24px;background:var(--ink);border-radius:3px;display:inline-block}
+
+  /* steps */
+  .steps{margin-top:20px;display:flex;flex-direction:column;gap:12px}
+  .step{border:1.5px solid var(--ink);border-radius:16px;padding:20px;display:flex;gap:16px;align-items:flex-start;background:var(--paper)}
+  .step .no{font-family:var(--mono);font-size:22px;font-weight:800;background:var(--ink);color:#fff;
+    min-width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .step .body h3{font-size:18px;font-weight:800;margin-bottom:4px}
+  .step .body p{font-size:16px;color:var(--ink-2);line-height:1.6}
+  .step .body code{font-family:var(--mono);font-size:14px;background:var(--wash);border:1px solid var(--line);padding:1px 7px;border-radius:6px}
+
+  /* benefits */
+  .benefits{margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:560px){.benefits{grid-template-columns:1fr}}
+  .benefit{border:1.5px solid var(--line);border-radius:16px;padding:20px;background:var(--paper)}
+  .benefit .ic{font-size:30px;line-height:1}
+  .benefit h3{font-size:17px;font-weight:800;margin:10px 0 6px}
+  .benefit p{font-size:15px;color:var(--ink-2);line-height:1.6}
+
+  /* qa */
+  .qa{margin-top:20px;display:flex;flex-direction:column;gap:0;border-top:1.5px solid var(--ink)}
+  .qa .item{border-bottom:1.5px solid var(--line);padding:20px 4px}
+  .qa .q{font-size:17px;font-weight:800;display:flex;gap:10px;align-items:baseline}
+  .qa .q .mk{font-family:var(--mono);font-weight:800;color:var(--ink);flex-shrink:0}
+  .qa .a{font-size:16px;color:var(--ink-2);line-height:1.65;margin-top:8px;padding-left:26px}
+
+  /* cta */
+  .cta{margin:56px 0 20px;text-align:center;border:1.5px solid var(--ink);border-radius:20px;padding:40px 24px;
+    box-shadow:8px 8px 0 var(--ink);background:var(--paper)}
+  .cta h2{font-size:clamp(22px,5vw,30px);font-weight:900;letter-spacing:-1px;line-height:1.15}
+  .cta p{font-size:16px;color:var(--ink-2);margin-top:10px}
+  .cta a{display:inline-block;margin-top:22px;background:var(--ink);color:#fff;text-decoration:none;
+    font-weight:800;font-size:17px;padding:16px 34px;border-radius:14px}
+  .cta a:active{transform:translateY(1px)}
+
+  footer{text-align:center;padding:44px 20px 60px;color:var(--ink-3);font-size:13px;line-height:2;
+    border-top:1.5px solid var(--ink);margin-top:40px;font-family:var(--mono)}
+  footer .u{color:var(--ink);font-weight:700}
+</style>
+</head>
+<body>
+
+<div class="navwrap">
+  <nav>
+    <div class="logo"><a href="/"><span>🍇</span> PODOLANG.kr</a></div>
+    <div class="tabs">
+      <a href="/">Translate</a>
+      <a href="/clone">Clone 30개국</a>
+      <a href="/faq" class="active">FAQ</a>
+    </div>
+  </nav>
+</div>
+
+<div class="wrap">
+  <header class="head">
+    <div class="kicker">PODOCLONE · FAQ</div>
+    <h1>자주 묻는 질문</h1>
+    <p class="lead">링크 하나면 내 가게가 30개 나라 스토어로.<br>어떻게 쓰는지, 뭐가 좋은지 간단히 알려드려요.</p>
+  </header>
+
+  <section class="section">
+    <h2><span class="bar"></span>이렇게 쓰면 됩니다</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="no">1</div>
+        <div class="body">
+          <h3>내 Shopify 주소를 복사</h3>
+          <p>운영 중인 스토어 주소를 복사합니다. 예: <code>https://myshop.com</code></p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="no">2</div>
+        <div class="body">
+          <h3>입력창에 붙여넣기</h3>
+          <p>복제 페이지의 입력창에 그 주소를 그대로 붙여넣습니다.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="no">3</div>
+        <div class="body">
+          <h3>복제 시작 버튼 누르기</h3>
+          <p><code>🚀 30개국 복제 시작</code> 버튼을 한 번 누릅니다.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="no">4</div>
+        <div class="body">
+          <h3>1분 기다리면 완성</h3>
+          <p>약 1분 뒤, 30개 나라의 스토어가 자동으로 만들어집니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2><span class="bar"></span>이런 점이 좋아요</h2>
+    <div class="benefits">
+      <div class="benefit">
+        <div class="ic">🌏</div>
+        <h3>30개국 한 번에</h3>
+        <p>나라마다 따로 만들 필요 없이, 링크 하나로 30개국 스토어가 끝납니다.</p>
+      </div>
+      <div class="benefit">
+        <div class="ic">🗣️</div>
+        <h3>자동 번역</h3>
+        <p>상품명과 설명이 각 나라 언어로 자동 변환됩니다.</p>
+      </div>
+      <div class="benefit">
+        <div class="ic">💱</div>
+        <h3>현지 가격 표시</h3>
+        <p>각 나라의 통화와 환율에 맞춰 가격이 자동으로 보여집니다.</p>
+      </div>
+      <div class="benefit">
+        <div class="ic">⏱️</div>
+        <h3>1분이면 충분</h3>
+        <p>며칠 걸리던 해외 진출 준비를 단 1분으로 줄여줍니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2><span class="bar"></span>궁금한 점</h2>
+    <div class="qa">
+      <div class="item">
+        <div class="q"><span class="mk">Q.</span>코딩을 몰라도 되나요?</div>
+        <div class="a">네. 주소만 붙여넣고 버튼을 누르면 됩니다. 별도의 코딩은 필요 없어요.</div>
+      </div>
+      <div class="item">
+        <div class="q"><span class="mk">Q.</span>준비물이 있나요?</div>
+        <div class="a">운영 중인 Shopify 스토어 주소 하나면 충분합니다.</div>
+      </div>
+      <div class="item">
+        <div class="q"><span class="mk">Q.</span>몇 개 나라가 만들어지나요?</div>
+        <div class="a">30개 나라의 스토어가 한 번에 생성됩니다.</div>
+      </div>
+      <div class="item">
+        <div class="q"><span class="mk">Q.</span>시간은 얼마나 걸리나요?</div>
+        <div class="a">약 1분이면 30개국 스토어가 모두 완성됩니다.</div>
+      </div>
+      <div class="item">
+        <div class="q"><span class="mk">Q.</span>가격도 나라에 맞게 바뀌나요?</div>
+        <div class="a">네. 나라별 통화와 환율에 맞춰 가격이 자동으로 적용됩니다.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <h2>지금 바로 복제해보세요</h2>
+    <p>링크 하나면 30개 나라 스토어가 1분 안에.</p>
+    <a href="/clone">🚀 30개국 복제하러 가기</a>
+  </section>
+</div>
+
+<footer>
+  <span class="u">© 2026 BJ LEE</span> · All Rights Reserved<br>
+  PODOLANG.kr
+</footer>
+
+</body>
+</html>
