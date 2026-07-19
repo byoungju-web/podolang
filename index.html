@@ -4,25 +4,32 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
 <title>포도랑 · 실시간 통역</title>
-<meta name="description" content="말하면 바로 통역됩니다. 전화 통역까지.">
+<meta name="description" content="말하면 바로 통역됩니다. 전화 통역까지. 포도랑.">
 <meta name="theme-color" content="#ffffff">
 <style>
-  :root{ --bg:#fff; --fg:#111; --sub:#8a8a8e; --line:#ebebed; --grape:#5b2c83; --rec:#c0392b; }
+  :root{
+    --bg:#fff; --fg:#111; --sub:#8a8a8e; --line:#ebebed;
+    --grape:#5b2c83; --grape-soft:#f4eef9; --rec:#c0392b;
+  }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
   html,body{margin:0;background:var(--bg);color:var(--fg);
     font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
     font-size:16px;-webkit-text-size-adjust:100%}
-  #app{height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+
+  /* ============ 통역 앱 (첫 화면 꽉 채움) ============ */
+  #app{height:100dvh;display:flex;flex-direction:column;overflow:hidden;
+    border-bottom:1px solid var(--line)}
 
   header{flex:0 0 auto;height:52px;display:flex;align-items:center;gap:8px;padding:0 14px;border-bottom:1px solid var(--line)}
-  header h1{flex:1;margin:0;font-size:17px;font-weight:700;letter-spacing:-.3px}
+  header h1{flex:1;margin:0;font-size:17px;font-weight:700;letter-spacing:-.3px;display:flex;align-items:center;gap:6px}
+  header h1 .dot{width:9px;height:9px;border-radius:50%;background:var(--grape)}
   .ico{width:34px;height:34px;border:0;background:none;display:grid;place-items:center;border-radius:9px;color:var(--fg)}
   .ico:active{background:#f2f2f4}
   .ico svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 
   .tabs{flex:0 0 auto;display:flex;border-bottom:1px solid var(--line)}
   .tab{flex:1;padding:11px 0;text-align:center;border:0;background:none;font:inherit;font-size:14px;color:var(--sub)}
-  .tab.on{color:var(--fg);font-weight:700;box-shadow:inset 0 -2px 0 var(--fg)}
+  .tab.on{color:var(--fg);font-weight:700;box-shadow:inset 0 -2px 0 var(--grape)}
 
   main{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px}
 
@@ -38,8 +45,9 @@
   .turn .foot small{color:var(--sub);font-size:11px;flex:1}
   .mini{border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 10px;font:inherit;font-size:12px;color:var(--fg)}
 
-  .empty{padding:56px 24px;text-align:center;color:var(--sub);font-size:14px;line-height:1.7}
+  .empty{padding:44px 24px;text-align:center;color:var(--sub);font-size:14px;line-height:1.7}
   .empty b{display:block;color:var(--fg);font-size:16px;margin-bottom:6px}
+  .empty .scrollhint{margin-top:22px;font-size:12px;color:var(--grape);opacity:.85}
 
   footer{flex:0 0 auto;border-top:1px solid var(--line);padding:14px 14px calc(14px + env(safe-area-inset-bottom));text-align:center}
   .mic{width:76px;height:76px;border-radius:38px;border:0;background:var(--fg);color:#fff;display:grid;place-items:center;margin:0 auto}
@@ -67,13 +75,66 @@
   .toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:#111;color:#fff;
     padding:10px 16px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:99;max-width:82%;text-align:center;line-height:1.4}
   .toast.on{opacity:1}
+
+  /* ============ 소개 / 홍보 (스크롤 아래) ============ */
+  .promo{max-width:680px;margin:0 auto;padding:0 20px}
+  .promo section{padding:64px 0;border-bottom:1px solid var(--line)}
+  .promo section:last-child{border-bottom:0}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--grape);margin:0 0 14px}
+  .promo h2{font-size:28px;line-height:1.3;font-weight:800;letter-spacing:-.6px;margin:0 0 16px}
+  .promo p{font-size:16px;line-height:1.75;color:#3a3a3d;margin:0 0 14px}
+  .promo p.lead{font-size:18px;color:var(--fg)}
+
+  .hero-brand{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+  .hero-brand .mark{width:40px;height:40px;border-radius:12px;background:var(--grape);display:grid;place-items:center;color:#fff;font-size:20px}
+  .hero-brand .name{font-size:20px;font-weight:800;letter-spacing:-.4px}
+  .hero-brand .name span{color:var(--sub);font-weight:500;font-size:13px;display:block;letter-spacing:0}
+
+  .how{list-style:none;padding:0;margin:20px 0 0;counter-reset:step}
+  .how li{position:relative;padding:18px 0 18px 52px;border-top:1px solid var(--line)}
+  .how li:first-child{border-top:0}
+  .how li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:16px;
+    width:34px;height:34px;border-radius:50%;background:var(--grape-soft);color:var(--grape);
+    font-weight:800;font-size:14px;display:grid;place-items:center}
+  .how li b{display:block;font-size:16px;margin-bottom:3px}
+  .how li span{font-size:14px;color:var(--sub);line-height:1.6}
+
+  .feat{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}
+  .feat .cell{border:1px solid var(--line);border-radius:14px;padding:18px}
+  .feat .cell h3{margin:0 0 6px;font-size:15px;font-weight:700}
+  .feat .cell p{margin:0;font-size:13px;color:var(--sub);line-height:1.6}
+
+  .plans{display:flex;flex-direction:column;gap:12px;margin-top:22px}
+  .plan{border:1px solid var(--line);border-radius:16px;padding:22px}
+  .plan.hi{border-color:var(--grape);background:var(--grape-soft)}
+  .plan .tag{font-size:12px;font-weight:700;color:var(--grape);margin-bottom:6px}
+  .plan .price{font-size:26px;font-weight:800;letter-spacing:-.5px}
+  .plan .price small{font-size:13px;font-weight:500;color:var(--sub)}
+  .plan ul{list-style:none;padding:0;margin:14px 0 0}
+  .plan ul li{font-size:14px;color:#3a3a3d;padding:6px 0 6px 22px;position:relative;line-height:1.5}
+  .plan ul li::before{content:"";position:absolute;left:2px;top:12px;width:10px;height:10px;
+    border-left:2px solid var(--grape);border-bottom:2px solid var(--grape);transform:rotate(-45deg);border-radius:1px}
+
+  .top-cta{display:inline-flex;align-items:center;gap:8px;margin-top:26px;padding:13px 22px;
+    background:var(--fg);color:#fff;border:0;border-radius:12px;font:inherit;font-weight:600;font-size:15px;cursor:pointer}
+  .top-cta svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+  .foot-note{text-align:center;color:var(--sub);font-size:12px;line-height:1.7;padding:40px 20px calc(40px + env(safe-area-inset-bottom))}
+  .foot-note .b{color:var(--grape);font-weight:700}
+
+  @media (max-width:420px){
+    .promo h2{font-size:24px}
+    .feat{grid-template-columns:1fr}
+  }
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
+
+<!-- ===================== 통역 앱 (첫 화면) ===================== -->
 <div id="app">
   <header>
-    <h1>포도랑</h1>
+    <h1><span class="dot"></span>포도랑</h1>
     <button class="ico" onclick="openSet()" aria-label="설정">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.6 1.6 0 00-2.7 1.1V21a2 2 0 11-4 0v-.1A1.6 1.6 0 006.6 19l-.1.1a2 2 0 11-2.8-2.8l.1-.1A1.6 1.6 0 003 13.6a2 2 0 110-4 1.6 1.6 0 001.5-1.1 1.6 1.6 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.6 1.6 0 001.8.3H9a1.6 1.6 0 001-1.5V2a2 2 0 114 0v.1a1.6 1.6 0 001 1.5 1.6 1.6 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.6 1.6 0 00-.3 1.8V9a1.6 1.6 0 001.5 1H22a2 2 0 110 4h-.1a1.6 1.6 0 00-1.5 1z"/></svg>
     </button>
@@ -94,11 +155,112 @@
   </footer>
 </div>
 
+<!-- ===================== 소개 / 홍보 (스크롤) ===================== -->
+<div class="promo">
+
+  <section>
+    <div class="hero-brand">
+      <div class="mark">🍇</div>
+      <div class="name">포도랑<span>Podolang · 실시간 통역</span></div>
+    </div>
+    <p class="eyebrow">말하면, 바로 통역</p>
+    <h2>언어가 달라도<br>대화는 멈추지 않게.</h2>
+    <p class="lead">한국어로 말하면 상대의 언어로 바뀌어 소리까지 나옵니다. 마주 앉아서도, 전화로도. 앱 설치도 회원가입도 없이 이 화면에서 바로 씁니다.</p>
+    <button class="top-cta" onclick="goTop()">
+      <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+      위로 올려서 지금 통역하기
+    </button>
+  </section>
+
+  <section>
+    <p class="eyebrow">쓰는 법</p>
+    <h2>세 번이면 끝.</h2>
+    <ol class="how">
+      <li><b>언어 고르기</b><span>내 언어와 상대 언어를 위에서 선택합니다. 한국어 ↔ 태국어, 영어, 중국어, 일본어 등.</span></li>
+      <li><b>누르고 말하기</b><span>마이크를 누른 채로 말하고, 끝나면 손을 뗍니다.</span></li>
+      <li><b>바로 들려주기</b><span>번역된 문장이 화면에 뜨고, 상대 언어 음성이 바로 재생됩니다.</span></li>
+    </ol>
+  </section>
+
+  <section>
+    <p class="eyebrow">두 가지 방식</p>
+    <h2>마주 앉아도, 멀리 있어도.</h2>
+    <div class="feat">
+      <div class="cell">
+        <h3>마주보고 통역</h3>
+        <p>한 폰을 사이에 두고 번갈아 말하면 즉석에서 통역됩니다. 손님 응대, 현장 소통에 좋아요.</p>
+      </div>
+      <div class="cell">
+        <h3>전화 통역</h3>
+        <p>상대 번호로 전화를 걸면 통화 중에 실시간으로 통역됩니다. 해외 거래처와 바로 통화하세요.</p>
+      </div>
+      <div class="cell">
+        <h3>음성까지 자연스럽게</h3>
+        <p>글자만이 아니라 상대 언어 목소리로 읽어줍니다. 태국어·베트남어 등도 지원합니다.</p>
+      </div>
+      <div class="cell">
+        <h3>설치 없이 웹에서</h3>
+        <p>주소만 열면 끝. 폰이든 PC든 브라우저에서 그대로 동작합니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">누구를 위해</p>
+    <h2>말이 통해야<br>일이 됩니다.</h2>
+    <p>해외 공장·거래처와 매일 소통하는 1인 사업자를 위해 만들었습니다. 통역사를 부르지 않아도, 번역기를 오가며 복사·붙여넣기 하지 않아도, 말하는 그대로 상대에게 전해집니다. 현장에서 바로 쓰라고 단순하게 만들었어요.</p>
+  </section>
+
+  <section>
+    <p class="eyebrow">요금</p>
+    <h2>가볍게 시작하세요.</h2>
+    <div class="plans">
+      <div class="plan">
+        <div class="tag">무료</div>
+        <div class="price">0원</div>
+        <ul>
+          <li>하루 5회 통역</li>
+          <li>마주보고 통역</li>
+          <li>주요 언어 지원</li>
+        </ul>
+      </div>
+      <div class="plan hi">
+        <div class="tag">프로</div>
+        <div class="price">$19<small> / 월</small></div>
+        <ul>
+          <li>무제한 통역</li>
+          <li>전화 통역 포함</li>
+          <li>대화 기록 저장</li>
+        </ul>
+      </div>
+      <div class="plan">
+        <div class="tag">비즈니스</div>
+        <div class="price">$49<small> / 월</small></div>
+        <ul>
+          <li>팀 공유</li>
+          <li>용어집 고정 번역</li>
+          <li>우선 지원</li>
+        </ul>
+      </div>
+    </div>
+    <button class="top-cta" onclick="goTop()">
+      <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+      지금 무료로 통역해보기
+    </button>
+  </section>
+
+  <div class="foot-note">
+    <span class="b">포도랑</span> · Podolang<br>
+    말하면 바로 통역됩니다.<br>
+    © 2026 BJ LEE
+  </div>
+</div>
+
 <div class="sheet" id="sheet" onclick="if(event.target===this)closeSheet()"><div class="card" id="card"></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v1.0.0';
+const VER='v1.1.0';
 const API_DEFAULT='https://api.podolang.kr';
 const K={api:'podolang_api', from:'podolang_from', to:'podolang_to', hist:'podolang_hist', tel:'podolang_tel'};
 const LANGS=[['KO','한국어'],['TH','태국어'],['EN','영어'],['JA','일본어'],['ZH','중국어'],['VI','베트남어'],['ES','스페인어'],['ID','인도네시아어']];
@@ -116,6 +278,9 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 const langName=c=>(LANGS.find(l=>l[0]===c)||[c,c])[1];
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2400)}
 const opts=sel=>LANGS.map(([c,n])=>`<option value="${c}" ${c===sel?'selected':''}>${n}</option>`).join('');
+
+/* 소개에서 통역으로 올라가기 */
+function goTop(){ window.scrollTo({top:0, behavior:'smooth'}); }
 
 /* ---------- 탭 ---------- */
 function tab(m){
@@ -139,7 +304,7 @@ function renderTalk(){
         <button class="mini" onclick="copyOne(${i})">복사</button>
       </div>
     </div>`).join('')
-    : `<div class="empty"><b>마이크를 누르고 말하세요</b>말이 끝나면 손을 떼세요.<br>번역된 음성이 바로 나옵니다.</div>`;
+    : `<div class="empty"><b>마이크를 누르고 말하세요</b>말이 끝나면 손을 떼세요.<br>번역된 음성이 바로 나옵니다.<div class="scrollhint">↓ 아래로 내리면 포도랑 소개를 볼 수 있어요</div></div>`;
 
   $('#main').innerHTML = `
     <div class="langbar">
@@ -268,8 +433,12 @@ async function checkApi(){
   }catch(e){ toast('연결하지 못했습니다'); }
 }
 
+/* 통역 앱은 100dvh 고정. 키보드가 올라올 때만 통역 영역 높이를 조정(전화 탭 입력용). */
 if(window.visualViewport){
-  visualViewport.addEventListener('resize',()=>{ $('#app').style.height=visualViewport.height+'px'; });
+  visualViewport.addEventListener('resize',()=>{
+    if(window.scrollY < 4){ $('#app').style.height=visualViewport.height+'px'; }
+    else { $('#app').style.height='100dvh'; }
+  });
 }
 tab('talk');
 </script>
