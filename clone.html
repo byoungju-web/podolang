@@ -49,7 +49,7 @@
   .logo a{color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:9px}
   .logo svg{width:26px;height:26px;display:block;flex-shrink:0}
   .tabs{display:flex;gap:4px;border:1.5px solid var(--ink);border-radius:11px;padding:3px;background:var(--paper)}
-  .tabs a{padding:8px 15px;border-radius:8px;font-size:14px;font-weight:700;text-decoration:none;color:var(--ink-3)}
+  .tabs a{padding:8px 14px;border-radius:8px;font-size:14px;font-weight:700;text-decoration:none;color:var(--ink-3);white-space:nowrap}
   .tabs a.active{background:var(--ink);color:#fff}
 
   .hero{padding:56px 0 12px;text-align:center;display:flex;flex-direction:column;align-items:center}
@@ -59,37 +59,19 @@
   .sub{color:var(--ink-2);font-size:clamp(16px,4vw,19px);max-width:620px;line-height:1.6;margin-top:22px}
   .sub b{color:var(--ink);font-weight:700}
 
-  .input-box{width:100%;max-width:620px;background:var(--paper);border:1.5px solid var(--ink);border-radius:18px;
-    padding:7px;display:flex;gap:7px;margin:34px auto 0;box-shadow:6px 6px 0 var(--ink)}
-  .input-box input{flex:1;min-width:0;background:transparent;border:0;color:var(--ink);padding:14px 16px;
-    font-size:16px;font-family:var(--mono);outline:none}
+  /* 입력창: 주소 잘 보이게 넓게 + 버튼 작게 */
+  .input-box{width:100%;max-width:640px;background:var(--paper);border:1.5px solid var(--ink);border-radius:18px;
+    padding:6px;display:flex;gap:6px;align-items:center;margin:34px auto 0;box-shadow:6px 6px 0 var(--ink)}
+  .input-box input{flex:1 1 auto;min-width:0;width:100%;background:transparent;border:0;color:var(--ink);
+    padding:13px 14px;font-size:15px;font-family:var(--mono);outline:none;text-overflow:ellipsis}
   .input-box input::placeholder{color:var(--ink-3)}
-  .input-box button{background:var(--ink);border:0;color:#fff;padding:14px 22px;border-radius:13px;
-    font-weight:800;font-size:15px;cursor:pointer;white-space:nowrap;font-family:var(--sans);transition:transform .1s,opacity .2s}
+  .input-box button{flex:0 0 auto;background:var(--ink);border:0;color:#fff;padding:11px 15px;border-radius:12px;
+    font-weight:800;font-size:13px;cursor:pointer;white-space:nowrap;font-family:var(--sans);transition:transform .1s,opacity .2s}
   .input-box button:hover:not(:disabled){opacity:.86}
   .input-box button:active:not(:disabled){transform:translateY(1px)}
   .input-box button:disabled{opacity:.5;cursor:not-allowed}
 
-  #deploy{max-width:620px;margin:26px auto 0;display:none}
-  #deploy.show{display:block}
-  .log-term{background:var(--ink);border-radius:14px;padding:16px 15px;font-family:var(--mono);font-size:13.5px;
-    color:#eef;overflow-x:auto;box-shadow:6px 6px 0 rgba(11,11,12,.12)}
-  .cmd{color:#b9b9be;padding-bottom:9px;border-bottom:1px dashed #3a3a3a;margin-bottom:9px;white-space:nowrap}
-  .cmd .p{color:#fff}.cmd .u{color:#fff;font-weight:700}
-  .cur{display:inline-block;width:8px;height:15px;background:#fff;vertical-align:-2px;margin-left:2px;animation:blink 1s steps(1) infinite}
-  @keyframes blink{50%{opacity:0}}
-  .log-line{display:flex;align-items:baseline;gap:9px;padding:3px 0;opacity:0;transform:translateY(3px);
-    animation:linein .26s forwards;white-space:nowrap}
-  @keyframes linein{to{opacity:1;transform:none}}
-  .log-line .chip{flex-shrink:0;font-size:11px;font-weight:700;padding:2px 7px;border-radius:5px;
-    background:#2c2c31;color:#d8d8de;letter-spacing:.3px}
-  .log-line .txt{color:#eef}
-  .log-line .res{color:#a6a6ac;margin-left:auto;padding-left:14px}
-  .log-line .tick{color:#fff;font-weight:800}
-  .log-line .spin{color:#d0d0d5}
-  .log-done{color:#fff;font-weight:700;padding-top:9px;margin-top:6px;border-top:1px dashed #3a3a3a;white-space:nowrap}
-
-  #stats{max-width:620px;margin:16px auto 0;display:none;grid-template-columns:repeat(4,1fr);gap:10px}
+  #stats{max-width:640px;margin:26px auto 0;display:none;grid-template-columns:repeat(4,1fr);gap:10px}
   #stats.show{display:grid}
   .stat{border:1.5px solid var(--ink);border-radius:12px;padding:14px 8px;text-align:center;background:var(--paper)}
   .stat .n{font-family:var(--mono);font-size:clamp(19px,5vw,26px);font-weight:800;letter-spacing:-1px}
@@ -133,7 +115,6 @@
   @media(prefers-reduced-motion:reduce){
     *{animation-duration:.001s!important}
     .card{opacity:1;transform:none}
-    .cur{animation:none}
   }
 </style>
 </head>
@@ -142,9 +123,9 @@
 
 <div class="wrap">
   <nav>
-    <div class="logo"><a href="/"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="Podolang"><rect width="120" height="120" rx="24" fill="#2D1B4E"/><path d="M60 14 C 62 10, 68 8, 72 12 C 76 16, 74 24, 60 26 C 46 24, 44 16, 48 12 C 52 8, 58 10, 60 14 Z" fill="#2ECC71"/><circle cx="46" cy="70" r="26" fill="#8B5CF6" stroke="#6D28D9" stroke-width="3"/><circle cx="76" cy="70" r="26" fill="#A78BFA" stroke="#6D28D9" stroke-width="3"/></svg> PODOLANG.kr</a></div>
+    <div class="logo"><a href="/"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="podolang"><rect width="120" height="120" rx="24" fill="#2D1B4E"/><path d="M60 14 C 62 10, 68 8, 72 12 C 76 16, 74 24, 60 26 C 46 24, 44 16, 48 12 C 52 8, 58 10, 60 14 Z" fill="#2ECC71"/><circle cx="46" cy="70" r="26" fill="#8B5CF6" stroke="#6D28D9" stroke-width="3"/><circle cx="76" cy="70" r="26" fill="#A78BFA" stroke="#6D28D9" stroke-width="3"/></svg> podolang.clone</a></div>
     <div class="tabs">
-      <a href="/">Translate</a>
+      <a href="/">실시간 통역</a>
       <a href="/clone" class="active">Clone 30개국</a>
       <a href="/faq">FAQ</a>
     </div>
@@ -157,11 +138,9 @@
 
     <div class="input-box">
       <input id="shop-url" type="text" value="https://myshop.com" spellcheck="false" autocomplete="off" placeholder="https://myshop.com">
-      <button id="run-btn">🚀 30개국 복제 시작</button>
+      <button id="run-btn">🚀 복제</button>
     </div>
   </section>
-
-  <div id="deploy"><div class="log-term" id="log-term"></div></div>
 
   <div id="stats">
     <div class="stat"><div class="n" data-target="30">0</div><div class="l">COUNTRIES</div></div>
@@ -228,15 +207,6 @@ const COUNTRIES = [
   {f:"🇨🇴",c:"CO",n:"콜롬비아",l:"ES",cur:"$",r:4100,h:"#comprasonline"},
 ];
 
-const STEPS = [
-  {chip:"Shopify MCP",   txt:"상품 크롤링",        res:PRODUCT_COUNT+"개 상품"},
-  {chip:"DeepL MCP",     txt:"번역 24 × 30개 언어", res:"720개 문자열"},
-  {chip:"Currency MCP",  txt:"실시간 환율 적용",    res:"30개 통화"},
-  {chip:"Stripe MCP",    txt:"결제 수단 생성",      res:"30개 리전"},
-  {chip:"Instagram MCP", txt:"현지 해시태그 생성",  res:"30개 계정"},
-  {chip:"Workers",       txt:"엣지 도메인 배포",    res:"30개 라이브"},
-];
-
 const $ = s => document.querySelector(s);
 const sleep = ms => new Promise(r=>setTimeout(r,ms));
 const reduced = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -264,15 +234,14 @@ function localStores(url){
   }));
 }
 
-const runBtn=$('#run-btn'), urlIn=$('#shop-url'), deploy=$('#deploy'),
-      term=$('#log-term'), progress=$('#progress'), stats=$('#stats'),
-      grid=$('#grid'), secLabel=$('#sec-label'), liveCount=$('#live-count'), done=$('#done');
+const runBtn=$('#run-btn'), urlIn=$('#shop-url'), progress=$('#progress'),
+      stats=$('#stats'), grid=$('#grid'), secLabel=$('#sec-label'),
+      liveCount=$('#live-count'), done=$('#done');
 let running=false;
 
 function reset(){
   running=false;
-  runBtn.disabled=false; urlIn.disabled=false; runBtn.textContent='🚀 30개국 복제 시작';
-  deploy.classList.remove('show'); term.innerHTML='';
+  runBtn.disabled=false; urlIn.disabled=false; runBtn.textContent='🚀 복제';
   stats.classList.remove('show'); stats.querySelectorAll('.n').forEach(n=>n.textContent='0');
   grid.innerHTML=''; secLabel.classList.remove('show'); done.classList.remove('show');
   progress.style.width='0%';
@@ -299,35 +268,15 @@ async function run(){
     body:JSON.stringify({ shopifyUrl:url })
   }).then(r=>r.ok?r.json():null).catch(()=>null);
 
-  deploy.classList.add('show');
-  const host = cleanHost(url);
-  term.innerHTML = `<div class="cmd"><span class="p">$</span> podoclone deploy <span class="u">${host}</span><span class="cur" id="term-cur"></span></div>`;
-  deploy.scrollIntoView({behavior:'smooth', block:'nearest'});
-  await sleep(k(450));
-  const cur=document.getElementById('term-cur'); if(cur) cur.remove();
-
-  for(let i=0;i<STEPS.length;i++){
-    const s=STEPS[i];
-    const line=document.createElement('div');
-    line.className='log-line';
-    line.innerHTML=`<span class="chip">${s.chip}</span><span class="txt">${s.txt}</span><span class="res"><span class="spin">⠋ 처리 중…</span></span>`;
-    term.appendChild(line); term.scrollTop=term.scrollHeight;
-    await sleep(k(230));
-    line.querySelector('.res').innerHTML=`<span class="tick">✓</span> ${s.res}`;
-    progress.style.width=Math.round(((i+1)/STEPS.length)*100)+'%';
-    await sleep(k(140));
+  // 진행바만 부드럽게 채움 (로그 없이)
+  for(let i=1;i<=6;i++){
+    progress.style.width=Math.round((i/6)*100)+'%';
+    await sleep(k(220));
   }
 
   const apiData = await Promise.race([ apiPromise, sleep(k(2500)).then(()=>null) ]);
   const stores = (apiData && apiData.stores && apiData.stores.length) ? apiData.stores : localStores(url);
-  const src = (apiData && apiData.stores) ? 'api' : 'local';
 
-  const fin=document.createElement('div');
-  fin.className='log-done';
-  fin.innerHTML=`✓ 완료 — ${stores.length}개국 스토어 라이브 (58s · ${src==='api'?'api.podolang.kr':'local sim'})`;
-  term.appendChild(fin); term.scrollTop=term.scrollHeight;
-
-  await sleep(k(320));
   stats.classList.add('show');
   stats.querySelectorAll('.n').forEach(countUp);
 
