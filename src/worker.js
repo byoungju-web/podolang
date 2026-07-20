@@ -326,9 +326,14 @@ async function translate(env, text, sourceLang, targetLang) {
         ]
       })
     });
-    const d = await res.json();
-    if (d.error) throw new Error('번역 실패: ' + d.error.message);
-    return { translated: d.choices[0].message.content.trim(), engine: 'GPT' };
+    const raw = await res.text();
+    let d;
+    try { d = JSON.parse(raw); }
+    catch (e) { throw new Error('번역 실패(파싱): ' + raw.slice(0, 300)); }
+    if (d.error) throw new Error('번역 실패: ' + (d.error.message || JSON.stringify(d.error)));
+    const out = d.choices?.[0]?.message?.content;
+    if (!out) throw new Error('번역 실패(응답형식): ' + JSON.stringify(d).slice(0, 300));
+    return { translated: out.trim(), engine: 'GPT' };
   });
 }
 
