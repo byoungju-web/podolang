@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -40,8 +41,9 @@
   nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 0 18px;
     border-bottom:1.5px solid var(--ink);flex-wrap:wrap;max-width:1120px;margin:0 auto}
   .navwrap{padding:0 20px}
-  .logo{font-weight:900;font-size:20px;letter-spacing:-.5px;display:flex;align-items:center;gap:8px}
-  .logo a{color:var(--ink);text-decoration:none}
+  .logo{font-weight:900;font-size:20px;letter-spacing:-.5px;display:flex;align-items:center;gap:9px}
+  .logo a{color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:9px}
+  .logo svg{width:26px;height:26px;display:block;flex-shrink:0}
   .tabs{display:flex;gap:4px;border:1.5px solid var(--ink);border-radius:11px;padding:3px;background:var(--paper)}
   .tabs a{padding:8px 15px;border-radius:8px;font-size:14px;font-weight:700;text-decoration:none;color:var(--ink-3)}
   .tabs a.active{background:var(--ink);color:#fff}
@@ -55,7 +57,6 @@
   .section > h2{font-size:24px;font-weight:900;letter-spacing:-.5px;display:flex;align-items:center;gap:10px;margin-bottom:8px}
   .section > h2 .bar{width:14px;height:24px;background:var(--ink);border-radius:3px;display:inline-block}
 
-  /* steps */
   .steps{margin-top:20px;display:flex;flex-direction:column;gap:12px}
   .step{border:1.5px solid var(--ink);border-radius:16px;padding:20px;display:flex;gap:16px;align-items:flex-start;background:var(--paper)}
   .step .no{font-family:var(--mono);font-size:22px;font-weight:800;background:var(--ink);color:#fff;
@@ -64,7 +65,6 @@
   .step .body p{font-size:16px;color:var(--ink-2);line-height:1.6}
   .step .body code{font-family:var(--mono);font-size:14px;background:var(--wash);border:1px solid var(--line);padding:1px 7px;border-radius:6px}
 
-  /* benefits */
   .benefits{margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
   @media(max-width:560px){.benefits{grid-template-columns:1fr}}
   .benefit{border:1.5px solid var(--line);border-radius:16px;padding:20px;background:var(--paper)}
@@ -72,14 +72,12 @@
   .benefit h3{font-size:17px;font-weight:800;margin:10px 0 6px}
   .benefit p{font-size:15px;color:var(--ink-2);line-height:1.6}
 
-  /* qa */
   .qa{margin-top:20px;display:flex;flex-direction:column;gap:0;border-top:1.5px solid var(--ink)}
   .qa .item{border-bottom:1.5px solid var(--line);padding:20px 4px}
   .qa .q{font-size:17px;font-weight:800;display:flex;gap:10px;align-items:baseline}
   .qa .q .mk{font-family:var(--mono);font-weight:800;color:var(--ink);flex-shrink:0}
   .qa .a{font-size:16px;color:var(--ink-2);line-height:1.65;margin-top:8px;padding-left:26px}
 
-  /* cta */
   .cta{margin:56px 0 20px;text-align:center;border:1.5px solid var(--ink);border-radius:20px;padding:40px 24px;
     box-shadow:8px 8px 0 var(--ink);background:var(--paper)}
   .cta h2{font-size:clamp(22px,5vw,30px);font-weight:900;letter-spacing:-1px;line-height:1.15}
@@ -97,7 +95,7 @@
 
 <div class="navwrap">
   <nav>
-    <div class="logo"><a href="/"><span>🍇</span> PODOLANG.kr</a></div>
+    <div class="logo"><a href="/"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="Podolang"><rect width="120" height="120" rx="24" fill="#2D1B4E"/><path d="M60 14 C 62 10, 68 8, 72 12 C 76 16, 74 24, 60 26 C 46 24, 44 16, 48 12 C 52 8, 58 10, 60 14 Z" fill="#2ECC71"/><circle cx="46" cy="70" r="26" fill="#8B5CF6" stroke="#6D28D9" stroke-width="3"/><circle cx="76" cy="70" r="26" fill="#A78BFA" stroke="#6D28D9" stroke-width="3"/></svg> PODOLANG.kr</a></div>
     <div class="tabs">
       <a href="/">Translate</a>
       <a href="/clone">Clone 30개국</a>
