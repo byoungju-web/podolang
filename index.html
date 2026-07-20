@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -21,8 +22,8 @@
     border-bottom:1px solid var(--line)}
 
   header{flex:0 0 auto;height:52px;display:flex;align-items:center;gap:8px;padding:0 14px;border-bottom:1px solid var(--line)}
-  header h1{flex:1;margin:0;font-size:17px;font-weight:700;letter-spacing:-.3px;display:flex;align-items:center;gap:6px}
-  header h1 .dot{width:9px;height:9px;border-radius:50%;background:var(--grape)}
+  header h1{flex:1;margin:0;font-size:17px;font-weight:700;letter-spacing:-.3px;display:flex;align-items:center;gap:7px}
+  header h1 .logo{width:24px;height:24px;display:block;flex-shrink:0}
   .ico{width:34px;height:34px;border:0;background:none;display:grid;place-items:center;border-radius:9px;color:var(--fg)}
   .ico:active{background:#f2f2f4}
   .ico svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
@@ -85,8 +86,8 @@
   .promo p{font-size:16px;line-height:1.75;color:#3a3a3d;margin:0 0 14px}
   .promo p.lead{font-size:18px;color:var(--fg)}
 
-  .hero-brand{display:flex;align-items:center;gap:10px;margin-bottom:20px}
-  .hero-brand .mark{width:40px;height:40px;border-radius:12px;background:var(--grape);display:grid;place-items:center;color:#fff;font-size:20px}
+  .hero-brand{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+  .hero-brand .mark{width:44px;height:44px;display:block;flex-shrink:0}
   .hero-brand .name{font-size:20px;font-weight:800;letter-spacing:-.4px}
   .hero-brand .name span{color:var(--sub);font-weight:500;font-size:13px;display:block;letter-spacing:0}
 
@@ -134,7 +135,7 @@
 <!-- ===================== 통역 앱 (첫 화면) ===================== -->
 <div id="app">
   <header>
-    <h1><span class="dot"></span>포도랑</h1>
+    <h1><svg class="logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="포도랑"><rect width="120" height="120" rx="24" fill="#2D1B4E"/><path d="M60 14 C 62 10, 68 8, 72 12 C 76 16, 74 24, 60 26 C 46 24, 44 16, 48 12 C 52 8, 58 10, 60 14 Z" fill="#2ECC71"/><circle cx="46" cy="70" r="26" fill="#8B5CF6" stroke="#6D28D9" stroke-width="3"/><circle cx="76" cy="70" r="26" fill="#A78BFA" stroke="#6D28D9" stroke-width="3"/></svg>포도랑</h1>
     <button class="ico" onclick="openSet()" aria-label="설정">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.6 1.6 0 00-2.7 1.1V21a2 2 0 11-4 0v-.1A1.6 1.6 0 006.6 19l-.1.1a2 2 0 11-2.8-2.8l.1-.1A1.6 1.6 0 003 13.6a2 2 0 110-4 1.6 1.6 0 001.5-1.1 1.6 1.6 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.6 1.6 0 001.8.3H9a1.6 1.6 0 001-1.5V2a2 2 0 114 0v.1a1.6 1.6 0 001 1.5 1.6 1.6 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.6 1.6 0 00-.3 1.8V9a1.6 1.6 0 001.5 1H22a2 2 0 110 4h-.1a1.6 1.6 0 00-1.5 1z"/></svg>
     </button>
@@ -160,7 +161,7 @@
 
   <section>
     <div class="hero-brand">
-      <div class="mark">🍇</div>
+      <svg class="mark" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="포도랑"><rect width="120" height="120" rx="24" fill="#2D1B4E"/><path d="M60 14 C 62 10, 68 8, 72 12 C 76 16, 74 24, 60 26 C 46 24, 44 16, 48 12 C 52 8, 58 10, 60 14 Z" fill="#2ECC71"/><circle cx="46" cy="70" r="26" fill="#8B5CF6" stroke="#6D28D9" stroke-width="3"/><circle cx="76" cy="70" r="26" fill="#A78BFA" stroke="#6D28D9" stroke-width="3"/></svg>
       <div class="name">포도랑<span>Podolang · 실시간 통역</span></div>
     </div>
     <p class="eyebrow">말하면, 바로 통역</p>
