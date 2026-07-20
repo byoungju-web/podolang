@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -24,45 +23,55 @@
   header{flex:0 0 auto;height:52px;display:flex;align-items:center;gap:8px;padding:0 14px;border-bottom:1px solid var(--line)}
   header h1{flex:1;margin:0;font-size:17px;font-weight:700;letter-spacing:-.3px;display:flex;align-items:center;gap:7px}
   header h1 .logo{width:24px;height:24px;display:block;flex-shrink:0}
-  .ico{width:34px;height:34px;border:0;background:none;display:grid;place-items:center;border-radius:9px;color:var(--fg)}
+  .ico{width:36px;height:36px;border:0;background:none;display:grid;place-items:center;border-radius:9px;color:var(--fg)}
   .ico:active{background:#f2f2f4}
-  .ico svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .ico svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 
   .tabs{flex:0 0 auto;display:flex;border-bottom:1px solid var(--line)}
-  .tab{flex:1;padding:11px 0;text-align:center;border:0;background:none;font:inherit;font-size:14px;color:var(--sub)}
+  .tab{flex:1;padding:12px 0;text-align:center;border:0;background:none;font:inherit;font-size:15.5px;color:var(--sub)}
   .tab.on{color:var(--fg);font-weight:700;box-shadow:inset 0 -2px 0 var(--grape)}
 
   main{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px}
 
   .langbar{display:flex;align-items:center;gap:8px;margin-bottom:16px}
-  .langbar select{flex:1;border:1px solid var(--line);border-radius:11px;padding:11px;font:inherit;font-size:15px;background:#fafafa;outline:none}
-  .swap{width:36px;height:36px;border:1px solid var(--line);border-radius:10px;background:#fff;flex:0 0 auto;display:grid;place-items:center}
+  .langbar select{flex:1;border:1px solid var(--line);border-radius:11px;padding:12px;font:inherit;font-size:16px;background:#fafafa;outline:none}
+  .swap{width:38px;height:38px;border:1px solid var(--line);border-radius:10px;background:#fff;flex:0 0 auto;display:grid;place-items:center}
   .swap svg{width:16px;height:16px;fill:none;stroke:var(--fg);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 
-  .turn{border:1px solid var(--line);border-radius:14px;padding:13px;margin-bottom:10px}
-  .turn .src{font-size:13px;color:var(--sub);margin-bottom:6px;line-height:1.5;word-break:break-word}
-  .turn .dst{font-size:17px;line-height:1.55;font-weight:600;word-break:break-word}
-  .turn .foot{display:flex;align-items:center;gap:8px;margin-top:9px}
-  .turn .foot small{color:var(--sub);font-size:11px;flex:1}
-  .mini{border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 10px;font:inherit;font-size:12px;color:var(--fg)}
+  .turn{border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px}
+  .turn .src{font-size:14.5px;color:var(--sub);margin-bottom:6px;line-height:1.55;word-break:break-word}
+  .turn .dst{font-size:18.5px;line-height:1.6;font-weight:600;word-break:break-word}
+  .turn .foot{display:flex;align-items:center;gap:8px;margin-top:10px}
+  .turn .foot small{color:var(--sub);font-size:12px;flex:1}
+  .mini{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 11px;font:inherit;font-size:13px;color:var(--fg)}
+  .mini.del{color:var(--rec);border-color:#f0d4d0}
 
-  .empty{padding:44px 24px;text-align:center;color:var(--sub);font-size:14px;line-height:1.7}
-  .empty b{display:block;color:var(--fg);font-size:16px;margin-bottom:6px}
-  .empty .scrollhint{margin-top:22px;font-size:12px;color:var(--grape);opacity:.85}
+  .empty{padding:44px 24px;text-align:center;color:var(--sub);font-size:15px;line-height:1.7}
+  .empty b{display:block;color:var(--fg);font-size:17px;margin-bottom:6px}
+  .empty .scrollhint{margin-top:22px;font-size:13px;color:var(--grape);opacity:.85}
 
-  footer{flex:0 0 auto;border-top:1px solid var(--line);padding:14px 14px calc(14px + env(safe-area-inset-bottom));text-align:center}
-  .mic{width:76px;height:76px;border-radius:38px;border:0;background:var(--fg);color:#fff;display:grid;place-items:center;margin:0 auto}
-  .mic svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  footer{flex:0 0 auto;border-top:1px solid var(--line);
+    padding:12px 14px calc(12px + env(safe-area-inset-bottom));
+    display:flex;align-items:center;gap:10px}
+  .foot-mic{flex:1;display:flex;flex-direction:column;align-items:center}
+  .mic{width:72px;height:72px;border-radius:36px;border:0;background:var(--fg);color:#fff;display:grid;place-items:center}
+  .mic svg{width:27px;height:27px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
   .mic.rec{background:var(--rec);animation:pulse 1.2s infinite}
   .mic:disabled{opacity:.35}
   @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
-  .micLabel{font-size:12px;color:var(--sub);margin-top:9px;min-height:16px}
+  .micLabel{font-size:12.5px;color:var(--sub);margin-top:8px;min-height:16px}
+  /* 설정 버튼 — 하단 왼쪽 */
+  .foot-set{width:44px;height:44px;flex:0 0 auto;border:1px solid var(--line);background:#fff;border-radius:12px;
+    display:grid;place-items:center;color:var(--fg)}
+  .foot-set:active{background:#f2f2f4}
+  .foot-set svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .foot-spacer{width:44px;flex:0 0 auto}
 
   .fld{margin-bottom:12px}
   .fld label{display:block;font-size:12px;color:var(--sub);margin-bottom:5px}
   .fld input,.fld select{width:100%;border:1px solid var(--line);border-radius:11px;padding:11px 12px;font:inherit;font-size:15px;background:#fafafa;outline:none}
   .fld input:focus{border-color:#c9c9cc;background:#fff}
-  .hint{font-size:12px;color:var(--sub);margin-top:5px;line-height:1.55}
+  .hint{font-size:12.5px;color:var(--sub);margin-top:5px;line-height:1.55}
   .btn{width:100%;padding:13px;border-radius:12px;border:0;background:var(--fg);color:#fff;font:inherit;font-weight:600;font-size:15px}
   .btn.ghost{background:#f2f2f4;color:var(--fg);margin-top:8px}
   .btn:disabled{opacity:.35}
@@ -120,8 +129,8 @@
     background:var(--fg);color:#fff;border:0;border-radius:12px;font:inherit;font-weight:600;font-size:15px;cursor:pointer}
   .top-cta svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-  .foot-note{text-align:center;color:var(--sub);font-size:12px;line-height:1.7;padding:40px 20px calc(40px + env(safe-area-inset-bottom))}
-  .foot-note .b{color:var(--grape);font-weight:700}
+  .foot-note{text-align:center;color:var(--sub);font-size:12px;line-height:1.9;padding:40px 20px calc(40px + env(safe-area-inset-bottom))}
+  .foot-note .b{color:var(--fg);font-weight:700}
 
   @media (max-width:420px){
     .promo h2{font-size:24px}
@@ -135,10 +144,7 @@
 <!-- ===================== 통역 앱 (첫 화면) ===================== -->
 <div id="app">
   <header>
-    <h1><svg class="logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="포도랑"><rect width="120" height="120" rx="24" fill="#2D1B4E"/><path d="M60 14 C 62 10, 68 8, 72 12 C 76 16, 74 24, 60 26 C 46 24, 44 16, 48 12 C 52 8, 58 10, 60 14 Z" fill="#2ECC71"/><circle cx="46" cy="70" r="26" fill="#8B5CF6" stroke="#6D28D9" stroke-width="3"/><circle cx="76" cy="70" r="26" fill="#A78BFA" stroke="#6D28D9" stroke-width="3"/></svg>포도랑</h1>
-    <button class="ico" onclick="openSet()" aria-label="설정">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.6 1.6 0 00-2.7 1.1V21a2 2 0 11-4 0v-.1A1.6 1.6 0 006.6 19l-.1.1a2 2 0 11-2.8-2.8l.1-.1A1.6 1.6 0 003 13.6a2 2 0 110-4 1.6 1.6 0 001.5-1.1 1.6 1.6 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.6 1.6 0 001.8.3H9a1.6 1.6 0 001-1.5V2a2 2 0 114 0v.1a1.6 1.6 0 001 1.5 1.6 1.6 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.6 1.6 0 00-.3 1.8V9a1.6 1.6 0 001.5 1H22a2 2 0 110 4h-.1a1.6 1.6 0 00-1.5 1z"/></svg>
-    </button>
+    <h1><svg class="logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="podolang"><rect width="120" height="120" rx="24" fill="#2D1B4E"/><path d="M60 14 C 62 10, 68 8, 72 12 C 76 16, 74 24, 60 26 C 46 24, 44 16, 48 12 C 52 8, 58 10, 60 14 Z" fill="#2ECC71"/><circle cx="46" cy="70" r="26" fill="#8B5CF6" stroke="#6D28D9" stroke-width="3"/><circle cx="76" cy="70" r="26" fill="#A78BFA" stroke="#6D28D9" stroke-width="3"/></svg>podolang</h1>
   </header>
 
   <div class="tabs">
@@ -149,10 +155,16 @@
   <main id="main"></main>
 
   <footer id="foot">
-    <button class="mic" id="mic" aria-label="녹음">
-      <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 00-3 3v7a3 3 0 006 0V5a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v3"/></svg>
+    <button class="foot-set" onclick="openSet()" aria-label="설정">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.6 1.6 0 00-2.7 1.1V21a2 2 0 11-4 0v-.1A1.6 1.6 0 006.6 19l-.1.1a2 2 0 11-2.8-2.8l.1-.1A1.6 1.6 0 003 13.6a2 2 0 110-4 1.6 1.6 0 001.5-1.1 1.6 1.6 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.6 1.6 0 001.8.3H9a1.6 1.6 0 001-1.5V2a2 2 0 114 0v.1a1.6 1.6 0 001 1.5 1.6 1.6 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.6 1.6 0 00-.3 1.8V9a1.6 1.6 0 001.5 1H22a2 2 0 110 4h-.1a1.6 1.6 0 00-1.5 1z"/></svg>
     </button>
-    <div class="micLabel" id="micLabel">누르고 있는 동안 말하세요</div>
+    <div class="foot-mic">
+      <button class="mic" id="mic" aria-label="녹음">
+        <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 00-3 3v7a3 3 0 006 0V5a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v3"/></svg>
+      </button>
+      <div class="micLabel" id="micLabel">누르고 있는 동안 말하세요</div>
+    </div>
+    <div class="foot-spacer"></div>
   </footer>
 </div>
 
@@ -161,8 +173,8 @@
 
   <section>
     <div class="hero-brand">
-      <svg class="mark" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="포도랑"><rect width="120" height="120" rx="24" fill="#2D1B4E"/><path d="M60 14 C 62 10, 68 8, 72 12 C 76 16, 74 24, 60 26 C 46 24, 44 16, 48 12 C 52 8, 58 10, 60 14 Z" fill="#2ECC71"/><circle cx="46" cy="70" r="26" fill="#8B5CF6" stroke="#6D28D9" stroke-width="3"/><circle cx="76" cy="70" r="26" fill="#A78BFA" stroke="#6D28D9" stroke-width="3"/></svg>
-      <div class="name">포도랑<span>Podolang · 실시간 통역</span></div>
+      <svg class="mark" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="podolang"><rect width="120" height="120" rx="24" fill="#2D1B4E"/><path d="M60 14 C 62 10, 68 8, 72 12 C 76 16, 74 24, 60 26 C 46 24, 44 16, 48 12 C 52 8, 58 10, 60 14 Z" fill="#2ECC71"/><circle cx="46" cy="70" r="26" fill="#8B5CF6" stroke="#6D28D9" stroke-width="3"/><circle cx="76" cy="70" r="26" fill="#A78BFA" stroke="#6D28D9" stroke-width="3"/></svg>
+      <div class="name">podolang<span>실시간 통역</span></div>
     </div>
     <p class="eyebrow">말하면, 바로 통역</p>
     <h2>언어가 달라도<br>대화는 멈추지 않게.</h2>
@@ -251,9 +263,9 @@
   </section>
 
   <div class="foot-note">
-    <span class="b">포도랑</span> · Podolang<br>
-    말하면 바로 통역됩니다.<br>
-    © 2026 BJ LEE
+    <span class="b">podolang v1.1.0</span><br>
+    © 2026 BJ LEE · All Rights Reserved<br>
+    PODOLANG.kr
   </div>
 </div>
 
@@ -262,15 +274,15 @@
 
 <script>
 const VER='v1.1.0';
-const API_DEFAULT='https://api.podolang.kr';
-const K={api:'podolang_api', from:'podolang_from', to:'podolang_to', hist:'podolang_hist', tel:'podolang_tel'};
+// 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
+const API='https://podolang.hasin7jk.workers.dev';
+const K={from:'podolang_from', to:'podolang_to', hist:'podolang_hist', tel:'podolang_tel'};
 const LANGS=[['KO','한국어'],['TH','태국어'],['EN','영어'],['JA','일본어'],['ZH','중국어'],['VI','베트남어'],['ES','스페인어'],['ID','인도네시아어']];
 const $=s=>document.querySelector(s);
 let mode='talk', rec=null, chunks=[], busy=false;
 
 const load=(k,d)=>{try{const v=localStorage.getItem(k);return v!==null?JSON.parse(v):d}catch(e){return d}};
 const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
-let api=load(K.api,API_DEFAULT);
 let from=load(K.from,'KO'), to=load(K.to,'TH');
 let hist=load(K.hist,[]);
 // 예전 버전이 저장해둔 무거운 음성 데이터가 남아있으면 정리해서 용량을 즉시 회수
@@ -278,7 +290,7 @@ if(hist.some(h=>h && h.audio)){
   hist = hist.map(({audio, ...rest}) => rest);
   try{ localStorage.setItem(K.hist, JSON.stringify(hist)); }catch(e){ try{localStorage.removeItem(K.hist);}catch(_){ } hist=[]; }
 }
-const url=p=>api.replace(/\/$/,'')+p;
+const url=p=>API.replace(/\/$/,'')+p;
 
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const langName=c=>(LANGS.find(l=>l[0]===c)||[c,c])[1];
@@ -308,9 +320,10 @@ function renderTalk(){
         <small>${langName(h.from)} → ${langName(h.to)}${h.engine?' · '+esc(h.engine):''}</small>
         ${h._audio?`<button class="mini" onclick="play(${i})">다시 듣기</button>`:''}
         <button class="mini" onclick="copyOne(${i})">복사</button>
+        <button class="mini del" onclick="delOne(${i})">삭제</button>
       </div>
     </div>`).join('')
-    : `<div class="empty"><b>마이크를 누르고 말하세요</b>말이 끝나면 손을 떼세요.<br>번역된 음성이 바로 나옵니다.<div class="scrollhint">↓ 아래로 내리면 포도랑 소개를 볼 수 있어요</div></div>`;
+    : `<div class="empty"><b>마이크를 누르고 말하세요</b>말이 끝나면 손을 떼세요.<div class="scrollhint">↓ 아래로 내리면 podolang 소개를 볼 수 있어요</div></div>`;
 
   $('#main').innerHTML = `
     <div class="langbar">
@@ -321,12 +334,12 @@ function renderTalk(){
       <select id="selTo" onchange="setLang()">${opts(to)}</select>
     </div>
     ${list}
-    ${hist.length?`<button class="btn ghost" onclick="clearHist()">기록 지우기</button>`:''}
-    <div class="ver">포도랑 ${VER}</div>`;
+    ${hist.length?`<button class="btn ghost" onclick="clearHist()">전체 기록 지우기</button>`:''}`;
 }
 function setLang(){ from=$('#selFrom').value; to=$('#selTo').value; save(K.from,from); save(K.to,to); }
 function swap(){ const t=from; from=to; to=t; save(K.from,from); save(K.to,to); render(); }
 function clearHist(){ if(!confirm('통역 기록을 모두 지웁니다.'))return; hist=[]; saveHist(); render(); }
+function delOne(i){ hist.splice(i,1); saveHist(); render(); }
 function copyOne(i){ navigator.clipboard.writeText(hist[i].dst).then(()=>toast('복사했습니다')); }
 function play(i){ if(hist[i]&&hist[i]._audio) new Audio('data:audio/mpeg;base64,'+hist[i]._audio).play(); }
 
@@ -366,8 +379,6 @@ async function done(){
     const res = await fetch(url('/api/podolang'), {method:'POST', body:fd});
     const d = await res.json();
     if(d.error) throw new Error(d.error);
-    // 음성(base64)은 저장하지 않는다. 저장 용량 초과 방지.
-    // 방금 통역한 것만 이번 세션 동안 메모리에서 다시 듣기 가능.
     const item = {src:d.original, dst:d.translated, from, to, engine:d.engine, at:Date.now()};
     if(d.audioBase64) item._audio = d.audioBase64;   // 메모리에만 (저장 안 됨)
     hist.unshift(item);
@@ -405,8 +416,7 @@ function renderCall(){
     </div>
     <button class="btn" id="callBtn" onclick="callStart()">통역 전화 걸기</button>
     <div class="hint" style="margin-top:12px">상대에게 전화가 갑니다. 한 사람이 말하고 잠깐 멈추면 번역된 음성이 재생됩니다. 번갈아 말하는 방식입니다.</div>
-    <div id="callLog" style="margin-top:14px"></div>
-    <div class="ver">포도랑 ${VER}</div>`;
+    <div id="callLog" style="margin-top:14px"></div>`;
 }
 async function callStart(){
   const num=$('#cNum').value.trim();
@@ -425,31 +435,36 @@ async function callStart(){
   b.disabled=false; b.textContent='통역 전화 걸기';
 }
 
-/* ---------- 설정 ---------- */
+/* ---------- 설정 (서버 주소 없음 — 언어 기본값 · 정보만) ---------- */
 function openSet(){
   $('#card').innerHTML=`
     <h2>설정</h2>
     <div class="fld">
-      <label>서버 주소</label>
-      <input id="sApi" placeholder="${API_DEFAULT}" value="${esc(api)}">
-      <div class="hint">기본값 그대로 두면 됩니다. API 키는 서버에만 있고 이 폰에는 저장되지 않습니다.</div>
+      <label>내 언어 (기본)</label>
+      <select id="setFrom">${opts(from)}</select>
+    </div>
+    <div class="fld">
+      <label>상대 언어 (기본)</label>
+      <select id="setTo">${opts(to)}</select>
     </div>
     <button class="btn" onclick="saveSet()">저장</button>
     <button class="btn ghost" onclick="checkApi()">연결 확인</button>
-    <button class="btn ghost" onclick="resetApi()">기본값으로</button>
-    <div class="ver">포도랑 ${VER}</div>`;
+    <div class="hint" style="margin-top:12px">번역·음성은 서버에서 처리됩니다. API 키는 서버에만 있고 이 기기에는 저장되지 않습니다.</div>
+    <div class="ver">podolang ${VER}</div>`;
   $('#sheet').classList.add('on');
 }
 function closeSheet(){ $('#sheet').classList.remove('on'); }
-function saveSet(){ api=$('#sApi').value.trim()||API_DEFAULT; save(K.api,api); closeSheet(); toast('저장했습니다'); }
-function resetApi(){ $('#sApi').value=API_DEFAULT; }
+function saveSet(){
+  from=$('#setFrom').value; to=$('#setTo').value;
+  save(K.from,from); save(K.to,to);
+  closeSheet(); render(); toast('저장했습니다');
+}
 async function checkApi(){
-  const u=($('#sApi').value.trim()||API_DEFAULT).replace(/\/$/,'');
   try{
-    const d=await (await fetch(u+'/api/health')).json();
+    const d=await (await fetch(url('/api/health'))).json();
     if(!d.ok) throw new Error();
     const off=Object.entries(d.keys).filter(([,v])=>!v).map(([k])=>k);
-    toast(off.length?'연결됨 · 키 없음: '+off.join(', '):'연결됨 · 키 모두 있음');
+    toast(off.length?'연결됨 · 일부 기능 준비중: '+off.join(', '):'연결됨 · 정상');
   }catch(e){ toast('연결하지 못했습니다'); }
 }
 
