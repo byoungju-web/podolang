@@ -1,13 +1,21 @@
 /**
  * 🍇 PODOLANG by BJ LEE - 실시간 통역 + Twilio 전화 통역 API
- * Cloudflare Workers · v1.2
+ * Cloudflare Workers · v1.3
  * © 2026 BJ LEE. All Rights Reserved.
  *
- * v1.2 변경점
- *  - 기본 목소리를 계정에 실제로 있는 Sarah 로 교체 (Rachel 은 계정에 없음)
- *  - 음성 모델 캐스케이드: v3 → turbo → flash → multilingual 순으로 되는 것 사용
- *  - /api/test?lang=TH 진단 주소 추가 (브라우저에서 바로 확인)
+ * v1.3 변경점 (지역차단 우회)
+ *  - OpenAI(Whisper·GPT) 호출을 Cloudflare AI Gateway 경유로 변경
+ *    → "Country, region, or territory not supported" 우회
+ *  - CORS 허용목록에 podolang.hasin7jk.workers.dev 추가
+ *  - /api/health 에 gateway 표시
  */
+
+// ===== Cloudflare AI Gateway (OpenAI 지역차단 우회) =====
+const CF_ACCOUNT_ID = '8e3361d320715cc98e7b66cb3127ca76';
+const CF_GATEWAY = 'default';
+const OPENAI_BASE = `https://gateway.ai.cloudflare.com/v1/${CF_ACCOUNT_ID}/${CF_GATEWAY}/openai`;
+// (문제 생기면 아래 한 줄로 바꿔 원래 직접호출로 복귀 가능)
+// const OPENAI_BASE = 'https://api.openai.com/v1';
 
 // 계정에 실제로 있는 목소리 (Sarah). 없으면 첫 번째 목소리로 자동 대체됨
 const VOICE_DEFAULT = 'EXAVITQu4vr4xnSDxMaL';
@@ -20,6 +28,7 @@ const ALLOWED = [
   'https://podolang.kr',
   'https://www.podolang.kr',
   'https://byoungju-web.github.io',
+  'https://podolang.hasin7jk.workers.dev',
   'http://localhost:8788'
 ];
 
@@ -35,7 +44,8 @@ export default {
       // 0. 상태 확인
       if (url.pathname === '/api/health') {
         return json({
-          ok: true, app: 'podolang', version: '1.2',
+          ok: true, app: 'podolang', version: '1.3',
+          gateway: OPENAI_BASE.includes('gateway.ai') ? 'ai-gateway' : 'direct',
           keys: {
             openai: !!env.OPENAI_API_KEY,
             deepl: !!env.DEEPL_API_KEY,
@@ -72,6 +82,17 @@ export default {
           }
         }
         return json({ lang, voice: vid, results }, 200, H);
+      }
+
+      // 0-3. 번역 파이프라인 진단 — /api/testchat?text=안녕 열면 GPT 경유 확인
+      if (url.pathname === '/api/testchat') {
+        const text = url.searchParams.get('text') || '안녕하세요';
+        try {
+          const tr = await translate(env, text, 'KO', 'EN');
+          return json({ ok: true, input: text, translated: tr.translated, engine: tr.engine }, 200, H);
+        } catch (e) {
+          return json({ ok: false, error: e.message }, 200, H);
+        }
       }
 
       // 1. 음성 -> 텍스트
@@ -214,7 +235,7 @@ export default {
         return new Response('OK');
       }
 
-      return new Response('🍇 PodoLang API by BJ LEE · v1.2', { headers: H });
+      return new Response('🍇 PodoLang API by BJ LEE · v1.3', { headers: H });
 
     } catch (e) {
       return json({ error: e.message || '처리 중 오류가 발생했습니다.' }, 500, H);
@@ -256,7 +277,8 @@ async function transcribe(env, audio, sourceLang) {
     form.append('model', 'whisper-1');
     if (s && s !== 'AUTO') form.append('language', s.toLowerCase());
 
-    const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+    // ★ AI Gateway 경유로 OpenAI Whisper 호출 (지역차단 우회)
+    const res = await fetch(`${OPENAI_BASE}/audio/transcriptions`, {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${env.OPENAI_API_KEY}` },
       body: form
@@ -291,7 +313,8 @@ async function translate(env, text, sourceLang, targetLang) {
   }
 
   return await retry(async () => {
-    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    // ★ AI Gateway 경유로 OpenAI GPT 호출 (지역차단 우회)
+    const res = await fetch(`${OPENAI_BASE}/chat/completions`, {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
