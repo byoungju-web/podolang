@@ -12,7 +12,7 @@
 
 // ===== Cloudflare AI Gateway (OpenAI 지역차단 우회) =====
 const CF_ACCOUNT_ID = '8e3361d320715cc98e7b66cb3127ca76';
-const CF_GATEWAY = 'default';
+const CF_GATEWAY = 'podolang;
 const OPENAI_BASE = `https://gateway.ai.cloudflare.com/v1/${CF_ACCOUNT_ID}/${CF_GATEWAY}/openai`;
 // (문제 생기면 아래 한 줄로 바꿔 원래 직접호출로 복귀 가능)
 // const OPENAI_BASE = 'https://api.openai.com/v1';
