@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -336,6 +337,9 @@ async function run(){
 
   await sleep(k(420));
   secLabel.classList.add('show');
+  // 국기 카드가 보이는 위치로 자동 스크롤 (팝업 연출을 보면서 내려감)
+  secLabel.scrollIntoView({ behavior:'smooth', block:'start' });
+  await sleep(k(220));
   for(let i=0;i<stores.length;i++){
     const s=stores[i];
     const card=document.createElement('div');
