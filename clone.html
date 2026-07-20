@@ -71,7 +71,27 @@
   .input-box button:active:not(:disabled){transform:translateY(1px)}
   .input-box button:disabled{opacity:.5;cursor:not-allowed}
 
-  #stats{max-width:640px;margin:26px auto 0;display:none;grid-template-columns:repeat(4,1fr);gap:10px}
+  /* deploy log terminal */
+  #deploy{max-width:640px;margin:26px auto 0;display:none}
+  #deploy.show{display:block}
+  .log-term{background:var(--ink);border-radius:14px;padding:16px 15px;font-family:var(--mono);font-size:13.5px;
+    color:#eef;overflow-x:auto;box-shadow:6px 6px 0 rgba(11,11,12,.12)}
+  .cmd{color:#b9b9be;padding-bottom:9px;border-bottom:1px dashed #3a3a3a;margin-bottom:9px;white-space:nowrap}
+  .cmd .p{color:#fff}.cmd .u{color:#fff;font-weight:700}
+  .cur{display:inline-block;width:8px;height:15px;background:#fff;vertical-align:-2px;margin-left:2px;animation:blink 1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+  .log-line{display:flex;align-items:baseline;gap:9px;padding:3px 0;opacity:0;transform:translateY(3px);
+    animation:linein .26s forwards;white-space:nowrap}
+  @keyframes linein{to{opacity:1;transform:none}}
+  .log-line .chip{flex-shrink:0;font-size:11px;font-weight:700;padding:2px 7px;border-radius:5px;
+    background:#2c2c31;color:#d8d8de;letter-spacing:.3px}
+  .log-line .txt{color:#eef}
+  .log-line .res{color:#a6a6ac;margin-left:auto;padding-left:14px}
+  .log-line .tick{color:#fff;font-weight:800}
+  .log-line .spin{color:#d0d0d5}
+  .log-done{color:#fff;font-weight:700;padding-top:9px;margin-top:6px;border-top:1px dashed #3a3a3a;white-space:nowrap}
+
+  #stats{max-width:640px;margin:16px auto 0;display:none;grid-template-columns:repeat(4,1fr);gap:10px}
   #stats.show{display:grid}
   .stat{border:1.5px solid var(--ink);border-radius:12px;padding:14px 8px;text-align:center;background:var(--paper)}
   .stat .n{font-family:var(--mono);font-size:clamp(19px,5vw,26px);font-weight:800;letter-spacing:-1px}
@@ -115,6 +135,7 @@
   @media(prefers-reduced-motion:reduce){
     *{animation-duration:.001s!important}
     .card{opacity:1;transform:none}
+    .cur{animation:none}
   }
 </style>
 </head>
@@ -141,6 +162,8 @@
       <button id="run-btn">🚀 복제</button>
     </div>
   </section>
+
+  <div id="deploy"><div class="log-term" id="log-term"></div></div>
 
   <div id="stats">
     <div class="stat"><div class="n" data-target="30">0</div><div class="l">COUNTRIES</div></div>
@@ -207,6 +230,15 @@ const COUNTRIES = [
   {f:"🇨🇴",c:"CO",n:"콜롬비아",l:"ES",cur:"$",r:4100,h:"#comprasonline"},
 ];
 
+const STEPS = [
+  {txt:"상품 크롤링",        res:PRODUCT_COUNT+"개 상품"},
+  {txt:"번역 24 × 30개 언어", res:"720개 문자열"},
+  {txt:"실시간 환율 적용",    res:"30개 통화"},
+  {txt:"결제 수단 생성",      res:"30개 리전"},
+  {txt:"현지 해시태그 생성",  res:"30개 계정"},
+  {txt:"엣지 도메인 배포",    res:"30개 라이브"},
+];
+
 const $ = s => document.querySelector(s);
 const sleep = ms => new Promise(r=>setTimeout(r,ms));
 const reduced = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -234,14 +266,15 @@ function localStores(url){
   }));
 }
 
-const runBtn=$('#run-btn'), urlIn=$('#shop-url'), progress=$('#progress'),
-      stats=$('#stats'), grid=$('#grid'), secLabel=$('#sec-label'),
-      liveCount=$('#live-count'), done=$('#done');
+const runBtn=$('#run-btn'), urlIn=$('#shop-url'), deploy=$('#deploy'),
+      term=$('#log-term'), progress=$('#progress'), stats=$('#stats'),
+      grid=$('#grid'), secLabel=$('#sec-label'), liveCount=$('#live-count'), done=$('#done');
 let running=false;
 
 function reset(){
   running=false;
   runBtn.disabled=false; urlIn.disabled=false; runBtn.textContent='🚀 복제';
+  deploy.classList.remove('show'); term.innerHTML='';
   stats.classList.remove('show'); stats.querySelectorAll('.n').forEach(n=>n.textContent='0');
   grid.innerHTML=''; secLabel.classList.remove('show'); done.classList.remove('show');
   progress.style.width='0%';
@@ -268,15 +301,36 @@ async function run(){
     body:JSON.stringify({ shopifyUrl:url })
   }).then(r=>r.ok?r.json():null).catch(()=>null);
 
-  // 진행바만 부드럽게 채움 (로그 없이)
-  for(let i=1;i<=6;i++){
-    progress.style.width=Math.round((i/6)*100)+'%';
-    await sleep(k(220));
+  // 터미널 로그 스트리밍
+  deploy.classList.add('show');
+  const host = cleanHost(url);
+  term.innerHTML = `<div class="cmd"><span class="p">$</span> podoclone deploy <span class="u">${host}</span><span class="cur" id="term-cur"></span></div>`;
+  deploy.scrollIntoView({behavior:'smooth', block:'nearest'});
+  await sleep(k(450));
+  const cur=document.getElementById('term-cur'); if(cur) cur.remove();
+
+  for(let i=0;i<STEPS.length;i++){
+    const s=STEPS[i];
+    const line=document.createElement('div');
+    line.className='log-line';
+    line.innerHTML=`<span class="txt">${s.txt}</span><span class="res"><span class="spin">⠋ 처리 중…</span></span>`;
+    term.appendChild(line); term.scrollTop=term.scrollHeight;
+    await sleep(k(230));
+    line.querySelector('.res').innerHTML=`<span class="tick">✓</span> ${s.res}`;
+    progress.style.width=Math.round(((i+1)/STEPS.length)*100)+'%';
+    await sleep(k(140));
   }
 
   const apiData = await Promise.race([ apiPromise, sleep(k(2500)).then(()=>null) ]);
   const stores = (apiData && apiData.stores && apiData.stores.length) ? apiData.stores : localStores(url);
+  const src = (apiData && apiData.stores) ? 'api' : 'local';
 
+  const fin=document.createElement('div');
+  fin.className='log-done';
+  fin.innerHTML=`✓ 완료 — ${stores.length}개국 스토어 라이브 (58s · ${src==='api'?'api.podolang.kr':'local sim'})`;
+  term.appendChild(fin); term.scrollTop=term.scrollHeight;
+
+  await sleep(k(320));
   stats.classList.add('show');
   stats.querySelectorAll('.n').forEach(countUp);
 
