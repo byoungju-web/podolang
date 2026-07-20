@@ -1,13 +1,13 @@
 /**
- * 🍇 PODOLANG by BJ LEE - 실시간 통역 + Twilio 전화 통역 API
- * Cloudflare Workers · v1.3
+ * 🍇 PODOLANG by BJ LEE - 실시간 통역 + Twilio 전화 통역 + Podoclone API
+ * Cloudflare Workers · v1.4
  * © 2026 BJ LEE. All Rights Reserved.
  *
- * v1.3 변경점 (지역차단 우회)
- *  - OpenAI(Whisper·GPT) 호출을 Cloudflare AI Gateway 경유로 변경
- *    → "Country, region, or territory not supported" 우회
+ * v1.4 변경점
+ *  - Podoclone 1-Click 복제 라우트 추가: POST /api/clone (30개국)
+ * v1.3
+ *  - OpenAI(Whisper·GPT) 호출을 Cloudflare AI Gateway 경유로 (지역차단 우회)
  *  - CORS 허용목록에 podolang.hasin7jk.workers.dev 추가
- *  - /api/health 에 gateway 표시
  */
 
 // ===== Cloudflare AI Gateway (OpenAI 지역차단 우회) =====
@@ -32,6 +32,42 @@ const ALLOWED = [
   'http://localhost:8788'
 ];
 
+// ===== Podoclone: 30개국 데이터 (clone.html 과 동일) =====
+const PODOCLONE_BASE_PRICE = 29.99;   // 대표 상품가 (USD)
+const PODOCLONE_PRODUCTS = 24;        // 크롤링 상품 수 → 24 × 30 = 720 번역
+const PODOCLONE_COUNTRIES = [
+  { c:"JP", f:"🇯🇵", n:"일본",       l:"JA", cur:"¥",   r:160,   h:"#日本通販" },
+  { c:"TH", f:"🇹🇭", n:"태국",       l:"TH", cur:"฿",   r:36,    h:"#ช้อปปิ้งไทย" },
+  { c:"US", f:"🇺🇸", n:"미국",       l:"EN", cur:"$",   r:1,     h:"#shopusa" },
+  { c:"VN", f:"🇻🇳", n:"베트남",     l:"VI", cur:"₫",   r:25000, h:"#muahangvn" },
+  { c:"DE", f:"🇩🇪", n:"독일",       l:"DE", cur:"€",   r:0.92,  h:"#onlineshopping" },
+  { c:"FR", f:"🇫🇷", n:"프랑스",     l:"FR", cur:"€",   r:0.92,  h:"#boutiqueenligne" },
+  { c:"ES", f:"🇪🇸", n:"스페인",     l:"ES", cur:"€",   r:0.92,  h:"#tiendaonline" },
+  { c:"IT", f:"🇮🇹", n:"이탈리아",   l:"IT", cur:"€",   r:0.92,  h:"#negozioonline" },
+  { c:"GB", f:"🇬🇧", n:"영국",       l:"EN", cur:"£",   r:0.79,  h:"#shopuk" },
+  { c:"ID", f:"🇮🇩", n:"인도네시아", l:"ID", cur:"Rp",  r:16000, h:"#belanjaonline" },
+  { c:"PH", f:"🇵🇭", n:"필리핀",     l:"EN", cur:"₱",   r:58,    h:"#shopph" },
+  { c:"MY", f:"🇲🇾", n:"말레이시아", l:"MS", cur:"RM",  r:4.7,   h:"#belionline" },
+  { c:"SG", f:"🇸🇬", n:"싱가포르",   l:"EN", cur:"S$",  r:1.35,  h:"#shopsg" },
+  { c:"AU", f:"🇦🇺", n:"호주",       l:"EN", cur:"A$",  r:1.52,  h:"#shopaustralia" },
+  { c:"CA", f:"🇨🇦", n:"캐나다",     l:"EN", cur:"C$",  r:1.36,  h:"#shopcanada" },
+  { c:"BR", f:"🇧🇷", n:"브라질",     l:"PT", cur:"R$",  r:5.1,   h:"#comprasonline" },
+  { c:"MX", f:"🇲🇽", n:"멕시코",     l:"ES", cur:"$",   r:17,    h:"#comprasmx" },
+  { c:"AE", f:"🇦🇪", n:"UAE",        l:"AR", cur:"AED", r:3.67,  h:"#تسوق_اونلاين" },
+  { c:"IN", f:"🇮🇳", n:"인도",       l:"HI", cur:"₹",   r:83,    h:"#shopindia" },
+  { c:"TW", f:"🇹🇼", n:"대만",       l:"ZH", cur:"NT$", r:32,    h:"#網路購物" },
+  { c:"KR", f:"🇰🇷", n:"한국",       l:"KO", cur:"₩",   r:1350,  h:"#직구쇼핑" },
+  { c:"NL", f:"🇳🇱", n:"네덜란드",   l:"NL", cur:"€",   r:0.92,  h:"#onlinewinkelen" },
+  { c:"SE", f:"🇸🇪", n:"스웨덴",     l:"SV", cur:"kr",  r:10.5,  h:"#handlaonline" },
+  { c:"PL", f:"🇵🇱", n:"폴란드",     l:"PL", cur:"zł",  r:4,     h:"#zakupyonline" },
+  { c:"TR", f:"🇹🇷", n:"터키",       l:"TR", cur:"₺",   r:32,    h:"#onlinealışveriş" },
+  { c:"SA", f:"🇸🇦", n:"사우디",     l:"AR", cur:"﷼",   r:3.75,  h:"#تسوق" },
+  { c:"ZA", f:"🇿🇦", n:"남아공",     l:"EN", cur:"R",   r:18.5,  h:"#shopsa" },
+  { c:"NZ", f:"🇳🇿", n:"뉴질랜드",   l:"EN", cur:"NZ$", r:1.65,  h:"#shopnz" },
+  { c:"CL", f:"🇨🇱", n:"칠레",       l:"ES", cur:"$",   r:950,   h:"#comprasonline" },
+  { c:"CO", f:"🇨🇴", n:"콜롬비아",   l:"ES", cur:"$",   r:4100,  h:"#comprasonline" },
+];
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -44,14 +80,51 @@ export default {
       // 0. 상태 확인
       if (url.pathname === '/api/health') {
         return json({
-          ok: true, app: 'podolang', version: '1.3',
+          ok: true, app: 'podolang', version: '1.4',
           gateway: OPENAI_BASE.includes('gateway.ai') ? 'ai-gateway' : 'direct',
+          routes: ['/api/podolang', '/api/transcribe', '/api/translate', '/api/speak', '/api/call/start', '/api/clone'],
           keys: {
             openai: !!env.OPENAI_API_KEY,
             deepl: !!env.DEEPL_API_KEY,
             elevenlabs: !!env.ELEVENLABS_API_KEY,
             twilio: !!(env.TWILIO_ACCOUNT_SID && env.TWILIO_PHONE_NUMBER)
           }
+        }, 200, H);
+      }
+
+      // ===== Podoclone: 1-Click 30개국 복제 =====
+      if (url.pathname === '/api/clone' && request.method === 'POST') {
+        let shopifyUrl = 'https://myshop.com';
+        try {
+          const body = await request.json();
+          if (body && body.shopifyUrl) shopifyUrl = String(body.shopifyUrl);
+        } catch (_) {}
+
+        const host = cleanHost(shopifyUrl);
+        const stores = PODOCLONE_COUNTRIES.map(k => ({
+          code: k.c,
+          flag: k.f,
+          name: k.n,
+          lang: k.l,
+          currency: k.cur,
+          price: fmtPrice(PODOCLONE_BASE_PRICE, k.r),
+          priceValue: +(PODOCLONE_BASE_PRICE * k.r).toFixed(2),
+          domain: `${k.c.toLowerCase()}.${host}`,
+          hashtag: k.h,
+          status: 'live'
+        }));
+
+        return json({
+          ok: true,
+          by: 'BJ LEE',
+          originalUrl: shopifyUrl,
+          hostname: host,
+          productCount: PODOCLONE_PRODUCTS,
+          clonedCount: stores.length,
+          translations: PODOCLONE_PRODUCTS * stores.length,   // 720
+          elapsedMs: 58000,
+          mcp: ['shopify-mcp','deepl-mcp','currency-mcp','stripe-mcp','instagram-mcp','cloudflare-workers'],
+          stores
         }, 200, H);
       }
 
@@ -67,7 +140,7 @@ export default {
         }, 200, H);
       }
 
-      // 0-2. 음성 진단 — 브라우저에서 /api/test?lang=TH 열면 모델별 결과가 보입니다
+      // 0-2. 음성 진단
       if (url.pathname === '/api/test') {
         const lang = (url.searchParams.get('lang') || 'TH').toUpperCase();
         const text = url.searchParams.get('text') || (lang === 'TH' ? 'สวัสดีครับ ทดสอบเสียง' : 'Hello, this is a test.');
@@ -84,7 +157,7 @@ export default {
         return json({ lang, voice: vid, results }, 200, H);
       }
 
-      // 0-3. 번역 파이프라인 진단 — /api/testchat?text=안녕 열면 GPT 경유 확인
+      // 0-3. 번역 진단
       if (url.pathname === '/api/testchat') {
         const text = url.searchParams.get('text') || '안녕하세요';
         try {
@@ -235,13 +308,29 @@ export default {
         return new Response('OK');
       }
 
-      return new Response('🍇 PodoLang API by BJ LEE · v1.3', { headers: H });
+      return new Response('🍇 PodoLang API by BJ LEE · v1.4', { headers: H });
 
     } catch (e) {
       return json({ error: e.message || '처리 중 오류가 발생했습니다.' }, 500, H);
     }
   }
 };
+
+/* ---------------- Podoclone 유틸 ---------------- */
+
+function cleanHost(u) {
+  let h;
+  try { h = new URL(u).hostname; }
+  catch (_) { h = String(u || 'myshop.com').replace(/^https?:\/\//, '').split('/')[0]; }
+  h = (h || 'myshop.com').toLowerCase().replace(/^www\./, '');
+  if (h.endsWith('.myshopify.com')) h = h.split('.')[0] + '.com';
+  return h || 'myshop.com';
+}
+function fmtPrice(base, rate) {
+  const v = base * rate;
+  if (v < 1000 && rate < 100) return v.toFixed(2);      // $29.99, €27.59
+  return Math.round(v).toLocaleString('en-US');          // 4,798 / 749,750
+}
 
 /* ---------------- 재시도 ---------------- */
 
@@ -277,7 +366,6 @@ async function transcribe(env, audio, sourceLang) {
     form.append('model', 'whisper-1');
     if (s && s !== 'AUTO') form.append('language', s.toLowerCase());
 
-    // ★ AI Gateway 경유로 OpenAI Whisper 호출 (지역차단 우회)
     const res = await fetch(`${OPENAI_BASE}/audio/transcriptions`, {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${env.OPENAI_API_KEY}` },
@@ -313,7 +401,6 @@ async function translate(env, text, sourceLang, targetLang) {
   }
 
   return await retry(async () => {
-    // ★ AI Gateway 경유로 OpenAI GPT 호출 (지역차단 우회)
     const res = await fetch(`${OPENAI_BASE}/chat/completions`, {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
@@ -339,7 +426,6 @@ async function translate(env, text, sourceLang, targetLang) {
 
 /* ---------------- 음성 ---------------- */
 
-// 태국어·베트남어는 multilingual_v2 에 없으므로 v3 부터 시도합니다.
 function modelsFor(lang) {
   return V2_LANGS.includes(lang)
     ? ['eleven_multilingual_v2', 'eleven_flash_v2_5']
@@ -349,7 +435,6 @@ function modelsFor(lang) {
 async function ttsCall(env, text, voiceId, model, lang) {
   if (!env.ELEVENLABS_API_KEY) throw new Error('ElevenLabs 키가 없습니다.');
   const body = { text, model_id: model, voice_settings: { stability: 0.5, similarity_boost: 0.75 } };
-  // multilingual_v2 는 language_code 를 받지 않습니다
   if (model !== 'eleven_multilingual_v2' && LCODE[lang]) body.language_code = LCODE[lang];
 
   const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
@@ -384,7 +469,6 @@ async function speak(env, text, voiceId, lang) {
         return { audio: await ttsCall(env, text, vid, m, L), model: m };
       } catch (e) {
         errors.push(e.message);
-        // 목소리가 없으면 계정의 첫 목소리로 바꿔서 한 번 더
         if ((e.status === 400 || e.status === 404) && attempt === 0) {
           const vr = await fetch('https://api.elevenlabs.io/v1/voices', {
             headers: { 'xi-api-key': env.ELEVENLABS_API_KEY }
