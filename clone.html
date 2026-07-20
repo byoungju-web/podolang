@@ -337,9 +337,6 @@ async function run(){
 
   await sleep(k(420));
   secLabel.classList.add('show');
-  // 국기 카드가 보이는 위치로 자동 스크롤 (팝업 연출을 보면서 내려감)
-  secLabel.scrollIntoView({ behavior:'smooth', block:'start' });
-  await sleep(k(220));
   for(let i=0;i<stores.length;i++){
     const s=stores[i];
     const card=document.createElement('div');
@@ -352,8 +349,9 @@ async function run(){
       `<div class="meta">✓ ${s.lang} 번역 · ${s.hashtag||''}</div>`;
     grid.appendChild(card);
     requestAnimationFrame(()=>card.classList.add('pop'));
+    card.scrollIntoView({ behavior:'smooth', block:'center' });   // 팝업되는 카드를 화면 중앙으로 따라가며 보여줌
     liveCount.textContent=`${i+1} / ${stores.length}`;
-    await sleep(reduced?0:80);
+    await sleep(reduced?0:120);
   }
 
   await sleep(k(280));
