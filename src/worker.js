@@ -368,6 +368,27 @@ export default {
         return json({ messages: out, seq, status: meta?.status || 'active' }, 200, H);
       }
 
+      // 9-1. 통화 종료 (전화 끊기)
+      if (url.pathname === '/api/call/end' && request.method === 'POST') {
+        const { callSid } = await request.json();
+        if (callSid && env.TWILIO_ACCOUNT_SID) {
+          try {
+            const auth = btoa(`${env.TWILIO_ACCOUNT_SID}:${env.TWILIO_AUTH_TOKEN}`);
+            const f = new URLSearchParams(); f.append('Status', 'completed');
+            await fetch(`https://api.twilio.com/2010-04-01/Accounts/${env.TWILIO_ACCOUNT_SID}/Calls/${callSid}.json`, {
+              method: 'POST',
+              headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: f
+            });
+            if (env.PODOLANG_KV) {
+              const old = await env.PODOLANG_KV.get(`call:${callSid}`, 'json') || {};
+              await env.PODOLANG_KV.put(`call:${callSid}`, JSON.stringify({ ...old, status: 'completed' }), { expirationTtl: 60 * 30 });
+            }
+          } catch (e) {}
+        }
+        return json({ ok: true }, 200, H);
+      }
+
       // 10. 콜 상태 콜백
       if (url.pathname === '/api/call/status' && request.method === 'POST') {
         const fd = await request.formData();
@@ -569,11 +590,11 @@ function toBase64(buf) {
   return btoa(bin);
 }
 
-const LCODE = { KO:'ko', TH:'th', EN:'en', JA:'ja', ZH:'zh', VI:'vi', ES:'es', ID:'id' };
-const LMAP  = { KO:'ko-KR', TH:'th-TH', EN:'en-US', JA:'ja-JP', ZH:'zh-CN', VI:'vi-VN', ES:'es-ES', ID:'id-ID' };
+const LCODE = { KO:'ko', TH:'th', EN:'en', JA:'ja', ZH:'zh', VI:'vi', ES:'es', ID:'id', DE:'de', FR:'fr', AR:'ar', IT:'it', RU:'ru', PT:'pt' };
+const LMAP  = { KO:'ko-KR', TH:'th-TH', EN:'en-US', JA:'ja-JP', ZH:'zh-CN', VI:'vi-VN', ES:'es-ES', ID:'id-ID', DE:'de-DE', FR:'fr-FR', AR:'ar-XA', IT:'it-IT', RU:'ru-RU', PT:'pt-BR' };
 const sttLang = l => LMAP[l] || 'en-US';
 const sayLang = l => LMAP[l] || 'en-US';
-const sayVoice = l => ({ KO:'Polly.Seoyeon', JA:'Polly.Mizuki', ZH:'Polly.Zhiyu', EN:'Polly.Joanna', ES:'Polly.Lupe', TH:'Google.th-TH-Standard-A', VI:'Google.vi-VN-Standard-A', ID:'Google.id-ID-Standard-A' })[l] || 'Polly.Joanna';
+const sayVoice = l => ({ KO:'Polly.Seoyeon', JA:'Polly.Mizuki', ZH:'Polly.Zhiyu', EN:'Polly.Joanna', ES:'Polly.Lupe', TH:'Google.th-TH-Standard-A', VI:'Google.vi-VN-Standard-A', ID:'Google.id-ID-Standard-A', DE:'Polly.Vicki', FR:'Polly.Lea', IT:'Polly.Bianca', RU:'Polly.Tatyana', AR:'Polly.Zeina', PT:'Polly.Camila' })[l] || 'Polly.Joanna';
 
 // 상대에게 처음 들려줄 안내 (상대 언어)
 const GREET = {
