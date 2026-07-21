@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -145,7 +144,7 @@
 <!-- ===================== 통역 앱 (첫 화면) ===================== -->
 <div id="app">
   <header>
-    <h1><svg class="logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="podolang"><rect width="120" height="120" rx="24" fill="#2D1B4E"/><path d="M60 14 C 62 10, 68 8, 72 12 C 76 16, 74 24, 60 26 C 46 24, 44 16, 48 12 C 52 8, 58 10, 60 14 Z" fill="#2ECC71"/><circle cx="46" cy="70" r="26" fill="#8B5CF6" stroke="#6D28D9" stroke-width="3"/><circle cx="76" cy="70" r="26" fill="#A78BFA" stroke="#6D28D9" stroke-width="3"/></svg>podolang</h1>
+    <h1><svg class="logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="podolang"><path d="M60 14 C 62 10, 68 8, 72 12 C 76 16, 74 24, 60 26 C 46 24, 44 16, 48 12 C 52 8, 58 10, 60 14 Z" fill="#2ECC71"/><circle cx="46" cy="70" r="26" fill="#8B5CF6" stroke="#6D28D9" stroke-width="3"/><circle cx="76" cy="70" r="26" fill="#A78BFA" stroke="#6D28D9" stroke-width="3"/></svg>podolang</h1>
   </header>
 
   <div class="tabs">
@@ -174,7 +173,7 @@
 
   <section>
     <div class="hero-brand">
-      <svg class="mark" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="podolang"><rect width="120" height="120" rx="24" fill="#2D1B4E"/><path d="M60 14 C 62 10, 68 8, 72 12 C 76 16, 74 24, 60 26 C 46 24, 44 16, 48 12 C 52 8, 58 10, 60 14 Z" fill="#2ECC71"/><circle cx="46" cy="70" r="26" fill="#8B5CF6" stroke="#6D28D9" stroke-width="3"/><circle cx="76" cy="70" r="26" fill="#A78BFA" stroke="#6D28D9" stroke-width="3"/></svg>
+      <svg class="mark" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="podolang"><path d="M60 14 C 62 10, 68 8, 72 12 C 76 16, 74 24, 60 26 C 46 24, 44 16, 48 12 C 52 8, 58 10, 60 14 Z" fill="#2ECC71"/><circle cx="46" cy="70" r="26" fill="#8B5CF6" stroke="#6D28D9" stroke-width="3"/><circle cx="76" cy="70" r="26" fill="#A78BFA" stroke="#6D28D9" stroke-width="3"/></svg>
       <div class="name">podolang<span>실시간 통역</span></div>
     </div>
     <p class="eyebrow">말하면, 바로 통역</p>
@@ -194,6 +193,20 @@
       <li><b>누르고 말하기</b><span>마이크를 누른 채로 말하고, 끝나면 손을 뗍니다.</span></li>
       <li><b>바로 들려주기</b><span>번역된 문장이 화면에 뜨고, 상대 언어 음성이 바로 재생됩니다.</span></li>
     </ol>
+  </section>
+
+  <section>
+    <p class="eyebrow">받는 법 · 전화 통역</p>
+    <h2>상대는 그냥<br>전화만 받으면 돼요.</h2>
+    <ol class="how">
+      <li><b>전화를 받는다</b><span>상대에게 포도랑 번호로 전화가 갑니다. 평소처럼 받으면 됩니다.</span></li>
+      <li><b>안내 음성을 듣는다</b><span>받으면 상대 언어로 "포도랑 통역 전화입니다. 말씀하시면 통역됩니다" 안내가 나옵니다.</span></li>
+      <li><b>그대로 통화한다</b><span>상대는 자기 언어로 편하게 말하면 됩니다. 당신은 앱 화면에서 마이크로 말하고, 상대 말은 번역되어 재생됩니다.</span></li>
+    </ol>
+    <p style="font-size:14px;color:var(--sub);line-height:1.7;margin-top:16px">
+      💡 <b style="color:var(--fg)">상대 폰(삼성 등)에 <span style="white-space:nowrap">'통화 어시스트'</span>, <span style="white-space:nowrap">'실시간 통역'</span>, <span style="white-space:nowrap">'텍스트 통화'</span> 버튼이 떠도 누르지 않아도 됩니다.</b>
+      그냥 전화를 받아 평소처럼 말하면 포도랑이 통역합니다. (그 버튼들은 상대 폰의 기능이라 포도랑과는 별개입니다.)
+    </p>
   </section>
 
   <section>
@@ -278,7 +291,7 @@ const VER='v1.1.0';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 const K={from:'podolang_from', to:'podolang_to', hist:'podolang_hist', tel:'podolang_tel'};
-const LANGS=[['KO','한국어'],['TH','태국어'],['EN','영어'],['JA','일본어'],['ZH','중국어'],['VI','베트남어'],['ES','스페인어'],['ID','인도네시아어']];
+const LANGS=[['KO','한국어'],['TH','태국어'],['EN','영어'],['JA','일본어'],['ZH','중국어'],['VI','베트남어'],['ES','스페인어'],['ID','인도네시아어'],['DE','독일어'],['FR','프랑스어'],['AR','아랍어'],['IT','이탈리아어'],['RU','러시아어'],['PT','포르투갈어']];
 const $=s=>document.querySelector(s);
 let mode='talk', rec=null, chunks=[], busy=false;
 
@@ -306,7 +319,8 @@ function tab(m){
   mode=m;
   $('#tabTalk').classList.toggle('on',m==='talk');
   $('#tabCall').classList.toggle('on',m==='call');
-  $('#foot').hidden = m!=='talk';
+  // 전화 통역 탭에선 아래 마이크(푸터)를 숨겨 마이크가 하나만 보이게
+  $('#foot').style.display = (m==='talk') ? 'flex' : 'none';
   render();
 }
 function render(){ mode==='talk'?renderTalk():renderCall(); }
@@ -418,12 +432,18 @@ function renderCall(){
       <div class="hint">국가번호부터 넣으세요. 한국은 +8210…</div>
     </div>
     <div class="langbar">
-      <select id="cFrom">${opts(from)}</select>
+      <select id="cFrom" onchange="setCallLang()">${opts(from)}</select>
       <div style="width:36px;text-align:center;color:var(--sub)">→</div>
-      <select id="cTo">${opts(to)}</select>
+      <select id="cTo" onchange="setCallLang()">${opts(to)}</select>
     </div>
     <button class="btn" id="callBtn" onclick="callStart()">📞 통역 전화 걸기</button>
     <div class="hint" style="margin-top:12px">상대에게 전화가 갑니다. <b>당신은 이 화면에서 마이크로 말하고</b>, 상대가 하는 말은 여기서 번역되어 재생됩니다. 상대는 그냥 전화로 통화하면 됩니다.</div>`;
+}
+/* 전화 통역 언어를 마주보고 통역과 자동 동기화 */
+function setCallLang(){
+  const f=$('#cFrom'), t=$('#cTo');
+  if(f) from=f.value; if(t) to=t.value;
+  save(K.from,from); save(K.to,to);
 }
 
 function renderCallActive(){
@@ -437,7 +457,7 @@ function renderCallActive(){
       <div class="micLabel" id="callMicLabel">누르고 말하면 상대에게 전달됩니다</div>
     </div>
     <div id="callLog"></div>
-    <button class="btn ghost" onclick="callEnd()" style="margin-top:14px">통화 종료</button>`;
+    <button class="btn" onclick="callEnd()" style="margin-top:16px;background:var(--rec)">📵 통화 종료</button>`;
   bindCallMic();
   updateCallLog();
 }
@@ -559,11 +579,20 @@ async function callMicDone(){
 function endCallCleanup(){
   if(callState){ clearInterval(callState.timer); callState.active=false; }
 }
-function callEnd(){
+async function callEnd(){
+  const sid = callState && callState.sid;
   endCallCleanup();
   callState=null;
-  toast('통화를 종료했습니다');
   renderCall();
+  toast('통화를 종료했습니다');
+  if(sid){
+    try{
+      await fetch(url('/api/call/end'),{
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ callSid: sid })
+      });
+    }catch(e){}
+  }
 }
 
 /* ---------- 설정 (서버 주소 없음 — 언어 기본값 · 정보만) ---------- */
