@@ -1,5 +1,11 @@
+
 name = "podolang"
 main = "src/worker.js"
 compatibility_date = "2024-11-01"
+
 [placement]
 mode = "smart"
+
+[[kv_namespaces]]
+binding = "PODOLANG_KV"
+id = "476d9f97ec1b45aa956dc2b36e0a003a"
