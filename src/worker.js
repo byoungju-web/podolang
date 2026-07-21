@@ -1,8 +1,13 @@
+
 /**
  * 🍇 PODOLANG by BJ LEE - 실시간 통역 + Twilio 전화 통역 + Podoclone API
- * Cloudflare Workers · v1.4
+ * Cloudflare Workers · v1.5
  * © 2026 BJ LEE. All Rights Reserved.
  *
+ * v1.5 변경점
+ *  - 전화 통역을 "앱이 다리 역할" 방식으로 재작성 (양방향 전달)
+ *    당신=앱(마이크/스피커), 상대=전화. KV(PODOLANG_KV) 필요.
+ *    /api/call/start · /twiml/answer · /twiml/gather · /api/call/say · /api/call/poll
  * v1.4 변경점
  *  - Podoclone 1-Click 복제 라우트 추가: POST /api/clone (30개국)
  * v1.3
@@ -80,14 +85,15 @@ export default {
       // 0. 상태 확인
       if (url.pathname === '/api/health') {
         return json({
-          ok: true, app: 'podolang', version: '1.4',
+          ok: true, app: 'podolang', version: '1.5',
           gateway: OPENAI_BASE.includes('gateway.ai') ? 'ai-gateway' : 'direct',
-          routes: ['/api/podolang', '/api/transcribe', '/api/translate', '/api/speak', '/api/call/start', '/api/clone'],
+          routes: ['/api/podolang', '/api/translate', '/api/speak', '/api/clone', '/api/call/start', '/api/call/say', '/api/call/poll'],
           keys: {
             openai: !!env.OPENAI_API_KEY,
             deepl: !!env.DEEPL_API_KEY,
             elevenlabs: !!env.ELEVENLABS_API_KEY,
-            twilio: !!(env.TWILIO_ACCOUNT_SID && env.TWILIO_PHONE_NUMBER)
+            twilio: !!(env.TWILIO_ACCOUNT_SID && env.TWILIO_PHONE_NUMBER),
+            kv: !!env.PODOLANG_KV
           }
         }, 200, H);
       }
@@ -225,19 +231,30 @@ export default {
         }, 200, H);
       }
 
+      // ================= 전화 통역 (앱이 다리 역할) =================
+      // 구조: 당신=앱(마이크로 말하고 스피커로 들음), 상대=전화.
+      //  - 상대가 전화에서 말함 → Twilio Gather → 번역 → KV 우편함 → 앱이 poll 로 받아 재생
+      //  - 당신이 앱에서 말함 → /api/call/say → 번역 → 진행 중 통화에 밀어넣어 상대가 들음
+      //  fromLang = 내가 말하는 언어, toLang = 상대(전화) 언어
+
       // 5. 전화 걸기
       if (url.pathname === '/api/call/start' && request.method === 'POST') {
         if (!env.TWILIO_ACCOUNT_SID || !env.TWILIO_PHONE_NUMBER) {
           return json({ error: '전화 통역이 아직 설정되지 않았습니다.' }, 400, H);
         }
-        const { to, fromLang, toLang, userId } = await request.json();
+        if (!env.PODOLANG_KV) {
+          return json({ error: '전화 통역 저장소(KV)가 연결되지 않았습니다.' }, 400, H);
+        }
+        const { to, fromLang, toLang } = await request.json();
         if (!/^\+\d{8,15}$/.test(to || '')) return json({ error: '전화번호 형식이 맞지 않습니다.' }, 400, H);
+        const f = (fromLang || 'KO').toUpperCase();   // 내 언어
+        const t = (toLang || 'TH').toUpperCase();     // 상대 언어
 
         const auth = btoa(`${env.TWILIO_ACCOUNT_SID}:${env.TWILIO_AUTH_TOKEN}`);
         const form = new URLSearchParams();
         form.append('To', to);
         form.append('From', env.TWILIO_PHONE_NUMBER);
-        form.append('Url', `${url.origin}/twiml/translate?fromLang=${fromLang}&toLang=${toLang}&userId=${userId || ''}`);
+        form.append('Url', `${url.origin}/twiml/answer?me=${f}&peer=${t}`);
         form.append('StatusCallback', `${url.origin}/api/call/status`);
         form.append('StatusCallbackEvent', 'completed');
 
@@ -249,53 +266,110 @@ export default {
         const d = await res.json();
         if (d.code) return json({ error: d.message }, 400, H);
 
-        if (env.PODOLANG_KV) {
-          await env.PODOLANG_KV.put(`call:${d.sid}`,
-            JSON.stringify({ to, fromLang, toLang, status: 'initiated', created: Date.now() }),
-            { expirationTtl: 60 * 60 * 24 * 7 });
-        }
+        await env.PODOLANG_KV.put(`call:${d.sid}`,
+          JSON.stringify({ to, me: f, peer: t, seq: 0, status: 'initiated', created: Date.now() }),
+          { expirationTtl: 60 * 60 * 6 });
         return json({ callSid: d.sid, status: d.status, message: `${to} 연결 중입니다.` }, 200, H);
       }
 
-      // 6. TwiML - 통역 시작
-      if (url.pathname.startsWith('/twiml/translate')) {
-        const f = (url.searchParams.get('fromLang') || 'KO').toUpperCase();
-        const t = (url.searchParams.get('toLang') || 'TH').toUpperCase();
+      // 6. TwiML - 상대 전화가 받으면: 인사 후 상대 말을 계속 수집
+      if (url.pathname.startsWith('/twiml/answer')) {
+        const me = (url.searchParams.get('me') || 'KO').toUpperCase();
+        const peer = (url.searchParams.get('peer') || 'TH').toUpperCase();
+        const sid = url.searchParams.get('sid') || '';
+        // 처음 연결될 때만 인사
+        const greet = sid ? '' :
+          `<Say language="${sayLang(peer)}" voice="${sayVoice(peer)}">${escXml(greetText(peer))}</Say>`;
         return xml(`<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Say language="${sayLang(f)}" voice="${sayVoice(f)}">포도랑 통역을 시작합니다. 말씀하세요.</Say>
-  <Gather input="speech" language="${sttLang(f)}" speechTimeout="auto" method="POST"
-    action="${url.origin}/twiml/process?fromLang=${f}&amp;toLang=${t}">
-    <Pause length="10"/>
+  ${greet}
+  <Gather input="speech" language="${sttLang(peer)}" speechTimeout="auto" actionOnEmptyResult="true" method="POST"
+    action="${url.origin}/twiml/gather?me=${me}&amp;peer=${peer}">
+    <Pause length="12"/>
   </Gather>
-  <Redirect>${url.origin}/twiml/translate?fromLang=${t}&amp;toLang=${f}</Redirect>
+  <Redirect>${url.origin}/twiml/answer?me=${me}&amp;peer=${peer}&amp;sid=1</Redirect>
 </Response>`);
       }
 
-      // 7. TwiML - 인식 → 번역 → 재생
-      if (url.pathname.startsWith('/twiml/process') && request.method === 'POST') {
+      // 7. TwiML - 상대가 말한 것: 번역해서 KV 우편함에 저장 (상대 → 나)
+      if (url.pathname.startsWith('/twiml/gather') && request.method === 'POST') {
         const fd = await request.formData();
-        const speech = (fd.get('SpeechResult') || '').toString();
-        const f = (url.searchParams.get('fromLang') || 'KO').toUpperCase();
-        const t = (url.searchParams.get('toLang') || 'TH').toUpperCase();
+        const speech = (fd.get('SpeechResult') || '').toString().trim();
+        const sid = (fd.get('CallSid') || '').toString();
+        const me = (url.searchParams.get('me') || 'KO').toUpperCase();
+        const peer = (url.searchParams.get('peer') || 'TH').toUpperCase();
 
-        if (!speech.trim()) {
-          return xml(`<?xml version="1.0" encoding="UTF-8"?>
-<Response><Redirect>${url.origin}/twiml/translate?fromLang=${f}&amp;toLang=${t}</Redirect></Response>`);
+        if (speech && sid && env.PODOLANG_KV) {
+          try {
+            const tr = await translate(env, speech, peer, me);   // 상대말 → 내 언어
+            const meta = await env.PODOLANG_KV.get(`call:${sid}`, 'json') || { seq: 0 };
+            const seq = (meta.seq || 0) + 1;
+            meta.seq = seq;
+            await env.PODOLANG_KV.put(`call:${sid}`, JSON.stringify(meta), { expirationTtl: 60 * 60 * 6 });
+            await env.PODOLANG_KV.put(`msg:${sid}:${seq}`,
+              JSON.stringify({ dir: 'peer', src: speech, text: tr.translated, at: Date.now() }),
+              { expirationTtl: 60 * 30 });
+          } catch (e) { /* 저장 실패해도 통화는 계속 */ }
         }
-        const tr = await translate(env, speech, f, t);
+        // 계속 상대 말 수집
         return xml(`<?xml version="1.0" encoding="UTF-8"?>
-<Response>
-  <Say language="${sayLang(t)}" voice="${sayVoice(t)}">${escXml(tr.translated)}</Say>
-  <Gather input="speech" language="${sttLang(t)}" speechTimeout="auto" method="POST"
-    action="${url.origin}/twiml/process?fromLang=${t}&amp;toLang=${f}">
-    <Pause length="10"/>
-  </Gather>
-  <Redirect>${url.origin}/twiml/translate?fromLang=${t}&amp;toLang=${f}</Redirect>
-</Response>`);
+<Response><Redirect>${url.origin}/twiml/answer?me=${me}&amp;peer=${peer}&amp;sid=1</Redirect></Response>`);
       }
 
-      // 8. 콜 상태 콜백
+      // 8. 내가 앱에서 말함 → 번역 → 진행 중 통화에 밀어넣어 상대가 들음 (나 → 상대)
+      if (url.pathname === '/api/call/say' && request.method === 'POST') {
+        if (!env.PODOLANG_KV) return json({ error: 'KV 미연결' }, 400, H);
+        const fd = await request.formData();
+        const sid = (fd.get('callSid') || '').toString();
+        const audio = fd.get('audio');
+        let text = (fd.get('text') || '').toString();
+
+        const meta = await env.PODOLANG_KV.get(`call:${sid}`, 'json');
+        if (!meta) return json({ error: '통화를 찾을 수 없습니다.' }, 404, H);
+        const me = meta.me, peer = meta.peer;
+
+        // 음성이 오면 먼저 텍스트로 (내 언어)
+        if (!text && audio) text = await transcribe(env, audio, me);
+        if (!text || !text.trim()) return json({ error: '음성을 인식하지 못했습니다.' }, 400, H);
+
+        const tr = await translate(env, text, me, peer);   // 내말 → 상대 언어
+
+        // 진행 중 통화 업데이트: 상대에게 번역 음성 재생 후 다시 수집 루프로
+        const auth = btoa(`${env.TWILIO_ACCOUNT_SID}:${env.TWILIO_AUTH_TOKEN}`);
+        const twiml = `<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Say language="${sayLang(peer)}" voice="${sayVoice(peer)}">${escXml(tr.translated)}</Say>
+  <Redirect>${url.origin}/twiml/answer?me=${me}&amp;peer=${peer}&amp;sid=1</Redirect>
+</Response>`;
+        const upForm = new URLSearchParams();
+        upForm.append('Twiml', twiml);
+        const up = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${env.TWILIO_ACCOUNT_SID}/Calls/${sid}.json`, {
+          method: 'POST',
+          headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: upForm
+        });
+        const upd = await up.json();
+        if (upd.code) return json({ error: '통화에 전달 실패: ' + upd.message }, 400, H);
+
+        return json({ ok: true, src: text, translated: tr.translated }, 200, H);
+      }
+
+      // 9. 앱이 상대방 말(번역본)을 받아가는 우편함
+      if (url.pathname === '/api/call/poll' && request.method === 'GET') {
+        if (!env.PODOLANG_KV) return json({ messages: [], seq: 0 }, 200, H);
+        const sid = url.searchParams.get('callSid') || '';
+        const since = parseInt(url.searchParams.get('since') || '0', 10);
+        const meta = await env.PODOLANG_KV.get(`call:${sid}`, 'json');
+        const seq = meta?.seq || 0;
+        const out = [];
+        for (let n = since + 1; n <= seq; n++) {
+          const m = await env.PODOLANG_KV.get(`msg:${sid}:${n}`, 'json');
+          if (m) out.push({ n, ...m });
+        }
+        return json({ messages: out, seq, status: meta?.status || 'active' }, 200, H);
+      }
+
+      // 10. 콜 상태 콜백
       if (url.pathname === '/api/call/status' && request.method === 'POST') {
         const fd = await request.formData();
         const sid = fd.get('CallSid'), st = fd.get('CallStatus');
@@ -303,12 +377,12 @@ export default {
           const old = await env.PODOLANG_KV.get(`call:${sid}`, 'json') || {};
           await env.PODOLANG_KV.put(`call:${sid}`,
             JSON.stringify({ ...old, status: st, updated: Date.now() }),
-            { expirationTtl: 60 * 60 * 24 * 7 });
+            { expirationTtl: 60 * 60 * 6 });
         }
         return new Response('OK');
       }
 
-      return new Response('🍇 PodoLang API by BJ LEE · v1.4', { headers: H });
+      return new Response('🍇 PodoLang API by BJ LEE · v1.5', { headers: H });
 
     } catch (e) {
       return json({ error: e.message || '처리 중 오류가 발생했습니다.' }, 500, H);
@@ -501,6 +575,19 @@ const LMAP  = { KO:'ko-KR', TH:'th-TH', EN:'en-US', JA:'ja-JP', ZH:'zh-CN', VI:'
 const sttLang = l => LMAP[l] || 'en-US';
 const sayLang = l => LMAP[l] || 'en-US';
 const sayVoice = l => ({ KO:'Polly.Seoyeon', JA:'Polly.Mizuki', ZH:'Polly.Zhiyu', EN:'Polly.Joanna', ES:'Polly.Lupe', TH:'Google.th-TH-Standard-A', VI:'Google.vi-VN-Standard-A', ID:'Google.id-ID-Standard-A' })[l] || 'Polly.Joanna';
+
+// 상대에게 처음 들려줄 안내 (상대 언어)
+const GREET = {
+  KO:'포도랑 통역 전화입니다. 말씀하시면 통역됩니다.',
+  EN:'This is a Podolang interpreted call. Please speak, and it will be translated.',
+  TH:'นี่คือสายแปลภาษาโพโดลัง กรุณาพูด แล้วระบบจะแปลให้',
+  VI:'Đây là cuộc gọi phiên dịch Podolang. Vui lòng nói, hệ thống sẽ dịch.',
+  JA:'ポドランの通訳電話です。話すと翻訳されます。',
+  ZH:'这是 Podolang 翻译电话。请讲话，系统会为您翻译。',
+  ES:'Esta es una llamada con interpretación de Podolang. Hable y se traducirá.',
+  ID:'Ini panggilan penerjemahan Podolang. Silakan bicara, akan diterjemahkan.'
+};
+const greetText = l => GREET[l] || GREET.EN;
 
 const escXml = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;' }[c]));
 
