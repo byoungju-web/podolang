@@ -323,6 +323,12 @@ section{position:relative}
 .pcell .pc-s{font-family:var(--mono);font-size:10.5px;font-weight:700;color:#B23A2E;margin-top:3px}
 @media(max-width:620px){.up-shell{padding:24px 18px}.thumbs{grid-template-columns:1fr 1fr}}
 
+.savedbox{display:none;align-items:center;gap:12px;flex-wrap:wrap;background:#EFFCF3;border:1px solid #CDEFDA;border-radius:14px;padding:13px 16px;margin-bottom:16px}
+.savedbox .sv-ic{width:22px;height:22px;border-radius:50%;background:#22C55E;color:#fff;display:grid;place-items:center;font-size:13px;font-weight:700;flex:0 0 auto}
+.savedbox .sv-t{font-size:13.5px;color:#1E7A45;flex:1;min-width:180px}
+.savedbox .sv-t b{font-weight:800}
+.btn-mini{padding:9px 15px;font-size:13px;border-radius:10px}
+
 /* ---------- REVEAL ---------- */
 .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
 .reveal.in{opacity:1;transform:none}
@@ -362,7 +368,8 @@ section{position:relative}
     <a href="#features" class="hide-sm">기능</a>
     <a href="#pricing" class="hide-sm">가격</a>
     <a href="#faq" class="hide-sm">FAQ</a>
-    <span class="price-sm mono">$49/월</span>
+    <a href="admin.html" class="hide-sm">내 방 목록</a>
+    <span class="price-sm mono">podolang.kr/stay</span>
     <a href="#upload" class="nav-cta">시작하기</a>
   </div>
 </div></div>
@@ -481,6 +488,12 @@ section{position:relative}
       <div class="res-head">
         <h3>리스팅이 완성됐습니다</h3>
         <span class="res-id" id="resId"></span>
+      </div>
+
+      <div class="savedbox" id="savedBox">
+        <span class="sv-ic">✓</span>
+        <span class="sv-t"><b>내 방 목록에 저장됐습니다.</b> 사진과 함께 이 기기에 보관됩니다.</span>
+        <a class="btn btn-ghost btn-mini" href="admin.html">내 방 목록 열기</a>
       </div>
 
       <div class="res-block">
@@ -740,7 +753,7 @@ section{position:relative}
     PodoStay
   </div>
   <div class="flinks">
-    <a href="#upload">데모</a><a href="#how">작동 방식</a><a href="#features">기능</a><a href="#pricing">가격</a><a href="#faq">FAQ</a><a href="https://podolang.kr">PodoLang</a>
+    <a href="#upload">데모</a><a href="admin.html">내 방 목록</a><a href="#how">작동 방식</a><a href="#features">기능</a><a href="#pricing">가격</a><a href="#faq">FAQ</a><a href="https://podolang.kr">PodoLang</a>
   </div>
   <div class="copy">
     <div class="mono">podolang.kr/stay · Vision MCP + DeepL + PriceLabs + Instagram MCP</div>
@@ -846,6 +859,66 @@ section{position:relative}
   var MAX = 3, POLL_MS = 1200, POLL_MAX = 45;
 
   var $ = function(id){ return document.getElementById(id); };
+
+  /* ---------- 저장소 (IndexedDB — 사진은 Blob으로 저장) ---------- */
+  var DB_NAME='podostay', DB_VER=1, STORE='listings';
+  function openDB(){
+    return new Promise(function(res,rej){
+      var rq=indexedDB.open(DB_NAME,DB_VER);
+      rq.onupgradeneeded=function(e){
+        var db=e.target.result;
+        if(!db.objectStoreNames.contains(STORE)){
+          var s=db.createObjectStore(STORE,{keyPath:'id'});
+          s.createIndex('createdAt','createdAt');
+        }
+      };
+      rq.onsuccess=function(){ res(rq.result); };
+      rq.onerror=function(){ rej(rq.error); };
+    });
+  }
+  function saveListing(rec){
+    return openDB().then(function(db){
+      return new Promise(function(res,rej){
+        var rq=db.transaction(STORE,'readwrite').objectStore(STORE).put(rec);
+        rq.onsuccess=function(){ res(); }; rq.onerror=function(){ rej(rq.error); };
+      });
+    });
+  }
+  /* 사진을 긴 변 1200px / JPEG 0.72 로 줄여 저장 (용량 초과 방지) */
+  function shrink(file){
+    return new Promise(function(res){
+      var img=new Image(), u=URL.createObjectURL(file);
+      img.onload=function(){
+        try{
+          var MAXPX=1200, w=img.width, h=img.height;
+          var sc=Math.min(1, MAXPX/Math.max(w,h));
+          var cv=document.createElement('canvas');
+          cv.width=Math.round(w*sc); cv.height=Math.round(h*sc);
+          cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
+          cv.toBlob(function(b){
+            URL.revokeObjectURL(u);
+            res(b||file);
+          },'image/jpeg',0.72);
+        }catch(e){ URL.revokeObjectURL(u); res(file); }
+      };
+      img.onerror=function(){ URL.revokeObjectURL(u); res(file); };
+      img.src=u;
+    });
+  }
+  function persist(id, tags, base, translations, prices){
+    return Promise.all(picked.map(shrink)).then(function(blobs){
+      return saveListing({
+        id: String(id),
+        createdAt: new Date().toISOString(),
+        photos: blobs,
+        tags: tags||null,
+        base: base||null,
+        translations: translations||null,
+        prices: prices||null,
+        demo: !!demoMode
+      });
+    });
+  }
   var fileInput=$('fileInput'), dropZone=$('dropZone'), thumbs=$('thumbs'),
       runBtn=$('runBtn'), runLabel=$('runLabel'), runArrow=$('runArrow'),
       resetBtn=$('resetBtn'), upHint=$('upHint'), upMsg=$('upMsg'),
@@ -932,6 +1005,7 @@ section{position:relative}
   resetBtn.addEventListener('click', function(){
     picked=[]; busy=false; demoMode=false;
     result.className='result'; resetSteps(); clearMsg();
+    var sb=$('savedBox'); if(sb) sb.style.display='none';
     resetBtn.style.display='none'; runArrow.style.display='';
     runLabel.textContent='리스팅 생성 시작';
     renderThumbs();
@@ -1110,6 +1184,14 @@ section{position:relative}
 
     result.className='result show';
     result.scrollIntoView({behavior:'smooth',block:'nearest'});
+
+    /* 내 방 목록에 저장 */
+    persist(id, tags, null, translations, prices).then(function(){
+      var box=$('savedBox');
+      if(box) box.style.display='flex';
+    }).catch(function(){
+      msg('bad','방 목록에 저장하지 못했습니다. 저장 공간을 확인해 주세요.');
+    });
   }
 
   function paint(t){
