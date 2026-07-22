@@ -492,7 +492,7 @@ section{position:relative}
 
       <div class="savedbox" id="savedBox">
         <span class="sv-ic">✓</span>
-        <span class="sv-t"><b>내 방 목록에 저장됐습니다.</b> 사진과 함께 이 기기에 보관됩니다.</span>
+        <span class="sv-t"><b>내 방 목록에 저장됐습니다.</b> 목록에서 방 크기·1박 요금 등을 입력하세요.</span>
         <a class="btn btn-ghost btn-mini" href="admin.html">내 방 목록 열기</a>
       </div>
 
@@ -906,6 +906,7 @@ section{position:relative}
     });
   }
   function persist(id, tags, base, translations, prices){
+    var tg = tags||{};
     return Promise.all(picked.map(shrink)).then(function(blobs){
       return saveListing({
         id: String(id),
@@ -915,6 +916,15 @@ section{position:relative}
         base: base||null,
         translations: translations||null,
         prices: prices||null,
+        info: {
+          name:'', area:0, beds:Number(tg.beds||0),
+          price:0, listPrice:0, salePrice:0,
+          adults:2, children:0, checkIn:'15:00', checkOut:'11:00',
+          cancelDays:7, payDay:1,
+          items:['tv','fridge','wifi'], etc:'',
+          view:tg.view||'ocean', bedType:tg.bed_type||'queen',
+          style:tg.style||'minimal', light:tg.light||'sunset'
+        },
         demo: !!demoMode
       });
     });
