@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -267,6 +266,63 @@ section{position:relative}
 .footer .copy{font-size:12.5px;line-height:1.9}
 .footer .copy .mono{font-size:11.5px;color:var(--muted-2)}
 
+/* ---------- UPLOADER ---------- */
+.up-shell{background:var(--surface);border:1px solid var(--line);border-radius:26px;padding:34px 32px;box-shadow:var(--shadow-md);max-width:900px;margin:0 auto}
+.drop{border:2px dashed #D8D8E8;border-radius:20px;padding:34px 22px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;background:#FCFCFF}
+.drop:hover,.drop.hot{border-color:var(--coral);background:#FFF8F7}
+.drop .dic{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#FFF0EE,#FFE3DE);display:grid;place-items:center;margin:0 auto 14px}
+.drop .dic svg{width:26px;height:26px;color:var(--coral)}
+.drop b{display:block;font-size:16.5px;font-weight:800;margin-bottom:5px}
+.drop span{font-size:13.5px;color:var(--muted)}
+.thumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+.thumb{position:relative;aspect-ratio:4/3;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#F0F0F8}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb .rm{position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;border:none;background:rgba(20,20,43,.72);color:#fff;font-size:14px;line-height:1;cursor:pointer;display:grid;place-items:center}
+.thumb .no{position:absolute;bottom:6px;left:6px;font-family:var(--mono);font-size:10px;font-weight:700;background:rgba(255,255,255,.9);color:var(--mid);padding:2px 7px;border-radius:6px}
+.up-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:20px}
+.up-hint{font-family:var(--mono);font-size:11.5px;color:var(--muted-2)}
+.btn[disabled]{opacity:.45;cursor:not-allowed;transform:none!important}
+.spin{width:15px;height:15px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+.runsteps{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.rs{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;padding:8px 13px;border-radius:10px;background:var(--bg);border:1px solid var(--line);color:var(--muted-2);transition:.25s}
+.rs .rd{width:7px;height:7px;border-radius:50%;background:#C9C9DA;flex:0 0 auto}
+.rs.run{background:#FFF3F1;border-color:#FFD8D2;color:#B23A2E}
+.rs.run .rd{background:var(--coral);animation:pulse 1.4s infinite}
+.rs.done{background:#EFFCF3;border-color:#CDEFDA;color:#1E7A45}
+.rs.done .rd{background:#22C55E}
+.rs.err{background:#FFF0F0;border-color:#FFD0D0;color:#B00}
+
+.up-msg{margin-top:16px;font-size:13.5px;font-weight:600;padding:12px 15px;border-radius:12px;display:none}
+.up-msg.show{display:block}
+.up-msg.info{background:#F0F4FF;border:1px solid #D9E4FF;color:#2B4C9B}
+.up-msg.bad{background:#FFF0F0;border:1px solid #FFD0D0;color:#A32}
+
+.result{margin-top:26px;display:none}
+.result.show{display:block}
+.res-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.res-head h3{font-size:19px;font-weight:900;letter-spacing:-.02em}
+.res-id{font-family:var(--mono);font-size:11px;color:var(--muted-2);background:var(--bg);border:1px solid var(--line);padding:4px 9px;border-radius:7px}
+.res-block{border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:14px;background:#FCFCFF}
+.res-block .rlabel{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--coral);margin-bottom:12px}
+.vtags{display:flex;flex-wrap:wrap;gap:8px}
+.vtag{font-family:var(--mono);font-size:12px;font-weight:600;background:#fff;border:1px solid var(--line);padding:6px 11px;border-radius:9px;box-shadow:var(--shadow-sm)}
+.vtag em{color:var(--coral);font-style:normal}
+.langtabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.lt{font-family:var(--mono);font-size:11.5px;font-weight:700;padding:6px 11px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--muted);cursor:pointer;transition:.18s}
+.lt:hover{border-color:#cfcfe0}
+.lt.on{background:var(--mid);color:#fff;border-color:var(--mid)}
+.tr-title{font-size:17px;font-weight:800;letter-spacing:-.01em;margin-bottom:8px;line-height:1.4}
+.tr-desc{font-size:14px;color:var(--muted);line-height:1.65;margin-bottom:12px}
+.tr-hash{font-family:var(--mono);font-size:12px;color:var(--coral);font-weight:600}
+.pricegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:10px}
+.pcell{background:#fff;border:1px solid var(--line);border-radius:13px;padding:13px 14px}
+.pcell .pc-m{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:5px}
+.pcell .pc-v{font-size:20px;font-weight:800;letter-spacing:-.02em}
+.pcell .pc-s{font-family:var(--mono);font-size:10.5px;font-weight:700;color:#B23A2E;margin-top:3px}
+@media(max-width:620px){.up-shell{padding:24px 18px}.thumbs{grid-template-columns:1fr 1fr}}
+
 /* ---------- REVEAL ---------- */
 .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
 .reveal.in{opacity:1;transform:none}
@@ -307,7 +363,7 @@ section{position:relative}
     <a href="#pricing" class="hide-sm">가격</a>
     <a href="#faq" class="hide-sm">FAQ</a>
     <span class="price-sm mono">$49/월</span>
-    <a href="#deploy" class="nav-cta">시작하기</a>
+    <a href="#upload" class="nav-cta">시작하기</a>
   </div>
 </div></div>
 
@@ -319,7 +375,7 @@ section{position:relative}
       <h1>방 사진 3장이면<br><span class="hl">전세계 숙소</span>가<br>스스로 팔립니다</h1>
       <p class="lead">Vision AI가 <b>"오션뷰, 2베드, 미니멀"</b>을 읽어냅니다. DeepL이 30개국 언어로 리스팅을 쓰고, PriceLabs가 나라별 성수기 가격을 매기고, Instagram이 자동 포스팅합니다. <b>Cloudflare Workers 하나로.</b></p>
       <div class="hero-ctas">
-        <a class="btn btn-primary" href="#deploy">사진 3장으로 시작하기
+        <a class="btn btn-primary" href="#upload">사진 3장으로 시작하기
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </a>
         <a class="btn btn-ghost" href="#how">작동 방식 보기</a>
@@ -381,6 +437,72 @@ section{position:relative}
     </div>
   </div>
 </div>
+
+<!-- UPLOAD / LIVE DEMO -->
+<section class="pad" id="upload"><div class="wrap">
+  <div class="sec-head reveal">
+    <span class="sec-tag">Try it</span>
+    <h2>사진을 올려보세요</h2>
+    <p>방 사진 1~3장이면 됩니다. Vision이 방을 읽고, 리스팅·번역·가격이 만들어지는 과정을 그대로 보실 수 있습니다.</p>
+  </div>
+
+  <div class="up-shell reveal">
+    <input type="file" id="fileInput" accept="image/*" multiple hidden>
+
+    <div class="drop" id="dropZone" role="button" tabindex="0" aria-label="사진 선택">
+      <div class="dic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8.5" cy="10" r="1.8"/><path d="m4 17 5-5 4 4 3-3 4 4"/></svg></div>
+      <b>방 사진 선택하기</b>
+      <span>거실 · 침실 · 욕실 순으로 최대 3장 · JPG, PNG</span>
+    </div>
+
+    <div class="thumbs" id="thumbs"></div>
+
+    <div class="up-actions">
+      <button class="btn btn-primary" id="runBtn" disabled>
+        <span id="runLabel">리스팅 생성 시작</span>
+        <svg id="runArrow" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+      <button class="btn btn-ghost" id="resetBtn" style="display:none">다시 하기</button>
+      <span class="up-hint" id="upHint">사진 0 / 3</span>
+    </div>
+
+    <div class="runsteps" id="runSteps">
+      <span class="rs" data-s="upload"><span class="rd"></span>업로드</span>
+      <span class="rs" data-s="vision"><span class="rd"></span>Vision 분석</span>
+      <span class="rs" data-s="airbnb"><span class="rd"></span>리스팅 생성</span>
+      <span class="rs" data-s="translating"><span class="rd"></span>30개국 번역</span>
+      <span class="rs" data-s="posting"><span class="rd"></span>가격·포스팅</span>
+      <span class="rs" data-s="completed"><span class="rd"></span>완료</span>
+    </div>
+
+    <div class="up-msg" id="upMsg"></div>
+
+    <div class="result" id="result">
+      <div class="res-head">
+        <h3>리스팅이 완성됐습니다</h3>
+        <span class="res-id" id="resId"></span>
+      </div>
+
+      <div class="res-block">
+        <div class="rlabel">Vision 분석 결과</div>
+        <div class="vtags" id="vTags"></div>
+      </div>
+
+      <div class="res-block">
+        <div class="rlabel">언어별 리스팅</div>
+        <div class="langtabs" id="langTabs"></div>
+        <div class="tr-title" id="trTitle"></div>
+        <div class="tr-desc" id="trDesc"></div>
+        <div class="tr-hash" id="trHash"></div>
+      </div>
+
+      <div class="res-block" style="margin-bottom:0">
+        <div class="rlabel">나라별 1박 가격</div>
+        <div class="pricegrid" id="priceGrid"></div>
+      </div>
+    </div>
+  </div>
+</div></section>
 
 <!-- HOW IT WORKS -->
 <section class="pad" id="how"><div class="wrap">
@@ -601,7 +723,7 @@ section{position:relative}
   <div class="finalcta reveal">
     <h2>방 사진 3장이면<br>전세계가 당신의 손님입니다</h2>
     <p>번역 알바도, 가격 눈치싸움도, 인스타 포스팅도 이제 자동입니다.</p>
-    <a class="btn btn-primary" href="#top">PodoStay 시작하기
+    <a class="btn btn-primary" href="#upload">PodoStay 시작하기
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </a>
   </div>
@@ -618,7 +740,7 @@ section{position:relative}
     PodoStay
   </div>
   <div class="flinks">
-    <a href="#how">작동 방식</a><a href="#features">기능</a><a href="#pricing">가격</a><a href="#faq">FAQ</a><a href="https://podolang.kr">PodoLang</a>
+    <a href="#upload">데모</a><a href="#how">작동 방식</a><a href="#features">기능</a><a href="#pricing">가격</a><a href="#faq">FAQ</a><a href="https://podolang.kr">PodoLang</a>
   </div>
   <div class="copy">
     <div class="mono">podolang.kr/stay · Vision MCP + DeepL + PriceLabs + Instagram MCP</div>
@@ -710,6 +832,294 @@ section{position:relative}
       }
     }, 2900);
   }
+})();
+</script>
+
+<script>
+/* =========================================================
+   PodoStay — Upload → Worker(/api/upload) → Poll → Result
+   © 2026 BJ LEE · All Rights Reserved · PODOLANG.kr
+   ⚙️ 아래 API_BASE 를 본인 Worker 주소로 바꾸세요.
+   ========================================================= */
+(function(){
+  var API_BASE = 'https://podostay.hasin7jk.workers.dev'; // ← Worker 주소
+  var MAX = 3, POLL_MS = 1200, POLL_MAX = 45;
+
+  var $ = function(id){ return document.getElementById(id); };
+  var fileInput=$('fileInput'), dropZone=$('dropZone'), thumbs=$('thumbs'),
+      runBtn=$('runBtn'), runLabel=$('runLabel'), runArrow=$('runArrow'),
+      resetBtn=$('resetBtn'), upHint=$('upHint'), upMsg=$('upMsg'),
+      result=$('result'), resId=$('resId');
+  if(!fileInput) return;
+
+  var picked = [], busy = false, demoMode = false;
+
+  /* ---------- file picking ---------- */
+  dropZone.addEventListener('click', function(){ if(!busy) fileInput.click(); });
+  dropZone.addEventListener('keydown', function(e){
+    if(e.key==='Enter'||e.key===' '){ e.preventDefault(); if(!busy) fileInput.click(); }
+  });
+  ['dragenter','dragover'].forEach(function(t){
+    dropZone.addEventListener(t, function(e){ e.preventDefault(); dropZone.classList.add('hot'); });
+  });
+  ['dragleave','drop'].forEach(function(t){
+    dropZone.addEventListener(t, function(e){ e.preventDefault(); dropZone.classList.remove('hot'); });
+  });
+  dropZone.addEventListener('drop', function(e){
+    if(busy) return;
+    addFiles(e.dataTransfer && e.dataTransfer.files);
+  });
+  fileInput.addEventListener('change', function(){ addFiles(fileInput.files); fileInput.value=''; });
+
+  function addFiles(list){
+    if(!list) return;
+    for(var i=0;i<list.length;i++){
+      if(picked.length>=MAX){ msg('info','사진은 최대 '+MAX+'장까지 올릴 수 있습니다.'); break; }
+      var f=list[i];
+      if(!f.type || f.type.indexOf('image/')!==0){ msg('bad','이미지 파일만 올릴 수 있습니다.'); continue; }
+      if(f.size > 8*1024*1024){ msg('bad','8MB 이하 이미지만 올릴 수 있습니다: '+f.name); continue; }
+      picked.push(f);
+    }
+    renderThumbs();
+  }
+
+  function renderThumbs(){
+    thumbs.innerHTML='';
+    picked.forEach(function(f,idx){
+      var d=document.createElement('div'); d.className='thumb';
+      var img=document.createElement('img'); img.alt='방 사진 '+(idx+1);
+      img.src=URL.createObjectURL(f);
+      img.onload=function(){ URL.revokeObjectURL(img.src); };
+      var no=document.createElement('span'); no.className='no'; no.textContent='Photo '+(idx+1);
+      var rm=document.createElement('button'); rm.className='rm'; rm.type='button';
+      rm.setAttribute('aria-label','사진 '+(idx+1)+' 삭제'); rm.textContent='×';
+      rm.onclick=function(e){ e.stopPropagation(); if(busy) return; picked.splice(idx,1); renderThumbs(); };
+      d.appendChild(img); d.appendChild(no); if(!busy) d.appendChild(rm);
+      thumbs.appendChild(d);
+    });
+    upHint.textContent='사진 '+picked.length+' / '+MAX;
+    runBtn.disabled = busy || picked.length===0;
+  }
+
+  function msg(kind,text){
+    upMsg.className='up-msg show '+(kind==='bad'?'bad':'info');
+    upMsg.textContent=text;
+  }
+  function clearMsg(){ upMsg.className='up-msg'; upMsg.textContent=''; }
+
+  /* ---------- step indicator ---------- */
+  var ORDER=['upload','vision','airbnb','translating','posting','completed'];
+  function setStep(status){
+    var at=ORDER.indexOf(status);
+    if(at<0) return;
+    ORDER.forEach(function(s,i){
+      var el=document.querySelector('.rs[data-s="'+s+'"]');
+      if(!el) return;
+      el.className='rs'+(i<at?' done':(i===at?(s==='completed'?' done':' run'):''));
+    });
+  }
+  function resetSteps(){
+    ORDER.forEach(function(s){
+      var el=document.querySelector('.rs[data-s="'+s+'"]'); if(el) el.className='rs';
+    });
+  }
+  function errStep(){
+    var el=document.querySelector('.rs.run'); if(el) el.className='rs err';
+  }
+
+  /* ---------- run ---------- */
+  runBtn.addEventListener('click', function(){ if(!busy && picked.length) run(); });
+  resetBtn.addEventListener('click', function(){
+    picked=[]; busy=false; demoMode=false;
+    result.className='result'; resetSteps(); clearMsg();
+    resetBtn.style.display='none'; runArrow.style.display='';
+    runLabel.textContent='리스팅 생성 시작';
+    renderThumbs();
+    dropZone.style.display='';
+  });
+
+  function setBusy(on,label){
+    busy=on;
+    runBtn.disabled=on||picked.length===0;
+    runLabel.textContent=label||'리스팅 생성 시작';
+    runArrow.style.display=on?'none':'';
+    if(on && !document.getElementById('runSpin')){
+      var sp=document.createElement('span'); sp.className='spin'; sp.id='runSpin';
+      runBtn.appendChild(sp);
+    }
+    if(!on){ var s=document.getElementById('runSpin'); if(s) s.remove(); }
+  }
+
+  function run(){
+    clearMsg(); result.className='result'; resetSteps();
+    setBusy(true,'업로드 중'); setStep('upload'); demoMode=false;
+    dropZone.style.display='none';
+    renderThumbs();
+
+    var fd=new FormData();
+    picked.forEach(function(f){ fd.append('photos', f, f.name); });
+
+    var ctrl = ('AbortController' in window) ? new AbortController() : null;
+    var timer = setTimeout(function(){ if(ctrl) ctrl.abort(); }, 20000);
+
+    fetch(API_BASE+'/api/upload',{ method:'POST', body:fd, signal: ctrl?ctrl.signal:undefined })
+      .then(function(r){
+        clearTimeout(timer);
+        if(!r.ok) return r.json().catch(function(){return {};}).then(function(j){
+          throw new Error(j.error || ('서버 응답 '+r.status));
+        });
+        return r.json();
+      })
+      .then(function(j){
+        if(!j.listingId) throw new Error('listingId를 받지 못했습니다.');
+        msg('info','업로드 완료. Vision 분석을 시작합니다.');
+        poll(j.listingId, 0);
+      })
+      .catch(function(e){
+        clearTimeout(timer);
+        // Worker 미배포/네트워크 실패 → 데모 모드로 파이프라인 재현
+        demoMode=true;
+        msg('info','Worker에 연결하지 못해 데모 모드로 실행합니다. (배포 후 실제 결과가 표시됩니다)');
+        runDemo();
+      });
+  }
+
+  function poll(id, n){
+    if(n>POLL_MAX){
+      errStep(); setBusy(false); resetBtn.style.display='';
+      msg('bad','처리가 지연되고 있습니다. 잠시 후 다시 시도해 주세요.');
+      return;
+    }
+    setBusy(true,'처리 중');
+    fetch(API_BASE+'/api/listings/'+encodeURIComponent(id))
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(d.status) setStep(d.status==='queued'?'upload':d.status);
+        if(d.status==='completed'){ finish(id, d.tags, d.translations, d.prices); return; }
+        if(d.status==='failed'){
+          errStep(); setBusy(false); resetBtn.style.display='';
+          msg('bad','처리 중 오류가 발생했습니다. 다시 시도해 주세요.');
+          return;
+        }
+        setTimeout(function(){ poll(id, n+1); }, POLL_MS);
+      })
+      .catch(function(){ setTimeout(function(){ poll(id, n+1); }, POLL_MS); });
+  }
+
+  /* ---------- demo fallback (Worker 미배포 시) ---------- */
+  function runDemo(){
+    var id=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():'demo-'+Date.now();
+    var tags={view:'ocean',beds:2,bed_type:'queen',style:'minimal',light:'sunset',
+              amenities:['ocean_view','wifi','kitchen','2_beds'],confidence:0.94};
+    var base={
+      title:'Ocean View 2Beds Minimal Stay — Sunset Light',
+      description:'Wake up to an ocean view with two queen beds. Minimal interior, warm sunset light, fast wifi and a full kitchen. Built for slow mornings and long stays.'
+    };
+    var tr={
+      EN:{title:base.title,description:base.description,hashtags:['#oceanviewstay','#minimalstay']},
+      JA:{title:'オーシャンビュー 2ベッド ミニマルステイ — 夕陽の光',description:'海を望む2つのクイーンベッド。ミニマルな内装、夕暮れの光、高速Wi-Fiとキッチン付き。',hashtags:['#tokyostay','#オーシャンビュー']},
+      TH:{title:'วิวทะเล 2 ห้องนอน สไตล์มินิมอล — แสงยามเย็น',description:'ตื่นมาพร้อมวิวทะเล เตียงควีน 2 เตียง ตกแต่งมินิมอล พร้อมครัวและ Wi-Fi ความเร็วสูง',hashtags:['#bangkokairbnb','#วิวทะเล']},
+      FR:{title:'Vue Océan · 2 Chambres · Design Épuré',description:'Réveillez-vous face à l\'océan. Deux lits queen, intérieur épuré, lumière du couchant, cuisine équipée.',hashtags:['#parisairbnb','#vueocean']},
+      ES:{title:'Vista al Mar · 2 Camas · Estilo Minimalista',description:'Despierta con vistas al mar. Dos camas queen, interior minimalista, luz del atardecer y cocina completa.',hashtags:['#airbnbespana','#vistaalmar']},
+      DE:{title:'Meerblick · 2 Betten · Minimalistisch',description:'Aufwachen mit Meerblick. Zwei Queensize-Betten, minimalistisches Interieur, Abendlicht, Küche.',hashtags:['#berlinstay','#meerblick']}
+    };
+    var m=new Date().getMonth();
+    var prices={
+      JP: Math.round(180*(m===7?1.4:1)*1.2),
+      TH: Math.round(180*(m===11?1.6:1)*1.2),
+      US: Math.round(180*((m>=5&&m<=7)?1.3:1)*1.2),
+      FR: Math.round(180*((m>=6&&m<=7)?1.5:1)*1.2),
+      DEFAULT: Math.round(180*1.2)
+    };
+    var seq=['vision','airbnb','translating','posting','completed'], i=0;
+    setBusy(true,'처리 중');
+    (function tick(){
+      setStep(seq[i]);
+      if(seq[i]==='completed'){ finish(id, tags, tr, prices); return; }
+      i++; setTimeout(tick, 900);
+    })();
+  }
+
+  /* ---------- render result ---------- */
+  var MARKET={JP:'🇯🇵 일본',TH:'🇹🇭 태국',US:'🇺🇸 미국',FR:'🇫🇷 프랑스',DE:'🇩🇪 독일',
+              KR:'🇰🇷 한국',DEFAULT:'🌐 기본가'};
+  var SEASON={JP:'8월 +40%',TH:'12월 +60%',US:'여름 +30%',FR:'여름 +50%',DEFAULT:'기본가'};
+
+  function finish(id, tags, translations, prices){
+    setStep('completed'); setBusy(false); resetBtn.style.display='';
+    runLabel.textContent='완료됐습니다';
+    msg('info', demoMode
+      ? '데모 결과입니다. Worker를 배포하면 실제 사진 분석 결과가 표시됩니다.'
+      : '리스팅 생성이 완료됐습니다.');
+    resId.textContent = String(id).slice(0,8);
+
+    /* vision tags */
+    var vt=$('vTags'); vt.innerHTML='';
+    if(tags){
+      var rows=[['view',tags.view],['beds',tags.beds],['bed_type',tags.bed_type],
+                ['style',tags.style],['light',tags.light]];
+      if(tags.confidence!=null) rows.push(['confidence',Math.round(tags.confidence*100)+'%']);
+      rows.forEach(function(r){
+        if(r[1]==null||r[1]==='') return;
+        var s=document.createElement('span'); s.className='vtag';
+        s.innerHTML='<em>'+r[0]+':</em> '+r[1];
+        vt.appendChild(s);
+      });
+      (tags.amenities||[]).forEach(function(a){
+        var s=document.createElement('span'); s.className='vtag'; s.textContent=a;
+        vt.appendChild(s);
+      });
+    }
+
+    /* translations */
+    var tabs=$('langTabs'); tabs.innerHTML='';
+    var keys = translations ? Object.keys(translations) : [];
+    var pref=['EN','JA','TH','FR','ES','DE'];
+    keys.sort(function(a,b){
+      var ia=pref.indexOf(a), ib=pref.indexOf(b);
+      return (ia<0?99:ia)-(ib<0?99:ib);
+    });
+    var show = keys.slice(0,12);
+    show.forEach(function(k,idx){
+      var b=document.createElement('button'); b.className='lt'+(idx===0?' on':'');
+      b.type='button'; b.textContent=k;
+      b.onclick=function(){
+        tabs.querySelectorAll('.lt').forEach(function(x){ x.classList.remove('on'); });
+        b.classList.add('on'); paint(translations[k]);
+      };
+      tabs.appendChild(b);
+    });
+    if(keys.length>show.length){
+      var more=document.createElement('span'); more.className='lt';
+      more.style.cursor='default'; more.textContent='+'+(keys.length-show.length);
+      tabs.appendChild(more);
+    }
+    if(show.length) paint(translations[show[0]]);
+
+    /* prices */
+    var pg=$('priceGrid'); pg.innerHTML='';
+    if(prices){
+      Object.keys(prices).forEach(function(c){
+        var d=document.createElement('div'); d.className='pcell';
+        d.innerHTML='<div class="pc-m">'+(MARKET[c]||c)+'</div>'+
+                    '<div class="pc-v">$'+prices[c]+'</div>'+
+                    '<div class="pc-s">'+(SEASON[c]||'기본가')+'</div>';
+        pg.appendChild(d);
+      });
+    }
+
+    result.className='result show';
+    result.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+
+  function paint(t){
+    if(!t) return;
+    $('trTitle').textContent = t.title || '';
+    $('trDesc').textContent  = t.description || '';
+    $('trHash').textContent  = (t.hashtags||[]).join('  ');
+  }
+
+  renderThumbs();
 })();
 </script>
 </body>
