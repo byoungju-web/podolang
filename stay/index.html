@@ -859,7 +859,7 @@ section{position:relative}
   var $ = function(id){ return document.getElementById(id); };
 
   /* ---------- 저장소 (IndexedDB — 사진은 Blob으로 저장) ---------- */
-  var DB_NAME='podostay', DB_VER=1, STORE='listings';
+  var DB_NAME='podostay', DB_VER=2, STORE='listings', BSTORE='bookings';
   function openDB(){
     return new Promise(function(res,rej){
       var rq=indexedDB.open(DB_NAME,DB_VER);
@@ -868,6 +868,10 @@ section{position:relative}
         if(!db.objectStoreNames.contains(STORE)){
           var s=db.createObjectStore(STORE,{keyPath:'id'});
           s.createIndex('createdAt','createdAt');
+        }
+        if(!db.objectStoreNames.contains(BSTORE)){
+          var b=db.createObjectStore(BSTORE,{keyPath:'id'});
+          b.createIndex('createdAt','createdAt');
         }
       };
       rq.onsuccess=function(){ res(rq.result); };
