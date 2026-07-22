@@ -148,6 +148,61 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
 .savebar{position:sticky;bottom:0;z-index:3;background:rgba(245,246,253,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:13px 18px;display:flex;gap:9px;flex-wrap:wrap;margin:0 -18px -110px;}
 .savebar .sp{flex:1}
 
+/* pay button on card */
+.rmeta{font-family:var(--mono);font-size:10.5px;color:var(--muted-2);margin-top:auto;padding-top:10px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}
+.rmeta .lft{display:flex;align-items:center;gap:9px;flex-wrap:wrap;min-width:0}
+.paybtn{display:inline-flex;align-items:center;gap:6px;font-family:var(--sans);font-size:12.5px;font-weight:800;color:#fff;background:var(--coral);border:none;padding:9px 14px;border-radius:10px;cursor:pointer;box-shadow:0 6px 16px rgba(255,107,107,.32);flex:0 0 auto}
+.paybtn:hover{background:#ff5a5a}
+.paybtn:active{transform:translateY(1px)}
+.paybtn svg{width:15px;height:15px}
+.paybtn.paid{background:#22C55E;box-shadow:0 6px 16px rgba(34,197,94,.3)}
+
+/* plan chips */
+.plans{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.plan{border:1.5px solid var(--line);background:#FCFCFF;border-radius:15px;padding:14px;cursor:pointer;text-align:left;font-family:var(--sans);transition:.16s}
+.plan:hover{border-color:#cfcfe0}
+.plan.on{border-color:var(--coral);background:#FFF8F7;box-shadow:0 0 0 3px rgba(255,107,107,.1)}
+.plan .pn{font-size:14px;font-weight:800;display:flex;align-items:center;gap:6px}
+.plan .pn .tick{color:var(--coral);opacity:0}
+.plan.on .pn .tick{opacity:1}
+.plan .pp{font-size:19px;font-weight:900;letter-spacing:-.02em;margin:5px 0 2px}
+.plan .pd{font-size:11.5px;color:var(--muted);font-weight:600;line-height:1.45}
+
+/* breakdown */
+.bd{display:flex;flex-direction:column;gap:2px}
+.bdrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;font-size:14px}
+.bdrow+.bdrow{border-top:1px dashed var(--line)}
+.bdrow .k{color:var(--muted);font-weight:600}
+.bdrow .v{font-weight:800;font-variant-numeric:tabular-nums}
+.bdrow.fee .v{color:var(--coral)}
+.bdrow.tot{border-top:2px solid var(--ink);margin-top:4px;padding-top:13px}
+.bdrow.tot .k{color:var(--ink);font-weight:800;font-size:15px}
+.bdrow.tot .v{font-size:22px;font-weight:900;letter-spacing:-.02em}
+.bdrow .sub{font-family:var(--mono);font-size:10.5px;color:var(--muted-2);font-weight:600}
+
+/* refund policy */
+.rp{display:flex;flex-direction:column;gap:8px}
+.rprow{display:flex;align-items:center;gap:10px;font-size:13px;background:#FCFCFF;border:1px solid var(--line);border-radius:11px;padding:10px 12px}
+.rprow .rq{font-family:var(--mono);font-size:11px;font-weight:800;padding:3px 8px;border-radius:6px;flex:0 0 auto}
+.rprow.g .rq{background:#EFFCF3;color:#1E7A45;border:1px solid #CDEFDA}
+.rprow.y .rq{background:#FFF7E8;color:#8A5A00;border:1px solid #FFE2AE}
+.rprow.r .rq{background:#FFF0F0;color:#B00;border:1px solid #FFD0D0}
+.rprow .rt{color:var(--muted);font-weight:600}
+
+/* bookings */
+.bkempty{color:var(--muted-2);font-size:14px;font-weight:600;text-align:center;padding:26px 0}
+.bk{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:15px;margin-bottom:11px}
+.bk .bh{display:flex;align-items:center;gap:9px;margin-bottom:9px;flex-wrap:wrap}
+.bk .bt{font-size:14.5px;font-weight:800;flex:1;min-width:120px}
+.bk .st{font-size:11px;font-weight:800;padding:4px 9px;border-radius:7px}
+.st.paid{background:#EFFCF3;color:#1E7A45;border:1px solid #CDEFDA}
+.st.wait{background:#FFF7E8;color:#8A5A00;border:1px solid #FFE2AE}
+.st.ref{background:#F0F4FF;color:#2B4C9B;border:1px solid #D9E4FF}
+.st.no{background:#FFF0F0;color:#B00;border:1px solid #FFD0D0}
+.bk .bi{font-family:var(--mono);font-size:11.5px;color:var(--muted);line-height:1.9}
+.bk .bi b{color:var(--ink)}
+.bk .ba{display:flex;gap:8px;margin-top:11px}
+
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--mid);color:#fff;font-size:14px;font-weight:600;padding:13px 20px;border-radius:13px;box-shadow:var(--sh-lg);opacity:0;pointer-events:none;transition:.28s;z-index:90}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -174,12 +229,13 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
   </div>
   <div class="stats">
     <div class="stat"><div class="sv" id="stRooms">0</div><div class="sl">등록한 방</div></div>
-    <div class="stat"><div class="sv" id="stPhotos">0</div><div class="sl">사진</div></div>
+    <div class="stat"><div class="sv" id="stRevenue">—</div><div class="sl">예약 매출</div></div>
     <div class="stat"><div class="sv" id="stArea">—</div><div class="sl">평균 방 크기</div></div>
     <div class="stat"><div class="sv" id="stPrice">—</div><div class="sl">평균 1박 요금</div></div>
   </div>
   <div class="toolbar">
     <button class="btn btn-ghost btn-sm" id="sortBtn">최신순</button>
+    <button class="btn btn-ghost btn-sm" id="bkBtn">예약 내역</button>
     <span class="sp"></span>
     <span class="quota" id="quota"></span>
     <button class="btn btn-danger btn-sm" id="clearBtn">전체 삭제</button>
@@ -294,6 +350,84 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
   </div>
 </div>
 
+<!-- ===== 결제 ===== -->
+<div class="sheet" id="paySheet" role="dialog" aria-modal="true" aria-label="결제하기">
+  <div class="veil" id="payVeil"></div>
+  <div class="panel">
+    <div class="shead">
+      <h2 id="payTitle">결제하기</h2>
+      <button class="x" id="payClose" aria-label="닫기">×</button>
+    </div>
+    <div class="sbody">
+
+      <div class="blk">
+        <div class="bl"><span class="n">1</span>숙박 일정</div>
+        <div class="fgrid" style="margin-bottom:11px">
+          <div class="f"><label>체크인</label><input id="pIn" type="date"></div>
+          <div class="f"><label>체크아웃</label><input id="pOut" type="date"></div>
+        </div>
+        <div class="fgrid">
+          <div class="f"><label>성인</label>
+            <div class="inwrap"><input id="pAdults" class="hassuf" type="number" min="1" step="1" inputmode="numeric"><span class="suf">명</span></div></div>
+          <div class="f"><label>어린이</label>
+            <div class="inwrap"><input id="pKids" class="hassuf" type="number" min="0" step="1" inputmode="numeric"><span class="suf">명</span></div></div>
+        </div>
+      </div>
+
+      <div class="blk">
+        <div class="bl"><span class="n">2</span>요금제<span class="hint">수수료가 달라집니다</span></div>
+        <div class="plans">
+          <button type="button" class="plan" data-plan="STARTER">
+            <div class="pn"><span class="tick">✓</span>Starter</div>
+            <div class="pp">월 $0 <span style="font-size:13px;font-weight:700;color:var(--coral)">+ 9%</span></div>
+            <div class="pd">시작 부담 없음<br>예약당 9% 수수료</div>
+          </button>
+          <button type="button" class="plan" data-plan="PRO">
+            <div class="pn"><span class="tick">✓</span>Pro</div>
+            <div class="pp">월 $49 <span style="font-size:13px;font-weight:700;color:var(--coral)">+ 1%</span></div>
+            <div class="pd">예약 많을수록 유리<br>예약당 1% 수수료</div>
+          </button>
+        </div>
+      </div>
+
+      <div class="blk">
+        <div class="bl"><span class="n">3</span>결제 내역<span class="hint">자동 계산</span></div>
+        <div class="bd" id="payBd"></div>
+      </div>
+
+      <div class="blk">
+        <div class="bl"><span class="n">4</span>취소·환불 규정</div>
+        <div class="rp">
+          <div class="rprow g"><span class="rq">7일 전</span><span class="rt">전액 환불 (수수료 포함 100%)</span></div>
+          <div class="rprow y"><span class="rq">5~6일 전</span><span class="rt">50% 환불</span></div>
+          <div class="rprow r"><span class="rq">4일 이내</span><span class="rt">환불 불가</span></div>
+        </div>
+      </div>
+
+      <div class="savebar">
+        <button class="btn btn-coral" id="payGo">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></svg>
+          <span id="payGoLabel">결제하기</span>
+        </button>
+        <span class="sp"></span>
+        <button class="btn btn-ghost btn-sm" id="payCancel">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 예약 내역 ===== -->
+<div class="sheet" id="bkSheet" role="dialog" aria-modal="true" aria-label="예약 내역">
+  <div class="veil" id="bkVeil"></div>
+  <div class="panel">
+    <div class="shead">
+      <h2>예약 내역</h2>
+      <button class="x" id="bkClose" aria-label="닫기">×</button>
+    </div>
+    <div class="sbody"><div id="bkList"></div></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -303,7 +437,8 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
    저장: IndexedDB (사진 Blob) — localStorage 용량 문제 없음
    ========================================================= */
 (function(){
-  var DB='podostay', VER=1, STORE='listings';
+  var DB='podostay', VER=2, STORE='listings', BSTORE='bookings';
+  var API_BASE='https://podostay.hasin7jk.workers.dev'; /* ← Worker 주소 */
   var $=function(i){ return document.getElementById(i); };
 
   /* ---------- IndexedDB ---------- */
@@ -316,15 +451,19 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
           var s=d.createObjectStore(STORE,{keyPath:'id'});
           s.createIndex('createdAt','createdAt');
         }
+        if(!d.objectStoreNames.contains(BSTORE)){
+          var b=d.createObjectStore(BSTORE,{keyPath:'id'});
+          b.createIndex('createdAt','createdAt');
+        }
       };
       rq.onsuccess=function(){ res(rq.result); };
       rq.onerror=function(){ rej(rq.error); };
     });
   }
-  function op(mode,fn){
+  function op(mode,fn,store){
     return open().then(function(d){
       return new Promise(function(res,rej){
-        var rq=fn(d.transaction(STORE,mode).objectStore(STORE));
+        var rq=fn(d.transaction(store||STORE,mode).objectStore(store||STORE));
         rq.onsuccess=function(){ res(rq.result); };
         rq.onerror=function(){ rej(rq.error); };
       });
@@ -334,6 +473,27 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
   var putRow  =function(r){ return op('readwrite',function(s){ return s.put(r); }); };
   var delRow  =function(i){ return op('readwrite',function(s){ return s.delete(i); }); };
   var clearAll=function(){ return op('readwrite',function(s){ return s.clear(); }); };
+  var allBk   =function(){ return op('readonly', function(s){ return s.getAll(); }, BSTORE); };
+  var putBk   =function(r){ return op('readwrite',function(s){ return s.put(r); }, BSTORE); };
+
+  /* ---------- 요금제 (src/index.ts v2와 동일) ---------- */
+  var PLANS={
+    STARTER:{ name:'Starter', monthly:0,  percent:0.09 },
+    PRO:    { name:'Pro',     monthly:49, percent:0.01 }
+  };
+  function myPlan(){
+    try{ return localStorage.getItem('podostay_plan')||'STARTER'; }catch(e){ return 'STARTER'; }
+  }
+  function setPlan(p){ try{ localStorage.setItem('podostay_plan',p); }catch(e){} }
+  function hostId(){
+    var h;
+    try{ h=localStorage.getItem('podostay_host'); }catch(e){}
+    if(!h){
+      h='host_'+Math.random().toString(36).slice(2,10);
+      try{ localStorage.setItem('podostay_host',h); }catch(e){}
+    }
+    return h;
+  }
 
   /* ---------- 상수 ---------- */
   /* rate = 현지통화 1단위당 원화 */
@@ -353,7 +513,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
   var STYLE_KO={minimal:'미니멀',cozy:'코지',luxury:'럭셔리',modern:'모던'};
   var PREF=['KO','EN','JA','TH','FR','ES','DE'];
 
-  var urls=[], rows=[], newest=true, cur=null, curLang=null;
+  var urls=[], rows=[], bookings=[], newest=true, cur=null, curLang=null;
 
   function oUrl(b){ var u=URL.createObjectURL(b); urls.push(u); return u; }
   function freeUrls(){ urls.forEach(function(u){ URL.revokeObjectURL(u); }); urls=[]; }
@@ -428,6 +588,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
 
   /* ---------- 목록 ---------- */
   function load(){
+    allBk().then(function(bs){ bookings=bs||[]; }).catch(function(){ bookings=[]; });
     allRows().then(function(rs){
       rows=rs||[]; render(); quota();
     }).catch(function(){
@@ -457,7 +618,9 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
       if(f.price>0) pr.push(f.price);
     });
     $('stRooms').textContent=rows.length;
-    $('stPhotos').textContent=ph;
+    var paid=bookings.filter(function(b){ return b.status==='paid'; });
+    var rev=paid.reduce(function(a,b){ return a+(b.amount||0); },0);
+    $('stRevenue').textContent = rev? won(rev)+'원' : '—';
     $('stArea').textContent = ar.length ? Math.round(ar.reduce(function(a,b){return a+b;},0)/ar.length)+'m²' : '—';
     $('stPrice').textContent= pr.length ? won(Math.round(pr.reduce(function(a,b){return a+b;},0)/pr.length))+'원' : '—';
 
@@ -566,7 +729,17 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     }
 
     var mt=document.createElement('div'); mt.className='rmeta';
-    mt.innerHTML='<span>'+fmtDate(r.createdAt)+'</span><span class="lg">'+langKeys(r.translations).length+'개 언어</span>';
+    var lf=document.createElement('div'); lf.className='lft';
+    lf.innerHTML='<span>'+fmtDate(r.createdAt)+'</span><span class="lg">'+langKeys(r.translations).length+'개 언어</span>';
+    mt.appendChild(lf);
+
+    var pb=document.createElement('button'); pb.type='button'; pb.className='paybtn';
+    var done=(bookings||[]).filter(function(b){ return b.listingId===r.id && b.status==='paid'; }).length;
+    pb.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></svg>'+
+                 (done? '예약 '+done+'건' : '결제하기');
+    if(done) pb.className='paybtn paid';
+    pb.onclick=function(e){ e.stopPropagation(); openPay(r); };
+    mt.appendChild(pb);
     bd.appendChild(mt);
 
     c.appendChild(cz); c.appendChild(bd);
@@ -714,7 +887,10 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
   $('closeBtn').onclick=close;
   $('veil').onclick=close;
   document.addEventListener('keydown',function(e){
-    if(e.key==='Escape' && $('sheet').className.indexOf('on')>=0) close();
+    if(e.key!=='Escape') return;
+    if($('paySheet').className.indexOf('on')>=0){ closePay(); return; }
+    if($('bkSheet').className.indexOf('on')>=0){ closeBk(); return; }
+    if($('sheet').className.indexOf('on')>=0) close();
   });
 
   $('sortBtn').onclick=function(){
@@ -725,6 +901,193 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     if(!confirm('방 '+rows.length+'개를 모두 삭제할까요?')) return;
     clearAll().then(function(){ rows=[]; render(); quota(); toast('전체 삭제했습니다'); });
   };
+
+  /* =========================================================
+     결제 (요금제별 수수료 자동 계산 + 예약 저장)
+     ========================================================= */
+  var payRoom=null, payPlan=myPlan();
+
+  function ymd(d){
+    var p=function(n){ return (n<10?'0':'')+n; };
+    return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());
+  }
+  function nights(){
+    var a=new Date($('pIn').value), b=new Date($('pOut').value);
+    if(isNaN(a)||isNaN(b)) return 0;
+    return Math.max(0, Math.round((b-a)/86400000));
+  }
+  function openPay(r){
+    payRoom=r;
+    var f=info(r);
+    if(!f.price){
+      toast('먼저 1박 요금을 입력해 주세요'); openSheet(r); return;
+    }
+    $('payTitle').textContent=titleOf(r);
+    var t=new Date(); t.setDate(t.getDate()+7);
+    var o=new Date(t); o.setDate(o.getDate()+1);
+    $('pIn').value=ymd(t); $('pOut').value=ymd(o);
+    $('pAdults').value=f.adults||2;
+    $('pKids').value=f.children||0;
+    payPlan=myPlan();
+    paintPlans();
+    calcPay();
+    $('payGoLabel').textContent='결제하기';
+    $('payGo').disabled=false;
+    $('paySheet').className='sheet on';
+    document.body.style.overflow='hidden';
+  }
+  function paintPlans(){
+    document.querySelectorAll('.plan').forEach(function(b){
+      b.classList.toggle('on', b.getAttribute('data-plan')===payPlan);
+    });
+  }
+  document.querySelectorAll('.plan').forEach(function(b){
+    b.onclick=function(){
+      payPlan=b.getAttribute('data-plan'); setPlan(payPlan);
+      paintPlans(); calcPay();
+    };
+  });
+  ['pIn','pOut','pAdults','pKids'].forEach(function(id){
+    var e=$(id); if(e) e.addEventListener('change', calcPay);
+  });
+
+  function calcPay(){
+    if(!payRoom) return null;
+    var f=info(payRoom), n=nights();
+    var pl=PLANS[payPlan]||PLANS.STARTER;
+    var total=Math.round((f.price||0)*n);
+    var fee=Math.round(total*pl.percent);
+    var payout=total-fee;
+    var g=(Number($('pAdults').value||0))+(Number($('pKids').value||0));
+
+    var bd=$('payBd');
+    if(!n){
+      bd.innerHTML='<div class="bdrow"><span class="k">체크아웃 날짜를 체크인 이후로 정해 주세요</span></div>';
+      $('payGo').disabled=true;
+      return null;
+    }
+    $('payGo').disabled=false;
+    bd.innerHTML=
+      '<div class="bdrow"><span class="k">1박 요금 × '+n+'박</span><span class="v">'+won(f.price)+'원 × '+n+'</span></div>'+
+      '<div class="bdrow"><span class="k">숙박 인원</span><span class="v">'+g+'명</span></div>'+
+      '<div class="bdrow fee"><span class="k">PodoStay 수수료 <span class="sub">'+pl.name+' '+(pl.percent*100)+'%</span></span><span class="v">− '+won(fee)+'원</span></div>'+
+      '<div class="bdrow"><span class="k">호스트 정산액</span><span class="v">'+won(payout)+'원</span></div>'+
+      '<div class="bdrow tot"><span class="k">총 결제금액</span><span class="v">'+won(total)+'원</span></div>'+
+      (pl.monthly? '<div class="bdrow"><span class="k">월 구독료</span><span class="v">$'+pl.monthly+' / 월</span></div>':'');
+
+    return {nights:n,total:total,fee:fee,payout:payout,guests:g,plan:pl};
+  }
+
+  $('payGo').onclick=function(){
+    var c=calcPay(); if(!c||!payRoom) return;
+    var f=info(payRoom);
+    $('payGo').disabled=true; $('payGoLabel').textContent='결제 중…';
+
+    var body={
+      listingId:payRoom.id, hostId:hostId(),
+      checkin:$('pIn').value, checkout:$('pOut').value,
+      totalAmount:c.total, plan:payPlan
+    };
+    var ctrl=('AbortController' in window)?new AbortController():null;
+    var tm=setTimeout(function(){ if(ctrl) ctrl.abort(); },12000);
+
+    fetch(API_BASE+'/api/bookings/create',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(body), signal:ctrl?ctrl.signal:undefined
+    }).then(function(r){ clearTimeout(tm); if(!r.ok) throw 0; return r.json(); })
+      .then(function(j){ done(j.bookingId||null, false); })
+      .catch(function(){ clearTimeout(tm); done(null, true); });
+
+    function done(serverId, demo){
+      var bk={
+        id: serverId || ('bk_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)),
+        listingId: payRoom.id,
+        roomName: titleOf(payRoom),
+        checkin: $('pIn').value, checkout: $('pOut').value,
+        nights: c.nights, guests: c.guests,
+        amount: c.total, fee: c.fee, payout: c.payout,
+        plan: payPlan, feePercent: c.plan.percent,
+        status: 'paid', demo: !!demo,
+        createdAt: new Date().toISOString()
+      };
+      putBk(bk).then(function(){
+        bookings.push(bk);
+        closePay(); render();
+        toast(demo ? '데모 결제 완료 — 예약 내역에 저장됐습니다' : '결제가 완료됐습니다');
+      }).catch(function(){
+        $('payGo').disabled=false; $('payGoLabel').textContent='결제하기';
+        toast('예약을 저장하지 못했습니다');
+      });
+    }
+  };
+
+  function closePay(){
+    $('paySheet').className='sheet';
+    document.body.style.overflow=''; payRoom=null;
+  }
+  $('payClose').onclick=closePay;
+  $('payCancel').onclick=closePay;
+  $('payVeil').onclick=closePay;
+
+  /* ---------- 예약 내역 / 취소·환불 ---------- */
+  function refundRate(checkin){
+    var d=Math.ceil((new Date(checkin).getTime()-Date.now())/86400000);
+    return { days:d, rate: d>=7?1.0 : d>=5?0.5 : 0 };
+  }
+  function renderBookings(){
+    var w=$('bkList');
+    var list=bookings.slice().sort(function(a,b){
+      return new Date(b.createdAt||0)-new Date(a.createdAt||0);
+    });
+    if(!list.length){ w.innerHTML='<div class="bkempty">아직 예약이 없습니다.</div>'; return; }
+    w.innerHTML='';
+    list.forEach(function(b){
+      var st = b.status==='paid'?'paid':b.status==='refunded'?'ref':b.status==='no_refund'?'no':'wait';
+      var stn= b.status==='paid'?'결제 완료':b.status==='refunded'?'환불 완료':b.status==='no_refund'?'환불 불가':'대기';
+      var r=refundRate(b.checkin);
+      var d=document.createElement('div'); d.className='bk';
+      d.innerHTML=
+        '<div class="bh"><span class="bt">'+b.roomName+'</span><span class="st '+st+'">'+stn+'</span></div>'+
+        '<div class="bi">'+
+          b.checkin+' → '+b.checkout+' · <b>'+b.nights+'박</b> · '+b.guests+'명<br>'+
+          '결제 <b>'+won(b.amount)+'원</b> · 수수료 '+won(b.fee)+'원 ('+b.plan+' '+(b.feePercent*100)+'%)<br>'+
+          '정산 <b>'+won(b.payout)+'원</b>'+(b.demo?' · <span style="color:var(--muted-2)">데모</span>':'')+
+          (b.status==='refunded'?'<br>환불 <b>'+won(b.refundAmount||0)+'원</b>':'')+
+        '</div>';
+      if(b.status==='paid'){
+        var a=document.createElement('div'); a.className='ba';
+        var btn=document.createElement('button');
+        btn.className='btn btn-danger btn-sm';
+        btn.textContent = r.rate>0 ? ('취소 · '+(r.rate*100)+'% 환불') : '취소 (환불 불가)';
+        btn.onclick=function(){ cancelBk(b); };
+        a.appendChild(btn); d.appendChild(a);
+      }
+      w.appendChild(d);
+    });
+  }
+  function cancelBk(b){
+    var r=refundRate(b.checkin);
+    var amt=Math.round(b.amount*r.rate);
+    var msg = r.rate>0
+      ? '체크인 '+r.days+'일 전입니다.\n'+won(amt)+'원을 환불하고 예약을 취소할까요?'
+      : '체크인 '+r.days+'일 전이라 환불이 불가합니다.\n그래도 예약을 취소할까요?';
+    if(!confirm(msg)) return;
+    b.status = r.rate>0 ? 'refunded' : 'no_refund';
+    b.refundAmount = amt;
+    b.refundedAt = new Date().toISOString();
+    putBk(b).then(function(){
+      renderBookings(); render();
+      toast(r.rate>0 ? won(amt)+'원 환불 처리했습니다' : '예약을 취소했습니다 (환불 없음)');
+    });
+  }
+  $('bkBtn').onclick=function(){
+    renderBookings();
+    $('bkSheet').className='sheet on';
+    document.body.style.overflow='hidden';
+  };
+  function closeBk(){ $('bkSheet').className='sheet'; document.body.style.overflow=''; }
+  $('bkClose').onclick=closeBk;
+  $('bkVeil').onclick=closeBk;
 
   load();
 })();
