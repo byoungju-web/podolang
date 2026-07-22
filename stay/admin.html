@@ -203,6 +203,37 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
 .bk .bi b{color:var(--ink)}
 .bk .ba{display:flex;gap:8px;margin-top:11px}
 
+/* 방 등록번호 · 주소 · 연락처 */
+.cz .code{position:absolute;bottom:9px;left:9px;font-family:var(--mono);font-size:10.5px;font-weight:800;background:rgba(20,20,43,.78);color:#fff;padding:4px 9px;border-radius:7px;z-index:2;letter-spacing:.04em}
+.loc{display:flex;align-items:flex-start;gap:6px;font-size:12.5px;color:var(--muted);font-weight:600;margin-bottom:9px;line-height:1.45}
+.loc svg{width:14px;height:14px;flex:0 0 auto;margin-top:2px;color:var(--coral)}
+.ctts{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.ctt{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--muted);background:#FCFCFF;border:1px solid var(--line);padding:4px 9px;border-radius:7px}
+.ctt.pd{background:#F6F1FF;border-color:#E0D2FF;color:#5B34B8}
+.ctt.kk{background:#FFF9E0;border-color:#F5E38A;color:#7A5C00}
+.ctt.tel{background:#EFF6FF;border-color:#CFE1FF;color:#24509B}
+
+/* 설정 / 게스트 */
+.setrow{display:flex;align-items:center;gap:10px;padding:12px 0;font-size:14px}
+.setrow+.setrow{border-top:1px dashed var(--line)}
+.setrow .k{color:var(--muted);font-weight:600;flex:1}
+.setrow .v{font-weight:800}
+.planbadge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;background:#FFF8F7;border:1px solid #FFD8D2;color:#B23A2E;padding:6px 12px;border-radius:9px}
+
+.glist{display:flex;flex-direction:column;gap:10px}
+.gcard{background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:14px;display:flex;align-items:flex-start;gap:12px}
+.gcard .av{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#FFF0EE,#FFE3DE);color:var(--coral);display:grid;place-items:center;font-weight:900;font-size:16px;flex:0 0 auto}
+.gcard .gi{flex:1;min-width:0}
+.gcard .gn{font-size:15px;font-weight:800;margin-bottom:4px}
+.gcard .gm{font-family:var(--mono);font-size:11.5px;color:var(--muted);line-height:1.75}
+.gcard .ge{font-size:12px;color:var(--muted-2);margin-top:4px}
+.gcard .gx{display:flex;flex-direction:column;gap:6px;flex:0 0 auto}
+.mini{font-size:11.5px;font-weight:700;padding:6px 11px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--muted);cursor:pointer}
+.mini.del{border-color:#FFD0D0;color:#B00}
+
+.guestpick{display:flex;gap:9px;align-items:flex-end}
+.guestpick .f{flex:1}
+
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--mid);color:#fff;font-size:14px;font-weight:600;padding:13px 20px;border-radius:13px;box-shadow:var(--sh-lg);opacity:0;pointer-events:none;transition:.28s;z-index:90}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -230,12 +261,14 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
   <div class="stats">
     <div class="stat"><div class="sv" id="stRooms">0</div><div class="sl">등록한 방</div></div>
     <div class="stat"><div class="sv" id="stRevenue">—</div><div class="sl">예약 매출</div></div>
-    <div class="stat"><div class="sv" id="stArea">—</div><div class="sl">평균 방 크기</div></div>
+    <div class="stat"><div class="sv" id="stGuests">0</div><div class="sl">게스트</div></div>
     <div class="stat"><div class="sv" id="stPrice">—</div><div class="sl">평균 1박 요금</div></div>
   </div>
   <div class="toolbar">
     <button class="btn btn-ghost btn-sm" id="sortBtn">최신순</button>
     <button class="btn btn-ghost btn-sm" id="bkBtn">예약 내역</button>
+    <button class="btn btn-ghost btn-sm" id="gsBtn">게스트</button>
+    <button class="btn btn-ghost btn-sm" id="setBtn">⚙ 설정</button>
     <span class="sp"></span>
     <span class="quota" id="quota"></span>
     <button class="btn btn-danger btn-sm" id="clearBtn">전체 삭제</button>
@@ -255,15 +288,33 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
 
       <div class="blk">
         <div class="bl"><span class="n">1</span>기본 정보<span class="hint">방 목록에 표시됩니다</span></div>
+        <div class="fgrid" style="margin-bottom:11px">
+          <div class="f"><label>방 등록번호</label><input id="iCode" type="text" readonly style="background:#F2F2F8;color:var(--muted);font-family:var(--mono)"></div>
+          <div class="f"><label>위치 (지역)</label><input id="iRegion" type="text" placeholder="예: 제주 서귀포시"></div>
+        </div>
         <div class="fgrid one" style="margin-bottom:11px">
           <div class="f"><label>방 이름</label>
             <input id="iName" type="text" placeholder="예: 오션뷰 2베드 미니멀"></div>
+        </div>
+        <div class="fgrid one" style="margin-bottom:11px">
+          <div class="f"><label>주소</label>
+            <input id="iAddr" type="text" placeholder="예: 제주특별자치도 서귀포시 중문관광로 72번길"></div>
         </div>
         <div class="fgrid">
           <div class="f"><label>방 크기</label>
             <div class="inwrap"><input id="iArea" class="hassuf" type="number" min="0" step="1" placeholder="0" inputmode="numeric"><span class="suf">m²</span></div></div>
           <div class="f"><label>침대 수</label>
             <div class="inwrap"><input id="iBeds" class="hassuf" type="number" min="0" step="1" placeholder="0" inputmode="numeric"><span class="suf">개</span></div></div>
+        </div>
+      </div>
+
+      <div class="blk">
+        <div class="bl"><span class="n">2</span>연락처<span class="hint">비워두면 호스트 설정값 사용</span></div>
+        <div class="fgrid">
+          <div class="f"><label>전화번호</label><input id="iPhone" type="tel" inputmode="tel" placeholder="010-0000-0000"></div>
+          <div class="f"><label>이메일</label><input id="iMail" type="email" inputmode="email" placeholder="host@podolang.kr"></div>
+          <div class="f"><label>포도톡 ID</label><input id="iPodo" type="text" placeholder="@podostay"></div>
+          <div class="f"><label>카카오톡 ID</label><input id="iKakao" type="text" placeholder="kakao_id"></div>
         </div>
       </div>
 
@@ -375,19 +426,13 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
       </div>
 
       <div class="blk">
-        <div class="bl"><span class="n">2</span>요금제<span class="hint">수수료가 달라집니다</span></div>
-        <div class="plans">
-          <button type="button" class="plan" data-plan="STARTER">
-            <div class="pn"><span class="tick">✓</span>Starter</div>
-            <div class="pp">월 $0 <span style="font-size:13px;font-weight:700;color:var(--coral)">+ 9%</span></div>
-            <div class="pd">시작 부담 없음<br>예약당 9% 수수료</div>
-          </button>
-          <button type="button" class="plan" data-plan="PRO">
-            <div class="pn"><span class="tick">✓</span>Pro</div>
-            <div class="pp">월 $49 <span style="font-size:13px;font-weight:700;color:var(--coral)">+ 1%</span></div>
-            <div class="pd">예약 많을수록 유리<br>예약당 1% 수수료</div>
-          </button>
+        <div class="bl"><span class="n">2</span>게스트<span class="hint">설정 &gt; 게스트에서 관리</span></div>
+        <div class="guestpick">
+          <div class="f"><label>예약자 선택</label>
+            <select id="pGuest"></select></div>
+          <button class="btn btn-ghost btn-sm" id="pGuestAdd" style="margin-bottom:1px">＋ 등록</button>
         </div>
+        <div class="setrow" style="padding-bottom:0"><span class="k">연락처</span><span class="v mono" id="pGuestInfo" style="font-size:12px">—</span></div>
       </div>
 
       <div class="blk">
@@ -428,6 +473,91 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
   </div>
 </div>
 
+<!-- ===== 설정 (호스트 정보 + 요금제) ===== -->
+<div class="sheet" id="setSheet" role="dialog" aria-modal="true" aria-label="관리자 설정">
+  <div class="veil" id="setVeil"></div>
+  <div class="panel">
+    <div class="shead"><h2>관리자 설정</h2><button class="x" id="setClose" aria-label="닫기">×</button></div>
+    <div class="sbody">
+
+      <div class="blk">
+        <div class="bl"><span class="n">1</span>요금제<span class="hint">수수료가 달라집니다</span></div>
+        <div class="plans">
+          <button type="button" class="plan" data-plan="STARTER">
+            <div class="pn"><span class="tick">✓</span>Starter</div>
+            <div class="pp">월 $0 <span style="font-size:13px;font-weight:700;color:var(--coral)">+ 9%</span></div>
+            <div class="pd">시작 부담 없음<br>예약당 9% 수수료</div>
+          </button>
+          <button type="button" class="plan" data-plan="PRO">
+            <div class="pn"><span class="tick">✓</span>Pro</div>
+            <div class="pp">월 $49 <span style="font-size:13px;font-weight:700;color:var(--coral)">+ 1%</span></div>
+            <div class="pd">예약 많을수록 유리<br>예약당 1% 수수료</div>
+          </button>
+        </div>
+      </div>
+
+      <div class="blk">
+        <div class="bl"><span class="n">2</span>호스트 연락처<span class="hint">방 등록 시 자동 입력</span></div>
+        <div class="fgrid one" style="margin-bottom:11px">
+          <div class="f"><label>호스트 이름 / 상호</label><input id="hName" type="text" placeholder="예: 포도스테이 제주"></div>
+        </div>
+        <div class="fgrid">
+          <div class="f"><label>전화번호</label><input id="hPhone" type="tel" inputmode="tel" placeholder="010-0000-0000"></div>
+          <div class="f"><label>이메일</label><input id="hMail" type="email" inputmode="email" placeholder="host@podolang.kr"></div>
+          <div class="f"><label>포도톡 ID</label><input id="hPodo" type="text" placeholder="@podostay"></div>
+          <div class="f"><label>카카오톡 ID</label><input id="hKakao" type="text" placeholder="kakao_id"></div>
+        </div>
+      </div>
+
+      <div class="blk">
+        <div class="bl"><span class="n">3</span>계정 정보</div>
+        <div class="setrow"><span class="k">호스트 ID</span><span class="v mono" id="hId" style="font-size:12px"></span></div>
+        <div class="setrow"><span class="k">등록한 방</span><span class="v" id="hRooms">0개</span></div>
+        <div class="setrow"><span class="k">현재 요금제</span><span class="v"><span class="planbadge" id="hPlan">Starter · 9%</span></span></div>
+      </div>
+
+      <div class="savebar">
+        <button class="btn btn-coral" id="setSave">저장하기</button>
+        <span class="sp"></span>
+        <button class="btn btn-ghost btn-sm" id="setCancel">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 게스트 관리 ===== -->
+<div class="sheet" id="gsSheet" role="dialog" aria-modal="true" aria-label="게스트 관리">
+  <div class="veil" id="gsVeil"></div>
+  <div class="panel">
+    <div class="shead"><h2 id="gsTitle">게스트</h2><button class="x" id="gsClose" aria-label="닫기">×</button></div>
+    <div class="sbody">
+
+      <div class="blk">
+        <div class="bl"><span class="n">＋</span><span id="gsFormTitle">게스트 등록</span></div>
+        <div class="fgrid one" style="margin-bottom:11px">
+          <div class="f"><label>이름</label><input id="gName" type="text" placeholder="예: 김민수"></div>
+        </div>
+        <div class="fgrid" style="margin-bottom:11px">
+          <div class="f"><label>전화번호</label><input id="gPhone" type="tel" inputmode="tel" placeholder="010-0000-0000"></div>
+          <div class="f"><label>이메일</label><input id="gMail" type="email" inputmode="email" placeholder="guest@example.com"></div>
+          <div class="f"><label>포도톡 ID</label><input id="gPodo" type="text" placeholder="@guest"></div>
+          <div class="f"><label>카카오톡 ID</label><input id="gKakao" type="text" placeholder="kakao_id"></div>
+        </div>
+        <div class="fgrid one"><div class="f"><label>메모</label><input id="gMemo" type="text" placeholder="예: 재방문 고객, 반려견 동반"></div></div>
+        <div style="display:flex;gap:9px;margin-top:13px">
+          <button class="btn btn-coral btn-sm" id="gSave">게스트 저장</button>
+          <button class="btn btn-ghost btn-sm" id="gReset" style="display:none">새로 입력</button>
+        </div>
+      </div>
+
+      <div class="blk">
+        <div class="bl"><span class="n">＝</span>등록된 게스트<span class="hint" id="gsCount"></span></div>
+        <div class="glist" id="gsList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -437,7 +567,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
    저장: IndexedDB (사진 Blob) — localStorage 용량 문제 없음
    ========================================================= */
 (function(){
-  var DB='podostay', VER=2, STORE='listings', BSTORE='bookings';
+  var DB='podostay', VER=3, STORE='listings', BSTORE='bookings', GSTORE='guests';
   var API_BASE='https://podostay.hasin7jk.workers.dev'; /* ← Worker 주소 */
   var $=function(i){ return document.getElementById(i); };
 
@@ -454,6 +584,10 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
         if(!d.objectStoreNames.contains(BSTORE)){
           var b=d.createObjectStore(BSTORE,{keyPath:'id'});
           b.createIndex('createdAt','createdAt');
+        }
+        if(!d.objectStoreNames.contains(GSTORE)){
+          var g=d.createObjectStore(GSTORE,{keyPath:'id'});
+          g.createIndex('createdAt','createdAt');
         }
       };
       rq.onsuccess=function(){ res(rq.result); };
@@ -475,16 +609,27 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
   var clearAll=function(){ return op('readwrite',function(s){ return s.clear(); }); };
   var allBk   =function(){ return op('readonly', function(s){ return s.getAll(); }, BSTORE); };
   var putBk   =function(r){ return op('readwrite',function(s){ return s.put(r); }, BSTORE); };
+  var allGs   =function(){ return op('readonly', function(s){ return s.getAll(); }, GSTORE); };
+  var putGs   =function(r){ return op('readwrite',function(s){ return s.put(r); }, GSTORE); };
+  var delGs   =function(i){ return op('readwrite',function(s){ return s.delete(i); }, GSTORE); };
 
   /* ---------- 요금제 (src/index.ts v2와 동일) ---------- */
   var PLANS={
     STARTER:{ name:'Starter', monthly:0,  percent:0.09 },
     PRO:    { name:'Pro',     monthly:49, percent:0.01 }
   };
-  function myPlan(){
-    try{ return localStorage.getItem('podostay_plan')||'STARTER'; }catch(e){ return 'STARTER'; }
+  var HKEY='podostay_host_info';
+  function hostInfo(){
+    var d={plan:'STARTER',name:'',phone:'',email:'',podotalk:'',kakao:''};
+    try{
+      var raw=localStorage.getItem(HKEY);
+      if(raw){ var o=JSON.parse(raw); for(var k in o) if(o[k]!=null) d[k]=o[k]; }
+    }catch(e){}
+    return d;
   }
-  function setPlan(p){ try{ localStorage.setItem('podostay_plan',p); }catch(e){} }
+  function saveHost(o){ try{ localStorage.setItem(HKEY, JSON.stringify(o)); }catch(e){} }
+  function myPlan(){ return hostInfo().plan||'STARTER'; }
+  function setPlan(p){ var h=hostInfo(); h.plan=p; saveHost(h); }
   function hostId(){
     var h;
     try{ h=localStorage.getItem('podostay_host'); }catch(e){}
@@ -513,7 +658,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
   var STYLE_KO={minimal:'미니멀',cozy:'코지',luxury:'럭셔리',modern:'모던'};
   var PREF=['KO','EN','JA','TH','FR','ES','DE'];
 
-  var urls=[], rows=[], bookings=[], newest=true, cur=null, curLang=null;
+  var urls=[], rows=[], bookings=[], guests=[], newest=true, cur=null, curLang=null, gEdit=null;
 
   function oUrl(b){ var u=URL.createObjectURL(b); urls.push(u); return u; }
   function freeUrls(){ urls.forEach(function(u){ URL.revokeObjectURL(u); }); urls=[]; }
@@ -536,7 +681,9 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
   function defInfo(r){
     var tg=r.tags||{};
     return {
-      name:'', area:0, beds:Number(tg.beds||0), price:0, listPrice:0, salePrice:0,
+      name:'', code:'', address:'', region:'',
+      phone:'', email:'', podotalk:'', kakao:'',
+      area:0, beds:Number(tg.beds||0), price:0, listPrice:0, salePrice:0,
       adults:2, children:0, checkIn:'15:00', checkOut:'11:00',
       cancelDays:7, payDay:1, items:['tv','fridge','wifi'], etc:'',
       view:tg.view||'ocean', bedType:tg.bed_type||'queen',
@@ -545,7 +692,26 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
   }
   function info(r){
     if(!r.info) r.info=defInfo(r);
+    if(!r.info.code) r.info.code=makeCode(r);
     return r.info;
+  }
+  function makeCode(r){
+    var max=0;
+    rows.forEach(function(x){
+      var c=x.info&&x.info.code;
+      if(c){ var m=/PS-(\d+)/.exec(c); if(m) max=Math.max(max, parseInt(m[1],10)); }
+    });
+    return 'PS-'+String(max+1).padStart(4,'0');
+  }
+  /* 방에 값이 없으면 호스트 설정값 사용 */
+  function contactOf(r){
+    var f=info(r), h=hostInfo();
+    return {
+      phone:    f.phone    || h.phone    || '',
+      email:    f.email    || h.email    || '',
+      podotalk: f.podotalk || h.podotalk || '',
+      kakao:    f.kakao    || h.kakao    || ''
+    };
   }
   function titleOf(r){
     var f=info(r);
@@ -588,7 +754,8 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
 
   /* ---------- 목록 ---------- */
   function load(){
-    allBk().then(function(bs){ bookings=bs||[]; }).catch(function(){ bookings=[]; });
+    allBk().then(function(bs){ bookings=bs||[]; render(); }).catch(function(){ bookings=[]; });
+    allGs().then(function(gs){ guests=gs||[]; }).catch(function(){ guests=[]; });
     allRows().then(function(rs){
       rows=rs||[]; render(); quota();
     }).catch(function(){
@@ -610,18 +777,17 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
       return newest ? y-x : x-y;
     });
 
-    var ph=0, ar=[], pr=[];
+    var ph=0, pr=[];
     rows.forEach(function(r){
       ph+=(r.photos||[]).length;
       var f=info(r);
-      if(f.area>0) ar.push(f.area);
       if(f.price>0) pr.push(f.price);
     });
     $('stRooms').textContent=rows.length;
     var paid=bookings.filter(function(b){ return b.status==='paid'; });
     var rev=paid.reduce(function(a,b){ return a+(b.amount||0); },0);
     $('stRevenue').textContent = rev? won(rev)+'원' : '—';
-    $('stArea').textContent = ar.length ? Math.round(ar.reduce(function(a,b){return a+b;},0)/ar.length)+'m²' : '—';
+    $('stGuests').textContent = guests.length;
     $('stPrice').textContent= pr.length ? won(Math.round(pr.reduce(function(a,b){return a+b;},0)/pr.length))+'원' : '—';
 
     var area=$('listArea');
@@ -657,6 +823,8 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
 
     var cnt=document.createElement('span'); cnt.className='cnt';
     cnt.textContent=photos.length+'장'; cz.appendChild(cnt);
+    var cd=document.createElement('span'); cd.className='code';
+    cd.textContent=f.code||'PS-0000'; cz.appendChild(cd);
     if(photos.length>1){
       var sw=document.createElement('span'); sw.className='swipe'; sw.textContent='← 밀어서 보기';
       cz.appendChild(sw);
@@ -716,6 +884,23 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     });
     bd.appendChild(sp);
 
+    var addr=[f.region,f.address].filter(Boolean).join(' · ');
+    if(addr){
+      var lc=document.createElement('div'); lc.className='loc';
+      lc.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><span></span>';
+      lc.querySelector('span').textContent=addr;
+      bd.appendChild(lc);
+    }
+
+    var ct=contactOf(r);
+    if(ct.phone||ct.podotalk||ct.kakao){
+      var cw=document.createElement('div'); cw.className='ctts';
+      if(ct.phone){    var e1=document.createElement('span'); e1.className='ctt tel'; e1.textContent='📞 '+ct.phone; cw.appendChild(e1); }
+      if(ct.podotalk){ var e2=document.createElement('span'); e2.className='ctt pd';  e2.textContent='포도톡 '+ct.podotalk; cw.appendChild(e2); }
+      if(ct.kakao){    var e3=document.createElement('span'); e3.className='ctt kk';  e3.textContent='카톡 '+ct.kakao; cw.appendChild(e3); }
+      bd.appendChild(cw);
+    }
+
     var itemNames=(f.items||[]).map(function(k){
       var m=ITEMS.filter(function(x){ return x.k===k; })[0]; return m?m.n:k;
     });
@@ -763,6 +948,14 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     var f=info(r);
     $('shTitle').textContent=titleOf(r);
 
+    var h=hostInfo();
+    $('iCode').value  = f.code||'';
+    $('iRegion').value= f.region||'';
+    $('iAddr').value  = f.address||'';
+    $('iPhone').value = f.phone||h.phone||'';
+    $('iMail').value  = f.email||h.email||'';
+    $('iPodo').value  = f.podotalk||h.podotalk||'';
+    $('iKakao').value = f.kakao||h.kakao||'';
     $('iName').value  = f.name||'';
     $('iArea').value  = f.area||'';
     $('iBeds').value  = f.beds||'';
@@ -826,7 +1019,12 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     $('itemChips').querySelectorAll('.chip.on').forEach(function(b){ items.push(b.getAttribute('data-k')); });
     var n=function(id){ return Number($(id).value||0); };
     cur.info={
-      name:$('iName').value.trim(), area:n('iArea'), beds:n('iBeds'),
+      name:$('iName').value.trim(),
+      code:$('iCode').value.trim()||makeCode(cur),
+      region:$('iRegion').value.trim(), address:$('iAddr').value.trim(),
+      phone:$('iPhone').value.trim(), email:$('iMail').value.trim(),
+      podotalk:$('iPodo').value.trim(), kakao:$('iKakao').value.trim(),
+      area:n('iArea'), beds:n('iBeds'),
       price:n('iPrice'), listPrice:n('iList'), salePrice:n('iSale'),
       adults:n('iAdults'), children:n('iKids'),
       checkIn:$('iIn').value||'15:00', checkOut:$('iOut').value||'11:00',
@@ -888,6 +1086,8 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
   $('veil').onclick=close;
   document.addEventListener('keydown',function(e){
     if(e.key!=='Escape') return;
+    if($('gsSheet').className.indexOf('on')>=0){ closeGs(); return; }
+    if($('setSheet').className.indexOf('on')>=0){ closeSet(); return; }
     if($('paySheet').className.indexOf('on')>=0){ closePay(); return; }
     if($('bkSheet').className.indexOf('on')>=0){ closeBk(); return; }
     if($('sheet').className.indexOf('on')>=0) close();
@@ -903,9 +1103,114 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
   };
 
   /* =========================================================
-     결제 (요금제별 수수료 자동 계산 + 예약 저장)
+     관리자 설정 (요금제 + 호스트 연락처)
      ========================================================= */
-  var payRoom=null, payPlan=myPlan();
+  function paintPlans(){
+    document.querySelectorAll('.plan').forEach(function(b){
+      b.classList.toggle('on', b.getAttribute('data-plan')===myPlan());
+    });
+  }
+  document.querySelectorAll('.plan').forEach(function(b){
+    b.onclick=function(){ setPlan(b.getAttribute('data-plan')); paintPlans(); paintPlanBadge(); };
+  });
+  function paintPlanBadge(){
+    var p=PLANS[myPlan()]||PLANS.STARTER;
+    var e=$('hPlan');
+    if(e) e.textContent=p.name+' · '+(p.percent*100)+'%'+(p.monthly?' · 월 $'+p.monthly:'');
+  }
+  $('setBtn').onclick=function(){
+    var h=hostInfo();
+    $('hName').value=h.name||''; $('hPhone').value=h.phone||'';
+    $('hMail').value=h.email||''; $('hPodo').value=h.podotalk||'';
+    $('hKakao').value=h.kakao||'';
+    $('hId').textContent=hostId();
+    $('hRooms').textContent=rows.length+'개';
+    paintPlans(); paintPlanBadge();
+    $('setSheet').className='sheet on'; document.body.style.overflow='hidden';
+  };
+  $('setSave').onclick=function(){
+    var h=hostInfo();
+    h.name=$('hName').value.trim(); h.phone=$('hPhone').value.trim();
+    h.email=$('hMail').value.trim(); h.podotalk=$('hPodo').value.trim();
+    h.kakao=$('hKakao').value.trim();
+    saveHost(h); render(); toast('설정을 저장했습니다'); closeSet();
+  };
+  function closeSet(){ $('setSheet').className='sheet'; document.body.style.overflow=''; }
+  $('setClose').onclick=closeSet; $('setCancel').onclick=closeSet; $('setVeil').onclick=closeSet;
+
+  /* =========================================================
+     게스트 관리
+     ========================================================= */
+  function gForm(g){
+    gEdit = g||null;
+    $('gName').value =g?g.name||'':'';
+    $('gPhone').value=g?g.phone||'':'';
+    $('gMail').value =g?g.email||'':'';
+    $('gPodo').value =g?g.podotalk||'':'';
+    $('gKakao').value=g?g.kakao||'':'';
+    $('gMemo').value =g?g.memo||'':'';
+    $('gsFormTitle').textContent = g? '게스트 수정' : '게스트 등록';
+    $('gReset').style.display = g? '' : 'none';
+  }
+  function renderGuests(){
+    var w=$('gsList');
+    $('gsCount').textContent=guests.length+'명';
+    if(!guests.length){ w.innerHTML='<div class="bkempty">등록된 게스트가 없습니다.</div>'; return; }
+    w.innerHTML='';
+    guests.slice().sort(function(a,b){ return new Date(b.createdAt||0)-new Date(a.createdAt||0); })
+    .forEach(function(g){
+      var d=document.createElement('div'); d.className='gcard';
+      var av=document.createElement('div'); av.className='av';
+      av.textContent=(g.name||'?').slice(0,1);
+      var gi=document.createElement('div'); gi.className='gi';
+      var lines=[];
+      if(g.phone)    lines.push('📞 '+g.phone);
+      if(g.podotalk) lines.push('포도톡 '+g.podotalk);
+      if(g.kakao)    lines.push('카톡 '+g.kakao);
+      if(g.email)    lines.push('✉ '+g.email);
+      gi.innerHTML='<div class="gn"></div><div class="gm">'+lines.join('<br>')+'</div>'+
+                   (g.memo?'<div class="ge"></div>':'');
+      gi.querySelector('.gn').textContent=g.name||'이름 없음';
+      if(g.memo) gi.querySelector('.ge').textContent=g.memo;
+      var gx=document.createElement('div'); gx.className='gx';
+      var e=document.createElement('button'); e.className='mini'; e.textContent='수정';
+      e.onclick=function(){ gForm(g); $('gsSheet').querySelector('.panel').scrollTop=0; };
+      var x=document.createElement('button'); x.className='mini del'; x.textContent='삭제';
+      x.onclick=function(){
+        if(!confirm((g.name||'이 게스트')+'를 삭제할까요?')) return;
+        delGs(g.id).then(function(){
+          guests=guests.filter(function(v){ return v.id!==g.id; });
+          renderGuests(); toast('삭제했습니다');
+        });
+      };
+      gx.appendChild(e); gx.appendChild(x);
+      d.appendChild(av); d.appendChild(gi); d.appendChild(gx);
+      w.appendChild(d);
+    });
+  }
+  $('gSave').onclick=function(){
+    var name=$('gName').value.trim();
+    if(!name){ toast('이름을 입력해 주세요'); return; }
+    var g = gEdit || { id:'gs_'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),
+                       createdAt:new Date().toISOString() };
+    g.name=name; g.phone=$('gPhone').value.trim(); g.email=$('gMail').value.trim();
+    g.podotalk=$('gPodo').value.trim(); g.kakao=$('gKakao').value.trim();
+    g.memo=$('gMemo').value.trim();
+    putGs(g).then(function(){
+      if(!gEdit) guests.push(g);
+      gForm(null); renderGuests(); toast('게스트를 저장했습니다');
+    }).catch(function(){ toast('저장하지 못했습니다'); });
+  };
+  $('gReset').onclick=function(){ gForm(null); };
+  $('gsBtn').onclick=function(){ gForm(null); renderGuests(); openGs(); };
+  function openGs(){ $('gsSheet').className='sheet on'; document.body.style.overflow='hidden'; }
+  function closeGs(){ $('gsSheet').className='sheet'; document.body.style.overflow=''; }
+  $('gsClose').onclick=closeGs; $('gsVeil').onclick=closeGs;
+
+  /* =========================================================
+     결제
+     ========================================================= */
+  var payRoom=null;
 
   function ymd(d){
     var p=function(n){ return (n<10?'0':'')+n; };
@@ -916,37 +1221,47 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     if(isNaN(a)||isNaN(b)) return 0;
     return Math.max(0, Math.round((b-a)/86400000));
   }
+  function fillGuestSelect(){
+    var sel=$('pGuest'); sel.innerHTML='';
+    var o0=document.createElement('option'); o0.value=''; o0.textContent='— 선택 안 함 —';
+    sel.appendChild(o0);
+    guests.forEach(function(g){
+      var o=document.createElement('option'); o.value=g.id; o.textContent=g.name||'이름 없음';
+      sel.appendChild(o);
+    });
+    paintGuestInfo();
+  }
+  function paintGuestInfo(){
+    var id=$('pGuest').value;
+    var g=guests.filter(function(x){ return x.id===id; })[0];
+    var parts=[];
+    if(g){
+      if(g.phone) parts.push(g.phone);
+      if(g.podotalk) parts.push('포도톡 '+g.podotalk);
+      if(g.kakao) parts.push('카톡 '+g.kakao);
+    }
+    $('pGuestInfo').textContent = parts.length? parts.join(' · ') : '—';
+  }
+  $('pGuest').addEventListener('change', paintGuestInfo);
+  $('pGuestAdd').onclick=function(){ gForm(null); renderGuests(); openGs(); };
+
   function openPay(r){
     payRoom=r;
     var f=info(r);
-    if(!f.price){
-      toast('먼저 1박 요금을 입력해 주세요'); openSheet(r); return;
-    }
-    $('payTitle').textContent=titleOf(r);
+    if(!f.price){ toast('먼저 1박 요금을 입력해 주세요'); openSheet(r); return; }
+    $('payTitle').textContent=(f.code?f.code+' · ':'')+titleOf(r);
     var t=new Date(); t.setDate(t.getDate()+7);
     var o=new Date(t); o.setDate(o.getDate()+1);
     $('pIn').value=ymd(t); $('pOut').value=ymd(o);
     $('pAdults').value=f.adults||2;
     $('pKids').value=f.children||0;
-    payPlan=myPlan();
-    paintPlans();
+    fillGuestSelect();
     calcPay();
     $('payGoLabel').textContent='결제하기';
     $('payGo').disabled=false;
     $('paySheet').className='sheet on';
     document.body.style.overflow='hidden';
   }
-  function paintPlans(){
-    document.querySelectorAll('.plan').forEach(function(b){
-      b.classList.toggle('on', b.getAttribute('data-plan')===payPlan);
-    });
-  }
-  document.querySelectorAll('.plan').forEach(function(b){
-    b.onclick=function(){
-      payPlan=b.getAttribute('data-plan'); setPlan(payPlan);
-      paintPlans(); calcPay();
-    };
-  });
   ['pIn','pOut','pAdults','pKids'].forEach(function(id){
     var e=$(id); if(e) e.addEventListener('change', calcPay);
   });
@@ -954,7 +1269,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
   function calcPay(){
     if(!payRoom) return null;
     var f=info(payRoom), n=nights();
-    var pl=PLANS[payPlan]||PLANS.STARTER;
+    var pl=PLANS[myPlan()]||PLANS.STARTER;
     var total=Math.round((f.price||0)*n);
     var fee=Math.round(total*pl.percent);
     var payout=total-fee;
@@ -963,8 +1278,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     var bd=$('payBd');
     if(!n){
       bd.innerHTML='<div class="bdrow"><span class="k">체크아웃 날짜를 체크인 이후로 정해 주세요</span></div>';
-      $('payGo').disabled=true;
-      return null;
+      $('payGo').disabled=true; return null;
     }
     $('payGo').disabled=false;
     bd.innerHTML=
@@ -974,19 +1288,20 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
       '<div class="bdrow"><span class="k">호스트 정산액</span><span class="v">'+won(payout)+'원</span></div>'+
       '<div class="bdrow tot"><span class="k">총 결제금액</span><span class="v">'+won(total)+'원</span></div>'+
       (pl.monthly? '<div class="bdrow"><span class="k">월 구독료</span><span class="v">$'+pl.monthly+' / 월</span></div>':'');
-
     return {nights:n,total:total,fee:fee,payout:payout,guests:g,plan:pl};
   }
 
   $('payGo').onclick=function(){
     var c=calcPay(); if(!c||!payRoom) return;
     var f=info(payRoom);
+    var gid=$('pGuest').value;
+    var gobj=guests.filter(function(x){ return x.id===gid; })[0]||null;
     $('payGo').disabled=true; $('payGoLabel').textContent='결제 중…';
 
     var body={
-      listingId:payRoom.id, hostId:hostId(),
-      checkin:$('pIn').value, checkout:$('pOut').value,
-      totalAmount:c.total, plan:payPlan
+      listingId:payRoom.id, roomCode:f.code, hostId:hostId(),
+      guestId:gid||null, checkin:$('pIn').value, checkout:$('pOut').value,
+      totalAmount:c.total, plan:myPlan()
     };
     var ctrl=('AbortController' in window)?new AbortController():null;
     var tm=setTimeout(function(){ if(ctrl) ctrl.abort(); },12000);
@@ -995,25 +1310,27 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
       method:'POST', headers:{'Content-Type':'application/json'},
       body:JSON.stringify(body), signal:ctrl?ctrl.signal:undefined
     }).then(function(r){ clearTimeout(tm); if(!r.ok) throw 0; return r.json(); })
-      .then(function(j){ done(j.bookingId||null, false); })
-      .catch(function(){ clearTimeout(tm); done(null, true); });
+      .then(function(j){ done(j.bookingId||null,false); })
+      .catch(function(){ clearTimeout(tm); done(null,true); });
 
     function done(serverId, demo){
       var bk={
         id: serverId || ('bk_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)),
-        listingId: payRoom.id,
-        roomName: titleOf(payRoom),
-        checkin: $('pIn').value, checkout: $('pOut').value,
-        nights: c.nights, guests: c.guests,
-        amount: c.total, fee: c.fee, payout: c.payout,
-        plan: payPlan, feePercent: c.plan.percent,
-        status: 'paid', demo: !!demo,
-        createdAt: new Date().toISOString()
+        listingId: payRoom.id, roomCode: f.code, roomName: titleOf(payRoom),
+        guestId: gid||null,
+        guestName: gobj? gobj.name : '',
+        guestPhone: gobj? (gobj.phone||'') : '',
+        guestPodo: gobj? (gobj.podotalk||'') : '',
+        guestKakao: gobj? (gobj.kakao||'') : '',
+        checkin:$('pIn').value, checkout:$('pOut').value,
+        nights:c.nights, guests:c.guests,
+        amount:c.total, fee:c.fee, payout:c.payout,
+        plan:myPlan(), feePercent:c.plan.percent,
+        status:'paid', demo:!!demo, createdAt:new Date().toISOString()
       };
       putBk(bk).then(function(){
-        bookings.push(bk);
-        closePay(); render();
-        toast(demo ? '데모 결제 완료 — 예약 내역에 저장됐습니다' : '결제가 완료됐습니다');
+        bookings.push(bk); closePay(); render();
+        toast(demo? '데모 결제 완료 — 예약 내역에 저장됐습니다' : '결제가 완료됐습니다');
       }).catch(function(){
         $('payGo').disabled=false; $('payGoLabel').textContent='결제하기';
         toast('예약을 저장하지 못했습니다');
@@ -1021,13 +1338,8 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     }
   };
 
-  function closePay(){
-    $('paySheet').className='sheet';
-    document.body.style.overflow=''; payRoom=null;
-  }
-  $('payClose').onclick=closePay;
-  $('payCancel').onclick=closePay;
-  $('payVeil').onclick=closePay;
+  function closePay(){ $('paySheet').className='sheet'; document.body.style.overflow=''; payRoom=null; }
+  $('payClose').onclick=closePay; $('payCancel').onclick=closePay; $('payVeil').onclick=closePay;
 
   /* ---------- 예약 내역 / 취소·환불 ---------- */
   function refundRate(checkin){
@@ -1047,8 +1359,10 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
       var r=refundRate(b.checkin);
       var d=document.createElement('div'); d.className='bk';
       d.innerHTML=
-        '<div class="bh"><span class="bt">'+b.roomName+'</span><span class="st '+st+'">'+stn+'</span></div>'+
+        '<div class="bh"><span class="bt">'+(b.roomCode?b.roomCode+' · ':'')+b.roomName+'</span><span class="st '+st+'">'+stn+'</span></div>'+
         '<div class="bi">'+
+          (b.guestName? '게스트 <b>'+b.guestName+'</b>'+(b.guestPhone?' · '+b.guestPhone:'')+
+            (b.guestPodo?' · 포도톡 '+b.guestPodo:'')+(b.guestKakao?' · 카톡 '+b.guestKakao:'')+'<br>' : '')+
           b.checkin+' → '+b.checkout+' · <b>'+b.nights+'박</b> · '+b.guests+'명<br>'+
           '결제 <b>'+won(b.amount)+'원</b> · 수수료 '+won(b.fee)+'원 ('+b.plan+' '+(b.feePercent*100)+'%)<br>'+
           '정산 <b>'+won(b.payout)+'원</b>'+(b.demo?' · <span style="color:var(--muted-2)">데모</span>':'')+
