@@ -448,7 +448,7 @@ section{position:relative}
   <div class="sec-head reveal">
     <span class="sec-tag">Try it</span>
     <h2>사진을 올려보세요</h2>
-    <p>방 사진 1~3장이면 됩니다. Vision이 방을 읽고, 리스팅·번역·가격이 만들어지는 과정을 그대로 보실 수 있습니다.</p>
+    <p>방 사진 1~6장이면 됩니다. Vision이 방을 읽고, 리스팅·번역·가격이 만들어지는 과정을 그대로 보실 수 있습니다.</p>
   </div>
 
   <div class="up-shell reveal">
@@ -457,7 +457,7 @@ section{position:relative}
     <div class="drop" id="dropZone" role="button" tabindex="0" aria-label="사진 선택">
       <div class="dic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8.5" cy="10" r="1.8"/><path d="m4 17 5-5 4 4 3-3 4 4"/></svg></div>
       <b>방 사진 선택하기</b>
-      <span>거실 · 침실 · 욕실 순으로 최대 3장 · JPG, PNG</span>
+      <span>거실 · 침실 · 욕실 · 뷰 등 최대 6장 · JPG, PNG</span>
     </div>
 
     <div class="thumbs" id="thumbs"></div>
@@ -468,7 +468,7 @@ section{position:relative}
         <svg id="runArrow" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </button>
       <button class="btn btn-ghost" id="resetBtn" style="display:none">다시 하기</button>
-      <span class="up-hint" id="upHint">사진 0 / 3</span>
+      <span class="up-hint" id="upHint">사진 0 / 6</span>
     </div>
 
     <div class="runsteps" id="runSteps">
@@ -855,7 +855,7 @@ section{position:relative}
    ========================================================= */
 (function(){
   var API_BASE = 'https://podostay.hasin7jk.workers.dev'; // ← Worker 주소
-  var MAX = 3, POLL_MS = 1200, POLL_MAX = 45;
+  var MAX = 6, POLL_MS = 1200, POLL_MAX = 45;
 
   var $ = function(id){ return document.getElementById(id); };
 
