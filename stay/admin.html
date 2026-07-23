@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>내 방 목록 — PodoStay 관리자 | podolang.kr/stay</title>
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#1E5BD6">
+<meta name="theme-color" content="#FFFFFF">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3CclipPath id='r'%3E%3Cpath d='M50 25 L73 43 L73 79 L27 79 L27 43 Z'/%3E%3C/clipPath%3E%3Cpath d='M50 9 L93 44 L84 55 L84 89 L16 89 L16 55 L7 44 Z M50 25 L73 43 L73 79 L27 79 L27 43 Z' fill='%23241712' fill-rule='evenodd'/%3E%3Cg clip-path='url(%23r)'%3E%3Crect x='27' y='43' width='46' height='36' fill='%23EAF4FF'/%3E%3Cpath d='M27 70 L45 48 L60 66 L73 52 L73 79 L27 79 Z' fill='%232E9E5B'/%3E%3Crect x='27' y='66' width='46' height='13' fill='%231893EF'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,7 +33,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
 :focus-visible{outline:2.5px solid var(--coral);outline-offset:2px;border-radius:6px}
 .wrap{max-width:1100px;margin:0 auto;padding:0 18px}
 
-.nav{position:sticky;top:0;z-index:40;background:rgba(245,246,253,.85);backdrop-filter:blur(14px);border-bottom:1px solid rgba(231,231,241,.9)}
+.nav{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.92);backdrop-filter:blur(14px);border-bottom:2px solid #141419}
 .nav-inner{display:flex;justify-content:space-between;align-items:center;padding:11px 0;gap:12px}
 .brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17.5px}
 .brand .mark{width:32px;height:32px;flex:0 0 auto}
@@ -62,8 +62,11 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
 
 /* ===== card grid ===== */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding-bottom:70px}
-.rcard{background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:var(--sh-sm);display:flex;flex-direction:column;transition:box-shadow .2s,border-color .2s}
-.rcard:hover{box-shadow:var(--sh-md);border-color:#dcdcec}
+.rcard{background:var(--surface);border:2px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:var(--sh-sm);display:flex;flex-direction:column;transition:box-shadow .2s,transform .2s}
+.rcard:hover{box-shadow:var(--sh-md);transform:translateY(-3px)}
+.grid .rcard:nth-child(3n+1){border-color:#FF6B6B}
+.grid .rcard:nth-child(3n+2){border-color:#14B8A6}
+.grid .rcard:nth-child(3n){border-color:#6366F1}
 
 /* carousel */
 .cz{position:relative;aspect-ratio:4/3;background:linear-gradient(180deg,#8FB8FF,#C9E0FF 46%,#5B8DF0 46%,#3F6FD8)}
@@ -106,12 +109,12 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
 .veil{position:absolute;inset:0;background:rgba(20,20,43,.55)}
 .panel{position:absolute;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:740px;height:94vh;background:var(--bg);border-radius:24px 24px 0 0;overflow:auto;box-shadow:var(--sh-lg);animation:up .3s cubic-bezier(.2,.8,.2,1)}
 @keyframes up{from{transform:translate(-50%,26px);opacity:.6}to{transform:translate(-50%,0);opacity:1}}
-.shead{position:sticky;top:0;z-index:3;background:rgba(245,246,253,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:14px 18px;display:flex;align-items:center;gap:10px}
+.shead{position:sticky;top:0;z-index:3;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-bottom:2px solid #141419;padding:14px 18px;display:flex;align-items:center;gap:10px}
 .shead h2{font-size:17px;font-weight:900;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .x{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:19px;line-height:1;display:grid;place-items:center;color:var(--muted);flex:0 0 auto}
 .sbody{padding:18px 18px 110px}
 
-.blk{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:17px;margin-bottom:13px}
+.blk{background:var(--surface);border:1.5px solid #C9CCD6;border-radius:18px;padding:17px;margin-bottom:13px}
 .bl{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:800;margin-bottom:14px}
 .bl .n{width:22px;height:22px;border-radius:7px;background:#FFEDEA;color:var(--coral);font-family:var(--mono);font-size:11px;font-weight:700;display:grid;place-items:center;flex:0 0 auto}
 .bl .hint{margin-left:auto;font-size:11px;font-weight:600;color:var(--muted-2)}
