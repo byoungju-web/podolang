@@ -5,21 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>내 방 목록 — PodoStay 관리자 | podolang.kr/stay</title>
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#4AA6FF">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='s' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2363B8FF'/%3E%3Cstop offset='1' stop-color='%237C7BF0'/%3E%3C/linearGradient%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23FFD3A6'/%3E%3Cstop offset='1' stop-color='%23FF9270'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='2' y='2' width='60' height='60' rx='17' fill='url(%23s)'/%3E%3Crect x='15' y='17' width='34' height='30' rx='11' fill='none' stroke='%23fff' stroke-width='3.4'/%3E%3Cg fill='url(%23g)'%3E%3Ccircle cx='39.5' cy='25' r='4.3'/%3E%3Ccircle cx='44' cy='28.6' r='3.8'/%3E%3Ccircle cx='36' cy='29.4' r='3.4'/%3E%3C/g%3E%3C/svg%3E">
+<meta name="theme-color" content="#1E5BD6">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3CclipPath id='r'%3E%3Cpath d='M50 25 L73 43 L73 79 L27 79 L27 43 Z'/%3E%3C/clipPath%3E%3Cpath d='M50 9 L93 44 L84 55 L84 89 L16 89 L16 55 L7 44 Z M50 25 L73 43 L73 79 L27 79 L27 43 Z' fill='%23241712' fill-rule='evenodd'/%3E%3Cg clip-path='url(%23r)'%3E%3Crect x='27' y='43' width='46' height='36' fill='%23EAF4FF'/%3E%3Cpath d='M27 70 L45 48 L60 66 L73 52 L73 79 L27 79 Z' fill='%232E9E5B'/%3E%3Crect x='27' y='66' width='46' height='13' fill='%231893EF'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
 <style>
 :root{
-  --ink:#17233F;--mid:#22355F;--coral:#FF8A6B;--bg:#EEF4FF;--surface:#FFF;
-  --line:#DCE6F5;--muted:#5B6B8C;--muted-2:#93A2BE;
-  --sky:#3D93FF;
-  --sky-deep:#2E63C8;
-  --indigo:#6E7CF0;
-  --grad-primary:linear-gradient(135deg,#4AA6FF 0%,#6E7CF0 100%);
-  --grad-band:linear-gradient(140deg,#2E63C8 0%,#4AA6FF 52%,#7B7BF0 100%);
+  --ink:#141419;--mid:#22355F;--coral:#FF6B6B;--bg:#FFFFFF;--surface:#FFF;
+  --line:#E8E8EE;--muted:#6B6B78;--muted-2:#A6A6B4;
+  --sky:#1E5BD6;
+  --sky-deep:#173FA0;
+  --indigo:#4F46E5;
+  --grad-primary:linear-gradient(135deg,#1E5BD6 0%,#4F46E5 100%);
+  --grad-band:linear-gradient(140deg,#173FA0 0%,#1E5BD6 52%,#4F46E5 100%);
   --sans:"Pretendard Variable",Pretendard,-apple-system,system-ui,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
   --sh-sm:0 2px 8px rgba(26,26,46,.05);
@@ -38,11 +38,11 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
 .brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17.5px}
 .brand .mark{width:32px;height:32px;flex:0 0 auto}
 .brand .sub{font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--coral);background:#FFEDEA;border:1px solid #FFD8D2;padding:3px 7px;border-radius:6px}
-.nav-cta{background:var(--grad-primary);color:#fff;padding:10px 16px;border-radius:11px;font-size:14px;font-weight:700}
+.nav-cta{background:#141419;color:#fff;padding:10px 16px;border-radius:11px;font-size:14px;font-weight:700}
 
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 19px;border-radius:12px;font-weight:700;font-size:14.5px;border:1.5px solid transparent;cursor:pointer;font-family:var(--sans)}
 .btn:active{transform:translateY(1px)}
-.btn-primary{background:var(--grad-primary);color:#fff;box-shadow:0 8px 22px rgba(26,26,46,.2)}
+.btn-primary{background:#141419;color:#fff;box-shadow:0 8px 22px rgba(26,26,46,.2)}
 .btn-coral{background:var(--coral);color:#fff;box-shadow:0 8px 22px rgba(255,107,107,.32)}
 .btn-ghost{background:#fff;border-color:var(--line);color:var(--ink)}
 .btn-danger{background:#fff;border-color:#FFD0D0;color:#B00}
@@ -147,7 +147,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
 
 .langtabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:13px}
 .lt{font-family:var(--mono);font-size:11.5px;font-weight:700;padding:6px 11px;border-radius:8px;border:1.5px solid var(--line);background:#fff;color:var(--muted);cursor:pointer}
-.lt.on{background:var(--grad-primary);color:#fff;border-color:var(--mid)}
+.lt.on{background:#141419;color:#fff;border-color:var(--mid)}
 .hashline{font-family:var(--mono);font-size:12px;color:var(--coral);font-weight:600;margin-top:9px}
 
 .savebar{position:sticky;bottom:0;z-index:3;background:rgba(245,246,253,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:13px 18px;display:flex;gap:9px;flex-wrap:wrap;margin:0 -18px -110px;}
@@ -251,7 +251,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
 .guestpick{display:flex;gap:9px;align-items:flex-end}
 .guestpick .f{flex:1}
 
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--grad-primary);color:#fff;font-size:14px;font-weight:600;padding:13px 20px;border-radius:13px;box-shadow:var(--sh-lg);opacity:0;pointer-events:none;transition:.28s;z-index:90}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#141419;color:#fff;font-size:14px;font-weight:600;padding:13px 20px;border-radius:13px;box-shadow:var(--sh-lg);opacity:0;pointer-events:none;transition:.28s;z-index:90}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -260,7 +260,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
 
 <div class="nav"><div class="wrap nav-inner">
   <a class="brand" href="./">
-    <svg class="mark" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="skAA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#63B8FF"/><stop offset="0.55" stop-color="#5A9BFF"/><stop offset="1" stop-color="#7C7BF0"/></linearGradient><linearGradient id="grAA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFD3A6"/><stop offset="1" stop-color="#FF9270"/></linearGradient></defs><rect x="2" y="2" width="60" height="60" rx="17" fill="url(#skAA)"/><rect x="15" y="17" width="34" height="30" rx="11" fill="none" stroke="#fff" stroke-width="3.4"/><g fill="url(#grAA)"><circle cx="39.5" cy="25" r="4.3"/><circle cx="44" cy="28.6" r="3.8"/><circle cx="36" cy="29.4" r="3.4"/></g><g stroke="#fff" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.92"><path d="M20 37.5 q3.5 -2.4 7 0 t7 0 t7 0"/><path d="M20 42.5 q3.5 -2.4 7 0 t7 0 t7 0" opacity="0.7"/></g></svg>
+    <svg class="mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="rmAA"><path d="M50 25 L73 43 L73 79 L27 79 L27 43 Z"/></clipPath></defs><path d="M50 9 L93 44 L84 55 L84 89 L16 89 L16 55 L7 44 Z M50 25 L73 43 L73 79 L27 79 L27 43 Z" fill="#241712" fill-rule="evenodd"/><g clip-path="url(#rmAA)"><rect x="27" y="43" width="46" height="36" fill="#EAF4FF"/><path d="M27 66 L40 46 L52 62 L60 50 L73 66 Z" fill="#3FB06A"/><path d="M27 68 L37 54 L47 68 Z" fill="#2E9E5B"/><path d="M55 68 L64 55 L73 68 L73 79 L55 79 Z" fill="#2E9E5B"/><g fill="#1F7A44"><path d="M43 50 l3.2 6 h-6.4 z"/><path d="M43 54.5 l4 7.5 h-8 z"/><rect x="42.2" y="61" width="1.6" height="3"/><path d="M60 52 l2.8 5.4 h-5.6 z"/><path d="M60 56 l3.6 6.8 h-7.2 z"/><rect x="59.3" y="62" width="1.4" height="2.6"/></g><path d="M27 66 Q38 62 49 65 T73 65 L73 79 L27 79 Z" fill="#1893EF"/><path d="M27 71 Q40 67 52 70 T73 70 L73 79 L27 79 Z" fill="#0E7FDB"/><path d="M30 68 q2 -6 8 -6 q6 0 6 5 q0 3 -3 3 q2 -3 -1 -4 q-4 -1 -6 3 q-1 2 -1 4 z" fill="#fff"/><path d="M50 67 q2 -5 7 -5 q5 0 5 4 q0 3 -3 3 q2 -2 -1 -3 q-3 -1 -5 2 q-1 2 -1 3 z" fill="#fff"/><path d="M28 74 q5 -2 10 0 t10 0 t8 0" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" opacity="0.9"/><g fill="#15181C"><circle cx="57" cy="65.5" r="1.7"/><path d="M57 67.4 q-1.6 1.4 -1.2 3.4 q0.3 1.6 1.8 2.2 l1.1 -1.3 q-1.3 -0.6 -1.5 -1.9 q1 1 2.4 0.7 l0.5 -1.5 q-1.6 0.2 -2.3 -1 z"/><path d="M52 74.5 q6 -1.6 11 -0.4" stroke="#15181C" stroke-width="1.4" fill="none"/></g></g></svg>
     PodoStay <span class="sub">ADMIN</span>
   </a>
   <a href="intro.html#upload" class="nav-cta">+ 방 등록</a>
