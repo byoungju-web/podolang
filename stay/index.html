@@ -57,7 +57,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
 .grid .rcard:nth-child(3n){border-color:#6366F1}
 .rcard:hover{transform:translateY(-4px);box-shadow:var(--sh-md)}
 
-.cz{position:relative;aspect-ratio:4/3;background:linear-gradient(180deg,#8FB8FF,#C9E0FF 46%,#5B8DF0 46%,#3F6FD8)}
+.cz{position:relative;aspect-ratio:4/3;background:#EEF1F6;overflow:hidden}
 .cz .track{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .cz .track::-webkit-scrollbar{display:none}
 .cz .slide{flex:0 0 100%;height:100%;scroll-snap-align:center}
@@ -96,16 +96,19 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
 
 /* booking modal */
 .modal{position:fixed;inset:0;z-index:60;display:none}
-.modal.on{display:block}
+.modal.on{display:flex;align-items:flex-end;justify-content:center}
 .modal .veil{position:absolute;inset:0;background:rgba(20,20,43,.55)}
-.modal .box{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:100%;max-width:520px;max-height:94vh;overflow:auto;background:var(--bg);border-radius:24px 24px 0 0;box-shadow:var(--sh-lg);animation:up .3s cubic-bezier(.2,.8,.2,1)}
-@keyframes up{from{transform:translate(-50%,26px)}to{transform:translate(-50%,0)}}
+.modal .box{position:relative;width:100%;max-width:520px;max-height:94vh;overflow:auto;background:var(--bg);border-radius:24px 24px 0 0;box-shadow:var(--sh-lg);animation:up .3s cubic-bezier(.2,.8,.2,1)}
+@keyframes up{from{transform:translateY(26px)}to{transform:translateY(0)}}
 .mhead{position:sticky;top:0;background:rgba(245,246,253,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:15px 18px;display:flex;align-items:center;gap:10px;z-index:2}
 .mhead h2{font-size:17px;font-weight:900;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mhead .x{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:19px;cursor:pointer;color:var(--muted)}
 .mbody{padding:18px 18px 24px}
 .mimg{aspect-ratio:16/10;border-radius:16px;overflow:hidden;background:#DDE;margin-bottom:16px}
 .mimg img{width:100%;height:100%;object-fit:cover}
+.ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#fff}
+.ph-logo{width:46px;height:46px;opacity:.95}
+.ph-t{font-size:14px;font-weight:800;text-shadow:0 1px 3px rgba(0,0,0,.18);padding:0 16px;text-align:center;max-width:90%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .blk{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:13px}
 .blk .bl{font-size:13px;font-weight:800;margin-bottom:12px}
 .f{display:flex;flex-direction:column;gap:6px;margin-bottom:11px}
@@ -290,6 +293,23 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     $('listArea').innerHTML=''; $('listArea').appendChild(g);
   }
 
+  function viewGradient(view){
+    switch(view){
+      case 'ocean': return ['#7EC8FF','#4A90E2'];
+      case 'mountain': return ['#8FD0A0','#3FA46A'];
+      case 'city': return ['#C3B7F5','#8E7CF0'];
+      case 'garden': return ['#B7E5A0','#6FB84E'];
+      default: return ['#CFE0F5','#9DB6D6'];
+    }
+  }
+  function placeholderHTML(r){
+    var g=viewGradient(r.view);
+    var label=(r.title||'PodoStay');
+    return '<div class="ph" style="background:linear-gradient(160deg,'+g[0]+','+g[1]+')">'
+      +'<svg class="ph-logo" viewBox="0 0 64 64" fill="none"><path d="M32 8 L58 28 L52 34 L52 54 L12 54 L12 34 L6 28 Z" stroke="#fff" stroke-width="3" fill="rgba(255,255,255,.14)"/><circle cx="26" cy="40" r="3.2" fill="#fff"/><path d="M18 48 q6 -5 12 0 t12 0" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>'
+      +'<span class="ph-t">'+label+'</span></div>';
+  }
+
   function card(r){
     var c=document.createElement('div'); c.className='rcard';
     c.setAttribute('role','button'); c.tabIndex=0;
@@ -301,6 +321,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
       var s=document.createElement('div'); s.className='slide';
       var u=imgUrl(r,i);
       if(u){ var im=document.createElement('img'); im.src=u; im.alt=r.title||'방'; im.loading='lazy'; s.appendChild(im); }
+      else { s.innerHTML=placeholderHTML(r); }
       track.appendChild(s);
     }
     cz.appendChild(track);
@@ -358,7 +379,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     cur=r;
     $('mTitle').textContent=(r.code?r.code+' · ':'')+(r.title||'예약');
     var u=imgUrl(r,0);
-    $('mImg').innerHTML = u ? '<img src="'+u+'" alt="">' : '';
+    $('mImg').innerHTML = u ? '<img src="'+u+'" alt="">' : placeholderHTML(r);
     var t=new Date(); t.setDate(t.getDate()+7);
     var o=new Date(t); o.setDate(o.getDate()+1);
     $('bIn').value=ymd(t); $('bOut').value=ymd(o);
