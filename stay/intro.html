@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PodoStay — 방 사진 3장으로 전세계 숙소 운영 자동화 | podolang.kr/stay</title>
-<meta name="description" content="Vision MCP가 오션뷰·2베드를 읽고, DeepL이 30개국으로 번역하고, PriceLabs가 나라별 성수기 가격을 자동 책정합니다. 사진 3장이면 전세계 리스팅이 완성됩니다. $49/월 + 예약 1%.">
+<meta name="description" content="AI가 방 사진을 읽고 30개국 언어로 리스팅을 자동 생성합니다. 나라별 성수기 가격까지 자동. 사진만 올리면 전세계 리스팅이 완성됩니다.">
 <meta property="og:title" content="PodoStay — 방 사진 3장으로 전세계 숙소 운영 자동화">
-<meta property="og:description" content="Vision MCP + DeepL + PriceLabs + Instagram MCP. Cloudflare Workers 하나로 30개국 숙소 운영을 자동화합니다.">
+<meta property="og:description" content="AI가 방 사진 한 번으로 30개국 숙소 운영을 자동화합니다.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://podolang.kr/stay">
 <meta name="theme-color" content="#1A1A2E">
@@ -377,9 +377,9 @@ section{position:relative}
 <header class="hero" id="top"><div class="wrap">
   <div class="hero-grid">
     <div>
-      <span class="eyebrow"><span class="live"><b></b>LIVE</span> Vision · DeepL · PriceLabs · Instagram MCP</span>
+      <span class="eyebrow"><span class="live"><b></b>LIVE</span> AI 자동 리스팅 · 30개국 번역 · 스마트 가격</span>
       <h1>방 사진 3장이면<br><span class="hl">전세계 숙소</span>가<br>스스로 팔립니다</h1>
-      <p class="lead">Vision AI가 <b>"오션뷰, 2베드, 미니멀"</b>을 읽어냅니다. DeepL이 30개국 언어로 리스팅을 쓰고, PriceLabs가 나라별 성수기 가격을 매기고, Instagram이 자동 포스팅합니다. <b>Cloudflare Workers 하나로.</b></p>
+      <p class="lead">AI가 <b>"오션뷰, 2베드, 미니멀"</b>을 읽어냅니다. 30개국 언어로 리스팅을 자동 생성하고, 나라별 성수기 가격을 매기고, SNS 포스팅까지 자동으로. <b>사진만 올리면 됩니다.</b></p>
       <div class="hero-ctas">
         <a class="btn btn-primary" href="#upload">사진 3장으로 시작하기
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -396,7 +396,7 @@ section{position:relative}
     <!-- SIGNATURE: live multilingual listing card -->
     <div class="stage">
       <div class="float f1"><span class="g">▲</span> Vision 태깅 완료</div>
-      <div class="float f2">DeepL <span class="g">30 langs</span> · 실시간</div>
+      <div class="float f2"><span class="g">30개 언어</span> · 실시간 번역</div>
       <div class="card" id="liveCard" aria-live="polite">
         <div class="lc-photo">
           <div class="lc-sun"></div>
@@ -519,106 +519,86 @@ section{position:relative}
 <section class="pad" id="how"><div class="wrap">
   <div class="sec-head reveal">
     <span class="sec-tag">How it works</span>
-    <h2>업로드 한 번, 나머지는 MCP가</h2>
-    <p>Cloudflare Workers 하나가 R2·D1·Queue를 오케스트레이션합니다. 사진을 올리면 리스팅 완성까지 사람 손이 필요 없습니다.</p>
+    <h2>업로드 한 번, 나머지는 AI가</h2>
+    <p>사진을 올리는 순간부터 리스팅 완성까지, 사람 손이 필요 없습니다.</p>
   </div>
 
   <div class="pipe reveal">
     <div class="stepc">
       <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v13l4-4h12a2 2 0 0 0 2-2Z"/><path d="M12 8v6M9 11h6"/></svg></div>
-      <div class="body"><div class="kh"><h3>사진 업로드</h3><span class="mcp">POST /api/upload</span></div>
-      <p>방 사진 1~3장을 올리면 R2에 저장되고 Queue가 파이프라인을 트리거합니다. <code>listingId</code> 발급.</p></div>
+      <div class="body"><div class="kh"><h3>사진 업로드</h3></div>
+      <p>방 사진 1~6장을 올리면 자동으로 저장되고 분석이 시작됩니다.</p></div>
     </div>
     <div class="stepc">
       <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></div>
-      <div class="body"><div class="kh"><h3>Vision 분석</h3><span class="mcp">VISION MCP</span></div>
-      <p>사진에서 뷰·침대 수·인테리어 톤·조명을 태깅합니다. <code>{view:"ocean", beds:2, style:"minimal", light:"sunset"}</code></p></div>
+      <div class="body"><div class="kh"><h3>Vision 분석</h3></div>
+      <p>사진에서 뷰·침대 수·인테리어 톤·조명을 자동으로 읽어냅니다.</p></div>
     </div>
     <div class="stepc">
       <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg></div>
-      <div class="body"><div class="kh"><h3>리스팅 생성</h3><span class="mcp">LISTING MCP</span></div>
+      <div class="body"><div class="kh"><h3>리스팅 생성</h3></div>
       <p>태그를 근거로 SEO 최적화된 제목·설명·편의시설을 자동 작성합니다.</p></div>
     </div>
     <div class="stepc">
       <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18Z"/></svg></div>
-      <div class="body"><div class="kh"><h3>30개국 번역</h3><span class="mcp">DEEPL MCP</span></div>
+      <div class="body"><div class="kh"><h3>30개국 번역</h3></div>
       <p>제목·설명을 30개 언어로 <b>병렬</b> 번역하고 나라별 해시태그까지 붙입니다.</p></div>
     </div>
     <div class="stepc">
       <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-      <div class="body"><div class="kh"><h3>성수기 가격</h3><span class="mcp">PRICELABS MCP</span></div>
-      <p>나라별 성수기 계수를 적용합니다. <code>Tokyo 8월 +40%</code> · <code>Bangkok 12월 +60%</code></p></div>
+      <div class="body"><div class="kh"><h3>성수기 가격</h3></div>
+      <p>나라별 성수기를 자동 반영합니다. 도쿄 8월, 방콕 12월처럼 시장별 피크를 놓치지 않습니다.</p></div>
     </div>
     <div class="stepc">
       <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor"/></svg></div>
-      <div class="body"><div class="kh"><h3>인스타 포스팅</h3><span class="mcp">INSTAGRAM MCP</span></div>
-      <p><code>#tokyostay #bangkokstay</code> 자동 게시 + Reels 커버 생성.</p></div>
+      <div class="body"><div class="kh"><h3>인스타 포스팅</h3></div>
+      <p>완성된 리스팅을 나라별 태그로 자동 게시합니다.</p></div>
     </div>
     <div class="stepc">
       <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div>
-      <div class="body"><div class="kh"><h3>정산</h3><span class="mcp">STRIPE MCP</span></div>
-      <p>월 $49 구독 + 예약 1% 수수료를 Webhook으로 자동 정산합니다.</p></div>
+      <div class="body"><div class="kh"><h3>정산</h3></div>
+      <p>구독료와 예약 수수료를 자동으로 정산합니다.</p></div>
     </div>
   </div>
 
-  <div class="codeblk reveal">
-    <div class="top"><i style="background:#FF5F57"></i><i style="background:#FEBC2E"></i><i style="background:#28C840"></i><span class="f">src/index.ts — Queue Consumer</span></div>
-<span class="cm">// 업로드 → 완성까지 전 과정을 Queue 하나가 오케스트레이션</span>
-<span class="k">export async function</span> <span class="b">queue</span>(batch, env) {
-  <span class="k">for</span> (<span class="k">const</span> msg <span class="k">of</span> batch.messages) {
-    <span class="k">const</span> tags        = <span class="k">await</span> <span class="b">visionMCP</span>(env, msg.body.keys);   <span class="cm">// 👁️  방 분석</span>
-    <span class="k">const</span> listing     = <span class="k">await</span> <span class="b">listingMCP</span>(tags);            <span class="cm">// 🏠  리스팅 초안</span>
-    <span class="k">const</span> translated  = <span class="k">await</span> <span class="b">deeplMCP</span>(env, listing);       <span class="cm">// 🌐  30개 언어</span>
-    <span class="k">const</span> prices      = <span class="k">await</span> <span class="b">pricelabsMCP</span>(env, tags);      <span class="cm">// 💰  성수기 가격</span>
-    <span class="k">await</span> <span class="b">instagramMCP</span>(env, translated);                 <span class="cm">// 📸  자동 포스팅</span>
-    msg.<span class="b">ack</span>();
-  }
-}
-  </div>
 </div></section>
 
 <!-- FEATURES -->
 <section class="pad" id="features" style="padding-top:24px"><div class="wrap">
   <div class="sec-head reveal">
     <span class="sec-tag">Capabilities</span>
-    <h2>운영대행이 사람으로 하던 걸<br>MCP 7개가 대신합니다</h2>
+    <h2>운영대행이 사람으로 하던 걸<br>AI가 대신합니다</h2>
   </div>
   <div class="feat reveal">
     <div class="fcard">
       <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></div>
       <h3>Vision 태깅</h3>
       <p>오션뷰·침대 수·인테리어 스타일·조명을 사진에서 자동 인식. 사람이 설명 쓸 필요 없습니다.</p>
-      <div class="meta">@cf/llava · GPT-4o Vision</div>
     </div>
     <div class="fcard">
       <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18Z"/></svg></div>
       <h3>30개국 번역</h3>
       <p>영어·일본어·태국어·프랑스어 등 30개 언어를 병렬 번역. 현지 어투 해시태그까지 자동.</p>
-      <div class="meta">DeepL · 병렬 처리</div>
     </div>
     <div class="fcard">
       <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
       <h3>성수기 가격 최적화</h3>
       <p>나라별 성수기 계수를 자동 적용. 도쿄 8월, 방콕 12월 — 놓칠 수 있는 피크를 자동으로 잡습니다.</p>
-      <div class="meta">PriceLabs · 국가별 계수</div>
     </div>
     <div class="fcard">
       <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor"/></svg></div>
       <h3>인스타그램 자동화</h3>
-      <p>리스팅이 완성되면 나라별 태그로 자동 포스팅 + Reels 커버 생성. 마케팅까지 무인.</p>
-      <div class="meta">Instagram Graph API</div>
+      <p>리스팅이 완성되면 나라별 태그로 SNS에 자동 게시됩니다. 마케팅까지 무인.</p>
     </div>
     <div class="fcard">
       <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div>
       <h3>구독 + 1% 정산</h3>
-      <p>월 $49 구독과 예약 1% 수수료를 Stripe Webhook으로 자동 정산. 회계 신경 쓸 일 없습니다.</p>
-      <div class="meta">Stripe · Webhook</div>
+      <p>구독료와 예약 수수료를 자동 정산합니다. 회계 신경 쓸 일 없습니다.</p>
     </div>
     <div class="fcard">
       <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10a6 6 0 0 0-11.3-2.8A4.5 4.5 0 1 0 6 16h11a4 4 0 0 0 1-7.9Z"/></svg></div>
       <h3>서버 관리 0</h3>
-      <p>Workers + R2 + D1 + Queue 위에서 돕니다. 서버 켜둘 필요도, 스케일링 걱정도 없습니다.</p>
-      <div class="meta">Cloudflare · Workers 1개</div>
+      <p>서버를 켜둘 필요도, 관리할 필요도 없습니다. 등록해두면 알아서 돕니다.</p>
     </div>
   </div>
 </div></section>
@@ -630,7 +610,7 @@ section{position:relative}
       <div>
         <span class="sec-tag">Dynamic pricing</span>
         <h3 style="margin-top:12px">고정가로<br>손해 보지 않게</h3>
-        <p>같은 방이라도 나라마다 성수기가 다릅니다. PriceLabs MCP가 시장별 계수를 자동 적용해 피크 매출을 놓치지 않습니다.</p>
+        <p>같은 방이라도 나라마다 성수기가 다릅니다. AI가 시장별 성수기를 자동 반영해 피크 매출을 놓치지 않습니다.</p>
         <div class="note">base = ocean $180 · 2beds ×1.2 → 시장별 성수기 계수 적용</div>
       </div>
       <div class="bars" id="seasonBars">
@@ -663,7 +643,7 @@ section{position:relative}
         <li><svg class="ic-y" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> 무제한 방 등록</li>
         <li><svg class="ic-y" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> 서버 관리 필요 없음</li>
       </ul>
-      <div class="deploybox">배포: <b>npx wrangler deploy</b><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>npx pages deploy dist</b></div>
+      <div class="deploybox">사진만 올리면 <b>바로 시작</b> · 설치·설정 없음</div>
     </div>
     <div class="plan plan-light">
       <div class="pname">기존 운영대행</div>
@@ -681,29 +661,27 @@ section{position:relative}
   </div>
 </div></section>
 
-<!-- STACK / DEPLOY -->
+<!-- VALUE BAND -->
 <section class="pad" id="deploy" style="padding-top:24px"><div class="wrap">
   <div class="stack-band reveal">
     <div class="stack-grid">
       <div>
-        <span class="sec-tag" style="color:var(--coral-soft)">Built on the edge</span>
-        <h3 style="margin-top:12px">Cloudflare Workers 하나면 끝</h3>
-        <p>별도 서버, 별도 인프라 없이 엣지에서 전부 돕니다. 명령어 두 줄로 배포됩니다.</p>
+        <span class="sec-tag" style="color:var(--coral-soft)">간편함</span>
+        <h3 style="margin-top:12px">사진만 올리면 끝</h3>
+        <p>복잡한 설정도, 관리할 서버도 없습니다. 방 사진을 올리는 순간 전세계 리스팅이 자동으로 만들어집니다.</p>
         <div class="badges">
-          <span class="badge2">Cloudflare Workers</span><span class="badge2">R2</span><span class="badge2">D1</span>
-          <span class="badge2">Queues</span><span class="badge2">Hono</span><span class="badge2">TypeScript</span>
-          <span class="badge2">MCP ×7</span>
+          <span class="badge2">AI 자동 분석</span><span class="badge2">30개국 번역</span>
+          <span class="badge2">스마트 가격</span><span class="badge2">SNS 자동 게시</span>
+          <span class="badge2">무제한 방 등록</span>
         </div>
       </div>
       <div class="stack-cmd">
-<span class="p"># Worker 배포</span>
-<span class="c">$ npx wrangler deploy</span>
+<span class="p"># 이렇게 간단합니다</span>
+<span class="c">1. 방 사진 올리기</span>
+<span class="c">2. AI가 리스팅 생성</span>
+<span class="c">3. 게스트에 게시</span>
 
-<span class="p"># 랜딩(Pages) 배포</span>
-<span class="c">$ npx pages deploy dist</span>
-
-<span class="p"># Secrets 등록</span>
-<span class="c">$ wrangler secret put DEEPL_KEY</span>
+<span class="p"># 나머지는 자동</span>
       </div>
     </div>
   </div>
@@ -717,13 +695,13 @@ section{position:relative}
   </div>
   <div class="faq reveal">
     <details class="qa"><summary>정말 사진 3장이면 되나요?<span class="pm"></span></summary>
-      <div class="a">네. 방 사진 1~3장을 올리면 Vision MCP가 뷰·침대 수·스타일·조명을 읽어내고, 그 태그를 근거로 제목·설명·가격·번역이 자동 생성됩니다. 사진이 많을수록 태깅 정확도는 올라갑니다.</div></details>
+      <div class="a">네. 방 사진 1~6장을 올리면 AI가 뷰·침대 수·스타일·조명을 읽어내고, 그것을 근거로 제목·설명·가격·번역이 자동 생성됩니다. 사진이 많을수록 정확도는 올라갑니다.</div></details>
     <details class="qa"><summary>번역은 몇 개 언어까지 되나요?<span class="pm"></span></summary>
       <div class="a">기본 30개 언어를 병렬로 번역합니다. 영어·일본어·태국어·프랑스어·스페인어·독일어·중국어·베트남어 등, 각 시장에 맞는 해시태그(<code>#tokyostay</code>, <code>#bangkokstay</code>)까지 자동으로 붙습니다.</div></details>
     <details class="qa"><summary>가격은 어떻게 정해지나요?<span class="pm"></span></summary>
-      <div class="a">PriceLabs MCP가 나라별 성수기 계수를 적용합니다. 예를 들어 도쿄는 8월 +40%, 방콕은 12월 +60%처럼 시장별 피크를 자동 반영해 고정가로 인한 손해를 막습니다.</div></details>
+      <div class="a">AI가 나라별 성수기를 적용합니다. 예를 들어 도쿄는 8월, 방콕은 12월처럼 시장별 피크를 자동 반영해 고정가로 인한 손해를 막습니다.</div></details>
     <details class="qa"><summary>서버를 직접 운영해야 하나요?<span class="pm"></span></summary>
-      <div class="a">아니요. 전체 파이프라인이 Cloudflare Workers + R2 + D1 + Queue 위에서 돕니다. <code>npx wrangler deploy</code> 한 줄이면 배포되고, 이후 스케일링·서버 관리는 신경 쓸 필요가 없습니다.</div></details>
+      <div class="a">아니요. 별도로 서버를 켜두거나 관리할 필요가 없습니다. 방을 등록해두면 알아서 돕니다.</div></details>
     <details class="qa"><summary>비용 구조가 어떻게 되나요?<span class="pm"></span></summary>
       <div class="a">월 $49 구독 + 예약 1% 수수료입니다. 방 개수 제한이 없어, 운영대행 20%와 비교하면 예약이 늘수록 절감 폭이 커집니다.</div></details>
   </div>
@@ -754,7 +732,7 @@ section{position:relative}
     <a href="#upload">데모</a><a href="admin.html">내 방 목록</a><a href="#how">작동 방식</a><a href="#features">기능</a><a href="#pricing">가격</a><a href="#faq">FAQ</a><a href="https://podolang.kr">PodoLang</a>
   </div>
   <div class="copy">
-    <div class="mono">podolang.kr/stay · Vision MCP + DeepL + PriceLabs + Instagram MCP</div>
+    <div class="mono">podolang.kr/stay · AI 숙소 운영 자동화</div>
     © 2026 BJ LEE · All Rights Reserved · PODOLANG.kr · PodoStay · 무단 복제 및 배포 금지
   </div>
 </div></footer>
