@@ -69,7 +69,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
 .cz .dots{position:absolute;bottom:9px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:2}
 .cz .dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.55);transition:.2s}
 .cz .dot.on{background:#fff;width:18px;border-radius:3px}
-.cz .cnt{position:absolute;top:9px;right:9px;font-family:var(--mono);font-size:10.5px;font-weight:700;background:rgba(20,20,43,.7);color:#fff;padding:4px 9px;border-radius:999px;z-index:2}
+.cz .cnt{position:absolute;top:9px;left:9px;font-family:var(--mono);font-size:10.5px;font-weight:700;background:rgba(20,20,43,.7);color:#fff;padding:4px 9px;border-radius:999px;z-index:2}
 .cz .swipe{position:absolute;top:9px;left:9px;font-size:10.5px;font-weight:700;background:rgba(255,255,255,.9);color:var(--mid);padding:4px 9px;border-radius:999px;z-index:2}
 
 /* card body */
@@ -204,7 +204,10 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
 .bk .ba{display:flex;gap:8px;margin-top:11px}
 
 /* 방 등록번호 · 주소 · 연락처 */
-.cz .code{position:absolute;bottom:9px;left:9px;font-family:var(--mono);font-size:10.5px;font-weight:800;background:rgba(20,20,43,.78);color:#fff;padding:4px 9px;border-radius:7px;z-index:2;letter-spacing:.04em}
+.cz .code{position:absolute;bottom:9px;right:9px;font-family:var(--mono);font-size:10.5px;font-weight:800;background:rgba(20,20,43,.78);color:#fff;padding:4px 9px;border-radius:7px;z-index:2;letter-spacing:.04em}
+.cz .pub{position:absolute;top:9px;right:9px;font-size:10.5px;font-weight:800;padding:4px 10px;border-radius:999px;z-index:2}
+.cz .pub.on{background:#22C55E;color:#fff}
+.cz .pub.off{background:rgba(255,255,255,.92);color:var(--muted)}
 .loc{display:flex;align-items:flex-start;gap:6px;font-size:12.5px;color:var(--muted);font-weight:600;margin-bottom:9px;line-height:1.45}
 .loc svg{width:14px;height:14px;flex:0 0 auto;margin-top:2px;color:var(--coral)}
 .ctts{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
@@ -250,7 +253,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     </svg>
     PodoStay <span class="sub">ADMIN</span>
   </a>
-  <a href="./#upload" class="nav-cta">+ 방 등록</a>
+  <a href="intro.html#upload" class="nav-cta">+ 방 등록</a>
 </div></div>
 
 <div class="wrap">
@@ -393,6 +396,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
 
       <div class="savebar">
         <button class="btn btn-coral" id="saveBtn">저장하기</button>
+        <button class="btn btn-ghost btn-sm" id="pubBtn">게스트에 게시</button>
         <button class="btn btn-ghost btn-sm" id="copyBtn">복사</button>
         <span class="sp"></span>
         <button class="btn btn-danger btn-sm" id="delBtn">삭제</button>
@@ -795,7 +799,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
       area.innerHTML='<div class="empty">'+
         '<div class="eic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg></div>'+
         '<h3>아직 등록한 방이 없습니다</h3><p>방 사진 3장을 올리면 여기에 쌓입니다.</p>'+
-        '<a class="btn btn-primary" href="./#upload">첫 방 등록하기</a></div>';
+        '<a class="btn btn-primary" href="intro.html#upload">첫 방 등록하기</a></div>';
       return;
     }
 
@@ -825,6 +829,10 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     cnt.textContent=photos.length+'장'; cz.appendChild(cnt);
     var cd=document.createElement('span'); cd.className='code';
     cd.textContent=f.code||'PS-0000'; cz.appendChild(cd);
+    var pub=document.createElement('span');
+    pub.className='pub '+(r.published?'on':'off');
+    pub.textContent=r.published?'● 게시중':'비공개';
+    cz.appendChild(pub);
     if(photos.length>1){
       var sw=document.createElement('span'); sw.className='swipe'; sw.textContent='← 밀어서 보기';
       cz.appendChild(sw);
@@ -994,6 +1002,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     if(keys.length) showLang(keys[0]); else { curLang=null; $('dTitle').value=''; $('dDesc').value=''; $('dHash').textContent=''; }
 
     renderPrices();
+    updatePubBtn();
     $('sheet').className='sheet on';
     document.body.style.overflow='hidden';
   }
@@ -1040,6 +1049,12 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     cur.priceKRW=cur.info.price;
   }
 
+  function updatePubBtn(){
+    var b=$('pubBtn'); if(!b||!cur) return;
+    b.textContent = cur.published ? '게시 취소' : '게스트에 게시';
+    b.className = 'btn btn-sm '+(cur.published?'btn-danger':'btn-ghost');
+  }
+
   $('saveBtn').onclick=function(){
     if(!cur) return;
     collect();
@@ -1048,6 +1063,44 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
       $('shTitle').textContent=titleOf(cur);
     }).catch(function(){ toast('저장하지 못했습니다'); });
   };
+
+  $('pubBtn').onclick=function(){
+    if(!cur) return;
+    collect();
+    var f=cur.info;
+    if(!cur.published){
+      if(!f.price){ toast('게시하려면 1박 요금을 먼저 입력해 주세요'); return; }
+      cur.published=true; cur.publishedAt=new Date().toISOString();
+    } else {
+      cur.published=false;
+    }
+    var makePublished=cur.published;
+    putRow(cur).then(function(){
+      updatePubBtn(); render();
+      pushToServer(cur, !makePublished);
+      toast(makePublished ? '게스트 화면에 게시했습니다' : '게시를 취소했습니다');
+    }).catch(function(){ toast('처리하지 못했습니다'); });
+  };
+
+  /* 서버(Worker)로 게시/취소 전송 — 서버 없으면 조용히 무시 */
+  function pushToServer(r, unpublish){
+    var f=r.info||{}, ct=contactOf(r);
+    var payload={
+      id:r.id, code:f.code, hostId:hostId(), published:!unpublish,
+      title:titleOf(r), region:f.region, address:f.address,
+      area:f.area, beds:f.beds, adults:f.adults, children:f.children,
+      price:f.price, listPrice:f.listPrice, salePrice:f.salePrice,
+      checkIn:f.checkIn, checkOut:f.checkOut, cancelDays:f.cancelDays,
+      items:f.items, etc:f.etc, view:f.view, style:f.style,
+      contact:ct, translations:r.translations||null, prices:r.prices||null
+    };
+    try{
+      fetch(API_BASE+'/api/rooms/publish',{
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(payload)
+      }).catch(function(){});
+    }catch(e){}
+  }
 
   $('copyBtn').onclick=function(){
     if(!cur) return;
