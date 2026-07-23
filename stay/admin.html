@@ -422,11 +422,18 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     <div class="sbody">
 
       <div class="blk">
-        <div class="bl"><span class="n">1</span>숙박 일정<span class="hint">인원은 게스트가 예약 시 입력</span></div>
-        <div class="fgrid">
+        <div class="bl"><span class="n">1</span>숙박 일정 · 인원</div>
+        <div class="fgrid" style="margin-bottom:11px">
           <div class="f"><label>체크인</label><input id="pIn" type="date"></div>
           <div class="f"><label>체크아웃</label><input id="pOut" type="date"></div>
         </div>
+        <div class="fgrid">
+          <div class="f"><label>성인</label>
+            <div class="inwrap"><input id="pAdults" class="hassuf" type="number" min="1" step="1" inputmode="numeric" value="2"><span class="suf">명</span></div></div>
+          <div class="f"><label>어린이</label>
+            <div class="inwrap"><input id="pKids" class="hassuf" type="number" min="0" step="1" inputmode="numeric" value="0"><span class="suf">명</span></div></div>
+        </div>
+        <div id="pCapHint" style="font-size:11.5px;color:var(--muted-2);font-weight:600;margin-top:9px"></div>
       </div>
 
       <div class="blk">
@@ -1324,6 +1331,14 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     var t=new Date(); t.setDate(t.getDate()+7);
     var o=new Date(t); o.setDate(o.getDate()+1);
     $('pIn').value=ymd(t); $('pOut').value=ymd(o);
+    $('pAdults').value=f.baseGuests||2; $('pKids').value=0;
+    var cap=$('pCapHint');
+    if(cap){
+      var parts=['기준 '+(f.baseGuests||2)+'명'];
+      if(f.maxGuests>0) parts.push('최대 '+f.maxGuests+'명');
+      if(f.extraFee>0) parts.push('초과 시 1명당 '+won(f.extraFee)+'원/박');
+      cap.textContent=parts.join(' · ');
+    }
     fillGuestSelect();
     calcPay();
     $('payGoLabel').textContent='결제하기';
@@ -1331,7 +1346,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     $('paySheet').className='sheet on';
     document.body.style.overflow='hidden';
   }
-  ['pIn','pOut'].forEach(function(id){
+  ['pIn','pOut','pAdults','pKids'].forEach(function(id){
     var e=$(id); if(e) e.addEventListener('change', calcPay);
   });
 
@@ -1339,25 +1354,40 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     if(!payRoom) return null;
     var f=info(payRoom), n=nights();
     var pl=PLANS[myPlan()]||PLANS.STARTER;
-    var total=Math.round((f.price||0)*n);
-    var fee=Math.round(total*pl.percent);
-    var payout=total-fee;
-    var g=Number(f.baseGuests||2);
+    var adults=Number($('pAdults').value||0), kids=Number($('pKids').value||0);
+    var g=adults+kids;
+    var base=Number(f.baseGuests||2), max=Number(f.maxGuests||0), extraFee=Number(f.extraFee||0);
 
     var bd=$('payBd');
     if(!n){
       bd.innerHTML='<div class="bdrow"><span class="k">체크아웃 날짜를 체크인 이후로 정해 주세요</span></div>';
       $('payGo').disabled=true; return null;
     }
+    if(max>0 && g>max){
+      bd.innerHTML='<div class="bdrow"><span class="k" style="color:#B00">최대 '+max+'명까지 예약할 수 있습니다</span></div>';
+      $('payGo').disabled=true; return null;
+    }
     $('payGo').disabled=false;
-    bd.innerHTML=
-      '<div class="bdrow"><span class="k">1박 요금 × '+n+'박</span><span class="v">'+won(f.price)+'원 × '+n+'</span></div>'+
-      '<div class="bdrow"><span class="k">숙박 인원</span><span class="v">'+g+'명</span></div>'+
+    var extraGuests=Math.max(0, g-base);
+    var roomTotal=Math.round((f.price||0)*n);
+    var extraTotal=extraGuests*extraFee*n;
+    var total=roomTotal+extraTotal;
+    var fee=Math.round(total*pl.percent);
+    var payout=total-fee;
+
+    var html=
+      '<div class="bdrow"><span class="k">1박 요금 × '+n+'박</span><span class="v">'+won(roomTotal)+'원</span></div>'+
+      '<div class="bdrow"><span class="k">숙박 인원</span><span class="v">성인 '+adults+(kids?' · 어린이 '+kids:'')+' (총 '+g+'명)</span></div>';
+    if(extraGuests>0 && extraFee>0){
+      html+='<div class="bdrow"><span class="k">추가 인원 '+extraGuests+'명 × '+n+'박</span><span class="v">+ '+won(extraTotal)+'원</span></div>';
+    }
+    html+=
       '<div class="bdrow fee"><span class="k">PodoStay 수수료 <span class="sub">'+pl.name+' '+(pl.percent*100)+'%</span></span><span class="v">− '+won(fee)+'원</span></div>'+
       '<div class="bdrow"><span class="k">호스트 정산액</span><span class="v">'+won(payout)+'원</span></div>'+
       '<div class="bdrow tot"><span class="k">총 결제금액</span><span class="v">'+won(total)+'원</span></div>'+
       (pl.monthly? '<div class="bdrow"><span class="k">월 구독료</span><span class="v">$'+pl.monthly+' / 월</span></div>':'');
-    return {nights:n,total:total,fee:fee,payout:payout,guests:g,plan:pl};
+    bd.innerHTML=html;
+    return {nights:n,total:total,fee:fee,payout:payout,guests:g,adults:adults,children:kids,extraGuests:extraGuests,extraTotal:extraTotal,plan:pl};
   }
 
   $('payGo').onclick=function(){
@@ -1392,7 +1422,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
         guestPodo: gobj? (gobj.podotalk||'') : '',
         guestKakao: gobj? (gobj.kakao||'') : '',
         checkin:$('pIn').value, checkout:$('pOut').value,
-        nights:c.nights, guests:c.guests,
+        nights:c.nights, guests:c.guests, adults:c.adults, children:c.children, extraGuests:c.extraGuests,
         amount:c.total, fee:c.fee, payout:c.payout,
         plan:myPlan(), feePercent:c.plan.percent,
         status:'paid', demo:!!demo, createdAt:new Date().toISOString()
