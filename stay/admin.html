@@ -217,6 +217,15 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
 .ctt.tel{background:#EFF6FF;border-color:#CFE1FF;color:#24509B}
 
 /* 설정 / 게스트 */
+/* Vision 분석 결과 컬러 태그 */
+.vchips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.vchip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:800;padding:5px 11px;border-radius:9px;line-height:1}
+.vchip .vic{font-size:12px}
+.vchip.view{background:#E7F3FF;color:#1B6FC4;border:1px solid #C4E1FA}
+.vchip.style{background:#F3EDFF;color:#6B34C4;border:1px solid #DDCEF9}
+.vchip.light{background:#FFF4E0;color:#B5730A;border:1px solid #F7E0AC}
+.vchip.bed{background:#EAF7EF;color:#1E8A50;border:1px solid #C5E9D3}
+
 .setrow{display:flex;align-items:center;gap:10px;padding:12px 0;font-size:14px}
 .setrow+.setrow{border-top:1px dashed var(--line)}
 .setrow .k{color:var(--muted);font-weight:600;flex:1}
@@ -312,7 +321,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
       </div>
 
       <div class="blk">
-        <div class="bl"><span class="n">2</span>연락처<span class="hint">비워두면 호스트 설정값 사용</span></div>
+        <div class="bl"><span class="n">2</span>연락처<span class="hint">게스트에게 안내됨 · 비워두면 호스트값</span></div>
         <div class="fgrid">
           <div class="f"><label>전화번호</label><input id="iPhone" type="tel" inputmode="tel" placeholder="010-0000-0000"></div>
           <div class="f"><label>이메일</label><input id="iMail" type="email" inputmode="email" placeholder="host@podolang.kr"></div>
@@ -322,7 +331,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
       </div>
 
       <div class="blk">
-        <div class="bl"><span class="n">2</span>요금<span class="hint">1박 요금만 넣으면 나라별 가격 자동 계산</span></div>
+        <div class="bl"><span class="n">3</span>요금<span class="hint">1박 요금만 넣으면 나라별 가격 자동 계산</span></div>
         <div class="fgrid one" style="margin-bottom:11px">
           <div class="f"><label>1박 요금 (기준)</label>
             <div class="inwrap"><input id="iPrice" class="hassuf big" type="number" min="0" step="1000" placeholder="0" inputmode="numeric"><span class="suf">원</span></div>
@@ -337,7 +346,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
       </div>
 
       <div class="blk">
-        <div class="bl"><span class="n">3</span>인원 · 추가요금<span class="hint">기준 초과 시 1명당 추가</span></div>
+        <div class="bl"><span class="n">4</span>인원 · 추가요금<span class="hint">기준 초과 시 1명당 추가</span></div>
         <div class="fgrid" style="margin-bottom:11px">
           <div class="f"><label>기준 인원</label>
             <div class="inwrap"><input id="iBase" class="hassuf" type="number" min="1" step="1" placeholder="2" inputmode="numeric"><span class="suf">명</span></div>
@@ -357,7 +366,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
       </div>
 
       <div class="blk">
-        <div class="bl"><span class="n">4</span>예약 규정</div>
+        <div class="bl"><span class="n">5</span>예약 규정</div>
         <div class="fgrid">
           <div class="f"><label>예약 무료취소 가능</label>
             <div class="inwrap"><input id="iCancel" class="hassuf" type="number" min="0" step="1" placeholder="7" inputmode="numeric"><span class="suf">일 전</span></div></div>
@@ -367,19 +376,19 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
       </div>
 
       <div class="blk">
-        <div class="bl"><span class="n">5</span>보유 품목<span class="hint">눌러서 선택</span></div>
+        <div class="bl"><span class="n">6</span>보유 품목<span class="hint">눌러서 선택</span></div>
         <div class="chips" id="itemChips"></div>
         <div class="f" style="margin-top:12px"><label>기타 품목</label>
           <input id="iEtc" type="text" placeholder="예: 건조기, 커피머신, 유아용 침대"></div>
       </div>
 
       <div class="blk">
-        <div class="bl"><span class="n">6</span>나라별 1박 가격<span class="hint">자동 계산</span></div>
+        <div class="bl"><span class="n">7</span>나라별 1박 가격<span class="hint">자동 계산</span></div>
         <div class="pricegrid" id="dPrices"></div>
       </div>
 
       <div class="blk">
-        <div class="bl"><span class="n">7</span>Vision 분석 결과<span class="hint">수정 가능</span></div>
+        <div class="bl"><span class="n">8</span>Vision 분석 결과<span class="hint">수정 가능</span></div>
         <div class="fgrid">
           <div class="f"><label>뷰</label>
             <select id="iView"><option value="ocean">오션뷰</option><option value="city">시티뷰</option><option value="mountain">마운틴뷰</option><option value="garden">가든뷰</option><option value="none">뷰 없음</option></select></div>
@@ -393,7 +402,11 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
       </div>
 
       <div class="blk">
-        <div class="bl"><span class="n">8</span>언어별 리스팅<span class="hint">수정 가능</span></div>
+        <div class="bl"><span class="n">9</span>언어별 리스팅<span class="hint">수정 가능</span></div>
+        <div style="background:#FFF8F7;border:1px solid #FFD8D2;border-radius:11px;padding:11px 13px;margin-bottom:13px;font-size:12.5px;color:#B23A2E;line-height:1.55">
+          제목·설명은 처음 등록 때 자동 생성된 값입니다. <b>방 이름과 다르면</b> 아래에서 직접 고치거나 <b>“방 이름으로 채우기”</b>를 누르세요.
+        </div>
+        <button type="button" class="btn btn-ghost btn-sm" id="syncTitleBtn" style="margin-bottom:13px">방 이름으로 제목 채우기</button>
         <div class="langtabs" id="dTabs"></div>
         <div class="f" style="margin-bottom:11px"><label>제목</label><input id="dTitle" type="text"></div>
         <div class="f"><label>설명</label><textarea id="dDesc"></textarea></div>
@@ -667,6 +680,8 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
   ];
   var VIEW_KO={ocean:'오션뷰',city:'시티뷰',mountain:'마운틴뷰',garden:'가든뷰',none:'뷰 없음'};
   var STYLE_KO={minimal:'미니멀',cozy:'코지',luxury:'럭셔리',modern:'모던'};
+  var BED_KO={single:'싱글',double:'더블',queen:'퀸',king:'킹'};
+  var LIGHT_KO={sunset:'노을',bright:'밝음',dim:'은은함'};
   var PREF=['KO','EN','JA','TH','FR','ES','DE'];
 
   var urls=[], rows=[], bookings=[], guests=[], newest=true, cur=null, curLang=null, gEdit=null;
@@ -894,11 +909,18 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     specs.push('IN <b>'+(f.checkIn||'-')+'</b> / OUT <b>'+(f.checkOut||'-')+'</b>');
     if(f.cancelDays>0) specs.push('무료취소 <b>'+f.cancelDays+'</b>일 전');
     if(f.payDay>0)     specs.push('자동결제 <b>'+f.payDay+'</b>일');
-    if(f.view) specs.push(VIEW_KO[f.view]||f.view);
     specs.forEach(function(x){
       var e=document.createElement('span'); e.className='spec'; e.innerHTML=x; sp.appendChild(e);
     });
     bd.appendChild(sp);
+
+    /* Vision 분석 결과 — 컬러 태그 */
+    var vc=document.createElement('div'); vc.className='vchips';
+    if(f.view && f.view!=='none'){ var v1=document.createElement('span'); v1.className='vchip view'; v1.innerHTML='<span class="vic">🌊</span>'+(VIEW_KO[f.view]||f.view); vc.appendChild(v1); }
+    if(f.bedType){ var v2=document.createElement('span'); v2.className='vchip bed'; v2.innerHTML='<span class="vic">🛏️</span>'+(BED_KO[f.bedType]||f.bedType); vc.appendChild(v2); }
+    if(f.style){ var v3=document.createElement('span'); v3.className='vchip style'; v3.innerHTML='<span class="vic">✨</span>'+(STYLE_KO[f.style]||f.style); vc.appendChild(v3); }
+    if(f.light){ var v4=document.createElement('span'); v4.className='vchip light'; v4.innerHTML='<span class="vic">💡</span>'+(LIGHT_KO[f.light]||f.light); vc.appendChild(v4); }
+    if(vc.children.length) bd.appendChild(vc);
 
     var addr=[f.region,f.address].filter(Boolean).join(' · ');
     if(addr){
@@ -1030,6 +1052,15 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
   }
 
   $('iPrice').addEventListener('input', renderPrices);
+
+  /* 현재 언어 탭 제목을 방 이름으로 채우기 */
+  $('syncTitleBtn').onclick=function(){
+    if(!cur) return;
+    var name=$('iName').value.trim();
+    if(!name){ toast('먼저 기본 정보에서 방 이름을 입력해 주세요'); return; }
+    $('dTitle').value=name;
+    toast('제목을 방 이름으로 채웠습니다');
+  };
 
   function collect(){
     stashLang();
