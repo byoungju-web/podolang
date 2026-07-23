@@ -1126,7 +1126,19 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     }).catch(function(){ toast('처리하지 못했습니다'); });
   };
 
-  /* 서버(Worker)로 게시/취소 전송 — 서버 없으면 조용히 무시 */
+  /* Blob -> base64 data URL */
+  function blobToDataURL(b){
+    return new Promise(function(res){
+      try{
+        var fr=new FileReader();
+        fr.onload=function(){ res(fr.result); };
+        fr.onerror=function(){ res(null); };
+        fr.readAsDataURL(b);
+      }catch(e){ res(null); }
+    });
+  }
+
+  /* 서버(Worker)로 게시/취소 전송 — 사진 포함 */
   function pushToServer(r, unpublish){
     var f=r.info||{}, ct=contactOf(r);
     var payload={
@@ -1138,12 +1150,27 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
       items:f.items, etc:f.etc, view:f.view, style:f.style,
       contact:ct, translations:r.translations||null, prices:r.prices||null
     };
-    try{
-      fetch(API_BASE+'/api/rooms/publish',{
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(payload)
-      }).catch(function(){});
-    }catch(e){}
+
+    function send(){
+      try{
+        fetch(API_BASE+'/api/rooms/publish',{
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(payload)
+        }).catch(function(){});
+      }catch(e){}
+    }
+
+    /* 게시일 때만 사진을 base64로 변환해 함께 전송 */
+    var photos=(r.photos||[]);
+    if(!unpublish && photos.length){
+      var jobs=photos.slice(0,8).map(function(b){ return blobToDataURL(b); });
+      Promise.all(jobs).then(function(list){
+        payload.photos=list.filter(Boolean);
+        send();
+      }).catch(send);
+    } else {
+      send();
+    }
   }
 
   $('copyBtn').onclick=function(){
