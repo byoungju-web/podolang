@@ -141,7 +141,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     </svg>
     PodoStay
   </a>
-  <a class="nav-right" href="intro.html" style="color:var(--muted)">서비스 소개 →</a>
+  <span class="nav-right">podolang.kr/stay</span>
 </div></div>
 
 <div class="wrap">
@@ -176,6 +176,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
           <div class="f"><label>성인</label><input id="bAdults" type="number" min="1" step="1" inputmode="numeric" value="2"></div>
           <div class="f"><label>어린이</label><input id="bKids" type="number" min="0" step="1" inputmode="numeric" value="0"></div>
         </div>
+        <div id="capHint" style="font-size:11.5px;color:var(--muted-2);font-weight:600;margin-top:9px"></div>
       </div>
 
       <div class="blk">
@@ -184,6 +185,10 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
         <div class="two">
           <div class="f"><label>전화번호</label><input id="bPhone" type="tel" inputmode="tel" placeholder="010-0000-0000"></div>
           <div class="f"><label>이메일</label><input id="bMail" type="email" inputmode="email" placeholder="you@example.com"></div>
+        </div>
+        <div class="two">
+          <div class="f"><label>포도톡 ID <span style="color:var(--muted-2);font-weight:500">(선택)</span></label><input id="bPodo" type="text" placeholder="@id"></div>
+          <div class="f"><label>카카오톡 ID <span style="color:var(--muted-2);font-weight:500">(선택)</span></label><input id="bKakao" type="text" placeholder="kakao_id"></div>
         </div>
       </div>
 
@@ -325,7 +330,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     var specs=[];
     if(r.area>0) specs.push('<b>'+r.area+'</b>m²');
     if(r.beds>0) specs.push('침대 <b>'+r.beds+'</b>개');
-    if(r.adults>0) specs.push('성인 <b>'+r.adults+'</b>');
+    if(r.baseGuests>0) specs.push('기준 <b>'+r.baseGuests+'</b>명'+(r.maxGuests>0?' · 최대 '+r.maxGuests:''));
     specs.forEach(function(x){ var e=document.createElement('span'); e.className='rspec'; e.innerHTML=x; sp.appendChild(e); });
     bd.appendChild(sp);
 
@@ -358,7 +363,14 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     var t=new Date(); t.setDate(t.getDate()+7);
     var o=new Date(t); o.setDate(o.getDate()+1);
     $('bIn').value=ymd(t); $('bOut').value=ymd(o);
-    $('bAdults').value=r.adults||2; $('bKids').value=0;
+    $('bAdults').value=r.baseGuests||2; $('bKids').value=0;
+    var cap=$('capHint');
+    if(cap){
+      var parts=['기준 '+(r.baseGuests||2)+'명'];
+      if(r.maxGuests>0) parts.push('최대 '+r.maxGuests+'명');
+      if(r.extraFee>0) parts.push('초과 시 1명당 '+won(r.extraFee)+'원/박');
+      cap.textContent=parts.join(' · ');
+    }
     $('bGoLabel').textContent='예약하고 결제하기'; $('bGo').disabled=false;
     calc();
     $('modal').className='modal on'; document.body.style.overflow='hidden';
@@ -367,16 +379,31 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
 
   function calc(){
     if(!cur) return null;
-    var n=nights(), total=Math.round((cur.price||0)*n);
-    var g=(Number($('bAdults').value||0))+(Number($('bKids').value||0));
+    var n=nights();
+    var adults=Number($('bAdults').value||0), kids=Number($('bKids').value||0);
+    var g=adults+kids;
+    var base=Number(cur.baseGuests||2), max=Number(cur.maxGuests||0), extraFee=Number(cur.extraFee||0);
     var bd=$('bBd');
     if(!n){ bd.innerHTML='<div class="row"><span class="k">체크아웃을 체크인 이후로 정해 주세요</span></div>'; $('bGo').disabled=true; return null; }
+    if(max>0 && g>max){
+      bd.innerHTML='<div class="row"><span class="k" style="color:#B00">최대 '+max+'명까지 예약할 수 있습니다</span></div>';
+      $('bGo').disabled=true; return null;
+    }
     $('bGo').disabled=false;
-    bd.innerHTML=
-      '<div class="row"><span class="k">1박 요금 × '+n+'박</span><span class="v">'+won(cur.price)+'원 × '+n+'</span></div>'+
-      '<div class="row"><span class="k">숙박 인원</span><span class="v">'+g+'명</span></div>'+
-      '<div class="row tot"><span class="k">총 결제금액</span><span class="v">'+won(total)+'원</span></div>';
-    return {nights:n,total:total,guests:g};
+    var extraGuests=Math.max(0, g-base);
+    var roomTotal=Math.round((cur.price||0)*n);
+    var extraTotal=extraGuests*extraFee*n;
+    var total=roomTotal+extraTotal;
+    var html=
+      '<div class="row"><span class="k">1박 요금 × '+n+'박</span><span class="v">'+won(roomTotal)+'원</span></div>'+
+      '<div class="row"><span class="k">숙박 인원</span><span class="v">'+
+        '성인 '+adults+(kids?' · 어린이 '+kids:'')+' (총 '+g+'명)</span></div>';
+    if(extraGuests>0 && extraFee>0){
+      html+='<div class="row"><span class="k">추가 인원 '+extraGuests+'명 × '+n+'박</span><span class="v">+ '+won(extraTotal)+'원</span></div>';
+    }
+    html+='<div class="row tot"><span class="k">총 결제금액</span><span class="v">'+won(total)+'원</span></div>';
+    bd.innerHTML=html;
+    return {nights:n,total:total,guests:g,adults:adults,children:kids,extraGuests:extraGuests,extraTotal:extraTotal};
   }
 
   $('bGo').onclick=function(){
@@ -388,9 +415,10 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     var body={
       listingId: cur.id, roomCode: cur.code, hostId: cur.hostId,
       checkin:$('bIn').value, checkout:$('bOut').value,
-      adults:Number($('bAdults').value||0), children:Number($('bKids').value||0),
-      totalAmount: c.total,
-      guest:{ name:name, phone:$('bPhone').value.trim(), email:$('bMail').value.trim() }
+      adults:c.adults, children:c.children, guests:c.guests, extraGuests:c.extraGuests,
+      totalAmount: c.total, extraAmount: c.extraTotal,
+      guest:{ name:name, phone:$('bPhone').value.trim(), email:$('bMail').value.trim(),
+              podotalk:$('bPodo').value.trim(), kakao:$('bKakao').value.trim() }
     };
     var ctrl=('AbortController' in window)?new AbortController():null;
     var tm=setTimeout(function(){ if(ctrl) ctrl.abort(); },15000);
