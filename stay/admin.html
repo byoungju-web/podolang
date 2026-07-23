@@ -337,12 +337,18 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
       </div>
 
       <div class="blk">
-        <div class="bl"><span class="n">3</span>인원 · 시간</div>
+        <div class="bl"><span class="n">3</span>인원 · 추가요금<span class="hint">기준 초과 시 1명당 추가</span></div>
         <div class="fgrid" style="margin-bottom:11px">
-          <div class="f"><label>성인</label>
-            <div class="inwrap"><input id="iAdults" class="hassuf" type="number" min="0" step="1" placeholder="2" inputmode="numeric"><span class="suf">명</span></div></div>
-          <div class="f"><label>어린이</label>
-            <div class="inwrap"><input id="iKids" class="hassuf" type="number" min="0" step="1" placeholder="0" inputmode="numeric"><span class="suf">명</span></div></div>
+          <div class="f"><label>기준 인원</label>
+            <div class="inwrap"><input id="iBase" class="hassuf" type="number" min="1" step="1" placeholder="2" inputmode="numeric"><span class="suf">명</span></div>
+            <div class="note">이 인원까지는 <b>1박 요금</b> 그대로</div></div>
+          <div class="f"><label>최대 인원</label>
+            <div class="inwrap"><input id="iMax" class="hassuf" type="number" min="1" step="1" placeholder="4" inputmode="numeric"><span class="suf">명</span></div></div>
+        </div>
+        <div class="fgrid one" style="margin-bottom:11px">
+          <div class="f"><label>추가 인원당 요금 (1박)</label>
+            <div class="inwrap"><input id="iExtra" class="hassuf" type="number" min="0" step="1000" placeholder="0" inputmode="numeric"><span class="suf">원</span></div>
+            <div class="note">기준 인원 초과 시 <b>1명 · 1박당</b> 붙는 금액</div></div>
         </div>
         <div class="fgrid">
           <div class="f"><label>체크인 시간</label><input id="iIn" type="time"></div>
@@ -416,16 +422,10 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     <div class="sbody">
 
       <div class="blk">
-        <div class="bl"><span class="n">1</span>숙박 일정</div>
-        <div class="fgrid" style="margin-bottom:11px">
+        <div class="bl"><span class="n">1</span>숙박 일정<span class="hint">인원은 게스트가 예약 시 입력</span></div>
+        <div class="fgrid">
           <div class="f"><label>체크인</label><input id="pIn" type="date"></div>
           <div class="f"><label>체크아웃</label><input id="pOut" type="date"></div>
-        </div>
-        <div class="fgrid">
-          <div class="f"><label>성인</label>
-            <div class="inwrap"><input id="pAdults" class="hassuf" type="number" min="1" step="1" inputmode="numeric"><span class="suf">명</span></div></div>
-          <div class="f"><label>어린이</label>
-            <div class="inwrap"><input id="pKids" class="hassuf" type="number" min="0" step="1" inputmode="numeric"><span class="suf">명</span></div></div>
         </div>
       </div>
 
@@ -688,7 +688,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
       name:'', code:'', address:'', region:'',
       phone:'', email:'', podotalk:'', kakao:'',
       area:0, beds:Number(tg.beds||0), price:0, listPrice:0, salePrice:0,
-      adults:2, children:0, checkIn:'15:00', checkOut:'11:00',
+      baseGuests:2, maxGuests:4, extraFee:0, checkIn:'15:00', checkOut:'11:00',
       cancelDays:7, payDay:1, items:['tv','fridge','wifi'], etc:'',
       view:tg.view||'ocean', bedType:tg.bed_type||'queen',
       style:tg.style||'minimal', light:tg.light||'sunset'
@@ -882,7 +882,8 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     var specs=[];
     if(f.area>0)  specs.push('<b>'+f.area+'</b>m²');
     if(f.beds>0)  specs.push('침대 <b>'+f.beds+'</b>개');
-    specs.push('성인 <b>'+(f.adults||0)+'</b>'+((f.children||0)>0?' · 어린이 <b>'+f.children+'</b>':''));
+    specs.push('기준 <b>'+(f.baseGuests||2)+'</b>명'+((f.maxGuests||0)>0?' · 최대 <b>'+f.maxGuests+'</b>명':''));
+    if(f.extraFee>0) specs.push('추가 <b>'+won(f.extraFee)+'</b>원/명');
     specs.push('IN <b>'+(f.checkIn||'-')+'</b> / OUT <b>'+(f.checkOut||'-')+'</b>');
     if(f.cancelDays>0) specs.push('무료취소 <b>'+f.cancelDays+'</b>일 전');
     if(f.payDay>0)     specs.push('자동결제 <b>'+f.payDay+'</b>일');
@@ -970,8 +971,9 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     $('iPrice').value = f.price||'';
     $('iList').value  = f.listPrice||'';
     $('iSale').value  = f.salePrice||'';
-    $('iAdults').value= f.adults!=null?f.adults:2;
-    $('iKids').value  = f.children!=null?f.children:0;
+    $('iBase').value  = f.baseGuests!=null?f.baseGuests:2;
+    $('iMax').value   = f.maxGuests!=null?f.maxGuests:4;
+    $('iExtra').value = f.extraFee||'';
     $('iIn').value    = f.checkIn||'15:00';
     $('iOut').value   = f.checkOut||'11:00';
     $('iCancel').value= f.cancelDays!=null?f.cancelDays:7;
@@ -1035,7 +1037,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
       podotalk:$('iPodo').value.trim(), kakao:$('iKakao').value.trim(),
       area:n('iArea'), beds:n('iBeds'),
       price:n('iPrice'), listPrice:n('iList'), salePrice:n('iSale'),
-      adults:n('iAdults'), children:n('iKids'),
+      baseGuests:n('iBase')||2, maxGuests:n('iMax')||0, extraFee:n('iExtra'),
       checkIn:$('iIn').value||'15:00', checkOut:$('iOut').value||'11:00',
       cancelDays:n('iCancel'), payDay:n('iPay'),
       items:items, etc:$('iEtc').value.trim(),
@@ -1088,7 +1090,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     var payload={
       id:r.id, code:f.code, hostId:hostId(), published:!unpublish,
       title:titleOf(r), region:f.region, address:f.address,
-      area:f.area, beds:f.beds, adults:f.adults, children:f.children,
+      area:f.area, beds:f.beds, baseGuests:f.baseGuests, maxGuests:f.maxGuests, extraFee:f.extraFee,
       price:f.price, listPrice:f.listPrice, salePrice:f.salePrice,
       checkIn:f.checkIn, checkOut:f.checkOut, cancelDays:f.cancelDays,
       items:f.items, etc:f.etc, view:f.view, style:f.style,
@@ -1110,7 +1112,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
       $('dDesc').value,'',
       '· 방 크기: '+(f.area||0)+'m²',
       '· 1박 요금: '+won(f.price||0)+'원',
-      '· 인원: 성인 '+(f.adults||0)+'명, 어린이 '+(f.children||0)+'명',
+      '· 기준 인원: '+(f.baseGuests||2)+'명 (최대 '+(f.maxGuests||f.baseGuests||2)+'명)'+((f.extraFee||0)>0?' · 추가 1명당 '+won(f.extraFee)+'원':''),
       '· 체크인 '+(f.checkIn||'')+' / 체크아웃 '+(f.checkOut||''),
       '· 무료취소: '+(f.cancelDays||0)+'일 전까지','',
       $('dHash').textContent
@@ -1251,7 +1253,22 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     g.memo=$('gMemo').value.trim();
     putGs(g).then(function(){
       if(!gEdit) guests.push(g);
+      var newId=g.id;
       gForm(null); renderGuests(); toast('게스트를 저장했습니다');
+      /* 결제창에서 '＋등록'으로 왔으면: 게스트 시트 닫고 결제창으로 복귀 + 자동 선택 */
+      if(gsReturnPay){
+        gsReturnPay=false;
+        $('gsSheet').className='sheet';
+        fillGuestSelect();
+        $('pGuest').value=newId; paintGuestInfo();
+        toast('예약자로 선택했습니다');
+        return;
+      }
+      /* 결제창이 열려 있으면 목록 갱신 + 방금 등록/수정한 게스트 자동 선택 */
+      if($('paySheet').className.indexOf('on')>=0){
+        fillGuestSelect();
+        $('pGuest').value=newId; paintGuestInfo();
+      }
     }).catch(function(){ toast('저장하지 못했습니다'); });
   };
   $('gReset').onclick=function(){ gForm(null); };
@@ -1296,7 +1313,8 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     $('pGuestInfo').textContent = parts.length? parts.join(' · ') : '—';
   }
   $('pGuest').addEventListener('change', paintGuestInfo);
-  $('pGuestAdd').onclick=function(){ gForm(null); renderGuests(); openGs(); };
+  var gsReturnPay=false;
+  $('pGuestAdd').onclick=function(){ gsReturnPay=true; gForm(null); renderGuests(); openGs(); };
 
   function openPay(r){
     payRoom=r;
@@ -1306,8 +1324,6 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     var t=new Date(); t.setDate(t.getDate()+7);
     var o=new Date(t); o.setDate(o.getDate()+1);
     $('pIn').value=ymd(t); $('pOut').value=ymd(o);
-    $('pAdults').value=f.adults||2;
-    $('pKids').value=f.children||0;
     fillGuestSelect();
     calcPay();
     $('payGoLabel').textContent='결제하기';
@@ -1315,7 +1331,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     $('paySheet').className='sheet on';
     document.body.style.overflow='hidden';
   }
-  ['pIn','pOut','pAdults','pKids'].forEach(function(id){
+  ['pIn','pOut'].forEach(function(id){
     var e=$(id); if(e) e.addEventListener('change', calcPay);
   });
 
@@ -1326,7 +1342,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
     var total=Math.round((f.price||0)*n);
     var fee=Math.round(total*pl.percent);
     var payout=total-fee;
-    var g=(Number($('pAdults').value||0))+(Number($('pKids').value||0));
+    var g=Number(f.baseGuests||2);
 
     var bd=$('payBd');
     if(!n){
@@ -1416,7 +1432,10 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
         '<div class="bi">'+
           (b.guestName? '게스트 <b>'+b.guestName+'</b>'+(b.guestPhone?' · '+b.guestPhone:'')+
             (b.guestPodo?' · 포도톡 '+b.guestPodo:'')+(b.guestKakao?' · 카톡 '+b.guestKakao:'')+'<br>' : '')+
-          b.checkin+' → '+b.checkout+' · <b>'+b.nights+'박</b> · '+b.guests+'명<br>'+
+          b.checkin+' → '+b.checkout+' · <b>'+b.nights+'박</b> · '+
+            (b.adults!=null? '성인 '+b.adults+(b.children?' · 어린이 '+b.children:'') : (b.guests||0)+'명')+
+            ' <b>(총 '+(b.guests||0)+'명)</b>'+
+            (b.extraGuests>0?' · 추가 '+b.extraGuests+'명':'')+'<br>'+
           '결제 <b>'+won(b.amount)+'원</b> · 수수료 '+won(b.fee)+'원 ('+b.plan+' '+(b.feePercent*100)+'%)<br>'+
           '정산 <b>'+won(b.payout)+'원</b>'+(b.demo?' · <span style="color:var(--muted-2)">데모</span>':'')+
           (b.status==='refunded'?'<br>환불 <b>'+won(b.refundAmount||0)+'원</b>':'')+
