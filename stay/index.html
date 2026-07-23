@@ -129,6 +129,48 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
 .mfoot{position:sticky;bottom:0;background:rgba(245,246,253,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:14px 18px;margin:0 -18px -24px}
 
 .footer{padding:40px 0 56px;text-align:center;color:var(--muted-2);font-size:12.5px;line-height:1.9}
+
+/* 하단 탭바 */
+body{padding-bottom:72px}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:70;background:rgba(255,255,255,.96);backdrop-filter:blur(14px);border-top:1px solid var(--line);display:flex;height:64px;padding-bottom:env(safe-area-inset-bottom)}
+.tab{flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--muted-2);font-family:var(--sans);cursor:pointer;padding:0}
+.tab svg{width:23px;height:23px}
+.tab span{font-size:11px;font-weight:700}
+.tab.on{color:var(--ink)}
+.tab.on svg{color:var(--coral)}
+
+/* 뷰 패널 공통 */
+.phead{padding:8px 0 18px}
+.phead h1{font-size:26px;font-weight:900;letter-spacing:-.02em;margin-bottom:6px}
+.phead p{color:var(--muted);font-size:14px}
+.empty-box{text-align:center;padding:56px 20px;background:#fff;border:1.5px dashed var(--line);border-radius:20px}
+.empty-ic{font-size:40px;margin-bottom:12px}
+.empty-t{font-size:16px;font-weight:800;margin-bottom:6px}
+.empty-s{font-size:13px;color:var(--muted)}
+
+/* 설정 */
+.set-group{margin-bottom:24px}
+.set-label{font-size:12px;font-weight:800;color:var(--muted-2);text-transform:uppercase;letter-spacing:.06em;padding:0 4px 9px}
+.set-row{display:flex;align-items:center;gap:13px;background:#fff;border:1.5px solid var(--line);border-radius:15px;padding:15px;margin-bottom:10px;text-decoration:none;color:var(--ink);cursor:pointer;transition:.15s}
+.set-row:hover{border-color:var(--coral);transform:translateY(-1px)}
+.set-ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:20px;flex:0 0 auto}
+.set-tx{flex:1;display:flex;flex-direction:column;gap:3px;min-width:0}
+.set-tx b{font-size:15px;font-weight:800}
+.set-tx small{font-size:12px;color:var(--muted);font-weight:500}
+.set-arw{font-size:22px;color:var(--muted-2);font-weight:400}
+.set-foot{text-align:center;color:var(--muted-2);font-size:11.5px;padding:16px 0 8px}
+
+/* 내 예약 카드 */
+.bk-card{background:#fff;border:2px solid var(--line);border-radius:16px;padding:15px;margin-bottom:12px}
+.bk-card:nth-child(3n+1){border-color:#FF6B6B}
+.bk-card:nth-child(3n+2){border-color:#14B8A6}
+.bk-card:nth-child(3n){border-color:#6366F1}
+.bk-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px}
+.bk-title{font-size:15px;font-weight:800}
+.bk-status{font-size:11px;font-weight:800;padding:4px 9px;border-radius:999px;background:#FFF3E0;color:#B5730A;white-space:nowrap}
+.bk-status.paid{background:#E9F7EF;color:#1E8A50}
+.bk-meta{font-size:13px;color:var(--muted);line-height:1.7}
+.bk-amt{font-size:17px;font-weight:900;margin-top:8px}
 .footer .mono{font-size:11.5px}
 
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--mid);color:#fff;font-size:14px;font-weight:600;padding:13px 20px;border-radius:13px;box-shadow:var(--sh-lg);opacity:0;pointer-events:none;transition:.28s;z-index:90}
@@ -146,7 +188,7 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
   <span class="nav-right">podolang.kr/stay</span>
 </div></div>
 
-<div class="wrap">
+<div class="wrap" id="viewHome">
   <div class="hero">
     <span class="eyebrow"><b></b> Vision AI가 분석한 숙소</span>
     <h1>머물고 싶은 방을<br>골라보세요</h1>
@@ -155,6 +197,57 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
 
   <div class="count" id="count"></div>
   <div id="listArea"></div>
+</div>
+
+<!-- 내 예약 -->
+<div class="wrap view-panel" id="viewBookings" style="display:none">
+  <div class="phead"><h1>내 예약</h1><p>예약한 숙소를 확인하세요.</p></div>
+  <div id="myBookings"></div>
+</div>
+
+<!-- 쿠폰 -->
+<div class="wrap view-panel" id="viewCoupon" style="display:none">
+  <div class="phead"><h1>쿠폰</h1><p>보유한 할인 쿠폰입니다.</p></div>
+  <div class="empty-box">
+    <div class="empty-ic">🎟️</div>
+    <div class="empty-t">아직 쿠폰이 없습니다</div>
+    <div class="empty-s">이벤트나 첫 예약 시 쿠폰이 지급됩니다.</div>
+  </div>
+</div>
+
+<!-- 설정 -->
+<div class="wrap view-panel" id="viewSettings" style="display:none">
+  <div class="phead"><h1>설정</h1><p>PodoStay를 관리하세요.</p></div>
+
+  <div class="set-group">
+    <div class="set-label">호스트 (방 주인)</div>
+    <a class="set-row" href="admin.html">
+      <span class="set-ic" style="background:#EEF1FF">🏠</span>
+      <span class="set-tx"><b>관리자 · 내 방 관리</b><small>방 등록·수정·게시, 예약 현황 관리</small></span>
+      <span class="set-arw">›</span>
+    </a>
+    <a class="set-row" href="intro.html#upload">
+      <span class="set-ic" style="background:#FFF3E9">📸</span>
+      <span class="set-tx"><b>사진으로 방 등록</b><small>사진 올리면 AI가 리스팅 자동 생성</small></span>
+      <span class="set-arw">›</span>
+    </a>
+  </div>
+
+  <div class="set-group">
+    <div class="set-label">서비스</div>
+    <a class="set-row" href="intro.html">
+      <span class="set-ic" style="background:#E9F7EF">✨</span>
+      <span class="set-tx"><b>서비스 소개</b><small>PodoStay가 어떻게 작동하는지 보기</small></span>
+      <span class="set-arw">›</span>
+    </a>
+    <div class="set-row" id="setRefresh">
+      <span class="set-ic" style="background:#F0F0F5">🔄</span>
+      <span class="set-tx"><b>방 목록 새로고침</b><small>최신 게시 숙소 다시 불러오기</small></span>
+      <span class="set-arw">›</span>
+    </div>
+  </div>
+
+  <div class="set-foot">© 2026 BJ LEE · PODOLANG.kr · PodoStay</div>
 </div>
 
 <!-- booking modal -->
@@ -222,6 +315,26 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
 </div></div>
 
 <div class="toast" id="toast"></div>
+
+<!-- 하단 탭바 -->
+<nav class="tabbar" id="tabbar">
+  <button class="tab on" data-view="Home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+    <span>홈</span>
+  </button>
+  <button class="tab" data-view="Bookings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2.5"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>
+    <span>내 예약</span>
+  </button>
+  <button class="tab" data-view="Coupon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4Z"/><path d="M12 7v10" stroke-dasharray="2 2"/></svg>
+    <span>쿠폰</span>
+  </button>
+  <button class="tab" data-view="Settings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.5-2.4 1a7 7 0 0 0-1.7-1l-.3-2.5h-4l-.3 2.5a7 7 0 0 0-1.7 1l-2.4-1-2 3.5 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.5 2.4-1a7 7 0 0 0 1.7 1l.3 2.5h4l.3-2.5a7 7 0 0 0 1.7-1l2.4 1 2-3.5-2-1.5a7 7 0 0 0 .1-1Z"/></svg>
+    <span>설정</span>
+  </button>
+</nav>
 
 <script>
 /* =========================================================
@@ -450,11 +563,22 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
         if(!r.ok) throw new Error(j.error||'결제 요청 실패'); return j;
       }); })
       .then(function(j){
+        /* 예약을 로컬에 저장 (내 예약 탭용) */
+        saveMyBooking({
+          bookingId: j.bookingId||('bk_'+Date.now()),
+          title: (cur&&cur.title)||'예약',
+          code: (cur&&cur.code)||'',
+          checkin: body.checkin, checkout: body.checkout,
+          guests: body.guests, amount: body.totalAmount,
+          status: (j.checkout_url||j.client_secret)?'pending':'requested',
+          at: Date.now()
+        });
         /* Stripe Checkout URL이 오면 이동, 아니면 확정 메시지 */
         if(j.checkout_url){ location.href=j.checkout_url; return; }
-        if(j.client_secret){ toast('결제 준비 완료 — 결제창으로 이동합니다'); /* Stripe.js 연동 지점 */ return; }
+        if(j.client_secret){ toast('결제 준비 완료 — 결제창으로 이동합니다'); return; }
         toast('예약이 접수됐습니다. 확인 후 연락드립니다.');
         close();
+        renderMyBookings();
       })
       .catch(function(e){
         clearTimeout(tm);
@@ -467,7 +591,56 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
   $('mClose').onclick=close; $('veil').onclick=close;
   document.addEventListener('keydown', function(e){ if(e.key==='Escape' && $('modal').className.indexOf('on')>=0) close(); });
 
+  /* ---------- 하단 탭 전환 ---------- */
+  var VIEWS=['Home','Bookings','Coupon','Settings'];
+  function showView(name){
+    VIEWS.forEach(function(v){
+      var el=$('view'+v); if(el) el.style.display=(v===name)?'':'none';
+    });
+    document.querySelectorAll('.tab').forEach(function(t){ t.classList.toggle('on', t.getAttribute('data-view')===name); });
+    if(name==='Bookings') renderMyBookings();
+    window.scrollTo(0,0);
+  }
+  document.querySelectorAll('.tab').forEach(function(t){
+    t.addEventListener('click', function(){ showView(t.getAttribute('data-view')); });
+  });
+  var setRefresh=$('setRefresh');
+  if(setRefresh) setRefresh.onclick=function(){ showView('Home'); load(); toast('방 목록을 새로고침했습니다'); };
+
+  /* ---------- 내 예약 (로컬 저장) ---------- */
+  function getMyBookings(){
+    try{ return JSON.parse(localStorage.getItem('podostay_bookings')||'[]'); }catch(e){ return []; }
+  }
+  function saveMyBooking(b){
+    try{
+      var list=getMyBookings(); list.unshift(b);
+      localStorage.setItem('podostay_bookings', JSON.stringify(list.slice(0,50)));
+    }catch(e){}
+  }
+  function renderMyBookings(){
+    var box=$('myBookings'); if(!box) return;
+    var list=getMyBookings();
+    if(!list.length){
+      box.innerHTML='<div class="empty-box"><div class="empty-ic">🧳</div>'
+        +'<div class="empty-t">아직 예약이 없습니다</div>'
+        +'<div class="empty-s">홈에서 마음에 드는 숙소를 예약해 보세요.</div></div>';
+      return;
+    }
+    box.innerHTML='';
+    list.forEach(function(b){
+      var c=document.createElement('div'); c.className='bk-card';
+      var st=(b.status==='paid')?'결제완료':(b.status==='pending'?'결제대기':'접수됨');
+      var stc=(b.status==='paid')?' paid':'';
+      c.innerHTML='<div class="bk-top"><span class="bk-title">'+(b.code?b.code+' · ':'')+(b.title||'예약')+'</span>'
+        +'<span class="bk-status'+stc+'">'+st+'</span></div>'
+        +'<div class="bk-meta">'+(b.checkin||'')+' → '+(b.checkout||'')+' · '+(b.guests||0)+'명</div>'
+        +'<div class="bk-amt">'+won(b.amount||0)+'원</div>';
+      box.appendChild(c);
+    });
+  }
+
   load();
+  renderMyBookings();
 })();
 </script>
 </body>
