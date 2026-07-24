@@ -128,6 +128,41 @@ h1,h2,h3{margin:0;letter-spacing:-.02em}
 .policy b{color:var(--ink)}
 .mfoot{position:sticky;bottom:0;background:rgba(245,246,253,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:14px 18px;margin:0 -18px -24px}
 
+/* AI 검색창 */
+.searchwrap{margin:4px 0 22px}
+.searchbar{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid var(--ink);border-radius:16px;padding:13px 15px;box-shadow:0 6px 20px rgba(20,20,25,.06)}
+.searchbar:focus-within{border-color:var(--coral);box-shadow:0 8px 26px rgba(255,107,107,.18)}
+.s-ic{width:21px;height:21px;color:var(--muted);flex:0 0 auto}
+#searchInput{flex:1;border:none;outline:none;background:none;font-family:var(--sans);font-size:15.5px;font-weight:700;color:var(--ink);min-width:0}
+#searchInput::placeholder{color:var(--muted-2);font-weight:600}
+.s-mic{flex:0 0 auto;width:40px;height:40px;border-radius:12px;border:none;background:linear-gradient(135deg,#FF6B6B,#F59E0B);color:#fff;display:grid;place-items:center;cursor:pointer}
+.s-mic svg{width:20px;height:20px}
+.s-mic.rec{animation:pulse 1s infinite;background:#E5484D}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(229,72,77,.5)}50%{box-shadow:0 0 0 8px rgba(229,72,77,0)}}
+.s-tags{display:flex;gap:7px;overflow-x:auto;margin-top:11px;padding-bottom:2px;scrollbar-width:none}
+.s-tags::-webkit-scrollbar{display:none}
+.s-tag{flex:0 0 auto;background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:7px 13px;font-size:12.5px;font-weight:700;color:var(--ink);cursor:pointer;font-family:var(--sans);white-space:nowrap}
+.s-tag:active,.s-tag.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.s-hint{font-size:12.5px;color:var(--muted);margin-top:10px;font-weight:600;min-height:1px}
+.s-hint b{color:var(--coral)}
+
+/* 전세계 숙소 결과 */
+#extArea{margin-top:8px}
+.ext-head{font-size:16px;font-weight:900;margin:22px 0 4px}
+.ext-head b{color:var(--coral)}
+.ext-sub{font-size:12px;color:var(--muted-2);font-weight:600;margin-bottom:14px}
+.ext-load,.ext-empty{font-size:13px;color:var(--muted);padding:14px 0}
+.ext-card{display:flex;gap:12px;background:#fff;border:1.5px solid var(--line);border-radius:15px;padding:14px;margin-bottom:10px}
+.ext-card:nth-child(4n+3){border-color:#FF6B6B33}
+.ext-ic{width:44px;height:44px;border-radius:12px;background:#F2F5FA;display:grid;place-items:center;font-size:22px;flex:0 0 auto}
+.ext-info{flex:1;min-width:0}
+.ext-name{font-size:14.5px;font-weight:800;margin-bottom:3px}
+.ext-star{color:#F59E0B;font-size:12px;font-weight:800}
+.ext-meta{font-size:12.5px;color:var(--muted);margin-bottom:9px}
+.ext-act{display:flex;flex-wrap:wrap;gap:7px}
+.ext-act a{font-size:12px;font-weight:700;color:var(--ink);background:#F4F6FA;border:1px solid var(--line);border-radius:9px;padding:6px 10px;text-decoration:none}
+.ext-act a:active{background:var(--ink);color:#fff}
+
 .footer{padding:40px 0 56px;text-align:center;color:var(--muted-2);font-size:12.5px;line-height:1.9}
 
 /* 하단 탭바 */
@@ -195,8 +230,31 @@ body{padding-bottom:72px}
     <p>오션뷰·2베드·미니멀까지 AI가 분석한 숙소를 바로 예약하세요. 결제하면 호스트와 게스트 모두에게 알림이 갑니다.</p>
   </div>
 
+  <!-- AI 검색창 -->
+  <div class="searchwrap">
+    <div class="searchbar">
+      <svg class="s-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/></svg>
+      <input id="searchInput" type="search" enterkeyhint="search" autocomplete="off"
+        placeholder="어디로 떠날까요? 예: 제주 오션뷰 2명">
+      <button class="s-mic" id="micBtn" aria-label="음성 검색" title="말로 검색">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+      </button>
+    </div>
+    <div class="s-tags" id="searchTags">
+      <button class="s-tag" data-q="오션뷰">🌊 오션뷰</button>
+      <button class="s-tag" data-q="마운틴뷰">⛰️ 마운틴</button>
+      <button class="s-tag" data-q="제주">🏝️ 제주</button>
+      <button class="s-tag" data-q="2명">👥 2인</button>
+      <button class="s-tag" data-q="미니멀">✨ 미니멀</button>
+    </div>
+    <div class="s-hint" id="searchHint"></div>
+  </div>
+
   <div class="count" id="count"></div>
   <div id="listArea"></div>
+
+  <!-- 외부(전세계) 숙소 검색 결과 -->
+  <div id="extArea"></div>
 </div>
 
 <!-- 내 예약 -->
@@ -378,6 +436,7 @@ body{padding-bottom:72px}
       .then(function(r){ clearTimeout(tm); if(!r.ok) throw new Error('http'); return r.json(); })
       .then(function(data){
         rooms=(data && data.rooms) ? data.rooms : (Array.isArray(data)?data:[]);
+        allRooms=rooms.slice();
         if(!rooms.length){
           stateBox(
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg>',
@@ -399,11 +458,200 @@ body{padding-bottom:72px}
       });
   }
 
+  var allRooms=[];   /* 서버가 준 전체 방 */
+  var query='';
+
   function renderRooms(){
-    $('count').innerHTML='총 <b>'+rooms.length+'개</b>의 숙소';
+    var list=searchFilter(allRooms, query);
+    var cnt=$('count');
+    if(query){
+      cnt.innerHTML='<b>"'+esc(query)+'"</b> 검색결과 <b>'+list.length+'개</b>';
+    } else {
+      cnt.innerHTML='총 <b>'+list.length+'개</b>의 숙소';
+    }
+    if(!list.length){
+      $('listArea').innerHTML='<div class="empty-box"><div class="empty-ic">🔎</div>'
+        +'<div class="empty-t">검색 결과가 없습니다</div>'
+        +'<div class="empty-s">다른 지역이나 조건으로 검색해 보세요.<br>예: 제주, 오션뷰, 2명, 부산 바다</div></div>';
+      return;
+    }
     var g=document.createElement('div'); g.className='grid';
-    rooms.forEach(function(r){ g.appendChild(card(r)); });
+    list.forEach(function(r){ g.appendChild(card(r)); });
     $('listArea').innerHTML=''; $('listArea').appendChild(g);
+  }
+  function esc(s){ return String(s).replace(/[<>&"]/g,function(c){return{'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];}); }
+
+  /* ---------- 숙소 검색 엔진 (자연어 파싱 + 필터) ---------- */
+  var VIEW_WORDS={ocean:['오션','바다','ocean','sea','beach','해변','씨뷰'],
+    mountain:['마운틴','산뷰','산 뷰','mountain','계곡','山'],
+    city:['시티','도심','city','downtown','시내'],
+    garden:['가든','정원','garden','숲','포레스트','forest']};
+  var STYLE_WORDS={minimal:['미니멀','minimal','심플','깔끔'],cozy:['코지','아늑','cozy'],
+    luxury:['럭셔리','luxury','고급','프리미엄'],modern:['모던','modern','현대']};
+
+  function normalize(s){ return String(s||'').toLowerCase().replace(/\s+/g,' ').trim(); }
+
+  function parseQuery(q){
+    var t=normalize(q);
+    var out={text:t, views:[], styles:[], guests:0, maxPrice:0, tokens:[]};
+    /* 인원: "2명","4인","for 3" */
+    var gm=t.match(/(\d+)\s*(명|인|people|guest|pax)/);
+    if(gm) out.guests=parseInt(gm[1],10);
+    /* 가격: "10만원 이하","under 100000","5만" */
+    var pm=t.match(/(\d+)\s*만/); if(pm) out.maxPrice=parseInt(pm[1],10)*10000;
+    var pm2=t.match(/(\d{4,})\s*(원|krw)?/); if(pm2 && !out.maxPrice) { /* 큰 숫자만 가격 취급 */ if(parseInt(pm2[1],10)>=10000) out.maxPrice=parseInt(pm2[1],10); }
+    /* 뷰/스타일 */
+    Object.keys(VIEW_WORDS).forEach(function(k){ if(VIEW_WORDS[k].some(function(w){return t.indexOf(w)>=0;})) out.views.push(k); });
+    Object.keys(STYLE_WORDS).forEach(function(k){ if(STYLE_WORDS[k].some(function(w){return t.indexOf(w)>=0;})) out.styles.push(k); });
+    /* 지역/키워드 토큰 (숫자·단위 제거) */
+    out.tokens=t.replace(/[0-9]+\s*(명|인|만원|만|원|people|guest|pax|krw)/g,' ')
+                .split(/[\s,·/]+/).filter(function(w){ return w.length>=1 && !/^\d+$/.test(w); });
+    return out;
+  }
+
+  function roomHaystack(r){
+    var parts=[r.title,r.code,r.region,r.address,r.view,r.style,(r.etc||'')];
+    var tr=r.translations;
+    if(tr){ Object.keys(tr).forEach(function(k){ if(tr[k]&&tr[k].title) parts.push(tr[k].title); }); }
+    return normalize(parts.filter(Boolean).join(' '));
+  }
+
+  function searchFilter(listIn, q){
+    if(!q || !normalize(q)) return listIn.slice();
+    var p=parseQuery(q);
+    var scored=[];
+    listIn.forEach(function(r){
+      var hay=roomHaystack(r);
+      var score=0, ok=true;
+      /* 뷰/스타일 매칭 */
+      if(p.views.length){ if(p.views.indexOf(r.view)>=0) score+=5; else ok=false; }
+      if(p.styles.length){ if(p.styles.indexOf(r.style)>=0) score+=3; }
+      /* 인원 */
+      if(p.guests){ var maxG=r.maxGuests||r.baseGuests||0; if(maxG && p.guests>maxG) ok=false; else if(maxG) score+=2; }
+      /* 가격 */
+      if(p.maxPrice){ if(r.price && r.price>p.maxPrice) ok=false; else score+=1; }
+      /* 지역/키워드 토큰 — 하나라도 맞으면 가점, 텍스트 검색 */
+      var tokHit=0;
+      p.tokens.forEach(function(tok){ if(tok && hay.indexOf(tok)>=0){ tokHit++; score+=4; } });
+      /* 뷰/스타일/인원/가격 조건이 하나도 없고 토큰도 안 맞으면 제외 */
+      var hasCond=p.views.length||p.styles.length||p.guests||p.maxPrice;
+      if(!hasCond && p.tokens.length && tokHit===0) ok=false;
+      if(hasCond && p.tokens.length && tokHit===0){ /* 조건은 맞지만 지역토큰 불일치 시 감점만 */ }
+      if(ok) scored.push({r:r, s:score});
+    });
+    scored.sort(function(a,b){ return b.s-a.s; });
+    return scored.map(function(x){ return x.r; });
+  }
+
+  function doSearch(q){
+    query=normalize(q);
+    var hint=$('searchHint');
+    if(query){
+      var p=parseQuery(query);
+      var bits=[];
+      if(p.tokens.length) bits.push('지역/키워드: '+p.tokens.join(', '));
+      if(p.views.length) bits.push('뷰: '+p.views.join(', '));
+      if(p.guests) bits.push(p.guests+'명');
+      if(p.maxPrice) bits.push(won(p.maxPrice)+'원 이하');
+      hint.innerHTML = bits.length ? ('<b>AI 이해:</b> '+bits.join(' · ')) : '';
+    } else { hint.innerHTML=''; }
+    renderRooms();
+    /* 외부(전세계) 숙소 검색 — 지역 키워드가 있을 때만 */
+    clearTimeout(extTimer);
+    if(query){
+      extTimer=setTimeout(function(){ searchExternal(query); }, 500);
+    } else {
+      $('extArea').innerHTML='';
+    }
+  }
+  var extTimer=null, extSeq=0;
+
+  /* ---------- 전세계 숙소 검색 (OpenStreetMap · 무료 · 키 불필요) ---------- */
+  function searchExternal(q){
+    var seq=++extSeq;
+    var box=$('extArea');
+    box.innerHTML='<div class="ext-head">🌍 전세계 숙소 검색 중…</div>'
+      +'<div class="ext-load">"'+esc(q)+'" 지역의 호텔·게스트하우스를 찾고 있어요</div>';
+    /* 1) 지역명 -> 좌표 (Nominatim) */
+    var geoUrl='https://nominatim.openstreetmap.org/search?format=json&limit=1&accept-language=ko&q='+encodeURIComponent(q);
+    fetch(geoUrl,{headers:{'Accept':'application/json'}})
+      .then(function(r){ return r.json(); })
+      .then(function(g){
+        if(seq!==extSeq) return;
+        if(!g || !g.length){ box.innerHTML='<div class="ext-head">🌍 전세계 숙소</div><div class="ext-empty">"'+esc(q)+'" 지역을 찾지 못했어요. 도시 이름으로 검색해 보세요 (예: 파리, 방콕, Tokyo).</div>'; return; }
+        var lat=parseFloat(g[0].lat), lon=parseFloat(g[0].lon);
+        var place=g[0].display_name||q;
+        fetchStays(lat, lon, place, seq);
+      })
+      .catch(function(){
+        if(seq!==extSeq) return;
+        box.innerHTML='<div class="ext-head">🌍 전세계 숙소</div><div class="ext-empty">검색에 실패했어요. 잠시 후 다시 시도해 주세요.</div>';
+      });
+  }
+
+  function fetchStays(lat, lon, place, seq){
+    var box=$('extArea');
+    /* 2) 반경 내 숙소 (Overpass) */
+    var radius=6000;
+    var ql='[out:json][timeout:20];('
+      +'node["tourism"~"hotel|guest_house|hostel|motel|apartment|chalet"](around:'+radius+','+lat+','+lon+');'
+      +'way["tourism"~"hotel|guest_house|hostel|motel|apartment|chalet"](around:'+radius+','+lat+','+lon+');'
+      +');out center 40;';
+    var opUrl='https://overpass-api.de/api/interpreter?data='+encodeURIComponent(ql);
+    fetch(opUrl)
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(seq!==extSeq) return;
+        var els=(d && d.elements) ? d.elements : [];
+        var stays=els.map(function(e){
+          var t=e.tags||{};
+          return {
+            name:t.name||t['name:ko']||t['name:en']||'이름 없는 숙소',
+            type:t.tourism,
+            stars:t.stars||'',
+            phone:t.phone||t['contact:phone']||'',
+            website:t.website||t['contact:website']||'',
+            lat:e.lat||(e.center&&e.center.lat),
+            lon:e.lon||(e.center&&e.center.lon),
+            addr:[t['addr:city'],t['addr:street'],t['addr:housenumber']].filter(Boolean).join(' ')
+          };
+        }).filter(function(s){ return s.name && s.lat; });
+        renderExternal(stays, place);
+      })
+      .catch(function(){
+        if(seq!==extSeq) return;
+        box.innerHTML='<div class="ext-head">🌍 전세계 숙소</div><div class="ext-empty">숙소 정보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</div>';
+      });
+  }
+
+  var TYPE_KO={hotel:'호텔',guest_house:'게스트하우스',hostel:'호스텔',motel:'모텔',apartment:'아파트',chalet:'샬레'};
+  function renderExternal(stays, place){
+    var box=$('extArea');
+    var shortPlace=(place||'').split(',').slice(0,2).join(', ');
+    if(!stays.length){
+      box.innerHTML='<div class="ext-head">🌍 전세계 숙소</div><div class="ext-empty">'+esc(shortPlace)+' 주변에서 등록된 숙소를 찾지 못했어요.</div>';
+      return;
+    }
+    var html='<div class="ext-head">🌍 '+esc(shortPlace)+' 숙소 <b>'+stays.length+'곳</b></div>'
+      +'<div class="ext-sub">OpenStreetMap 실시간 데이터 · 눌러서 지도·예약 문의</div>';
+    stays.forEach(function(s){
+      var maps='https://www.openstreetmap.org/?mlat='+s.lat+'&mlon='+s.lon+'#map=18/'+s.lat+'/'+s.lon;
+      var book='https://www.google.com/search?q='+encodeURIComponent(s.name+' '+shortPlace+' 예약');
+      html+='<div class="ext-card">'
+        +'<div class="ext-ic">'+(s.type==='hostel'?'🛏️':s.type==='guest_house'?'🏡':'🏨')+'</div>'
+        +'<div class="ext-info">'
+          +'<div class="ext-name">'+esc(s.name)+(s.stars?' <span class="ext-star">★'+esc(s.stars)+'</span>':'')+'</div>'
+          +'<div class="ext-meta">'+(TYPE_KO[s.type]||s.type)+(s.addr?' · '+esc(s.addr):'')+'</div>'
+          +'<div class="ext-act">'
+            +(s.phone?'<a href="tel:'+esc(s.phone)+'">📞 전화</a>':'')
+            +(s.website?'<a href="'+esc(s.website)+'" target="_blank" rel="noopener">🌐 홈페이지</a>':'')
+            +'<a href="'+maps+'" target="_blank" rel="noopener">📍 지도</a>'
+            +'<a href="'+book+'" target="_blank" rel="noopener">🔎 예약 검색</a>'
+          +'</div>'
+        +'</div>'
+      +'</div>';
+    });
+    box.innerHTML=html;
   }
 
   function viewGradient(view){
@@ -637,6 +885,49 @@ body{padding-bottom:72px}
         +'<div class="bk-amt">'+won(b.amount||0)+'원</div>';
       box.appendChild(c);
     });
+  }
+
+  /* ---------- 검색 입력/태그/음성 ---------- */
+  var searchInput=$('searchInput');
+  if(searchInput){
+    var deb=null;
+    searchInput.addEventListener('input', function(){
+      clearTimeout(deb); var v=searchInput.value;
+      deb=setTimeout(function(){ doSearch(v); }, 180);
+    });
+    searchInput.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); searchInput.blur(); doSearch(searchInput.value); } });
+  }
+  document.querySelectorAll('.s-tag').forEach(function(t){
+    t.addEventListener('click', function(){
+      var q=t.getAttribute('data-q');
+      /* 같은 태그 다시 누르면 해제 */
+      if(searchInput.value===q){ searchInput.value=''; doSearch(''); }
+      else { searchInput.value=q; doSearch(q); }
+    });
+  });
+
+  /* 음성 검색 (Web Speech API) */
+  var micBtn=$('micBtn');
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(micBtn){
+    if(!SR){
+      micBtn.addEventListener('click', function(){ toast('이 브라우저는 음성 검색을 지원하지 않습니다'); });
+    } else {
+      var rec=new SR(); rec.lang='ko-KR'; rec.interimResults=true; rec.maxAlternatives=1;
+      var listening=false;
+      micBtn.addEventListener('click', function(){
+        if(listening){ try{rec.stop();}catch(e){} return; }
+        try{ rec.start(); }catch(e){}
+      });
+      rec.onstart=function(){ listening=true; micBtn.classList.add('rec'); $('searchHint').innerHTML='<b>🎤 듣고 있어요…</b> 말씀해 주세요'; };
+      rec.onerror=function(){ listening=false; micBtn.classList.remove('rec'); toast('음성 인식에 실패했습니다'); };
+      rec.onend=function(){ listening=false; micBtn.classList.remove('rec'); };
+      rec.onresult=function(ev){
+        var txt=''; for(var i=ev.resultIndex;i<ev.results.length;i++){ txt+=ev.results[i][0].transcript; }
+        searchInput.value=txt;
+        if(ev.results[ev.results.length-1].isFinal){ doSearch(txt); }
+      };
+    }
   }
 
   load();
