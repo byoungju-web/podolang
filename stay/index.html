@@ -101,11 +101,6 @@
       <span class="set-tx"><b>서비스 소개</b><small>PodoStay가 어떻게 작동하는지 보기</small></span>
       <span class="set-arw">›</span>
     </a>
-    <div class="set-row" id="setRefresh">
-      <span class="set-ic" style="background:#F0F0F5">🔄</span>
-      <span class="set-tx"><b>방 목록 새로고침</b><small>최신 게시 숙소 다시 불러오기</small></span>
-      <span class="set-arw">›</span>
-    </div>
   </div>
 
   <div class="set-foot">© 2026 BJ LEE · PODOLANG.kr · PodoStay</div>
@@ -739,8 +734,6 @@
   document.querySelectorAll('.tab').forEach(function(t){
     t.addEventListener('click', function(){ showView(t.getAttribute('data-view')); });
   });
-  var setRefresh=$('setRefresh');
-  if(setRefresh) setRefresh.onclick=function(){ showView('Home'); load(); toast('방 목록을 새로고침했습니다'); };
 
   /* ---------- 내 예약 (로컬 저장) ---------- */
   function getMyBookings(){
