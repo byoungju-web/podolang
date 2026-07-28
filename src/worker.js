@@ -1,13 +1,18 @@
 /**
- * 🍇 PODOLANG by BJ LEE - 실시간 통역 + Twilio 전화 통역 + Podoclone API
- * Cloudflare Workers · v1.5
+ * 🍇 PODOLANG by BJ LEE - 실시간 통역 + 사진 번역 + Twilio 전화 통역 + Podoclone API
+ * Cloudflare Workers · v1.6
  * © 2026 BJ LEE. All Rights Reserved.
  *
- * v1.5 변경점
+ * v1.6 변경점
+ *  - 사진 번역(OCR) 추가: POST /api/vision
+ *    이미지 안의 글자를 읽어서 번역. 서류·라벨·인보이스·간판·손글씨.
+ *    multipart(image 파일) 또는 JSON({imageBase64}) 둘 다 받음.
+ *    숫자·코드·단가·날짜는 원문 그대로 유지하도록 프롬프트 고정.
+ * v1.5
  *  - 전화 통역을 "앱이 다리 역할" 방식으로 재작성 (양방향 전달)
  *    당신=앱(마이크/스피커), 상대=전화. KV(PODOLANG_KV) 필요.
  *    /api/call/start · /twiml/answer · /twiml/gather · /api/call/say · /api/call/poll
- * v1.4 변경점
+ * v1.4
  *  - Podoclone 1-Click 복제 라우트 추가: POST /api/clone (30개국)
  * v1.3
  *  - OpenAI(Whisper·GPT) 호출을 Cloudflare AI Gateway 경유로 (지역차단 우회)
@@ -23,6 +28,10 @@ const OPENAI_BASE = `https://gateway.ai.cloudflare.com/v1/${CF_ACCOUNT_ID}/${CF_
 
 // 계정에 실제로 있는 목소리 (Sarah). 없으면 첫 번째 목소리로 자동 대체됨
 const VOICE_DEFAULT = 'EXAVITQu4vr4xnSDxMaL';
+
+// 사진 번역에 쓰는 모델 (vision 지원)
+const VISION_MODEL = 'gpt-4o-mini';
+const VISION_MAX_BYTES = 8 * 1024 * 1024;   // 8MB
 
 // eleven_multilingual_v2 가 지원하는 29개 언어 (태국어·베트남어 없음)
 const V2_LANGS = ['EN','JA','ZH','DE','HI','FR','KO','PT','IT','ES','ID','NL','TR',
@@ -84,9 +93,9 @@ export default {
       // 0. 상태 확인
       if (url.pathname === '/api/health') {
         return json({
-          ok: true, app: 'podolang', version: '1.5',
+          ok: true, app: 'podolang', version: '1.6',
           gateway: OPENAI_BASE.includes('gateway.ai') ? 'ai-gateway' : 'direct',
-          routes: ['/api/podolang', '/api/translate', '/api/speak', '/api/clone', '/api/call/start', '/api/call/say', '/api/call/poll'],
+          routes: ['/api/podolang', '/api/translate', '/api/speak', '/api/vision', '/api/clone', '/api/call/start', '/api/call/say', '/api/call/poll'],
           keys: {
             openai: !!env.OPENAI_API_KEY,
             deepl: !!env.DEEPL_API_KEY,
@@ -173,6 +182,17 @@ export default {
         }
       }
 
+      // 0-4. 사진 번역 진단 (브라우저 주소창으로 확인용)
+      if (url.pathname === '/api/vision/test') {
+        return json({
+          ok: true,
+          model: VISION_MODEL,
+          openaiKey: !!env.OPENAI_API_KEY,
+          maxBytes: VISION_MAX_BYTES,
+          how: 'POST /api/vision · multipart(image, sourceLang, targetLang) 또는 JSON({imageBase64, mime, sourceLang, targetLang})'
+        }, 200, H);
+      }
+
       // 1. 음성 -> 텍스트
       if (url.pathname === '/api/transcribe' && request.method === 'POST') {
         const fd = await request.formData();
@@ -194,7 +214,75 @@ export default {
         return new Response(r.audio, { headers: { 'Content-Type': 'audio/mpeg', ...H } });
       }
 
-      // 4. 올인원 통역
+      // ===== 4. 사진 번역 (OCR) =====
+      // 서류 · 라벨 · 인보이스 · 간판 · 손글씨를 찍으면 글자를 읽어 번역합니다.
+      // 보내는 방법 두 가지 (앱 사정에 맞는 쪽으로):
+      //   ① multipart/form-data : image(파일), sourceLang, targetLang, speak(선택 '1')
+      //   ② application/json    : { imageBase64, mime, sourceLang, targetLang, speak }
+      if (url.pathname === '/api/vision' && request.method === 'POST') {
+        const ct = (request.headers.get('Content-Type') || '').toLowerCase();
+        let dataUrl, sourceLang = 'AUTO', targetLang = 'KO', wantSpeak = false;
+
+        if (ct.includes('application/json')) {
+          const b = await request.json();
+          let raw = String(b.imageBase64 || '');
+          const mime = b.mime || 'image/jpeg';
+          // 앱이 dataURL 통째로 보내도 받아줌
+          dataUrl = raw.startsWith('data:') ? raw : `data:${mime};base64,${raw}`;
+          if (b.sourceLang) sourceLang = String(b.sourceLang);
+          if (b.targetLang) targetLang = String(b.targetLang);
+          wantSpeak = b.speak === true || b.speak === '1';
+        } else {
+          const fd = await request.formData();
+          const image = fd.get('image') || fd.get('file') || fd.get('photo');
+          if (!image || typeof image.arrayBuffer !== 'function') {
+            return json({ error: '사진이 오지 않았습니다.' }, 400, H);
+          }
+          const buf = await image.arrayBuffer();
+          if (buf.byteLength > VISION_MAX_BYTES) {
+            return json({ error: '사진이 너무 큽니다. 8MB 이하로 줄여주세요.' }, 400, H);
+          }
+          const mime = (image.type && image.type.startsWith('image/')) ? image.type : 'image/jpeg';
+          dataUrl = `data:${mime};base64,${toBase64(buf)}`;
+          if (fd.get('sourceLang')) sourceLang = String(fd.get('sourceLang'));
+          if (fd.get('targetLang')) targetLang = String(fd.get('targetLang'));
+          wantSpeak = String(fd.get('speak') || '') === '1';
+        }
+
+        const r = await visionRead(env, dataUrl, sourceLang, targetLang);
+        if (!r.original && !r.translated) {
+          return json({ error: '사진에서 글자를 찾지 못했습니다. 더 밝고 가까이 찍어보세요.' }, 200, H);
+        }
+
+        // 짧은 결과만 음성 생성 (긴 서류를 읽어주면 비용·시간이 커집니다)
+        let audioBase64 = null, audioError = null;
+        if (wantSpeak && r.translated && r.translated.length <= 400) {
+          try {
+            const s = await speak(env, r.translated, VOICE_DEFAULT, (targetLang || 'KO').toUpperCase());
+            audioBase64 = toBase64(s.audio);
+          } catch (e) { audioError = e.message; }
+        }
+
+        if (env.PODOLANG_KV) {
+          try {
+            await env.PODOLANG_KV.put(`vlog:${Date.now()}`,
+              JSON.stringify({ kind: r.kind, translated: r.translated.slice(0, 500), targetLang }),
+              { expirationTtl: 60 * 60 * 24 * 30 });
+          } catch (_) {}
+        }
+
+        return json({
+          ok: true,
+          kind: r.kind,
+          original: r.original,
+          translated: r.translated,
+          audioBase64,
+          audioError,
+          model: VISION_MODEL
+        }, 200, H);
+      }
+
+      // 5. 올인원 통역
       if (url.pathname === '/api/podolang' && request.method === 'POST') {
         const fd = await request.formData();
         const audio = fd.get('audio');
@@ -236,7 +324,7 @@ export default {
       //  - 당신이 앱에서 말함 → /api/call/say → 번역 → 진행 중 통화에 밀어넣어 상대가 들음
       //  fromLang = 내가 말하는 언어, toLang = 상대(전화) 언어
 
-      // 5. 전화 걸기
+      // 6. 전화 걸기
       if (url.pathname === '/api/call/start' && request.method === 'POST') {
         if (!env.TWILIO_ACCOUNT_SID || !env.TWILIO_PHONE_NUMBER) {
           return json({ error: '전화 통역이 아직 설정되지 않았습니다.' }, 400, H);
@@ -271,7 +359,7 @@ export default {
         return json({ callSid: d.sid, status: d.status, message: `${to} 연결 중입니다.` }, 200, H);
       }
 
-      // 6. TwiML - 상대 전화가 받으면: 인사 후 상대 말을 계속 수집
+      // 7. TwiML - 상대 전화가 받으면: 인사 후 상대 말을 계속 수집
       if (url.pathname.startsWith('/twiml/answer')) {
         const me = (url.searchParams.get('me') || 'KO').toUpperCase();
         const peer = (url.searchParams.get('peer') || 'TH').toUpperCase();
@@ -290,7 +378,7 @@ export default {
 </Response>`);
       }
 
-      // 7. TwiML - 상대가 말한 것: 번역해서 KV 우편함에 저장 (상대 → 나)
+      // 8. TwiML - 상대가 말한 것: 번역해서 KV 우편함에 저장 (상대 → 나)
       if (url.pathname.startsWith('/twiml/gather') && request.method === 'POST') {
         const fd = await request.formData();
         const speech = (fd.get('SpeechResult') || '').toString().trim();
@@ -315,7 +403,7 @@ export default {
 <Response><Redirect>${url.origin}/twiml/answer?me=${me}&amp;peer=${peer}&amp;sid=1</Redirect></Response>`);
       }
 
-      // 8. 내가 앱에서 말함 → 번역 → 진행 중 통화에 밀어넣어 상대가 들음 (나 → 상대)
+      // 9. 내가 앱에서 말함 → 번역 → 진행 중 통화에 밀어넣어 상대가 들음 (나 → 상대)
       if (url.pathname === '/api/call/say' && request.method === 'POST') {
         if (!env.PODOLANG_KV) return json({ error: 'KV 미연결' }, 400, H);
         const fd = await request.formData();
@@ -353,7 +441,7 @@ export default {
         return json({ ok: true, src: text, translated: tr.translated }, 200, H);
       }
 
-      // 9. 앱이 상대방 말(번역본)을 받아가는 우편함
+      // 10. 앱이 상대방 말(번역본)을 받아가는 우편함
       if (url.pathname === '/api/call/poll' && request.method === 'GET') {
         if (!env.PODOLANG_KV) return json({ messages: [], seq: 0 }, 200, H);
         const sid = url.searchParams.get('callSid') || '';
@@ -368,7 +456,7 @@ export default {
         return json({ messages: out, seq, status: meta?.status || 'active' }, 200, H);
       }
 
-      // 9-1. 통화 종료 (전화 끊기)
+      // 10-1. 통화 종료 (전화 끊기)
       if (url.pathname === '/api/call/end' && request.method === 'POST') {
         const { callSid } = await request.json();
         if (callSid && env.TWILIO_ACCOUNT_SID) {
@@ -389,7 +477,7 @@ export default {
         return json({ ok: true }, 200, H);
       }
 
-      // 10. 콜 상태 콜백
+      // 11. 콜 상태 콜백
       if (url.pathname === '/api/call/status' && request.method === 'POST') {
         const fd = await request.formData();
         const sid = fd.get('CallSid'), st = fd.get('CallStatus');
@@ -402,7 +490,7 @@ export default {
         return new Response('OK');
       }
 
-      return new Response('🍇 PodoLang API by BJ LEE · v1.5', { headers: H });
+      return new Response('🍇 PodoLang API by BJ LEE · v1.6', { headers: H });
 
     } catch (e) {
       return json({ error: e.message || '처리 중 오류가 발생했습니다.' }, 500, H);
@@ -469,6 +557,73 @@ async function transcribe(env, audio, sourceLang) {
     if (d.error) throw new Error('음성 인식 실패: ' + d.error.message);
     return d.text;
   });
+}
+
+/* ---------------- 사진 번역 (OCR) ---------------- */
+// 사진 안의 글자를 그대로 읽고(original) 목표 언어로 옮깁니다(translated).
+// 숫자·금액·코드·날짜는 절대 변환하지 않도록 프롬프트로 못을 박아뒀습니다.
+// 거래 서류에서 단가가 바뀌면 사고가 나기 때문입니다.
+async function visionRead(env, dataUrl, sourceLang, targetLang) {
+  if (!env.OPENAI_API_KEY) throw new Error('OpenAI 키가 없습니다.');
+  const s = (sourceLang || 'AUTO').toUpperCase();
+  const t = (targetLang || 'KO').toUpperCase();
+  const tName = LNAME[t] || t;
+  const sHint = (s && s !== 'AUTO')
+    ? `The text in the image is mainly ${LNAME[s] || s}.`
+    : 'Detect the language in the image yourself.';
+
+  const sysPrompt = [
+    'You read text out of photographs: business documents, invoices, product labels, packing lists, signs, receipts and handwriting.',
+    'Return ONLY a JSON object. No markdown fences, no commentary.',
+    'Shape: {"original": string, "translated": string, "kind": string}',
+    '"original" = every readable character exactly as printed, keeping line order. Separate lines with \\n.',
+    `"translated" = the same content rendered in ${tName}, keeping the same line structure so the two can be read side by side.`,
+    'Numbers, prices, quantities, dates, model numbers, order codes, phone numbers and units must be copied character for character. Never convert currency, never reformat dates, never round anything.',
+    'If a part is blurry or unreadable, write [?] at that spot instead of guessing.',
+    `"kind" = two or three words in ${tName} naming what the document is.`,
+    'If there is no readable text at all, return empty strings for original and translated.'
+  ].join(' ');
+
+  return await retry(async () => {
+    const res = await fetch(`${OPENAI_BASE}/chat/completions`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: VISION_MODEL,
+        temperature: 0.1,
+        max_tokens: 3000,
+        response_format: { type: 'json_object' },
+        messages: [
+          { role: 'system', content: sysPrompt },
+          { role: 'user', content: [
+            { type: 'text', text: sHint },
+            { type: 'image_url', image_url: { url: dataUrl, detail: 'high' } }
+          ] }
+        ]
+      })
+    });
+
+    const raw = await res.text();
+    let d;
+    try { d = JSON.parse(raw); }
+    catch (e) { throw new Error('사진 번역 실패(파싱): ' + raw.slice(0, 300)); }
+    if (d.error) throw new Error('사진 번역 실패: ' + (d.error.message || JSON.stringify(d.error)));
+
+    const content = d.choices?.[0]?.message?.content;
+    if (!content) throw new Error('사진 번역 실패(응답형식): ' + JSON.stringify(d).slice(0, 300));
+
+    // response_format 이 무시되는 경우까지 대비해 코드펜스를 걷어냅니다
+    const cleaned = content.replace(/^\s*```(?:json)?/i, '').replace(/```\s*$/, '').trim();
+    let out;
+    try { out = JSON.parse(cleaned); }
+    catch (e) { out = { original: '', translated: cleaned, kind: '' }; }
+
+    return {
+      original: String(out.original || '').trim(),
+      translated: String(out.translated || '').trim(),
+      kind: String(out.kind || '').trim()
+    };
+  }, 3);
 }
 
 async function translate(env, text, sourceLang, targetLang) {
@@ -592,6 +747,8 @@ function toBase64(buf) {
 
 const LCODE = { KO:'ko', TH:'th', EN:'en', JA:'ja', ZH:'zh', VI:'vi', ES:'es', ID:'id', DE:'de', FR:'fr', AR:'ar', IT:'it', RU:'ru', PT:'pt' };
 const LMAP  = { KO:'ko-KR', TH:'th-TH', EN:'en-US', JA:'ja-JP', ZH:'zh-CN', VI:'vi-VN', ES:'es-ES', ID:'id-ID', DE:'de-DE', FR:'fr-FR', AR:'ar-XA', IT:'it-IT', RU:'ru-RU', PT:'pt-BR' };
+// 사진 번역 프롬프트에서 쓰는 언어 이름
+const LNAME = { KO:'Korean', TH:'Thai', EN:'English', JA:'Japanese', ZH:'Chinese', VI:'Vietnamese', ES:'Spanish', ID:'Indonesian', DE:'German', FR:'French', AR:'Arabic', IT:'Italian', RU:'Russian', PT:'Portuguese', MS:'Malay', HI:'Hindi' };
 const sttLang = l => LMAP[l] || 'en-US';
 const sayLang = l => LMAP[l] || 'en-US';
 const sayVoice = l => ({ KO:'Polly.Seoyeon', JA:'Polly.Mizuki', ZH:'Polly.Zhiyu', EN:'Polly.Joanna', ES:'Polly.Lupe', TH:'Google.th-TH-Standard-A', VI:'Google.vi-VN-Standard-A', ID:'Google.id-ID-Standard-A', DE:'Polly.Vicki', FR:'Polly.Lea', IT:'Polly.Bianca', RU:'Polly.Tatyana', AR:'Polly.Zeina', PT:'Polly.Camila' })[l] || 'Polly.Joanna';
