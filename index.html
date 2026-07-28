@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
 <title>포도랑 · 실시간 통역</title>
-<meta name="description" content="말하면 바로 통역됩니다. 전화 통역까지. 포도랑.">
+<meta name="description" content="말하면 바로 통역됩니다. 사진 속 글자도, 전화 통역까지. 포도랑.">
 <meta name="theme-color" content="#ffffff">
 <style>
   :root{
@@ -28,7 +28,7 @@
   .ico svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 
   .tabs{flex:0 0 auto;display:flex;border-bottom:1px solid var(--line)}
-  .tab{flex:1;padding:12px 0;text-align:center;border:0;background:none;font:inherit;font-size:15.5px;color:var(--sub)}
+  .tab{flex:1;padding:12px 2px;text-align:center;border:0;background:none;font:inherit;font-size:14.5px;color:var(--sub);white-space:nowrap}
   .tab.on{color:var(--fg);font-weight:700;box-shadow:inset 0 -2px 0 var(--grape)}
 
   main{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px}
@@ -76,6 +76,24 @@
   .btn.ghost{background:#f2f2f4;color:var(--fg);margin-top:8px}
   .btn:disabled{opacity:.35}
   .ver{text-align:center;color:#c9c9cc;font-size:11px;padding:18px}
+
+  /* ---------- 사진 번역 ---------- */
+  .shots{display:flex;gap:10px}
+  .shots .btn{flex:1;margin-top:0}
+  .pv{margin-top:14px;border:1px solid var(--line);border-radius:14px;overflow:hidden;position:relative;background:#fafafa}
+  .pv img{display:block;width:100%;max-height:40dvh;object-fit:contain}
+  .pv .x{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:15px;border:0;
+    background:rgba(0,0,0,.55);color:#fff;font-size:15px;line-height:1;display:grid;place-items:center}
+  .ocr{white-space:pre-wrap;word-break:break-word}
+  .kind{display:inline-block;font-size:11.5px;font-weight:700;color:var(--grape);background:var(--grape-soft);
+    border-radius:6px;padding:3px 8px;margin-bottom:9px}
+  details.orig{margin-top:11px;border-top:1px solid var(--line);padding-top:11px}
+  details.orig summary{font-size:13px;color:var(--sub);list-style:none;cursor:pointer}
+  details.orig summary::-webkit-details-marker{display:none}
+  details.orig .ocr{font-size:14px;color:var(--sub);margin-top:9px;line-height:1.65}
+  .spin{display:inline-block;width:14px;height:14px;border:2px solid #e4e4e6;border-top-color:var(--grape);
+    border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px;margin-right:7px}
+  @keyframes sp{to{transform:rotate(360deg)}}
 
   .sheet{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;z-index:50}
   .sheet.on{display:block}
@@ -135,6 +153,7 @@
   @media (max-width:420px){
     .promo h2{font-size:24px}
     .feat{grid-template-columns:1fr}
+    .tab{font-size:13.5px}
   }
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -148,7 +167,8 @@
   </header>
 
   <div class="tabs">
-    <button class="tab on" id="tabTalk" onclick="tab('talk')">마주보고 통역</button>
+    <button class="tab on" id="tabTalk" onclick="tab('talk')">마주보고</button>
+    <button class="tab" id="tabPhoto" onclick="tab('photo')">사진 번역</button>
     <button class="tab" id="tabCall" onclick="tab('call')">전화 통역</button>
   </div>
 
@@ -178,7 +198,7 @@
     </div>
     <p class="eyebrow">말하면, 바로 통역</p>
     <h2>언어가 달라도<br>대화는 멈추지 않게.</h2>
-    <p class="lead">한국어로 말하면 상대의 언어로 바뀌어 소리까지 나옵니다. 마주 앉아서도, 전화로도. 앱 설치도 회원가입도 없이 이 화면에서 바로 씁니다.</p>
+    <p class="lead">한국어로 말하면 상대의 언어로 바뀌어 소리까지 나옵니다. 마주 앉아서도, 사진 한 장으로도, 전화로도. 앱 설치도 회원가입도 없이 이 화면에서 바로 씁니다.</p>
     <button class="top-cta" onclick="goTop()">
       <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
       위로 올려서 지금 통역하기
@@ -196,6 +216,19 @@
   </section>
 
   <section>
+    <p class="eyebrow">읽는 법 · 사진 번역</p>
+    <h2>글자는 찍으면<br>읽어드립니다.</h2>
+    <ol class="how">
+      <li><b>찍는다</b><span>거래명세서, 인보이스, 제품 라벨, 포장 박스, 간판, 손으로 쓴 메모. 카메라로 찍거나 앨범에서 고르면 됩니다.</span></li>
+      <li><b>읽는다</b><span>사진 속 글자를 줄 순서 그대로 읽어서 우리말로 옮깁니다. 원문도 같이 남아 있어 나란히 대조할 수 있습니다.</span></li>
+      <li><b>확인한다</b><span>수량·단가·날짜·품번은 원문 그대로 옮깁니다. 흐려서 안 보이는 자리는 추측하지 않고 [?] 로 표시합니다.</span></li>
+    </ol>
+    <p style="font-size:14px;color:var(--sub);line-height:1.7;margin-top:16px">
+      숫자를 바꾸지 않는 것이 이 기능의 핵심입니다. 단가가 한 자리 달라지면 그대로 손해가 되기 때문에, 읽을 수 없는 글자는 비워두도록 만들었습니다. <b style="color:var(--fg)">중요한 금액은 원문과 한 번 더 대조해 보세요.</b>
+    </p>
+  </section>
+
+  <section>
     <p class="eyebrow">받는 법 · 전화 통역</p>
     <h2>상대는 그냥<br>전화만 받으면 돼요.</h2>
     <ol class="how">
@@ -210,12 +243,16 @@
   </section>
 
   <section>
-    <p class="eyebrow">두 가지 방식</p>
+    <p class="eyebrow">세 가지 방식</p>
     <h2>마주 앉아도, 멀리 있어도.</h2>
     <div class="feat">
       <div class="cell">
         <h3>마주보고 통역</h3>
         <p>한 폰을 사이에 두고 번갈아 말하면 즉석에서 통역됩니다. 손님 응대, 현장 소통에 좋아요.</p>
+      </div>
+      <div class="cell">
+        <h3>사진 번역</h3>
+        <p>서류·라벨·인보이스를 찍으면 글자를 읽어 옮깁니다. 숫자와 품번은 원문 그대로 둡니다.</p>
       </div>
       <div class="cell">
         <h3>전화 통역</h3>
@@ -228,6 +265,10 @@
       <div class="cell">
         <h3>설치 없이 웹에서</h3>
         <p>주소만 열면 끝. 폰이든 PC든 브라우저에서 그대로 동작합니다.</p>
+      </div>
+      <div class="cell">
+        <h3>기록은 내 폰에</h3>
+        <p>통역·번역 기록은 이 기기에만 남습니다. 필요 없으면 한 번에 지울 수 있어요.</p>
       </div>
     </div>
   </section>
@@ -248,6 +289,7 @@
         <ul>
           <li>하루 5회 통역</li>
           <li>마주보고 통역</li>
+          <li>사진 번역 하루 3장</li>
           <li>주요 언어 지원</li>
         </ul>
       </div>
@@ -256,6 +298,7 @@
         <div class="price">$19<small> / 월</small></div>
         <ul>
           <li>무제한 통역</li>
+          <li>사진 번역 무제한</li>
           <li>전화 통역 포함</li>
           <li>대화 기록 저장</li>
         </ul>
@@ -277,20 +320,25 @@
   </section>
 
   <div class="foot-note">
-    <span class="b">podolang v1.1.0</span><br>
+    <span class="b">podolang v1.2.0</span><br>
     © 2026 BJ LEE · All Rights Reserved<br>
     PODOLANG.kr
   </div>
 </div>
 
+<!-- 사진 입력 (화면 다시 그려도 살아있도록 main 바깥에 둡니다) -->
+<input type="file" id="fileCam" accept="image/*" capture="environment" style="display:none">
+<input type="file" id="fileAlb" accept="image/*" style="display:none">
+
 <div class="sheet" id="sheet" onclick="if(event.target===this)closeSheet()"><div class="card" id="card"></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v1.1.0';
+const VER='v1.2.0';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
-const K={from:'podolang_from', to:'podolang_to', hist:'podolang_hist', tel:'podolang_tel'};
+const K={from:'podolang_from', to:'podolang_to', hist:'podolang_hist', tel:'podolang_tel',
+         pfrom:'podolang_pfrom', pto:'podolang_pto', phist:'podolang_phist'};
 const LANGS=[['KO','한국어'],['TH','태국어'],['EN','영어'],['JA','일본어'],['ZH','중국어'],['VI','베트남어'],['ES','스페인어'],['ID','인도네시아어'],['DE','독일어'],['FR','프랑스어'],['AR','아랍어'],['IT','이탈리아어'],['RU','러시아어'],['PT','포르투갈어']];
 const $=s=>document.querySelector(s);
 let mode='talk', rec=null, chunks=[], busy=false;
@@ -307,9 +355,10 @@ if(hist.some(h=>h && h.audio)){
 const url=p=>API.replace(/\/$/,'')+p;
 
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const langName=c=>(LANGS.find(l=>l[0]===c)||[c,c])[1];
+const langName=c=>c==='AUTO'?'자동 감지':(LANGS.find(l=>l[0]===c)||[c,c])[1];
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2400)}
 const opts=sel=>LANGS.map(([c,n])=>`<option value="${c}" ${c===sel?'selected':''}>${n}</option>`).join('');
+const optsAuto=sel=>`<option value="AUTO" ${sel==='AUTO'?'selected':''}>자동 감지</option>`+opts(sel);
 
 /* 소개에서 통역으로 올라가기 */
 function goTop(){ window.scrollTo({top:0, behavior:'smooth'}); }
@@ -318,12 +367,17 @@ function goTop(){ window.scrollTo({top:0, behavior:'smooth'}); }
 function tab(m){
   mode=m;
   $('#tabTalk').classList.toggle('on',m==='talk');
+  $('#tabPhoto').classList.toggle('on',m==='photo');
   $('#tabCall').classList.toggle('on',m==='call');
-  // 전화 통역 탭에선 아래 마이크(푸터)를 숨겨 마이크가 하나만 보이게
+  // 마주보고 통역에서만 아래 마이크(푸터)를 보여줍니다
   $('#foot').style.display = (m==='talk') ? 'flex' : 'none';
   render();
 }
-function render(){ mode==='talk'?renderTalk():renderCall(); }
+function render(){
+  if(mode==='talk') renderTalk();
+  else if(mode==='photo') renderPhoto();
+  else renderCall();
+}
 
 /* ---------- 마주보고 통역 ---------- */
 function renderTalk(){
@@ -414,6 +468,161 @@ function saveHist(){
   }catch(e){
     try{ localStorage.removeItem(K.hist); }catch(_){}
   }
+}
+
+/* ---------- 사진 번역 (OCR) ----------
+   서류·라벨·인보이스를 찍으면 글자를 읽어서 번역합니다.
+   숫자·단가·품번은 서버 쪽에서 원문 그대로 옮기도록 막아뒀습니다.   */
+let photoData = null;     // 리사이즈한 dataURL (이 기기 메모리에만)
+let photoResult = null;   // {kind, original, translated}
+let photoBusy = false;
+let pFrom = load(K.pfrom,'AUTO'), pTo = load(K.pto,'KO');
+let phist = load(K.phist,[]);
+
+function renderPhoto(){
+  const body = photoBusy
+    ? `<div class="turn"><div class="src"><span class="spin"></span>사진을 읽고 있습니다… 글자가 많으면 20초쯤 걸립니다.</div></div>`
+    : photoResult
+      ? `<div class="turn">
+           ${photoResult.kind?`<div class="kind">${esc(photoResult.kind)}</div>`:''}
+           <div class="dst ocr">${esc(photoResult.translated)}</div>
+           ${photoResult.original?`
+             <details class="orig">
+               <summary>원문 보기 (숫자 대조용)</summary>
+               <div class="ocr">${esc(photoResult.original)}</div>
+             </details>`:''}
+           <div class="foot">
+             <small>${langName(pFrom)} → ${langName(pTo)}</small>
+             <button class="mini" onclick="copyPhoto()">복사</button>
+             <button class="mini" onclick="resetPhoto()">새로 찍기</button>
+           </div>
+         </div>`
+      : '';
+
+  const list = phist.length ? `
+    <div style="font-size:12px;color:var(--sub);margin:18px 0 8px">지난 사진 번역</div>` +
+    phist.map((h,i)=>`
+      <div class="turn">
+        ${h.kind?`<div class="kind">${esc(h.kind)}</div>`:''}
+        <div class="dst ocr" style="font-size:16px">${esc(h.dst)}</div>
+        <div class="foot">
+          <small>${langName(h.from)} → ${langName(h.to)}</small>
+          <button class="mini" onclick="copyPhist(${i})">복사</button>
+          <button class="mini del" onclick="delPhist(${i})">삭제</button>
+        </div>
+      </div>`).join('') : '';
+
+  $('#main').innerHTML = `
+    <div class="langbar">
+      <select id="pFromSel" onchange="setPhotoLang()">${optsAuto(pFrom)}</select>
+      <div style="width:36px;text-align:center;color:var(--sub)">→</div>
+      <select id="pToSel" onchange="setPhotoLang()">${opts(pTo)}</select>
+    </div>
+
+    <div class="shots">
+      <button class="btn" onclick="openCam()">사진 찍기</button>
+      <button class="btn ghost" style="margin-top:0" onclick="openAlbum()">앨범에서</button>
+    </div>
+
+    ${photoData?`
+      <div class="pv">
+        <img src="${photoData}" alt="찍은 사진">
+        <button class="x" onclick="resetPhoto()" aria-label="사진 지우기">✕</button>
+      </div>
+      <button class="btn" style="margin-top:12px" onclick="photoTranslate()" ${photoBusy?'disabled':''}>
+        ${photoBusy?'읽는 중…':'이 사진 번역하기'}
+      </button>`
+      : (photoResult ? '' : `
+      <div class="empty" style="padding:34px 20px">
+        <b>서류를 찍으면 읽어드립니다</b>
+        거래명세서 · 인보이스 · 제품 라벨 · 간판 · 손글씨<br>
+        숫자와 품번은 원문 그대로 옮깁니다.
+        <div class="scrollhint">↓ 아래로 내리면 podolang 소개를 볼 수 있어요</div>
+      </div>`)}
+
+    <div style="margin-top:14px">${body}</div>
+    ${list}
+    ${phist.length?`<button class="btn ghost" onclick="clearPhist()">사진 번역 기록 지우기</button>`:''}`;
+}
+
+function setPhotoLang(){
+  const f=$('#pFromSel'), t=$('#pToSel');
+  if(f) pFrom=f.value; if(t) pTo=t.value;
+  save(K.pfrom,pFrom); save(K.pto,pTo);
+}
+function openCam(){ $('#fileCam').click(); }
+function openAlbum(){ $('#fileAlb').click(); }
+function resetPhoto(){ photoData=null; photoResult=null; renderPhoto(); }
+function copyPhoto(){
+  if(!photoResult) return;
+  navigator.clipboard.writeText(photoResult.translated).then(()=>toast('복사했습니다'));
+}
+function copyPhist(i){ navigator.clipboard.writeText(phist[i].dst).then(()=>toast('복사했습니다')); }
+function delPhist(i){ phist.splice(i,1); savePhist(); renderPhoto(); }
+function clearPhist(){ if(!confirm('사진 번역 기록을 모두 지웁니다.'))return; phist=[]; savePhist(); renderPhoto(); }
+function savePhist(){
+  try{ localStorage.setItem(K.phist, JSON.stringify(phist)); }
+  catch(e){ try{ localStorage.removeItem(K.phist); }catch(_){} }
+}
+
+// 폰 사진은 그대로 올리면 너무 큽니다. 긴 변 1600px, JPEG 로 줄여서 보냅니다.
+function shrinkImage(file, maxSide, quality){
+  return new Promise((resolve, reject)=>{
+    const fr = new FileReader();
+    const img = new Image();
+    fr.onload = ()=>{ img.src = fr.result; };
+    fr.onerror = ()=> reject(new Error('사진을 읽지 못했습니다'));
+    img.onerror = ()=> reject(new Error('사진 형식을 읽지 못했습니다'));
+    img.onload = ()=>{
+      let w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+      if(!w || !h) return reject(new Error('사진 크기를 알 수 없습니다'));
+      const s = Math.min(1, maxSide / Math.max(w,h));
+      w = Math.round(w*s); h = Math.round(h*s);
+      const cv = document.createElement('canvas');
+      cv.width = w; cv.height = h;
+      const cx = cv.getContext('2d');
+      cx.fillStyle = '#fff'; cx.fillRect(0,0,w,h);   // 투명 PNG 대비 흰 배경
+      cx.drawImage(img, 0, 0, w, h);
+      try{ resolve(cv.toDataURL('image/jpeg', quality)); }
+      catch(e){ reject(new Error('사진을 변환하지 못했습니다')); }
+    };
+    fr.readAsDataURL(file);
+  });
+}
+
+async function onPhotoPicked(input){
+  const file = input.files && input.files[0];
+  input.value = '';                    // 같은 사진을 다시 골라도 반응하도록
+  if(!file) return;
+  if(!/^image\//.test(file.type||'')){ toast('사진 파일만 됩니다'); return; }
+  photoResult = null;
+  try{
+    photoData = await shrinkImage(file, 1600, 0.85);
+    renderPhoto();
+  }catch(e){ toast(e.message||'사진을 불러오지 못했습니다'); }
+}
+$('#fileCam').addEventListener('change', e=>onPhotoPicked(e.target));
+$('#fileAlb').addEventListener('change', e=>onPhotoPicked(e.target));
+
+async function photoTranslate(){
+  if(!photoData || photoBusy) return;
+  photoBusy = true; renderPhoto();
+  try{
+    const r = await fetch(url('/api/vision'),{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ imageBase64: photoData, sourceLang: pFrom, targetLang: pTo })
+    });
+    const d = await r.json();
+    if(d.error) throw new Error(d.error);
+    if(!d.translated){ throw new Error('사진에서 글자를 찾지 못했습니다. 더 밝고 가까이 찍어보세요.'); }
+    photoResult = { kind:d.kind||'', original:d.original||'', translated:d.translated };
+    phist.unshift({ kind:photoResult.kind, src:photoResult.original, dst:photoResult.translated,
+                    from:pFrom, to:pTo, at:Date.now() });
+    phist = phist.slice(0,10);
+    savePhist();
+    photoData = null;                  // 결과가 나오면 미리보기는 접습니다
+  }catch(e){ toast(e.message||'사진 번역에 실패했습니다'); }
+  photoBusy = false; renderPhoto();
 }
 
 /* ---------- 전화 통역 (앱이 다리 역할) ----------
@@ -609,7 +818,7 @@ function openSet(){
     </div>
     <button class="btn" onclick="saveSet()">저장</button>
     <button class="btn ghost" onclick="checkApi()">연결 확인</button>
-    <div class="hint" style="margin-top:12px">번역·음성은 서버에서 처리됩니다. API 키는 서버에만 있고 이 기기에는 저장되지 않습니다.</div>
+    <div class="hint" style="margin-top:12px">번역·음성은 서버에서 처리됩니다. API 키는 서버에만 있고 이 기기에는 저장되지 않습니다. 사진은 번역할 때만 서버로 보내고 따로 보관하지 않습니다.</div>
     <div class="ver">podolang ${VER}</div>`;
   $('#sheet').classList.add('on');
 }
