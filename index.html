@@ -100,6 +100,11 @@
     background:var(--grape-soft);border-radius:9px;padding:8px 13px;margin-bottom:12px}
   .rtctl{display:flex;align-items:center;gap:10px;margin:14px 0}
   .turn.live{border-color:var(--grape);background:#fcfaff}
+  .seclabel{font-size:12px;color:var(--sub);margin:20px 0 8px;font-weight:600}
+  .telrow{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+  .telpick{flex:1;text-align:left;border:1px solid var(--line);background:#fafafa;
+    border-radius:11px;padding:12px;font:inherit;font-size:15.5px;color:var(--fg)}
+  .telpick:active{background:#f0edf6}
   .turn.live .dst{font-weight:500}
 
   .sheet{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;z-index:50}
@@ -330,7 +335,7 @@
   </section>
 
   <div class="foot-note">
-    <span class="b">podolang v2.0.1</span><br>
+    <span class="b">podolang v2.1.0</span><br>
     © 2026 BJ LEE · All Rights Reserved<br>
     PODOLANG.kr
   </div>
@@ -344,7 +349,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v2.0.1';
+const VER='v2.1.0';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -353,7 +358,8 @@ const RT_API='https://podolang-realtime.hasin7jk.workers.dev';
 const RT_OUT=['KO','EN','JA','ZH','ES','PT','FR','DE','IT','RU','HI','ID','VI'];
 const rtOk=c=>RT_OUT.includes(String(c||'').toUpperCase());
 const K={from:'podolang_from', to:'podolang_to', hist:'podolang_hist', tel:'podolang_tel',
-         pfrom:'podolang_pfrom', pto:'podolang_pto', phist:'podolang_phist'};
+         pfrom:'podolang_pfrom', pto:'podolang_pto', phist:'podolang_phist',
+         tels:'podolang_tels', clog:'podolang_clog'};
 const LANGS=[['KO','한국어'],['TH','태국어'],['EN','영어'],['JA','일본어'],['ZH','중국어'],['VI','베트남어'],['ES','스페인어'],['ID','인도네시아어'],['DE','독일어'],['FR','프랑스어'],['AR','아랍어'],['IT','이탈리아어'],['RU','러시아어'],['PT','포르투갈어']];
 const $=s=>document.querySelector(s);
 let mode='talk', rec=null, chunks=[], busy=false;
@@ -658,6 +664,8 @@ let rt = null;              // { room, ws, me, peer, active, log[], cur, muted }
 let sr = null;             // 폰 음성인식
 let srOn = false;          // 지금 듣고 있는지
 let sayBusy = false;       // 지금 읽어주는 중인지 (그동안은 듣기를 멈춥니다)
+let tels = load(K.tels, []);      // 저장된 전화번호 목록
+let clog = load(K.clog, []);      // 지난 통화 기록
 let pending = '';          // 아직 안 보낸 내 말
 let pendTimer = null;      // 말이 끝났는지 재는 타이머
 const PEND_WAIT = 900;     // ms — 이만큼 조용하면 한 문장 끝난 것으로 봅니다
@@ -718,6 +726,45 @@ function srStop(){
   sr = null; srOn = false;
 }
 
+/* ---------- 전화번호 목록 ---------- */
+function saveTel(num){
+  if(!num) return;
+  tels = tels.filter(t => t.num !== num);
+  tels.unshift({ num, at: Date.now() });
+  tels = tels.slice(0, 12);
+  try{ localStorage.setItem(K.tels, JSON.stringify(tels)); }catch(e){}
+}
+function pickTel(i){ const el=$('#cNum'); if(el && tels[i]) el.value = tels[i].num; }
+function delTel(i){
+  tels.splice(i,1);
+  try{ localStorage.setItem(K.tels, JSON.stringify(tels)); }catch(e){}
+  renderCall();
+}
+function clearTels(){
+  if(!confirm('저장된 번호를 모두 지웁니다.')) return;
+  tels = [];
+  try{ localStorage.removeItem(K.tels); }catch(e){}
+  renderCall();
+}
+
+/* ---------- 통화 기록 ---------- */
+function saveClog(){
+  try{ localStorage.setItem(K.clog, JSON.stringify(clog)); }
+  catch(e){ try{ localStorage.removeItem(K.clog); }catch(_){} }
+}
+function pushLog(item){ clog.unshift(item); clog = clog.slice(0,200); saveClog(); }
+function delLog(i){ clog.splice(i,1); saveClog(); renderCall(); }
+function clearLog(){
+  if(!confirm('통화 기록을 모두 지웁니다.')) return;
+  clog = []; try{ localStorage.removeItem(K.clog); }catch(e){}
+  renderCall();
+}
+function copyLog(i){ navigator.clipboard.writeText(clog[i].text).then(()=>toast('복사했습니다')); }
+const hhmm = ts => {
+  const d = new Date(ts);
+  return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+};
+
 /* ---------- 내 말은 한 문장이 될 때까지 모았다 보냅니다 ----------
    안드로이드 음성인식은 짧은 쉼에도 문장을 끊습니다.
    그때마다 보내면 상대는 토막난 말을 듣게 되고 번역 요청도 몇 배로 늘어납니다.  */
@@ -777,7 +824,7 @@ function renderCall(){
 
     ${noSR ? `
       <div class="turn" style="border-color:#f0d4d0">
-        <div class="src" style="color:var(--sr)">이 브라우저는 음성인식을 지원하지 않습니다.</div>
+        <div class="src" style="color:var(--rec)">이 브라우저는 음성인식을 지원하지 않습니다.</div>
         <div class="src">안드로이드 크롬에서 열어주세요. 삼성 인터넷은 지원하지 않을 수 있습니다.</div>
       </div>`
     : `<div class="rtbadge">말하면 상대에게 ${esc(langName(to))}로 전달됩니다</div>`}
@@ -793,7 +840,30 @@ function renderCall(){
     <div class="hint" style="margin-top:10px">
       상대는 그냥 전화를 받아 평소처럼 말하면 됩니다. 앱 설치도, 버튼 누를 것도 없습니다.
       당신은 이 화면에 대고 말하세요. 말이 끝나면 잠시 뒤 상대에게 전달됩니다.
-    </div>`;
+    </div>
+
+    ${tels.length ? `
+      <div class="seclabel">저장된 번호</div>
+      ${tels.map((t,i)=>`
+        <div class="telrow">
+          <button class="telpick" onclick="pickTel(${i})">${esc(t.num)}</button>
+          <button class="mini del" onclick="delTel(${i})">삭제</button>
+        </div>`).join('')}
+      <button class="btn ghost" onclick="clearTels()">번호 전체 지우기</button>` : ''}
+
+    ${clog.length ? `
+      <div class="seclabel">통화 기록 · ${clog.length}줄</div>
+      ${clog.map((m,i)=>`
+        <div class="turn">
+          <div class="src">${m.dir==='me'?'내 말':'상대'} · ${hhmm(m.at)}${m.src?'<br>'+esc(m.src):''}</div>
+          <div class="dst ocr" style="font-size:16px">${esc(m.text)}</div>
+          <div class="foot">
+            <small>${esc(m.pair||'')}</small>
+            <button class="mini" onclick="copyLog(${i})">복사</button>
+            <button class="mini del" onclick="delLog(${i})">삭제</button>
+          </div>
+        </div>`).join('')}
+      <button class="btn ghost" onclick="clearLog()">통화 기록 전체 지우기</button>` : ''}`;
 }
 
 function setCallLang(){
@@ -817,8 +887,9 @@ function renderCallActive(){
       <button class="mini" id="muteBtn" onclick="toggleMute()">${rt.muted?'다시 말하기':'잠깐 멈춤'}</button>
       <span class="lvl" id="lvl">${srOn?'듣는 중':''}</span>
     </div>
-    <div id="callLog"></div>
-    <button class="btn" onclick="callEnd()" style="margin-top:16px;background:var(--sr)">${rt.active?'통화 종료':'닫기'}</button>`;
+    <button class="btn" onclick="callEnd()" style="margin:4px 0 14px;background:var(--rec)">${rt.active?'통화 종료':'닫기'}</button>
+    <div class="seclabel">주고받은 말 · 아래로 내려서 보세요</div>
+    <div id="callLog"></div>`;
   updateCallLog();
 }
 
@@ -845,6 +916,7 @@ async function callStart(){
   const num = $('#cNum').value.trim();
   if(!/^\+\d{8,15}$/.test(num)){ toast('번호를 +1… 처럼 국가번호부터 넣어주세요'); return; }
   save(K.tel, num);
+  saveTel(num);
   const me = $('#cFrom').value, peer = $('#cTo').value;
   if(!SR){ toast('이 브라우저는 음성인식을 지원하지 않습니다'); return; }
 
@@ -899,11 +971,24 @@ function onRtMessage(ev){
 
   // 한 문장 완성
   if(m.type === 'line'){
-    rt.log.unshift({ dir:m.dir, src:m.src, text:m.text });
+    const item = { dir:m.dir, src:m.src, text:m.text, at:Date.now(),
+                   pair:`${langName(rt.me)} ↔ ${langName(rt.peer)}` };
+    // 같은 말이 조금씩 길어지며 여러 번 오는 경우가 있습니다.
+    // 앞 줄로 시작하는 새 줄이면 덧붙이지 않고 갈아끼웁니다.
+    const prev = rt.log[0];
+    const grew = !!(prev && prev.dir === m.dir && prev.src && m.src &&
+                 (String(m.src).startsWith(prev.src) || String(prev.src).startsWith(m.src)));
+    if(grew){
+      rt.log[0] = item;
+      if(clog.length && clog[0].dir === m.dir){ clog[0] = item; saveClog(); }
+    }else{
+      rt.log.unshift(item);
+      pushLog(item);
+    }
     rt.log = rt.log.slice(0, 40);
     if(m.dir === 'peer'){
       rt.cur.peer = '';
-      sayOut(m.text, rt.me);          // 상대 말을 내 언어로 읽어줍니다
+      if(!grew) sayOut(m.text, rt.me);   // 같은 말을 두 번 읽지 않습니다
       setStatus('말씀하세요.');
     }else{
       rt.cur.me = '';
