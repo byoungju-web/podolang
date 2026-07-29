@@ -330,7 +330,7 @@
   </section>
 
   <div class="foot-note">
-    <span class="b">podolang v2.0.0</span><br>
+    <span class="b">podolang v2.0.1</span><br>
     © 2026 BJ LEE · All Rights Reserved<br>
     PODOLANG.kr
   </div>
@@ -344,7 +344,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v2.0.0';
+const VER='v2.0.1';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -658,6 +658,10 @@ let rt = null;              // { room, ws, me, peer, active, log[], cur, muted }
 let sr = null;             // 폰 음성인식
 let srOn = false;          // 지금 듣고 있는지
 let sayBusy = false;       // 지금 읽어주는 중인지 (그동안은 듣기를 멈춥니다)
+let pending = '';          // 아직 안 보낸 내 말
+let pendTimer = null;      // 말이 끝났는지 재는 타이머
+const PEND_WAIT = 900;     // ms — 이만큼 조용하면 한 문장 끝난 것으로 봅니다
+const PEND_MAX  = 120;     // 글자 — 너무 길어지면 기다리지 않고 보냅니다
 
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 const BCP = { KO:'ko-KR', EN:'en-US', JA:'ja-JP', ZH:'zh-CN', ES:'es-ES', PT:'pt-BR',
@@ -681,16 +685,15 @@ function srStart(){
         const r = e.results[i];
         if(r.isFinal){
           const said = (r[0].transcript||'').trim();
-          if(said && rt && rt.ws && rt.ws.readyState===1 && !rt.muted){
-            rt.ws.send(JSON.stringify({ type:'say', text: said }));
-            rt.cur.me = '';
-            setStatus('전달 중…');
-          }
+          if(said) queueSay(said);          // 바로 안 보내고 모읍니다
         }else{
           interim += r[0].transcript;
         }
       }
-      if(rt){ rt.cur.me = interim.trim(); updateCallLog(); }
+      if(rt){
+        rt.cur.me = (pending + ' ' + interim).trim();
+        updateCallLog();
+      }
     };
 
     // 조용하면 저절로 멈춥니다. 통화 중이면 다시 켭니다.
@@ -715,12 +718,35 @@ function srStop(){
   sr = null; srOn = false;
 }
 
+/* ---------- 내 말은 한 문장이 될 때까지 모았다 보냅니다 ----------
+   안드로이드 음성인식은 짧은 쉼에도 문장을 끊습니다.
+   그때마다 보내면 상대는 토막난 말을 듣게 되고 번역 요청도 몇 배로 늘어납니다.  */
+function queueSay(piece){
+  if(!rt || !rt.active || rt.muted) return;
+  pending = (pending ? pending + ' ' : '') + piece;
+  clearTimeout(pendTimer);
+  if(pending.length >= PEND_MAX){ flushSay(); return; }
+  pendTimer = setTimeout(flushSay, PEND_WAIT);
+}
+function flushSay(){
+  clearTimeout(pendTimer); pendTimer = null;
+  const text = pending.trim();
+  pending = '';
+  if(!text || text.length < 2) return;                 // 잡음 한두 글자는 버립니다
+  if(!rt || !rt.ws || rt.ws.readyState !== 1 || rt.muted) return;
+  rt.ws.send(JSON.stringify({ type:'say', text }));
+  if(rt) rt.cur.me = '';
+  setStatus('전달 중…');
+  updateCallLog();
+}
+
 /* ---------- 폰이 상대 말을 내 언어로 읽어줌 ---------- */
 function sayOut(text, langCode){
   if(!text || !window.speechSynthesis) return;
   try{
     // 읽어주는 동안은 듣기를 멈춥니다. 안 그러면 내 폰 소리를 내가 다시 알아듣습니다.
     sayBusy = true; srStop();
+    clearTimeout(pendTimer); pendTimer = null; pending = '';
     const u = new SpeechSynthesisUtterance(text);
     u.lang = bcp(langCode);
     u.rate = 1.05;
@@ -916,7 +942,7 @@ function onRtMessage(ev){
 function toggleMute(){
   if(!rt) return;
   rt.muted = !rt.muted;
-  if(rt.muted) srStop(); else srStart();
+  if(rt.muted){ clearTimeout(pendTimer); pending=''; srStop(); } else srStart();
   const b = $('#muteBtn'); if(b) b.textContent = rt.muted ? '다시 말하기' : '잠깐 멈춤';
   toast(rt.muted ? '내 마이크를 멈췄습니다' : '다시 듣습니다');
 }
@@ -928,6 +954,7 @@ function openDebug(){
 
 async function callEnd(){
   const room = rt && rt.room;
+  clearTimeout(pendTimer); pendTimer = null; pending = '';
   srStop();
   try{ speechSynthesis.cancel(); }catch(e){}
   if(rt){
