@@ -330,7 +330,7 @@
   </section>
 
   <div class="foot-note">
-    <span class="b">podolang v1.4.0</span><br>
+    <span class="b">podolang v2.0.0</span><br>
     © 2026 BJ LEE · All Rights Reserved<br>
     PODOLANG.kr
   </div>
@@ -344,7 +344,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v1.4.0';
+const VER='v2.0.0';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -645,164 +645,98 @@ async function photoTranslate(){
   photoBusy = false; renderPhoto();
 }
 
-/* ================= 실시간 전화 통역 (Full-Duplex) =================
-   양쪽이 동시에 말하고 동시에 들립니다. 번갈아 기다릴 필요가 없습니다.
+/* ================= 전화 통역 =================
+   음성인식·음성합성을 나눠서 맡깁니다.
 
-   내 마이크 → PCM16 24kHz → WebSocket → 워커 → 통역세션 → 상대 전화
-   상대 전화 → 워커 → 통역세션 → WebSocket → 내 스피커
+   상대(전화)  : Twilio 가 듣고 Twilio 가 말합니다
+   나(이 화면) : 폰 내장 음성인식이 듣고, 폰 내장 음성합성이 읽어줍니다
 
-   두 방향이 별개의 세션이라 서로 막지 않습니다.
-   조용한 구간도 계속 보내야 합니다. 끊으면 맥락이 깨집니다.          */
+   워커는 글자만 주고받으며 번역만 합니다.
+   그래서 오디오 변환도, 실시간 소켓도 없습니다.                */
 
-let rt = null;   // { room, ws, me, peer, active, log[], cur{}, muted }
-let micCtx = null, micNode = null, micStream = null, micSrc = null;
-let outCtx = null, nextPlay = 0, lastChunkAt = 0;
+let rt = null;              // { room, ws, me, peer, active, log[], cur, muted }
+let sr = null;             // 폰 음성인식
+let srOn = false;          // 지금 듣고 있는지
+let sayBusy = false;       // 지금 읽어주는 중인지 (그동안은 듣기를 멈춥니다)
 
-// 예약이 현재보다 이만큼 앞서면 따라잡습니다. 안 그러면 지연이 계속 쌓입니다.
-const MAX_LEAD = 0.9;    // 초
-const GAP_RESET = 350;   // ms — 이만큼 소리가 없었으면 새 발화로 보고 시각을 되돌립니다
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+const BCP = { KO:'ko-KR', EN:'en-US', JA:'ja-JP', ZH:'zh-CN', ES:'es-ES', PT:'pt-BR',
+              FR:'fr-FR', DE:'de-DE', IT:'it-IT', RU:'ru-RU', VI:'vi-VN', ID:'id-ID',
+              TH:'th-TH', AR:'ar-SA' };
+const bcp = c => BCP[String(c||'').toUpperCase()] || 'en-US';
 
-/* ---- 마이크 잡기: 24kHz 로 받아서 20ms 씩 잘라 보냅니다 ---- */
-const CAP_WORKLET = `
-class PodoCap extends AudioWorkletProcessor {
-  constructor(){ super(); this.q=[]; this.need=640; }   // 640 = 40ms @ 16kHz
-  process(inputs){
-    const ch = inputs[0] && inputs[0][0];
-    if(ch && ch.length){
-      this.q.push(new Float32Array(ch));
-      let total = 0; for(const b of this.q) total += b.length;
-      while(total >= this.need){
-        const out = new Float32Array(this.need);
-        let filled = 0;
-        while(filled < this.need){
-          const head = this.q[0];
-          const take = Math.min(head.length, this.need - filled);
-          out.set(head.subarray(0, take), filled);
-          filled += take;
-          if(take === head.length) this.q.shift(); else this.q[0] = head.subarray(take);
-        }
-        this.port.postMessage(out, [out.buffer]);
-        total -= this.need;
-      }
-    }
-    return true;
-  }
-}
-registerProcessor('podo-cap', PodoCap);
-`;
-
-function f32ToB64(f32){
-  const i16 = new Int16Array(f32.length);
-  for(let i=0;i<f32.length;i++){
-    let v = f32[i];
-    if(v > 1) v = 1; else if(v < -1) v = -1;
-    i16[i] = v < 0 ? v * 0x8000 : v * 0x7FFF;
-  }
-  const bytes = new Uint8Array(i16.buffer);
-  let bin = '';
-  const CH = 0x8000;
-  for(let i=0;i<bytes.length;i+=CH) bin += String.fromCharCode.apply(null, bytes.subarray(i,i+CH));
-  return btoa(bin);
-}
-
-async function micStart(){
-  // 에코 제거를 켭니다. 스피커로 나온 상대 목소리를 마이크가 다시 주워서
-  // 되먹임이 생기는 걸 줄여줍니다. 그래도 이어폰이 확실합니다.
-  micStream = await navigator.mediaDevices.getUserMedia({
-    audio: { echoCancellation:true, noiseSuppression:true, autoGainControl:true, channelCount:1 }
-  });
-  // 24kHz 로 요청하면 브라우저가 알아서 리샘플해 줍니다
-  // Gemini Live 입력 규격은 16kHz 입니다 (재생은 24kHz 그대로)
-  micCtx = new (window.AudioContext||window.webkitAudioContext)({ sampleRate: 16000 });
-  if(micCtx.state === 'suspended') await micCtx.resume();
-  micSrc = micCtx.createMediaStreamSource(micStream);
-
-  const url = URL.createObjectURL(new Blob([CAP_WORKLET], {type:'application/javascript'}));
-  await micCtx.audioWorklet.addModule(url);
-  URL.revokeObjectURL(url);
-
-  micNode = new AudioWorkletNode(micCtx, 'podo-cap');
-  micNode.port.onmessage = e => {
-    if(!rt || !rt.active || rt.muted) return;
-    if(!rt.ws || rt.ws.readyState !== 1) return;
-    if(!rt.ready) return;
-    rt.ws.send(JSON.stringify({ type:'audio', audio: f32ToB64(e.data) }));
-  };
-  micSrc.connect(micNode);
-  // 워크렛 출력은 스피커로 보내지 않습니다 (보내면 내 목소리가 되돌아옵니다)
-  const mute = micCtx.createGain(); mute.gain.value = 0;
-  micNode.connect(mute); mute.connect(micCtx.destination);
-}
-
-function micStop(){
-  try{ micNode && micNode.disconnect(); }catch(e){}
-  try{ micSrc && micSrc.disconnect(); }catch(e){}
-  try{ micStream && micStream.getTracks().forEach(t=>t.stop()); }catch(e){}
-  try{ micCtx && micCtx.close(); }catch(e){}
-  micNode = micSrc = micStream = micCtx = null;
-}
-
-/* ---- 받은 소리를 끊김 없이 이어 재생 ----
-   조각마다 new Audio() 로 틀면 뚝뚝 끊깁니다.
-   재생 시각을 이어 붙여서 예약해야 매끄럽습니다.                */
-function playChunk(b64){
+/* ---------- 폰이 내 말을 글자로 ---------- */
+function srStart(){
+  if(!SR || !rt || !rt.active) return;
+  if(sr) return;
   try{
-    if(!outCtx){
-      outCtx = new (window.AudioContext||window.webkitAudioContext)({ sampleRate: 24000 });
-      nextPlay = 0;
-    }
-    if(outCtx.state === 'suspended') outCtx.resume();
-    const bin = atob(b64);
-    const bytes = new Uint8Array(bin.length);
-    for(let i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
-    const i16 = new Int16Array(bytes.buffer, bytes.byteOffset, bytes.byteLength >> 1);
-    if(!i16.length) return;
-    const buf = outCtx.createBuffer(1, i16.length, 24000);
-    const ch = buf.getChannelData(0);
-    for(let i=0;i<i16.length;i++) ch[i] = i16[i] / 32768;
-    const src = outCtx.createBufferSource();
-    src.buffer = buf;
-    src.connect(outCtx.destination);
+    sr = new SR();
+    sr.lang = bcp(rt.me);
+    sr.continuous = true;
+    sr.interimResults = true;
 
-    const now = outCtx.currentTime;
-    const wall = (typeof performance!=='undefined'? performance.now() : Date.now());
+    sr.onresult = e => {
+      let interim = '';
+      for(let i=e.resultIndex; i<e.results.length; i++){
+        const r = e.results[i];
+        if(r.isFinal){
+          const said = (r[0].transcript||'').trim();
+          if(said && rt && rt.ws && rt.ws.readyState===1 && !rt.muted){
+            rt.ws.send(JSON.stringify({ type:'say', text: said }));
+            rt.cur.me = '';
+            setStatus('전달 중…');
+          }
+        }else{
+          interim += r[0].transcript;
+        }
+      }
+      if(rt){ rt.cur.me = interim.trim(); updateCallLog(); }
+    };
 
-    // 소리가 한동안 끊겼다 다시 오면 = 새 발화. 예약 시각을 현재로 되돌립니다.
-    if(wall - lastChunkAt > GAP_RESET) nextPlay = 0;
-    lastChunkAt = wall;
+    // 조용하면 저절로 멈춥니다. 통화 중이면 다시 켭니다.
+    sr.onend = () => {
+      srOn = false; sr = null;
+      if(rt && rt.active && !rt.muted && !sayBusy) setTimeout(srStart, 250);
+    };
+    sr.onerror = ev => {
+      srOn = false;
+      if(ev.error === 'not-allowed' || ev.error === 'service-not-allowed'){
+        toast('마이크 권한을 확인하세요');
+        if(rt) rt.muted = true;
+      }
+    };
 
-    if(nextPlay < now + 0.06) nextPlay = now + 0.06;   // 60ms 여유
-
-    // 너무 앞서 있으면 밀린 만큼 버리고 따라잡습니다.
-    // 조금 끊기더라도 늦게 들리는 것보다 낫습니다.
-    if(nextPlay > now + MAX_LEAD){
-      nextPlay = now + 0.12;
-      rtLag = 0;
-    }
-
-    src.start(nextPlay);
-    nextPlay += buf.duration;
-    rtLag = Math.max(0, nextPlay - now);
-    showLag();
-  }catch(e){}
+    sr.start();
+    srOn = true;
+  }catch(e){ sr = null; srOn = false; }
 }
-function playReset(){
-  try{ outCtx && outCtx.close(); }catch(e){}
-  outCtx = null; nextPlay = 0; lastChunkAt = 0; rtLag = 0;
+function srStop(){
+  try{ if(sr){ sr.onend = null; sr.stop(); } }catch(e){}
+  sr = null; srOn = false;
 }
 
-// 지금 몇 초 뒤처져 들리는지 화면에 보여줍니다
-let rtLag = 0;
-function showLag(){
-  const el = $('#lvl'); if(!el) return;
-  el.textContent = rtLag > 0.15 ? ('지연 ' + rtLag.toFixed(1) + '초') : '';
+/* ---------- 폰이 상대 말을 내 언어로 읽어줌 ---------- */
+function sayOut(text, langCode){
+  if(!text || !window.speechSynthesis) return;
+  try{
+    // 읽어주는 동안은 듣기를 멈춥니다. 안 그러면 내 폰 소리를 내가 다시 알아듣습니다.
+    sayBusy = true; srStop();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = bcp(langCode);
+    u.rate = 1.05;
+    u.onend = u.onerror = () => {
+      sayBusy = false;
+      if(rt && rt.active && !rt.muted) setTimeout(srStart, 200);
+    };
+    speechSynthesis.speak(u);
+  }catch(e){ sayBusy = false; }
 }
 
 /* ---------- 화면 ---------- */
 function renderCall(){
   if(rt && rt.active) return renderCallActive();
 
-  const bad = !rtOk(from) || !rtOk(to);
+  const noSR = !SR;
   $('#main').innerHTML = `
     <div class="fld">
       <label>상대 전화번호</label>
@@ -815,26 +749,24 @@ function renderCall(){
       <select id="cTo" onchange="setCallLang()">${opts(to)}</select>
     </div>
 
-    ${bad ? `
+    ${noSR ? `
       <div class="turn" style="border-color:#f0d4d0">
-        <div class="src" style="color:var(--rec)">이 언어 조합은 실시간 통역이 안 됩니다.</div>
-        <div class="src">실시간이 되는 언어: 한국어·영어·일본어·중국어·스페인어·포르투갈어·프랑스어·독일어·이탈리아어·러시아어·힌디어·인도네시아어·베트남어</div>
+        <div class="src" style="color:var(--sr)">이 브라우저는 음성인식을 지원하지 않습니다.</div>
+        <div class="src">안드로이드 크롬에서 열어주세요. 삼성 인터넷은 지원하지 않을 수 있습니다.</div>
       </div>`
-    : `
-      <div class="rtbadge">실시간 · 양쪽이 동시에 말해도 됩니다</div>`}
+    : `<div class="rtbadge">말하면 상대에게 ${esc(langName(to))}로 전달됩니다</div>`}
 
-    <button class="btn" id="callBtn" onclick="callStart()" ${bad?'disabled':''}>통역 전화 걸기</button>
+    <button class="btn" id="callBtn" onclick="callStart()" ${noSR?'disabled':''}>통역 전화 걸기</button>
 
     <div class="turn" style="margin-top:14px">
       <div class="src" style="margin:0">
         <b style="color:var(--fg)">이어폰을 쓰세요.</b><br>
-        스피커로 들으면 상대 목소리를 마이크가 다시 주워서 통역이 꼬입니다.
-        이어폰을 끼면 이 문제가 없어집니다.
+        스피커로 들으면 통역 음성을 마이크가 다시 주워서 말이 꼬입니다.
       </div>
     </div>
     <div class="hint" style="margin-top:10px">
-      상대는 그냥 전화를 받아 평소처럼 말하면 됩니다. 당신은 이 화면에 대고 말하세요.
-      기다릴 필요 없이 서로 자연스럽게 주고받으면 됩니다.
+      상대는 그냥 전화를 받아 평소처럼 말하면 됩니다. 앱 설치도, 버튼 누를 것도 없습니다.
+      당신은 이 화면에 대고 말하세요. 말이 끝나면 잠시 뒤 상대에게 전달됩니다.
     </div>`;
 }
 
@@ -852,16 +784,15 @@ function renderCallActive(){
       <div class="src" id="callStatus">${esc(rt.status||'연결하는 중…')}</div>
       <div class="foot">
         <small>방 ${esc(rt.room)}</small>
-        <button class="mini" onclick="copyRoom()">방번호 복사</button>
         <button class="mini" onclick="openDebug()">진단</button>
       </div>
     </div>
     <div class="rtctl">
-      <button class="mini" id="muteBtn" onclick="toggleMute()">${rt.muted?'음소거 해제':'내 마이크 끄기'}</button>
-      <span class="lvl" id="lvl"></span>
+      <button class="mini" id="muteBtn" onclick="toggleMute()">${rt.muted?'다시 말하기':'잠깐 멈춤'}</button>
+      <span class="lvl" id="lvl">${srOn?'듣는 중':''}</span>
     </div>
     <div id="callLog"></div>
-    <button class="btn" onclick="callEnd()" style="margin-top:16px;background:var(--rec)">${rt.active?'통화 종료':'닫기'}</button>`;
+    <button class="btn" onclick="callEnd()" style="margin-top:16px;background:var(--sr)">${rt.active?'통화 종료':'닫기'}</button>`;
   updateCallLog();
 }
 
@@ -869,17 +800,18 @@ function updateCallLog(){
   const el = $('#callLog'); if(!el || !rt) return;
   const rows = rt.log.map(m => `
     <div class="turn">
-      <div class="src">${m.dir==='me'?'내 말':'상대'}</div>
+      <div class="src">${m.dir==='me'?'내 말':'상대'}${m.src?' · '+esc(m.src):''}</div>
       <div class="dst ocr">${esc(m.text)}</div>
     </div>`).join('');
   const live = [];
-  if(rt.cur.peer) live.push(`<div class="turn live"><div class="src">상대 · 말하는 중</div><div class="dst ocr">${esc(rt.cur.peer)}</div></div>`);
-  if(rt.cur.me)   live.push(`<div class="turn live"><div class="src">내 말 · 전달 중</div><div class="dst ocr">${esc(rt.cur.me)}</div></div>`);
+  if(rt.cur.peer) live.push(`<div class="turn live"><div class="src">상대 · 통역 중</div><div class="dst ocr">${esc(rt.cur.peer)}</div></div>`);
+  if(rt.cur.me)   live.push(`<div class="turn live"><div class="src">내 말 · 듣는 중</div><div class="dst ocr">${esc(rt.cur.me)}</div></div>`);
   el.innerHTML = live.join('') + rows;
 }
 function setStatus(t){
   if(rt) rt.status = t;
   const el = $('#callStatus'); if(el) el.textContent = t;
+  const l = $('#lvl'); if(l) l.textContent = srOn ? '듣는 중' : (sayBusy ? '읽어주는 중' : '');
 }
 
 /* ---------- 통화 시작 ---------- */
@@ -888,19 +820,13 @@ async function callStart(){
   if(!/^\+\d{8,15}$/.test(num)){ toast('번호를 +1… 처럼 국가번호부터 넣어주세요'); return; }
   save(K.tel, num);
   const me = $('#cFrom').value, peer = $('#cTo').value;
-  if(!rtOk(me) || !rtOk(peer)){ toast('이 언어 조합은 실시간 통역이 안 됩니다'); return; }
+  if(!SR){ toast('이 브라우저는 음성인식을 지원하지 않습니다'); return; }
 
-  const b = $('#callBtn'); b.disabled = true; b.textContent = '마이크 준비 중…';
+  const b = $('#callBtn'); b.disabled = true; b.textContent = '전화 거는 중…';
 
-  // 마이크 권한은 버튼을 누른 지금(사용자 동작) 받아야 합니다
-  try{
-    await micStart();
-  }catch(e){
-    toast('마이크를 쓸 수 없습니다. 브라우저 권한을 확인하세요.');
-    micStop(); b.disabled = false; b.textContent = '통역 전화 걸기'; return;
-  }
+  // 음성합성을 미리 한 번 깨워둡니다 (모바일은 사용자 동작 안에서만 허용됩니다)
+  try{ speechSynthesis.speak(new SpeechSynthesisUtterance(' ')); }catch(e){}
 
-  b.textContent = '전화 거는 중…';
   let d;
   try{
     const res = await fetch(RT_API + '/api/rt/start', {
@@ -911,10 +837,10 @@ async function callStart(){
     if(d.error) throw new Error(d.error);
   }catch(e){
     toast(e.message || '전화를 걸지 못했습니다');
-    micStop(); b.disabled = false; b.textContent = '통역 전화 걸기'; return;
+    b.disabled = false; b.textContent = '통역 전화 걸기'; return;
   }
 
-  rt = { room:d.room, ws:null, me, peer, active:true, ready:false, muted:false,
+  rt = { room:d.room, ws:null, me, peer, active:true, muted:false,
          log:[], cur:{me:'',peer:''}, status:'상대가 받기를 기다리는 중…' };
   renderCall();
 
@@ -931,79 +857,83 @@ function onRtMessage(ev){
   try{ m = JSON.parse(ev.data); }catch(e){ return; }
   if(!rt) return;
 
-  if(m.type === 'audio'){ playChunk(m.audio); return; }
+  // 상대가 말한 원문 (그쪽 언어)
+  if(m.type === 'heard'){
+    rt.cur.peer = '';
+    setStatus('상대 말을 옮기는 중…');
+    return;
+  }
 
-  if(m.type === 'text'){
-    const k = m.dir === 'me' ? 'me' : 'peer';
-    rt.cur[k] = (rt.cur[k] || '') + (m.delta || '');
+  // 번역 조각이 흘러들어옴
+  if(m.type === 'chunk'){
+    rt.cur.peer = (rt.cur.peer || '') + (m.delta || '');
     updateCallLog();
     return;
   }
-  if(m.type === 'text_done'){
-    const k = m.dir === 'me' ? 'me' : 'peer';
-    if(rt.cur[k]){
-      rt.log.unshift({ dir:k, text:rt.cur[k] });
-      rt.cur[k] = '';
-      rt.log = rt.log.slice(0, 40);
-      updateCallLog();
+
+  // 한 문장 완성
+  if(m.type === 'line'){
+    rt.log.unshift({ dir:m.dir, src:m.src, text:m.text });
+    rt.log = rt.log.slice(0, 40);
+    if(m.dir === 'peer'){
+      rt.cur.peer = '';
+      sayOut(m.text, rt.me);          // 상대 말을 내 언어로 읽어줍니다
+      setStatus('말씀하세요.');
+    }else{
+      rt.cur.me = '';
+      setStatus('상대에게 전달했습니다.');
     }
+    updateCallLog();
     return;
   }
-  if(m.type === 'status'){
-    if(m.state === 'phone-connected') setStatus('상대가 받았습니다. 통역 준비 중…');
-    else if(m.state === 'ready'){ rt.ready = true; setStatus('말씀하세요. 동시에 통역됩니다.'); }
-    else if(m.state === 'ended'){ setStatus('통화가 끝났습니다.'); callCleanup(); }
-    return;
-  }
+
   if(m.type === 'callstatus'){
     setStatus(m.text || '');
     if(m.blocked){
-      // 상대가 한 번도 안 받고 끝남 = 스팸 차단일 가능성이 큽니다
-      rt.blocked = true;
       const el = $('#callStatus');
       if(el) el.innerHTML = esc(m.text) +
         '<br><br><b style="color:var(--fg)">상대 폰이 이 번호를 차단했을 수 있습니다.</b>' +
-        '<br>해외번호라 스팸으로 걸러지는 경우가 많습니다. 상대 연락처에 ' +
-        '<b style="color:var(--fg)">+14472841160</b> 을 저장해 두면 통과합니다.';
+        '<br>상대 연락처에 <b style="color:var(--fg)">+14472841160</b> 을 저장해 두면 통과합니다.';
     }
-    if(m.ended){
-      micStop(); playReset();
-      if(rt) rt.active = false;
-    }
+    if(m.ended){ srStop(); if(rt) rt.active = false; renderCall(); }
     return;
   }
-  if(m.type === 'error'){ toast(m.text || '통역 오류'); return; }
-}
 
-function copyRoom(){
-  if(!rt) return;
-  navigator.clipboard.writeText(rt.room).then(()=>toast('방번호를 복사했습니다'));
-}
-function openDebug(){
-  if(!rt) return;
-  window.open(RT_API + '/api/rt/debug?room=' + encodeURIComponent(rt.room), '_blank');
+  if(m.type === 'status'){
+    if(m.state === 'phone-connected') setStatus('상대가 받았습니다.');
+    else if(m.state === 'ready'){
+      setStatus('말씀하세요. 말이 끝나면 상대에게 전달됩니다.');
+      srStart();
+      renderCall();
+    }
+    else if(m.state === 'ended'){ setStatus('통화가 끝났습니다.'); srStop(); if(rt) rt.active=false; renderCall(); }
+    return;
+  }
+
+  if(m.type === 'error'){ toast(m.text || '오류'); return; }
 }
 
 function toggleMute(){
   if(!rt) return;
   rt.muted = !rt.muted;
-  const b = $('#muteBtn'); if(b) b.textContent = rt.muted ? '음소거 해제' : '내 마이크 끄기';
-  toast(rt.muted ? '내 마이크를 껐습니다' : '내 마이크를 켰습니다');
+  if(rt.muted) srStop(); else srStart();
+  const b = $('#muteBtn'); if(b) b.textContent = rt.muted ? '다시 말하기' : '잠깐 멈춤';
+  toast(rt.muted ? '내 마이크를 멈췄습니다' : '다시 듣습니다');
 }
 
-function callCleanup(){
-  micStop();
-  playReset();
-  if(rt){
-    try{ rt.ws && rt.ws.readyState===1 && rt.ws.send(JSON.stringify({type:'bye'})); }catch(e){}
-    try{ rt.ws && rt.ws.close(); }catch(e){}
-    rt.active = false;
-  }
+function openDebug(){
+  if(!rt) return;
+  window.open(RT_API + '/api/rt/debug?room=' + encodeURIComponent(rt.room), '_blank');
 }
 
 async function callEnd(){
   const room = rt && rt.room;
-  callCleanup();
+  srStop();
+  try{ speechSynthesis.cancel(); }catch(e){}
+  if(rt){
+    try{ rt.ws && rt.ws.readyState===1 && rt.ws.send(JSON.stringify({type:'bye'})); }catch(e){}
+    try{ rt.ws && rt.ws.close(); }catch(e){}
+  }
   rt = null;
   renderCall();
   toast('통화를 종료했습니다');
