@@ -330,7 +330,7 @@
   </section>
 
   <div class="foot-note">
-    <span class="b">podolang v1.3.2</span><br>
+    <span class="b">podolang v1.4.0</span><br>
     © 2026 BJ LEE · All Rights Reserved<br>
     PODOLANG.kr
   </div>
@@ -344,7 +344,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v1.3.2';
+const VER='v1.4.0';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -665,7 +665,7 @@ const GAP_RESET = 350;   // ms — 이만큼 소리가 없었으면 새 발화�
 /* ---- 마이크 잡기: 24kHz 로 받아서 20ms 씩 잘라 보냅니다 ---- */
 const CAP_WORKLET = `
 class PodoCap extends AudioWorkletProcessor {
-  constructor(){ super(); this.q=[]; this.need=960; }   // 960 = 40ms @ 24kHz
+  constructor(){ super(); this.q=[]; this.need=640; }   // 640 = 40ms @ 16kHz
   process(inputs){
     const ch = inputs[0] && inputs[0][0];
     if(ch && ch.length){
@@ -712,7 +712,8 @@ async function micStart(){
     audio: { echoCancellation:true, noiseSuppression:true, autoGainControl:true, channelCount:1 }
   });
   // 24kHz 로 요청하면 브라우저가 알아서 리샘플해 줍니다
-  micCtx = new (window.AudioContext||window.webkitAudioContext)({ sampleRate: 24000 });
+  // Gemini Live 입력 규격은 16kHz 입니다 (재생은 24kHz 그대로)
+  micCtx = new (window.AudioContext||window.webkitAudioContext)({ sampleRate: 16000 });
   if(micCtx.state === 'suspended') await micCtx.resume();
   micSrc = micCtx.createMediaStreamSource(micStream);
 
