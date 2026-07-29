@@ -330,7 +330,7 @@
   </section>
 
   <div class="foot-note">
-    <span class="b">podolang v1.3.1</span><br>
+    <span class="b">podolang v1.3.2</span><br>
     © 2026 BJ LEE · All Rights Reserved<br>
     PODOLANG.kr
   </div>
@@ -344,7 +344,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v1.3.1';
+const VER='v1.3.2';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -860,7 +860,7 @@ function renderCallActive(){
       <span class="lvl" id="lvl"></span>
     </div>
     <div id="callLog"></div>
-    <button class="btn" onclick="callEnd()" style="margin-top:16px;background:var(--rec)">통화 종료</button>`;
+    <button class="btn" onclick="callEnd()" style="margin-top:16px;background:var(--rec)">${rt.active?'통화 종료':'닫기'}</button>`;
   updateCallLog();
 }
 
@@ -952,6 +952,23 @@ function onRtMessage(ev){
     if(m.state === 'phone-connected') setStatus('상대가 받았습니다. 통역 준비 중…');
     else if(m.state === 'ready'){ rt.ready = true; setStatus('말씀하세요. 동시에 통역됩니다.'); }
     else if(m.state === 'ended'){ setStatus('통화가 끝났습니다.'); callCleanup(); }
+    return;
+  }
+  if(m.type === 'callstatus'){
+    setStatus(m.text || '');
+    if(m.blocked){
+      // 상대가 한 번도 안 받고 끝남 = 스팸 차단일 가능성이 큽니다
+      rt.blocked = true;
+      const el = $('#callStatus');
+      if(el) el.innerHTML = esc(m.text) +
+        '<br><br><b style="color:var(--fg)">상대 폰이 이 번호를 차단했을 수 있습니다.</b>' +
+        '<br>해외번호라 스팸으로 걸러지는 경우가 많습니다. 상대 연락처에 ' +
+        '<b style="color:var(--fg)">+14472841160</b> 을 저장해 두면 통과합니다.';
+    }
+    if(m.ended){
+      micStop(); playReset();
+      if(rt) rt.active = false;
+    }
     return;
   }
   if(m.type === 'error'){ toast(m.text || '통역 오류'); return; }
