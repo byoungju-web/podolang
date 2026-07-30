@@ -386,7 +386,7 @@
   </section>
 
   <div class="foot-note">
-    <span class="b">podolang v3.1.2</span><br>
+    <span class="b">podolang v3.2.0</span><br>
     © 2026 BJ LEE · All Rights Reserved<br>
     PODOLANG.kr
   </div>
@@ -400,7 +400,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v3.1.2';
+const VER='v3.2.0';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -716,9 +716,37 @@ async function photoTranslate(){
 let rt = null;              // { room, ws, me, peer, active, log[], cur, muted }
 let sr = null;             // 폰 음성인식
 let srOn = false;          // 지금 듣고 있는지
-// 읽어주는 동안은 마이크를 끕니다. v2.1.1 에서 확실히 작동한 방식입니다.
-// 켜둔 채로 결과만 버리는 방식은 결과가 확정되지 않아 내 말이 안 나갔습니다.
-let sayBusy = false;
+// 마이크를 통화 내내 켜둡니다. 껐다 켤 때마다 안드로이드가 딸깍 소리를 냅니다.
+// 대신 방금 읽어준 말이 마이크로 되돌아오면 걸러냅니다.
+let sayBusy = false;              // 화면 표시용으로만 씁니다
+
+// 최근에 폰이 읽어준 말들. 이게 되돌아오면 버립니다.
+let spokenRecent = [];
+const norm = v => String(v||'').replace(/[\s.,!?~…"'“”‘’·:;()\-]/g,'').toLowerCase();
+
+function rememberSpoken(text){
+  const t = norm(text);
+  if(!t) return;
+  spokenRecent.push({ t, at: Date.now() });
+  const now = Date.now();
+  spokenRecent = spokenRecent.filter(x => now - x.at < 25000).slice(-8);
+}
+
+// 인식된 말이 방금 읽어준 것과 사실상 같은지 봅니다
+function isEcho(text){
+  const n = norm(text);
+  if(n.length < 2) return false;
+  for(const x of spokenRecent){
+    if(!x.t) continue;
+    if(x.t.includes(n) || n.includes(x.t)) return true;
+    // 짧은 조각이 섞여 들어오는 경우까지 잡습니다
+    const set = new Set(n);
+    let hit = 0;
+    for(const ch of set) if(x.t.includes(ch)) hit++;
+    if(hit / set.size >= 0.85 && Math.abs(x.t.length - n.length) <= Math.max(4, n.length * 0.5)) return true;
+  }
+  return false;
+}
 // 이용권 코드와 기기 식별자 (기기 식별자는 한 번 만들고 계속 씁니다)
 let licCode = load(K.lic, '');
 let licInfo = null;
@@ -951,6 +979,11 @@ function flushSay(){
   pending = '';
   finalBase = finalCount;                    // 여기까지는 보냈다고 표시
   if(!text || text.length < 2) return;       // 잡음 한두 글자는 버립니다
+  if(isEcho(text)){                          // 폰이 읽어준 말이 되돌아온 것
+    setStatus('말씀하세요.');
+    updateCallLog();
+    return;
+  }
   if(!rt || !rt.ws || rt.ws.readyState !== 1 || rt.muted) return;
   rt.ws.send(JSON.stringify({ type:'say', text }));
   if(rt) rt.cur.me = '';
@@ -964,16 +997,14 @@ function resetFinals(){ finalBase = 0; finalCount = 0; pending = ''; }
 function sayOut(text, langCode){
   if(!text || !window.speechSynthesis) return;
   try{
-    // 읽어주는 동안은 듣기를 멈춥니다. 안 그러면 내 폰 소리를 내가 다시 알아듣습니다.
-    sayBusy = true; srStop();
-    clearTimeout(pendTimer); pendTimer = null; resetFinals();
+    // 마이크를 끄지 않습니다. 껐다 켜면 딸깍 소리가 납니다.
+    // 대신 이 말이 되돌아오면 아래 flushSay 에서 걸러냅니다.
+    rememberSpoken(text);
+    sayBusy = true;
     const u = new SpeechSynthesisUtterance(text);
     u.lang = bcp(langCode);
     u.rate = 1.05;
-    u.onend = u.onerror = () => {
-      sayBusy = false;
-      if(rt && rt.active && !rt.muted) setTimeout(srStart, 200);
-    };
+    u.onend = u.onerror = () => { sayBusy = false; };
     speechSynthesis.speak(u);
   }catch(e){ sayBusy = false; }
 }
@@ -1206,6 +1237,7 @@ async function callEnd(){
   clearTimeout(pendTimer); pendTimer = null; resetFinals();
   srStop();
   sayBusy = false;
+  spokenRecent = [];
   stopWatch();
   try{ speechSynthesis.cancel(); }catch(e){}
   if(rt){
