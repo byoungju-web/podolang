@@ -386,7 +386,7 @@
   </section>
 
   <div class="foot-note">
-    <span class="b">podolang v4.0.1</span><br>
+    <span class="b">podolang v4.0.2</span><br>
     © 2026 BJ LEE · All Rights Reserved<br>
     PODOLANG.kr
   </div>
@@ -400,7 +400,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v4.0.1';
+const VER='v4.0.2';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -1198,6 +1198,132 @@ function closeSheet(){
   $('#sheet').classList.remove('on');
   ['nvTel','nvSearch','nvSet','nvMy'].forEach(id => { const b=$('#'+id); if(b) b.classList.remove('on'); });
 }
+/* ---------- 이용권 ---------- */
+async function licCheck(quiet){
+  if(!licCode){ licInfo = null; return null; }
+  try{
+    const r = await fetch(RT_API + '/api/lic/check', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ code: licCode, device: devId })
+    });
+    licInfo = await r.json();
+  }catch(e){ licInfo = { ok:false, reason:'서버에 연결하지 못했습니다.' }; }
+  if(!quiet && licInfo && !licInfo.ok) toast(licInfo.reason || '이용권을 확인하지 못했습니다');
+  return licInfo;
+}
+async function saveLic(){
+  const el = $('#licBox'); if(!el) return;
+  licCode = el.value.trim().toUpperCase();
+  save(K.lic, licCode);
+  await licCheck();
+  openMy();
+  renderCall();
+  if(licInfo && licInfo.ok) toast('이용권을 확인했습니다');
+}
+function clearLic(){
+  if(!confirm('이 기기에서 이용권을 지웁니다.')) return;
+  licCode = ''; licInfo = null;
+  try{ localStorage.removeItem(K.lic); }catch(e){}
+  openMy(); renderCall();
+}
+const licLine = () => {
+  if(!licCode) return '이용권 없음 — 전화 통역을 쓸 수 없습니다';
+  if(!licInfo) return '확인 중…';
+  if(!licInfo.ok) return licInfo.reason || '쓸 수 없는 이용권';
+  return `${licInfo.plan} · 남은 통역 ${licInfo['남은분']}분 · ${licInfo['만료일']} 까지`;
+};
+
+/* ---------- 창문 패널: 저장된 번호 + 통화 기록 ---------- */
+function openPanel(){
+  markNav('nvTel');
+  const telRows = tels.length ? tels.map((t,i)=>`
+    <div class="telrow">
+      <button class="telpick" onclick="pickTel(${i})">
+        <b>${esc(t.name || t.num)}</b>
+        ${t.name ? `<span>${esc(t.num)}</span>` : ''}
+      </button>
+      <button class="mini" onclick="renameTel(${i})">이름</button>
+      <button class="mini del" onclick="delTel(${i})">삭제</button>
+    </div>`).join('')
+    : `<div class="hint">아직 저장된 번호가 없습니다. 통화를 걸면 자동으로 저장됩니다.</div>`;
+
+  const logRows = !clog.length
+    ? `<div class="hint">아직 통화 기록이 없습니다.</div>`
+    : (clogOpen ? clog.map((m,i)=>`
+        <div class="turn">
+          <div class="src">${m.dir==='me'?'내 말':'상대'} · ${hhmm(m.at)}${m.src?'<br>'+esc(m.src):''}</div>
+          <div class="dst ocr" style="font-size:16px">${esc(m.text)}</div>
+          <div class="foot">
+            <small>${esc(m.pair||'')}</small>
+            <button class="mini" onclick="copyLog(${i})">복사</button>
+            <button class="mini del" onclick="delLog(${i})">삭제</button>
+          </div>
+        </div>`).join('') + `<button class="btn ghost" onclick="clearLog()">기록 전체 지우기</button>`
+      : `<div class="hint">접혀 있습니다. 오른쪽 버튼으로 펼치세요.</div>`);
+
+  $('#card').innerHTML = `
+    <h2>저장된 번호</h2>
+    ${telRows}
+    <div class="seclabel row">
+      <span>통화 기록 · ${clog.length}줄</span>
+      <button class="foldbtn" onclick="toggleClog()">${clogOpen ? '접기 ▲' : '펼치기 ▼'}</button>
+    </div>
+    ${logRows}
+    <div class="ver">podolang ${VER}</div>`;
+  $('#sheet').classList.add('on');
+}
+
+/* ---------- 전화번호 목록 ---------- */
+function saveTels(){ try{ localStorage.setItem(K.tels, JSON.stringify(tels)); }catch(e){} }
+function saveTel(num, name){
+  if(!num) return;
+  const old = tels.find(t => t.num === num);
+  tels = tels.filter(t => t.num !== num);
+  tels.unshift({ num, name: (name || (old && old.name) || '').trim(), at: Date.now() });
+  tels = tels.slice(0, 30);
+  saveTels();
+}
+function pickTel(i){
+  if(!tels[i]) return;
+  const n=$('#cNum'), nm=$('#cName');
+  if(n) n.value = tels[i].num;
+  if(nm) nm.value = tels[i].name || '';
+  closeSheet();
+  toast((tels[i].name || tels[i].num) + ' 를 넣었습니다');
+}
+function renameTel(i){
+  if(!tels[i]) return;
+  const v = prompt('이름을 입력하세요', tels[i].name || '');
+  if(v === null) return;
+  tels[i].name = v.trim();
+  saveTels(); openPanel();
+}
+function delTel(i){
+  if(!tels[i]) return;
+  if(!confirm((tels[i].name||tels[i].num) + ' 을 지웁니다.')) return;
+  tels.splice(i,1); saveTels(); openPanel();
+}
+
+/* ---------- 통화 기록 ---------- */
+function saveClog(){
+  try{ localStorage.setItem(K.clog, JSON.stringify(clog)); }
+  catch(e){ try{ localStorage.removeItem(K.clog); }catch(_){} }
+}
+function pushLog(item){ clog.unshift(item); clog = clog.slice(0,200); saveClog(); }
+function delLog(i){ clog.splice(i,1); saveClog(); openPanel(); }
+function clearLog(){
+  if(!confirm('통화 기록을 모두 지웁니다.')) return;
+  clog = []; try{ localStorage.removeItem(K.clog); }catch(e){}
+  openPanel();
+}
+function copyLog(i){ navigator.clipboard.writeText(clog[i].text).then(()=>toast('복사했습니다')); }
+const hhmm = ts => {
+  const d = new Date(ts);
+  return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+};
+let clogOpen = true;
+function toggleClog(){ clogOpen = !clogOpen; openPanel(); }
+
 function markNav(id){
   ['nvTel','nvSearch','nvSet','nvMy'].forEach(x => { const b=$('#'+x); if(b) b.classList.toggle('on', x===id); });
 }
