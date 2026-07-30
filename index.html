@@ -8,11 +8,19 @@
 <meta name="theme-color" content="#ffffff">
 <style>
   :root{
-    --bg:#fff; --fg:#111; --sub:#8a8a8e; --line:#ebebed;
-    --grape:#5b2c83; --grape-soft:#f4eef9; --rec:#c0392b;
+    /* 포도 껍질에 서린 흰 분(bloom) 같은 연한 자주 바탕 + 흰 카드 */
+    --ground:#f3effa;        /* 바탕 */
+    --card:#ffffff;          /* 카드 */
+    --bg:#fff; --fg:#141218; --sub:#77707f;
+    --line:#e6e1ee;          /* 옅은 구분선 */
+    --line2:#ccb9e0;         /* 카드 테두리 — 또렷하게 */
+    --grape:#5b2c83; --grape-soft:#f4eef9; --grape-ink:#3e1d5c;
+    --sky:#0b7ea8; --sky-soft:#eaf4fa; --sky-line:#a9d4e6;
+    --leaf:#2e9e5b;
+    --rec:#c0392b;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
-  html,body{margin:0;background:var(--bg);color:var(--fg);
+  html,body{margin:0;background:var(--ground);color:var(--fg);
     font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
     font-size:16px;-webkit-text-size-adjust:100%}
 
@@ -20,37 +28,45 @@
   #app{height:100dvh;display:flex;flex-direction:column;overflow:hidden;
     border-bottom:1px solid var(--line)}
 
-  header{flex:0 0 auto;height:52px;display:flex;align-items:center;gap:8px;padding:0 14px;border-bottom:1px solid var(--line)}
-  header h1{flex:1;margin:0;font-size:17px;font-weight:700;letter-spacing:-.3px;display:flex;align-items:center;gap:7px}
+  header{flex:0 0 auto;height:54px;display:flex;align-items:center;gap:8px;padding:0 16px;
+    background:var(--card);border-bottom:1.5px solid var(--line2)}
+  header h1{flex:1;margin:0;font-size:18px;font-weight:800;letter-spacing:-.4px;
+    display:flex;align-items:center;gap:8px;color:var(--grape-ink)}
   header h1 .logo{width:24px;height:24px;display:block;flex-shrink:0}
   .ico{width:36px;height:36px;border:0;background:none;display:grid;place-items:center;border-radius:9px;color:var(--fg)}
   .ico:active{background:#f2f2f4}
   .ico svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 
-  .tabs{flex:0 0 auto;display:flex;border-bottom:1px solid var(--line)}
-  .tab{flex:1;padding:12px 2px;text-align:center;border:0;background:none;font:inherit;font-size:14.5px;color:var(--sub);white-space:nowrap}
-  .tab.on{color:var(--fg);font-weight:700;box-shadow:inset 0 -2px 0 var(--grape)}
+  .tabs{flex:0 0 auto;display:flex;background:var(--card);border-bottom:1.5px solid var(--line2)}
+  .tab{flex:1;padding:13px 2px;text-align:center;border:0;background:none;font:inherit;
+    font-size:14.5px;color:var(--sub);white-space:nowrap;font-weight:600}
+  .tab.on{color:var(--grape-ink);font-weight:800;box-shadow:inset 0 -3px 0 var(--grape)}
 
-  main{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px}
+  main{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px 20px;background:var(--ground)}
 
   .langbar{display:flex;align-items:center;gap:8px;margin-bottom:16px}
-  .langbar select{flex:1;border:1px solid var(--line);border-radius:11px;padding:12px;font:inherit;font-size:16px;background:#fafafa;outline:none}
+  .langbar{background:var(--card);border:1.5px solid var(--line2);border-radius:16px;padding:11px}
+  .langbar select{flex:1;border:1.5px solid var(--line2);border-radius:11px;padding:12px;
+    font:inherit;font-size:16px;background:#fff;outline:none}
   .swap{width:38px;height:38px;border:1px solid var(--line);border-radius:10px;background:#fff;flex:0 0 auto;display:grid;place-items:center}
   .swap svg{width:16px;height:16px;fill:none;stroke:var(--fg);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 
-  .turn{border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px}
+  .turn{background:var(--card);border:1.5px solid var(--line2);border-radius:16px;
+    padding:15px;margin-bottom:11px}
   .turn .src{font-size:14.5px;color:var(--sub);margin-bottom:6px;line-height:1.55;word-break:break-word}
   .turn .dst{font-size:18.5px;line-height:1.6;font-weight:600;word-break:break-word}
   .turn .foot{display:flex;align-items:center;gap:8px;margin-top:10px}
   .turn .foot small{color:var(--sub);font-size:12px;flex:1}
-  .mini{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 11px;font:inherit;font-size:13px;color:var(--fg)}
+  .mini{border:1.5px solid var(--line2);background:#fff;border-radius:9px;padding:6px 12px;
+    font:inherit;font-size:13px;color:var(--grape-ink);font-weight:600}
   .mini.del{color:var(--rec);border-color:#f0d4d0}
 
-  .empty{padding:44px 24px;text-align:center;color:var(--sub);font-size:15px;line-height:1.7}
+  .empty{background:var(--card);border:1.5px dashed var(--line2);border-radius:16px;
+    padding:38px 22px;text-align:center;color:var(--sub);font-size:15px;line-height:1.7}
   .empty b{display:block;color:var(--fg);font-size:17px;margin-bottom:6px}
   .empty .scrollhint{margin-top:22px;font-size:13px;color:var(--grape);opacity:.85}
 
-  footer{flex:0 0 auto;border-top:1px solid var(--line);
+  footer{flex:0 0 auto;background:var(--card);border-top:1.5px solid var(--line2);
     padding:12px 14px calc(12px + env(safe-area-inset-bottom));
     display:flex;align-items:center;gap:10px}
   .foot-mic{flex:1;display:flex;flex-direction:column;align-items:center}
@@ -69,7 +85,9 @@
 
   .fld{margin-bottom:12px}
   .fld label{display:block;font-size:12px;color:var(--sub);margin-bottom:5px}
-  .fld input,.fld select{width:100%;border:1px solid var(--line);border-radius:11px;padding:11px 12px;font:inherit;font-size:15px;background:#fafafa;outline:none}
+  .fld{background:var(--card);border:1.5px solid var(--line2);border-radius:16px;padding:13px 14px;margin-bottom:11px}
+  .fld input,.fld select{width:100%;border:1.5px solid var(--line2);border-radius:11px;
+    padding:12px;font:inherit;font-size:16px;background:#fff;outline:none}
   .fld input:focus{border-color:#c9c9cc;background:#fff}
   .hint{font-size:12.5px;color:var(--sub);margin-top:5px;line-height:1.55}
   .btn{width:100%;padding:13px;border-radius:12px;border:0;background:var(--fg);color:#fff;font:inherit;font-weight:600;font-size:15px}
@@ -96,28 +114,56 @@
   @keyframes sp{to{transform:rotate(360deg)}}
 
   /* ---------- 실시간 전화 ---------- */
-  .rtbadge{display:inline-block;font-size:12.5px;font-weight:700;color:var(--grape);
-    background:var(--grape-soft);border-radius:9px;padding:8px 13px;margin-bottom:12px}
+  .rtbadge{display:block;font-size:13px;font-weight:700;color:var(--grape-ink);
+    background:var(--grape-soft);border:1.5px solid var(--line2);
+    border-radius:14px;padding:12px 14px;margin-bottom:12px}
+  .note{background:var(--sky-soft);border:1.5px solid var(--sky-line);border-radius:16px;
+    padding:14px;margin-bottom:11px;font-size:14px;line-height:1.65;color:#134a63}
+  .note b{color:#08384c}
   .rtctl{display:flex;align-items:center;gap:10px;margin:14px 0}
   .turn.live{border-color:var(--grape);background:#fcfaff}
-  .seclabel{font-size:12px;color:var(--sub);margin:20px 0 8px;font-weight:600}
+  .seclabel{font-size:11.5px;color:var(--grape);margin:22px 0 9px;font-weight:800;
+    letter-spacing:.06em;display:flex;align-items:center;gap:7px}
+  .seclabel::before{content:'';width:9px;height:9px;border-radius:50%;
+    background:var(--grape);flex:0 0 auto}
   .telrow{display:flex;gap:8px;align-items:center;margin-bottom:8px}
   .telpick{flex:1;text-align:left;border:1px solid var(--line);background:#fafafa;
     border-radius:11px;padding:12px;font:inherit;font-size:15.5px;color:var(--fg)}
   .telpick:active{background:#f0edf6}
+  .telpick b{display:block;font-size:15.5px}
+  .telpick span{display:block;font-size:13px;color:var(--sub);margin-top:2px}
+  .foldbtn{border:1px solid var(--line);background:#fff;border-radius:8px;
+    padding:3px 9px;font:inherit;font-size:12px;color:var(--sub);margin-left:auto}
+  .seclabel.row{display:flex;align-items:center;gap:8px}
   .turn.live .dst{font-weight:500}
 
-  .sheet{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;z-index:50}
+  /* 하단 4개 탭 — 활성 표시는 로고의 포도알에서 온 동그라미 */
+  .botnav{flex:0 0 auto;display:flex;background:var(--card);
+    border-top:1.5px solid var(--line2);
+    padding-bottom:env(safe-area-inset-bottom)}
+  .botnav button{flex:1;border:0;background:none;font:inherit;padding:9px 2px 8px;
+    display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--sub)}
+  .botnav .dot{width:9px;height:9px;border-radius:50%;background:#dcd4e8;transition:background .15s}
+  .botnav .lb{font-size:12px;font-weight:700;letter-spacing:-.2px}
+  .botnav button.on{color:var(--grape-ink)}
+  .botnav button.on .dot{background:var(--grape)}
+  .botnav button:active{background:var(--grape-soft)}
+
+  .sheet{position:fixed;inset:0;background:rgba(20,10,30,.4);display:none;z-index:50}
   .sheet.on{display:block}
-  .card{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:18px 18px 0 0;
-    padding:18px 18px calc(18px + env(safe-area-inset-bottom));max-height:84dvh;overflow-y:auto}
-  .card h2{margin:0 0 14px;font-size:16px}
+  .card{position:absolute;left:0;right:0;bottom:0;background:var(--ground);
+    border-top:1.5px solid var(--line2);border-radius:20px 20px 0 0;
+    padding:16px 16px calc(20px + env(safe-area-inset-bottom));max-height:86dvh;overflow-y:auto}
+  .card h2{margin:2px 0 14px;font-size:18px;font-weight:800;color:var(--grape-ink);
+    letter-spacing:-.4px;display:flex;align-items:center;gap:8px}
+  .card h2::before{content:'';width:11px;height:11px;border-radius:50%;background:var(--grape)}
+  .card .seclabel:first-of-type{margin-top:4px}
   .toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:#111;color:#fff;
     padding:10px 16px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:99;max-width:82%;text-align:center;line-height:1.4}
   .toast.on{opacity:1}
 
   /* ============ 소개 / 홍보 (스크롤 아래) ============ */
-  .promo{max-width:680px;margin:0 auto;padding:0 20px}
+  .promo{max-width:680px;margin:0 auto;padding:0 20px;background:var(--card)}
   .promo section{padding:64px 0;border-bottom:1px solid var(--line)}
   .promo section:last-child{border-bottom:0}
   .eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--grape);margin:0 0 14px}
@@ -187,9 +233,7 @@
   <main id="main"></main>
 
   <footer id="foot">
-    <button class="foot-set" onclick="openSet()" aria-label="설정">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.6 1.6 0 00-2.7 1.1V21a2 2 0 11-4 0v-.1A1.6 1.6 0 006.6 19l-.1.1a2 2 0 11-2.8-2.8l.1-.1A1.6 1.6 0 003 13.6a2 2 0 110-4 1.6 1.6 0 001.5-1.1 1.6 1.6 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.6 1.6 0 001.8.3H9a1.6 1.6 0 001-1.5V2a2 2 0 114 0v.1a1.6 1.6 0 001 1.5 1.6 1.6 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.6 1.6 0 00-.3 1.8V9a1.6 1.6 0 001.5 1H22a2 2 0 110 4h-.1a1.6 1.6 0 00-1.5 1z"/></svg>
-    </button>
+    <div class="foot-spacer"></div>
     <div class="foot-mic">
       <button class="mic" id="mic" aria-label="녹음">
         <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 00-3 3v7a3 3 0 006 0V5a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v3"/></svg>
@@ -198,6 +242,13 @@
     </div>
     <div class="foot-spacer"></div>
   </footer>
+
+  <nav class="botnav" id="botnav">
+    <button id="nvTel"    onclick="openPanel()"><span class="dot"></span><span class="lb">내번호</span></button>
+    <button id="nvSearch" onclick="openSearch()"><span class="dot"></span><span class="lb">검색</span></button>
+    <button id="nvSet"    onclick="openSet()"><span class="dot"></span><span class="lb">설정</span></button>
+    <button id="nvMy"     onclick="openMy()"><span class="dot"></span><span class="lb">마이</span></button>
+  </nav>
 </div>
 
 <!-- ===================== 소개 / 홍보 (스크롤) ===================== -->
@@ -335,7 +386,7 @@
   </section>
 
   <div class="foot-note">
-    <span class="b">podolang v2.1.1</span><br>
+    <span class="b">podolang v3.1.0</span><br>
     © 2026 BJ LEE · All Rights Reserved<br>
     PODOLANG.kr
   </div>
@@ -349,7 +400,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v2.1.1';
+const VER='v3.1.0';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -359,8 +410,9 @@ const RT_OUT=['KO','EN','JA','ZH','ES','PT','FR','DE','IT','RU','HI','ID','VI'];
 const rtOk=c=>RT_OUT.includes(String(c||'').toUpperCase());
 const K={from:'podolang_from', to:'podolang_to', hist:'podolang_hist', tel:'podolang_tel',
          pfrom:'podolang_pfrom', pto:'podolang_pto', phist:'podolang_phist',
-         tels:'podolang_tels', clog:'podolang_clog'};
-const LANGS=[['KO','한국어'],['TH','태국어'],['EN','영어'],['JA','일본어'],['ZH','중국어'],['VI','베트남어'],['ES','스페인어'],['ID','인도네시아어'],['DE','독일어'],['FR','프랑스어'],['AR','아랍어'],['IT','이탈리아어'],['RU','러시아어'],['PT','포르투갈어']];
+         tels:'podolang_tels', clog:'podolang_clog',
+         lic:'podolang_lic', dev:'podolang_dev'};
+const LANGS=[['KO','한국어'],['TH','태국어'],['EN','영어'],['JA','일본어'],['ZH','중국어'],['VI','베트남어'],['ES','스페인어'],['ID','인도네시아어'],['DE','독일어'],['FR','프랑스어'],['AR','아랍어'],['IT','이탈리아어'],['RU','러시아어'],['PT','포르투갈어'],['HI','힌디어'],['NL','네덜란드어']];
 const $=s=>document.querySelector(s);
 let mode='talk', rec=null, chunks=[], busy=false;
 
@@ -400,6 +452,7 @@ function tab(m){
   render();
 }
 function render(){
+  if(mode==='call' && licCode && !licInfo) licCheck(true).then(renderCall);
   if(mode==='talk') renderTalk();
   else if(mode==='photo') renderPhoto();
   else renderCall();
@@ -559,7 +612,7 @@ function renderPhoto(){
         ${photoBusy?'읽는 중…':'이 사진 번역하기'}
       </button>`
       : (photoResult ? '' : `
-      <div class="empty" style="padding:34px 20px">
+      <div class="empty">
         <b>서류를 찍으면 읽어드립니다</b>
         거래명세서 · 인보이스 · 제품 라벨 · 간판 · 손글씨<br>
         숫자와 품번은 원문 그대로 옮깁니다.
@@ -664,6 +717,15 @@ let rt = null;              // { room, ws, me, peer, active, log[], cur, muted }
 let sr = null;             // 폰 음성인식
 let srOn = false;          // 지금 듣고 있는지
 let sayBusy = false;       // 지금 읽어주는 중인지 (그동안은 듣기를 멈춥니다)
+// 이용권 코드와 기기 식별자 (기기 식별자는 한 번 만들고 계속 씁니다)
+let licCode = load(K.lic, '');
+let licInfo = null;
+let devId = load(K.dev, '');
+if(!devId){
+  devId = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()+Math.random())).slice(0,18);
+  save(K.dev, devId);
+}
+
 let tels = load(K.tels, []);      // 저장된 전화번호 목록
 let clog = load(K.clog, []);      // 지난 통화 기록
 let pending = '';          // 아직 안 보낸 내 말
@@ -676,7 +738,7 @@ const PEND_MAX  = 120;     // 글자 — 너무 길어지면 기다리지 않고
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 const BCP = { KO:'ko-KR', EN:'en-US', JA:'ja-JP', ZH:'zh-CN', ES:'es-ES', PT:'pt-BR',
               FR:'fr-FR', DE:'de-DE', IT:'it-IT', RU:'ru-RU', VI:'vi-VN', ID:'id-ID',
-              TH:'th-TH', AR:'ar-SA' };
+              TH:'th-TH', AR:'ar-SA', HI:'hi-IN', NL:'nl-NL' };
 const bcp = c => BCP[String(c||'').toUpperCase()] || 'en-US';
 
 /* ---------- 폰이 내 말을 글자로 ---------- */
@@ -693,6 +755,9 @@ function srStart(){
     //    덧붙이면 "나는 / 나는 나는 / 나는 어제…" 처럼 눈덩이가 됩니다.
     //    그래서 매번 덧붙이지 않고, 아직 안 보낸 구간만 통째로 다시 만듭니다.
     sr.onresult = e => {
+      // 읽어주는 중이면 마이크는 켜둔 채 결과만 버립니다.
+      // 껐다 켜면 이어폰에서 딸깍 소리가 납니다.
+      if(sayBusy){ finalBase = e.results.length; finalCount = e.results.length; return; }
       let finals = '', interim = '';
       for(let i=0; i<e.results.length; i++){
         const r = e.results[i];
@@ -740,25 +805,109 @@ function srStop(){
   sr = null; srOn = false;
 }
 
+/* ---------- 이용권 ---------- */
+async function licCheck(quiet){
+  if(!licCode){ licInfo = null; return null; }
+  try{
+    const r = await fetch(RT_API + '/api/lic/check', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ code: licCode, device: devId })
+    });
+    licInfo = await r.json();
+  }catch(e){ licInfo = { ok:false, reason:'서버에 연결하지 못했습니다.' }; }
+  if(!quiet && licInfo && !licInfo.ok) toast(licInfo.reason || '이용권을 확인하지 못했습니다');
+  return licInfo;
+}
+async function saveLic(){
+  const el = $('#licBox'); if(!el) return;
+  licCode = el.value.trim().toUpperCase();
+  save(K.lic, licCode);
+  await licCheck();
+  openMy();
+  renderCall();
+  if(licInfo && licInfo.ok) toast('이용권을 확인했습니다');
+}
+function clearLic(){
+  if(!confirm('이 기기에서 이용권을 지웁니다.')) return;
+  licCode = ''; licInfo = null;
+  try{ localStorage.removeItem(K.lic); }catch(e){}
+  openMy(); renderCall();
+}
+const licLine = () => {
+  if(!licCode) return '이용권 없음 — 전화 통역을 쓸 수 없습니다';
+  if(!licInfo) return '확인 중…';
+  if(!licInfo.ok) return licInfo.reason || '쓸 수 없는 이용권';
+  return `${licInfo.plan} · 남은 통역 ${licInfo['남은분']}분 · ${licInfo['만료일']} 까지`;
+};
+
+/* ---------- 창문 4개 패널: 저장된 번호 + 통화 기록 ---------- */
+function openPanel(){
+  markNav('nvTel');
+  const telRows = tels.length ? tels.map((t,i)=>`
+    <div class="telrow">
+      <button class="telpick" onclick="pickTel(${i})">
+        <b>${esc(t.name || t.num)}</b>
+        ${t.name ? `<span>${esc(t.num)}</span>` : ''}
+      </button>
+      <button class="mini" onclick="renameTel(${i})">이름</button>
+      <button class="mini del" onclick="delTel(${i})">삭제</button>
+    </div>`).join('')
+    : `<div class="hint">아직 저장된 번호가 없습니다. 통화를 걸면 자동으로 저장됩니다.</div>`;
+
+  const logRows = !clog.length
+    ? `<div class="hint">아직 통화 기록이 없습니다.</div>`
+    : (clogOpen ? clog.map((m,i)=>`
+        <div class="turn">
+          <div class="src">${m.dir==='me'?'내 말':'상대'} · ${hhmm(m.at)}${m.src?'<br>'+esc(m.src):''}</div>
+          <div class="dst ocr" style="font-size:16px">${esc(m.text)}</div>
+          <div class="foot">
+            <small>${esc(m.pair||'')}</small>
+            <button class="mini" onclick="copyLog(${i})">복사</button>
+            <button class="mini del" onclick="delLog(${i})">삭제</button>
+          </div>
+        </div>`).join('') + `<button class="btn ghost" onclick="clearLog()">기록 전체 지우기</button>`
+      : `<div class="hint">접혀 있습니다. 오른쪽 버튼으로 펼치세요.</div>`);
+
+  $('#card').innerHTML = `
+    <h2>저장된 번호</h2>
+    ${telRows}
+    <div class="seclabel row">
+      <span>통화 기록 · ${clog.length}줄</span>
+      <button class="foldbtn" onclick="toggleClog()">${clogOpen ? '접기 ▲' : '펼치기 ▼'}</button>
+    </div>
+    ${logRows}
+    <div class="ver">podolang ${VER}</div>`;
+  $('#sheet').classList.add('on');
+}
+
 /* ---------- 전화번호 목록 ---------- */
-function saveTel(num){
+function saveTels(){ try{ localStorage.setItem(K.tels, JSON.stringify(tels)); }catch(e){} }
+function saveTel(num, name){
   if(!num) return;
+  const old = tels.find(t => t.num === num);
   tels = tels.filter(t => t.num !== num);
-  tels.unshift({ num, at: Date.now() });
-  tels = tels.slice(0, 12);
-  try{ localStorage.setItem(K.tels, JSON.stringify(tels)); }catch(e){}
+  tels.unshift({ num, name: (name || (old && old.name) || '').trim(), at: Date.now() });
+  tels = tels.slice(0, 30);
+  saveTels();
 }
-function pickTel(i){ const el=$('#cNum'); if(el && tels[i]) el.value = tels[i].num; }
+function pickTel(i){
+  if(!tels[i]) return;
+  const n=$('#cNum'), nm=$('#cName');
+  if(n) n.value = tels[i].num;
+  if(nm) nm.value = tels[i].name || '';
+  closeSheet();
+  toast((tels[i].name || tels[i].num) + ' 를 넣었습니다');
+}
+function renameTel(i){
+  if(!tels[i]) return;
+  const v = prompt('이름을 입력하세요', tels[i].name || '');
+  if(v === null) return;
+  tels[i].name = v.trim();
+  saveTels(); openPanel();
+}
 function delTel(i){
-  tels.splice(i,1);
-  try{ localStorage.setItem(K.tels, JSON.stringify(tels)); }catch(e){}
-  renderCall();
-}
-function clearTels(){
-  if(!confirm('저장된 번호를 모두 지웁니다.')) return;
-  tels = [];
-  try{ localStorage.removeItem(K.tels); }catch(e){}
-  renderCall();
+  if(!confirm((tels[i].name||tels[i].num) + ' 을 지웁니다.')) return;
+  tels.splice(i,1); saveTels(); openPanel();
 }
 
 /* ---------- 통화 기록 ---------- */
@@ -767,12 +916,14 @@ function saveClog(){
   catch(e){ try{ localStorage.removeItem(K.clog); }catch(_){} }
 }
 function pushLog(item){ clog.unshift(item); clog = clog.slice(0,200); saveClog(); }
-function delLog(i){ clog.splice(i,1); saveClog(); renderCall(); }
+function delLog(i){ clog.splice(i,1); saveClog(); openPanel(); }
 function clearLog(){
   if(!confirm('통화 기록을 모두 지웁니다.')) return;
   clog = []; try{ localStorage.removeItem(K.clog); }catch(e){}
-  renderCall();
+  openPanel();
 }
+let clogOpen = true;
+function toggleClog(){ clogOpen = !clogOpen; openPanel(); }
 function copyLog(i){ navigator.clipboard.writeText(clog[i].text).then(()=>toast('복사했습니다')); }
 const hhmm = ts => {
   const d = new Date(ts);
@@ -798,21 +949,29 @@ function flushSay(){
 function resetFinals(){ finalBase = 0; finalCount = 0; pending = ''; }
 
 /* ---------- 폰이 상대 말을 내 언어로 읽어줌 ---------- */
+let sayQueue = 0;
 function sayOut(text, langCode){
   if(!text || !window.speechSynthesis) return;
+  // 이미 읽고 있는 게 많이 밀려 있으면 오래된 것을 버리고 최신 것만 읽습니다
+  if(sayQueue >= 2){ try{ speechSynthesis.cancel(); }catch(e){} sayQueue = 0; }
   try{
-    // 읽어주는 동안은 듣기를 멈춥니다. 안 그러면 내 폰 소리를 내가 다시 알아듣습니다.
-    sayBusy = true; srStop();
-    clearTimeout(pendTimer); pendTimer = null; resetFinals();
+    // 마이크는 켜둡니다. 대신 이 동안 들어온 결과는 버립니다 (위 onresult 참고).
+    // 껐다 켜면 딸깍 소리가 나고, 다시 켜지는 데 시간도 걸립니다.
+    sayBusy = true;
+    clearTimeout(pendTimer); pendTimer = null; pending = '';
     const u = new SpeechSynthesisUtterance(text);
     u.lang = bcp(langCode);
     u.rate = 1.05;
     u.onend = u.onerror = () => {
       sayBusy = false;
-      if(rt && rt.active && !rt.muted) setTimeout(srStart, 200);
+      // 읽어주는 동안 들어온 것은 이미 버렸으니 여기서 되짚을 필요가 없습니다
+      if(rt && rt.active && !rt.muted && !srOn) setTimeout(srStart, 200);
     };
+    sayQueue++;
+    const done = u.onend;
+    u.onend = u.onerror = () => { sayQueue = Math.max(0, sayQueue-1); done(); };
     speechSynthesis.speak(u);
-  }catch(e){ sayBusy = false; }
+  }catch(e){ sayBusy = false; sayQueue = 0; }
 }
 
 /* ---------- 화면 ---------- */
@@ -822,8 +981,14 @@ function renderCall(){
   const noSR = !SR;
   $('#main').innerHTML = `
     <div class="fld">
+      <label>상대 이름 (선택)</label>
+      <input id="cName" type="text" placeholder="예: 스미스 사장님"
+        autocomplete="off" autocorrect="off" spellcheck="false" value="">
+    </div>
+    <div class="fld">
       <label>상대 전화번호</label>
-      <input id="cNum" type="tel" inputmode="tel" placeholder="+12135551234" value="${esc(load(K.tel,''))}">
+      <input id="cNum" type="tel" inputmode="tel" placeholder="+12135551234"
+        autocomplete="off" autocorrect="off" spellcheck="false" value="${esc(load(K.tel,''))}">
       <div class="hint">국가번호부터 넣으세요. 미국 +1, 한국 +82(앞 0 빼고)</div>
     </div>
     <div class="langbar">
@@ -837,43 +1002,24 @@ function renderCall(){
         <div class="src" style="color:var(--rec)">이 브라우저는 음성인식을 지원하지 않습니다.</div>
         <div class="src">안드로이드 크롬에서 열어주세요. 삼성 인터넷은 지원하지 않을 수 있습니다.</div>
       </div>`
-    : `<div class="rtbadge">말하면 상대에게 ${esc(langName(to))}로 전달됩니다</div>`}
+    : (licInfo && licInfo.ok
+        ? `<div class="rtbadge">${esc(licLine())}</div>`
+        : `<div class="note"><b>이용권이 필요합니다.</b><br>${esc(licLine())}<br>
+             아래 <b>마이</b> 탭에서 코드를 넣으세요.</div>`)}
 
-    <button class="btn" id="callBtn" onclick="callStart()" ${noSR?'disabled':''}>통역 전화 걸기</button>
+    <button class="btn" id="callBtn" onclick="callStart()"
+      ${(noSR || !(licInfo && licInfo.ok)) ? 'disabled' : ''}>통역 전화 걸기</button>
 
-    <div class="turn" style="margin-top:14px">
-      <div class="src" style="margin:0">
-        <b style="color:var(--fg)">이어폰을 쓰세요.</b><br>
-        스피커로 들으면 통역 음성을 마이크가 다시 주워서 말이 꼬입니다.
-      </div>
+    <div class="note">
+      <b>이어폰을 쓰세요.</b><br>
+      스피커로 들으면 통역 음성을 마이크가 다시 주워서 말이 꼬입니다.
     </div>
     <div class="hint" style="margin-top:10px">
       상대는 그냥 전화를 받아 평소처럼 말하면 됩니다. 앱 설치도, 버튼 누를 것도 없습니다.
       당신은 이 화면에 대고 말하세요. 말이 끝나면 잠시 뒤 상대에게 전달됩니다.
     </div>
 
-    ${tels.length ? `
-      <div class="seclabel">저장된 번호</div>
-      ${tels.map((t,i)=>`
-        <div class="telrow">
-          <button class="telpick" onclick="pickTel(${i})">${esc(t.num)}</button>
-          <button class="mini del" onclick="delTel(${i})">삭제</button>
-        </div>`).join('')}
-      <button class="btn ghost" onclick="clearTels()">번호 전체 지우기</button>` : ''}
-
-    ${clog.length ? `
-      <div class="seclabel">통화 기록 · ${clog.length}줄</div>
-      ${clog.map((m,i)=>`
-        <div class="turn">
-          <div class="src">${m.dir==='me'?'내 말':'상대'} · ${hhmm(m.at)}${m.src?'<br>'+esc(m.src):''}</div>
-          <div class="dst ocr" style="font-size:16px">${esc(m.text)}</div>
-          <div class="foot">
-            <small>${esc(m.pair||'')}</small>
-            <button class="mini" onclick="copyLog(${i})">복사</button>
-            <button class="mini del" onclick="delLog(${i})">삭제</button>
-          </div>
-        </div>`).join('')}
-      <button class="btn ghost" onclick="clearLog()">통화 기록 전체 지우기</button>` : ''}`;
+    `;
 }
 
 function setCallLang(){
@@ -925,8 +1071,9 @@ function setStatus(t){
 async function callStart(){
   const num = $('#cNum').value.trim();
   if(!/^\+\d{8,15}$/.test(num)){ toast('번호를 +1… 처럼 국가번호부터 넣어주세요'); return; }
+  const nmEl = $('#cName');
   save(K.tel, num);
-  saveTel(num);
+  saveTel(num, nmEl ? nmEl.value : '');
   const me = $('#cFrom').value, peer = $('#cTo').value;
   if(!SR){ toast('이 브라우저는 음성인식을 지원하지 않습니다'); return; }
 
@@ -939,13 +1086,15 @@ async function callStart(){
   try{
     const res = await fetch(RT_API + '/api/rt/start', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ to:num, myLang:me, peerLang:peer })
+      body: JSON.stringify({ to:num, myLang:me, peerLang:peer, code:licCode, device:devId })
     });
     d = await res.json();
     if(d.error) throw new Error(d.error);
+    if(d['이용권']) licInfo = { ok:true, ...d['이용권'] };
   }catch(e){
     toast(e.message || '전화를 걸지 못했습니다');
-    b.disabled = false; b.textContent = '통역 전화 걸기'; return;
+    b.disabled = false; b.textContent = '통역 전화 걸기';
+    renderCall(); return;
   }
 
   rt = { room:d.room, ws:null, me, peer, active:true, muted:false,
@@ -1049,8 +1198,9 @@ function openDebug(){
 
 async function callEnd(){
   const room = rt && rt.room;
-  clearTimeout(pendTimer); pendTimer = null; pending = '';
+  clearTimeout(pendTimer); pendTimer = null; resetFinals();
   srStop();
+  sayQueue = 0; sayBusy = false;
   try{ speechSynthesis.cancel(); }catch(e){}
   if(rt){
     try{ rt.ws && rt.ws.readyState===1 && rt.ws.send(JSON.stringify({type:'bye'})); }catch(e){}
@@ -1071,6 +1221,7 @@ async function callEnd(){
 
 /* ---------- 설정 (서버 주소 없음 — 언어 기본값 · 정보만) ---------- */
 function openSet(){
+  markNav('nvSet');
   $('#card').innerHTML=`
     <h2>설정</h2>
     <div class="fld">
@@ -1087,7 +1238,112 @@ function openSet(){
     <div class="ver">podolang ${VER}</div>`;
   $('#sheet').classList.add('on');
 }
-function closeSheet(){ $('#sheet').classList.remove('on'); }
+function closeSheet(){
+  $('#sheet').classList.remove('on');
+  ['nvTel','nvSearch','nvSet','nvMy'].forEach(id => { const b=$('#'+id); if(b) b.classList.remove('on'); });
+}
+function markNav(id){
+  ['nvTel','nvSearch','nvSet','nvMy'].forEach(x => { const b=$('#'+x); if(b) b.classList.toggle('on', x===id); });
+}
+
+/* ---------- 검색 ---------- */
+let q = '';
+function openSearch(){
+  markNav('nvSearch');
+  const k = q.trim().toLowerCase();
+  const hit = t => t && String(t).toLowerCase().includes(k);
+
+  const telHits = !k ? [] : tels.map((t,i)=>({t,i})).filter(({t}) => hit(t.name) || hit(t.num));
+  const logHits = !k ? [] : clog.map((m,i)=>({m,i})).filter(({m}) => hit(m.text) || hit(m.src));
+  const phoHits = !k ? [] : phist.map((m,i)=>({m,i})).filter(({m}) => hit(m.dst) || hit(m.src) || hit(m.kind));
+
+  $('#card').innerHTML = `
+    <h2>검색</h2>
+    <div class="fld">
+      <input id="qBox" type="text" placeholder="이름 · 번호 · 통역 내용 · 사진 번역"
+        autocomplete="off" value="${esc(q)}" oninput="q=this.value; runSearch()">
+    </div>
+    ${!k ? `<div class="empty">찾고 싶은 말을 넣으세요.<br>저장된 번호, 통화 기록, 사진 번역을 한 번에 찾습니다.</div>` : `
+      ${telHits.length ? `<div class="seclabel">번호 ${telHits.length}</div>` + telHits.map(({t,i})=>`
+        <div class="telrow">
+          <button class="telpick" onclick="pickTel(${i})">
+            <b>${esc(t.name || t.num)}</b>${t.name?`<span>${esc(t.num)}</span>`:''}
+          </button>
+        </div>`).join('') : ''}
+      ${logHits.length ? `<div class="seclabel">통화 기록 ${logHits.length}</div>` + logHits.map(({m,i})=>`
+        <div class="turn">
+          <div class="src">${m.dir==='me'?'내 말':'상대'} · ${hhmm(m.at)}${m.src?'<br>'+esc(m.src):''}</div>
+          <div class="dst ocr" style="font-size:16px">${esc(m.text)}</div>
+          <div class="foot"><small></small><button class="mini" onclick="copyLog(${i})">복사</button></div>
+        </div>`).join('') : ''}
+      ${phoHits.length ? `<div class="seclabel">사진 번역 ${phoHits.length}</div>` + phoHits.map(({m,i})=>`
+        <div class="turn">
+          ${m.kind?`<div class="kind">${esc(m.kind)}</div>`:''}
+          <div class="dst ocr" style="font-size:16px">${esc(m.dst)}</div>
+          <div class="foot"><small></small><button class="mini" onclick="copyPhist(${i})">복사</button></div>
+        </div>`).join('') : ''}
+      ${(!telHits.length && !logHits.length && !phoHits.length) ? `<div class="empty">찾는 것이 없습니다.</div>` : ''}
+    `}`;
+  $('#sheet').classList.add('on');
+}
+function runSearch(){
+  const el = $('#qBox');
+  const pos = el ? el.selectionStart : null;
+  openSearch();
+  const el2 = $('#qBox');
+  if(el2){ el2.focus(); if(pos!=null) try{ el2.setSelectionRange(pos,pos); }catch(e){} }
+}
+
+/* ---------- 마이 ---------- */
+function openMy(){
+  markNav('nvMy');
+  $('#card').innerHTML = `
+    <h2>마이</h2>
+
+    <div class="seclabel">이용권</div>
+    <div class="fld">
+      <label>이용권 코드</label>
+      <input id="licBox" type="text" placeholder="PODO-XXXX-XXXX"
+        autocomplete="off" autocorrect="off" spellcheck="false"
+        style="letter-spacing:.08em;font-weight:700" value="${esc(licCode)}">
+    </div>
+    <div class="${licInfo && licInfo.ok ? 'rtbadge' : 'note'}">${esc(licLine())}</div>
+    <button class="btn" onclick="saveLic()">이용권 확인</button>
+    ${licCode ? `<button class="btn ghost" onclick="clearLic()">이 기기에서 코드 지우기</button>` : ''}
+    <div class="note" style="margin-top:11px">
+      전화 통역은 통화 1분마다 비용이 들어서 이용권이 필요합니다.
+      마주보고 통역과 사진 번역은 이용권 없이 쓸 수 있습니다.
+    </div>
+
+    <div class="seclabel">저장 현황</div>
+    <div class="turn">
+      <div class="dst" style="font-size:16px">번호 ${tels.length}개 · 통화 기록 ${clog.length}줄</div>
+      <div class="src" style="margin:8px 0 0">통역 기록 ${hist.length}건 · 사진 번역 ${phist.length}건</div>
+    </div>
+
+    <div class="seclabel">기본 언어</div>
+    <div class="turn">
+      <div class="dst" style="font-size:16px">${langName(from)} ↔ ${langName(to)}</div>
+      <div class="src" style="margin:8px 0 0">설정에서 바꿀 수 있습니다.</div>
+    </div>
+
+    <div class="seclabel">정리</div>
+    <button class="btn ghost" onclick="clearHist()">마주보고 통역 기록 지우기</button>
+    <button class="btn ghost" onclick="clearPhist()">사진 번역 기록 지우기</button>
+    <button class="btn ghost" onclick="clearLog()">통화 기록 지우기</button>
+
+    <div class="note" style="margin-top:16px">
+      <b>이 기기에만 저장됩니다.</b><br>
+      번호와 기록은 이 폰 안에만 있습니다. 서버로 보내지 않습니다.
+      브라우저 데이터를 지우면 함께 사라지니, 중요한 내용은 복사해 두세요.
+    </div>
+    <div class="note">
+      <b>전화 통역은 이어폰을 쓰세요.</b><br>
+      스피커로 들으면 통역 음성을 마이크가 다시 주워서 말이 꼬입니다.
+    </div>
+    <div class="ver">podolang ${VER}</div>`;
+  $('#sheet').classList.add('on');
+}
 function saveSet(){
   from=$('#setFrom').value; to=$('#setTo').value;
   save(K.from,from); save(K.to,to);
