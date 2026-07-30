@@ -386,7 +386,7 @@
   </section>
 
   <div class="foot-note">
-    <span class="b">podolang v3.2.0</span><br>
+    <span class="b">podolang v4.0.0</span><br>
     © 2026 BJ LEE · All Rights Reserved<br>
     PODOLANG.kr
   </div>
@@ -400,7 +400,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v3.2.0';
+const VER='v4.0.0';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -715,7 +715,7 @@ async function photoTranslate(){
 
 let rt = null;              // { room, ws, me, peer, active, log[], cur, muted }
 let sr = null;             // 폰 음성인식
-let srOn = false;          // 지금 듣고 있는지
+// 마이크가 열려 있으면 계속 듣는 상태입니다
 // 마이크를 통화 내내 켜둡니다. 껐다 켤 때마다 안드로이드가 딸깍 소리를 냅니다.
 // 대신 방금 읽어준 말이 마이크로 되돌아오면 걸러냅니다.
 let sayBusy = false;              // 화면 표시용으로만 씁니다
@@ -758,247 +758,162 @@ if(!devId){
 
 let tels = load(K.tels, []);      // 저장된 전화번호 목록
 let clog = load(K.clog, []);      // 지난 통화 기록
-let pending = '';          // 아직 안 보낸 내 말
-let pendTimer = null;      // 말이 끝났는지 재는 타이머
-let finalBase = 0;         // 여기부터가 아직 안 보낸 결과
-let finalCount = 0;        // 지금까지 받은 결과 개수
-const PEND_WAIT = 900;     // ms — 이만큼 조용하면 한 문장 끝난 것으로 봅니다
-const PEND_MAX  = 120;     // 글자 — 너무 길어지면 기다리지 않고 보냅니다
-
-const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+// 녹음 방식이라 브라우저 음성인식을 쓰지 않습니다.
+// MediaRecorder 는 안드로이드 크롬·삼성 인터넷 모두 지원합니다.
+const canRec = !!(navigator.mediaDevices && window.MediaRecorder);
 const BCP = { KO:'ko-KR', EN:'en-US', JA:'ja-JP', ZH:'zh-CN', ES:'es-ES', PT:'pt-BR',
               FR:'fr-FR', DE:'de-DE', IT:'it-IT', RU:'ru-RU', VI:'vi-VN', ID:'id-ID',
               TH:'th-TH', AR:'ar-SA', HI:'hi-IN', NL:'nl-NL' };
 const bcp = c => BCP[String(c||'').toUpperCase()] || 'en-US';
 
-/* ---------- 폰이 내 말을 글자로 ---------- */
-function srStart(){
-  if(!SR || !rt || !rt.active) return;
-  if(sr) return;
+/* ---------- 내 말을 녹음해서 워커로 보냅니다 ----------
+   안드로이드 음성인식(SpeechRecognition)을 쓰지 않습니다.
+   그걸 켜고 끌 때마다 시스템이 딸깍 소리를 냅니다.
+
+   대신 통화 시작에 마이크를 딱 한 번 열고 끝까지 닫지 않습니다.
+   녹음기만 갈아끼우며 조각을 만들어 워커로 보냅니다.
+   마이크를 다시 여는 일이 없으니 소리가 날 곳이 없습니다.        */
+
+let micStream = null;      // 통화 내내 이 하나만 씁니다
+let mr = null;             // 녹음기 (조각마다 새로 만듭니다)
+let recChunks = [];
+let ac = null, analyser = null, vadTimer = null;
+let speechMs = 0, silenceMs = 0;
+let sttBusy = false;
+
+const VAD_TICK    = 100;   // ms 마다 소리 크기를 봅니다
+const VAD_SILENCE = 1100;  // 이만큼 조용하면 한 문장 끝난 것으로 봅니다
+const VAD_MINSPK  = 350;   // 이보다 짧으면 기침·잡음으로 봅니다
+const VAD_MAXSPK  = 14000; // 너무 길면 중간에 한 번 끊어 보냅니다
+const VAD_LEVEL   = 0.014; // 이 이상이면 말하는 중
+
+function pickMime(){
+  const list = ['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus','audio/mp4'];
+  for(const m of list){
+    try{ if(window.MediaRecorder && MediaRecorder.isTypeSupported(m)) return { mimeType:m }; }catch(e){}
+  }
+  return {};
+}
+
+async function micOpen(){
+  if(micStream) return;
+  micStream = await navigator.mediaDevices.getUserMedia({
+    audio: { echoCancellation:true, noiseSuppression:true, autoGainControl:true, channelCount:1 }
+  });
+  // 소리 크기를 재려고 같은 흐름에 계량기를 붙입니다 (마이크를 새로 열지 않습니다)
   try{
-    sr = new SR();
-    sr.lang = bcp(rt.me);
-    sr.continuous = true;
-    sr.interimResults = true;
+    ac = new (window.AudioContext||window.webkitAudioContext)();
+    if(ac.state === 'suspended') await ac.resume();
+    const src = ac.createMediaStreamSource(micStream);
+    analyser = ac.createAnalyser();
+    analyser.fftSize = 1024;
+    src.connect(analyser);
+  }catch(e){ analyser = null; }
 
-    // ⚠️ 안드로이드 음성인식은 이미 확정된 결과를 계속 다시 내놓습니다.
-    //    덧붙이면 "나는 / 나는 나는 / 나는 어제…" 처럼 눈덩이가 됩니다.
-    //    그래서 매번 덧붙이지 않고, 아직 안 보낸 구간만 통째로 다시 만듭니다.
-    sr.onresult = e => {
-      let finals = '', interim = '';
-      for(let i=0; i<e.results.length; i++){
-        const r = e.results[i];
-        const txt = (r[0] && r[0].transcript || '').trim();
-        if(r.isFinal){
-          if(i >= finalBase && txt) finals += (finals ? ' ' : '') + txt;
-        }else{
-          interim += r[0] && r[0].transcript || '';
-        }
-      }
-      pending = finals;                      // 누적이 아니라 덮어쓰기
-      finalCount = e.results.length;
-      if(pending){
-        clearTimeout(pendTimer);
-        pendTimer = (pending.length >= PEND_MAX)
-          ? (flushSay(), null)
-          : setTimeout(flushSay, PEND_WAIT);
-      }
-      if(rt){
-        rt.cur.me = (pending + ' ' + interim).trim();
-        updateCallLog();
-      }
-    };
-
-    // 조용하면 저절로 멈춥니다. 통화 중이면 다시 켭니다.
-    sr.onend = () => {
-      srOn = false; sr = null;
-      if(rt && rt.active && !rt.muted && !sayBusy) setTimeout(srStart, 250);
-    };
-    sr.onerror = ev => {
-      srOn = false;
-      if(ev.error === 'not-allowed' || ev.error === 'service-not-allowed'){
-        toast('마이크 권한을 확인하세요');
-        if(rt) rt.muted = true;
-      }
-    };
-
-    resetFinals();
-    sr.start();
-    srOn = true;
-  }catch(e){ sr = null; srOn = false; }
-}
-// 안전장치: 마이크가 이유 없이 꺼진 채 3초 넘게 방치되면 되살립니다.
-// 위의 흐름은 그대로 두고, 밖에서 지켜보기만 합니다.
-let watchTimer = null;
-function startWatch(){
-  stopWatch();
-  watchTimer = setInterval(() => {
-    if(!rt || !rt.active){ stopWatch(); return; }
-    if(rt.muted || sayBusy) return;
-    if(!srOn) srStart();
-  }, 3000);
-}
-function stopWatch(){ clearInterval(watchTimer); watchTimer = null; }
-
-function srStop(){
-  try{ if(sr){ sr.onend = null; sr.stop(); } }catch(e){}
-  sr = null; srOn = false;
+  recStart();
+  clearInterval(vadTimer);
+  vadTimer = setInterval(vadTick, VAD_TICK);
 }
 
-/* ---------- 이용권 ---------- */
-async function licCheck(quiet){
-  if(!licCode){ licInfo = null; return null; }
-  try{
-    const r = await fetch(RT_API + '/api/lic/check', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ code: licCode, device: devId })
-    });
-    licInfo = await r.json();
-  }catch(e){ licInfo = { ok:false, reason:'서버에 연결하지 못했습니다.' }; }
-  if(!quiet && licInfo && !licInfo.ok) toast(licInfo.reason || '이용권을 확인하지 못했습니다');
-  return licInfo;
-}
-async function saveLic(){
-  const el = $('#licBox'); if(!el) return;
-  licCode = el.value.trim().toUpperCase();
-  save(K.lic, licCode);
-  await licCheck();
-  openMy();
-  renderCall();
-  if(licInfo && licInfo.ok) toast('이용권을 확인했습니다');
-}
-function clearLic(){
-  if(!confirm('이 기기에서 이용권을 지웁니다.')) return;
-  licCode = ''; licInfo = null;
-  try{ localStorage.removeItem(K.lic); }catch(e){}
-  openMy(); renderCall();
-}
-const licLine = () => {
-  if(!licCode) return '이용권 없음 — 전화 통역을 쓸 수 없습니다';
-  if(!licInfo) return '확인 중…';
-  if(!licInfo.ok) return licInfo.reason || '쓸 수 없는 이용권';
-  return `${licInfo.plan} · 남은 통역 ${licInfo['남은분']}분 · ${licInfo['만료일']} 까지`;
-};
-
-/* ---------- 창문 4개 패널: 저장된 번호 + 통화 기록 ---------- */
-function openPanel(){
-  markNav('nvTel');
-  const telRows = tels.length ? tels.map((t,i)=>`
-    <div class="telrow">
-      <button class="telpick" onclick="pickTel(${i})">
-        <b>${esc(t.name || t.num)}</b>
-        ${t.name ? `<span>${esc(t.num)}</span>` : ''}
-      </button>
-      <button class="mini" onclick="renameTel(${i})">이름</button>
-      <button class="mini del" onclick="delTel(${i})">삭제</button>
-    </div>`).join('')
-    : `<div class="hint">아직 저장된 번호가 없습니다. 통화를 걸면 자동으로 저장됩니다.</div>`;
-
-  const logRows = !clog.length
-    ? `<div class="hint">아직 통화 기록이 없습니다.</div>`
-    : (clogOpen ? clog.map((m,i)=>`
-        <div class="turn">
-          <div class="src">${m.dir==='me'?'내 말':'상대'} · ${hhmm(m.at)}${m.src?'<br>'+esc(m.src):''}</div>
-          <div class="dst ocr" style="font-size:16px">${esc(m.text)}</div>
-          <div class="foot">
-            <small>${esc(m.pair||'')}</small>
-            <button class="mini" onclick="copyLog(${i})">복사</button>
-            <button class="mini del" onclick="delLog(${i})">삭제</button>
-          </div>
-        </div>`).join('') + `<button class="btn ghost" onclick="clearLog()">기록 전체 지우기</button>`
-      : `<div class="hint">접혀 있습니다. 오른쪽 버튼으로 펼치세요.</div>`);
-
-  $('#card').innerHTML = `
-    <h2>저장된 번호</h2>
-    ${telRows}
-    <div class="seclabel row">
-      <span>통화 기록 · ${clog.length}줄</span>
-      <button class="foldbtn" onclick="toggleClog()">${clogOpen ? '접기 ▲' : '펼치기 ▼'}</button>
-    </div>
-    ${logRows}
-    <div class="ver">podolang ${VER}</div>`;
-  $('#sheet').classList.add('on');
+function micClose(){
+  clearInterval(vadTimer); vadTimer = null;
+  try{ if(mr && mr.state !== 'inactive'){ mr.onstop = null; mr.stop(); } }catch(e){}
+  mr = null; recChunks = [];
+  try{ micStream && micStream.getTracks().forEach(t => t.stop()); }catch(e){}
+  micStream = null;
+  try{ ac && ac.close(); }catch(e){}
+  ac = null; analyser = null;
+  speechMs = 0; silenceMs = 0; sttBusy = false;
 }
 
-/* ---------- 전화번호 목록 ---------- */
-function saveTels(){ try{ localStorage.setItem(K.tels, JSON.stringify(tels)); }catch(e){} }
-function saveTel(num, name){
-  if(!num) return;
-  const old = tels.find(t => t.num === num);
-  tels = tels.filter(t => t.num !== num);
-  tels.unshift({ num, name: (name || (old && old.name) || '').trim(), at: Date.now() });
-  tels = tels.slice(0, 30);
-  saveTels();
-}
-function pickTel(i){
-  if(!tels[i]) return;
-  const n=$('#cNum'), nm=$('#cName');
-  if(n) n.value = tels[i].num;
-  if(nm) nm.value = tels[i].name || '';
-  closeSheet();
-  toast((tels[i].name || tels[i].num) + ' 를 넣었습니다');
-}
-function renameTel(i){
-  if(!tels[i]) return;
-  const v = prompt('이름을 입력하세요', tels[i].name || '');
-  if(v === null) return;
-  tels[i].name = v.trim();
-  saveTels(); openPanel();
-}
-function delTel(i){
-  if(!confirm((tels[i].name||tels[i].num) + ' 을 지웁니다.')) return;
-  tels.splice(i,1); saveTels(); openPanel();
+// 녹음기는 조각마다 새로 만듭니다. 마이크는 그대로 열려 있습니다.
+function recStart(){
+  if(!micStream) return;
+  recChunks = [];
+  try{ mr = new MediaRecorder(micStream, pickMime()); }
+  catch(e){ try{ mr = new MediaRecorder(micStream); }catch(e2){ mr = null; return; } }
+
+  mr.ondataavailable = e => { if(e.data && e.data.size) recChunks.push(e.data); };
+  mr.onstop = () => {
+    const type = (mr && mr.mimeType) || 'audio/webm';
+    const blob = new Blob(recChunks, { type });
+    recChunks = [];
+    sendVoice(blob, type);
+    if(rt && rt.active) recStart();      // 곧바로 다음 조각을 담습니다
+  };
+  try{ mr.start(); }catch(e){}
 }
 
-/* ---------- 통화 기록 ---------- */
-function saveClog(){
-  try{ localStorage.setItem(K.clog, JSON.stringify(clog)); }
-  catch(e){ try{ localStorage.removeItem(K.clog); }catch(_){} }
+function recCut(){
+  if(mr && mr.state === 'recording'){ try{ mr.stop(); }catch(e){} }
 }
-function pushLog(item){ clog.unshift(item); clog = clog.slice(0,200); saveClog(); }
-function delLog(i){ clog.splice(i,1); saveClog(); openPanel(); }
-function clearLog(){
-  if(!confirm('통화 기록을 모두 지웁니다.')) return;
-  clog = []; try{ localStorage.removeItem(K.clog); }catch(e){}
-  openPanel();
-}
-let clogOpen = true;
-function toggleClog(){ clogOpen = !clogOpen; openPanel(); }
-function copyLog(i){ navigator.clipboard.writeText(clog[i].text).then(()=>toast('복사했습니다')); }
-const hhmm = ts => {
-  const d = new Date(ts);
-  return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-};
 
-/* ---------- 내 말은 한 문장이 될 때까지 모았다 보냅니다 ----------
-   안드로이드 음성인식은 짧은 쉼에도 문장을 끊습니다.
-   그때마다 보내면 상대는 토막난 말을 듣게 되고 번역 요청도 몇 배로 늘어납니다.  */
-function flushSay(){
-  clearTimeout(pendTimer); pendTimer = null;
-  const text = pending.trim();
-  pending = '';
-  finalBase = finalCount;                    // 여기까지는 보냈다고 표시
-  if(!text || text.length < 2) return;       // 잡음 한두 글자는 버립니다
-  if(isEcho(text)){                          // 폰이 읽어준 말이 되돌아온 것
-    setStatus('말씀하세요.');
-    updateCallLog();
+// 말이 끝났는지 소리 크기로 판단합니다
+function vadTick(){
+  if(!rt || !rt.active) return;
+  if(!analyser){                        // 계량기가 없으면 3초마다 잘라 보냅니다
+    speechMs += VAD_TICK;
+    if(speechMs >= 3000){ speechMs = 0; if(!rt.muted && !sayBusy) recCut(); }
     return;
   }
-  if(!rt || !rt.ws || rt.ws.readyState !== 1 || rt.muted) return;
-  rt.ws.send(JSON.stringify({ type:'say', text }));
-  if(rt) rt.cur.me = '';
-  setStatus('전달 중…');
-  updateCallLog();
+  const buf = new Float32Array(analyser.fftSize);
+  analyser.getFloatTimeDomainData(buf);
+  let sum = 0;
+  for(let i=0;i<buf.length;i++) sum += buf[i]*buf[i];
+  const rms = Math.sqrt(sum / buf.length);
+
+  // 폰이 읽어주는 동안은 세지 않습니다 (되먹임 방지)
+  if(sayBusy || rt.muted){ speechMs = 0; silenceMs = 0; return; }
+
+  if(rms > VAD_LEVEL){ speechMs += VAD_TICK; silenceMs = 0; }
+  else if(speechMs > 0){ silenceMs += VAD_TICK; }
+
+  const el = $('#lvl');
+  if(el) el.textContent = speechMs > 0 ? '말하는 중' : '듣는 중';
+
+  if(speechMs >= VAD_MINSPK && silenceMs >= VAD_SILENCE){
+    speechMs = 0; silenceMs = 0; recCut();
+  }else if(speechMs >= VAD_MAXSPK){
+    speechMs = 0; silenceMs = 0; recCut();
+  }
 }
-// 음성인식이 새로 켜지면 결과 목록도 처음부터 시작합니다
-function resetFinals(){ finalBase = 0; finalCount = 0; pending = ''; }
+
+// 녹음 조각을 워커로 보내 글자로 바꾸고, 상대에게 전달합니다
+async function sendVoice(blob, type){
+  if(!blob || blob.size < 4000) return;                 // 너무 짧으면 잡음
+  if(!rt || !rt.active || rt.muted) return;
+  if(!licCode){ return; }
+  if(sttBusy) return;                                    // 겹치지 않게
+  sttBusy = true;
+  setStatus('알아듣는 중…');
+  try{
+    const ext = /mp4/.test(type) ? 'mp4' : (/ogg/.test(type) ? 'ogg' : 'webm');
+    const fd = new FormData();
+    fd.append('audio', blob, 'voice.' + ext);
+    fd.append('lang', String(rt.me || 'ko').toLowerCase());
+    fd.append('code', licCode);
+    const r = await fetch(RT_API + '/api/stt', { method:'POST', body: fd });
+    const d = await r.json();
+    if(d.error) throw new Error(d.error);
+    const text = String(d.text || '').trim();
+    if(!text || text.length < 2){ setStatus('말씀하세요.'); return; }
+    if(isEcho(text)){ setStatus('말씀하세요.'); return; }   // 폰이 읽어준 말이 되돌아온 것
+    if(rt && rt.ws && rt.ws.readyState === 1){
+      rt.ws.send(JSON.stringify({ type:'say', text }));
+      setStatus('전달 중…');
+    }
+  }catch(e){
+    toast(e.message || '음성을 알아듣지 못했습니다');
+    setStatus('말씀하세요.');
+  }finally{ sttBusy = false; }
+}
 
 /* ---------- 폰이 상대 말을 내 언어로 읽어줌 ---------- */
 function sayOut(text, langCode){
   if(!text || !window.speechSynthesis) return;
   try{
     // 마이크를 끄지 않습니다. 껐다 켜면 딸깍 소리가 납니다.
-    // 대신 이 말이 되돌아오면 아래 flushSay 에서 걸러냅니다.
+    // 대신 이 말이 되돌아오면 sendVoice 에서 걸러냅니다.
     rememberSpoken(text);
     sayBusy = true;
     const u = new SpeechSynthesisUtterance(text);
@@ -1013,7 +928,7 @@ function sayOut(text, langCode){
 function renderCall(){
   if(rt && rt.active) return renderCallActive();
 
-  const noSR = !SR;
+  const noSR = !canRec;
   $('#main').innerHTML = `
     <div class="fld">
       <label>상대 이름 (선택)</label>
@@ -1034,8 +949,8 @@ function renderCall(){
 
     ${noSR ? `
       <div class="turn" style="border-color:#f0d4d0">
-        <div class="src" style="color:var(--rec)">이 브라우저는 음성인식을 지원하지 않습니다.</div>
-        <div class="src">안드로이드 크롬에서 열어주세요. 삼성 인터넷은 지원하지 않을 수 있습니다.</div>
+        <div class="src" style="color:var(--rec)">이 브라우저는 마이크 녹음을 지원하지 않습니다.</div>
+        <div class="src">안드로이드 크롬에서 열어주세요.</div>
       </div>`
     : (licInfo && licInfo.ok
         ? `<div class="rtbadge">${esc(licLine())}</div>`
@@ -1076,7 +991,7 @@ function renderCallActive(){
     </div>
     <div class="rtctl">
       <button class="mini" id="muteBtn" onclick="toggleMute()">${rt.muted?'다시 말하기':'잠깐 멈춤'}</button>
-      <span class="lvl" id="lvl">${srOn?'듣는 중':''}</span>
+      <span class="lvl" id="lvl">${micStream?'듣는 중':''}</span>
     </div>
     <button class="btn" onclick="callEnd()" style="margin:4px 0 14px;background:var(--rec)">${rt.active?'통화 종료':'닫기'}</button>
     <div class="seclabel">주고받은 말 · 아래로 내려서 보세요</div>
@@ -1099,7 +1014,7 @@ function updateCallLog(){
 function setStatus(t){
   if(rt) rt.status = t;
   const el = $('#callStatus'); if(el) el.textContent = t;
-  const l = $('#lvl'); if(l) l.textContent = srOn ? '듣는 중' : (sayBusy ? '읽어주는 중' : '');
+  const l = $('#lvl'); if(l) l.textContent = sayBusy ? '읽어주는 중' : (micStream ? '듣는 중' : '');
 }
 
 /* ---------- 통화 시작 ---------- */
@@ -1200,7 +1115,7 @@ function onRtMessage(ev){
         '<br><br><b style="color:var(--fg)">상대 폰이 이 번호를 차단했을 수 있습니다.</b>' +
         '<br>상대 연락처에 <b style="color:var(--fg)">+14472841160</b> 을 저장해 두면 통과합니다.';
     }
-    if(m.ended){ srStop(); sayBusy = false; stopWatch(); if(rt) rt.active = false; renderCall(); }
+    if(m.ended){ micClose(); sayBusy = false; if(rt) rt.active = false; renderCall(); }
     return;
   }
 
@@ -1208,11 +1123,10 @@ function onRtMessage(ev){
     if(m.state === 'phone-connected') setStatus('상대가 받았습니다.');
     else if(m.state === 'ready'){
       setStatus('말씀하세요. 말이 끝나면 상대에게 전달됩니다.');
-      srStart();
-      startWatch();
+      micOpen().catch(() => toast('마이크를 열 수 없습니다. 권한을 확인하세요.'));
       renderCall();
     }
-    else if(m.state === 'ended'){ setStatus('통화가 끝났습니다.'); srStop(); if(rt) rt.active=false; renderCall(); }
+    else if(m.state === 'ended'){ setStatus('통화가 끝났습니다.'); micClose(); if(rt) rt.active=false; renderCall(); }
     return;
   }
 
@@ -1222,7 +1136,8 @@ function onRtMessage(ev){
 function toggleMute(){
   if(!rt) return;
   rt.muted = !rt.muted;
-  if(rt.muted){ clearTimeout(pendTimer); resetFinals(); srStop(); } else srStart();
+  // 마이크는 계속 열어둡니다. 음소거는 보내지 않는 것으로 처리합니다.
+  speechMs = 0; silenceMs = 0;
   const b = $('#muteBtn'); if(b) b.textContent = rt.muted ? '다시 말하기' : '잠깐 멈춤';
   toast(rt.muted ? '내 마이크를 멈췄습니다' : '다시 듣습니다');
 }
@@ -1234,11 +1149,9 @@ function openDebug(){
 
 async function callEnd(){
   const room = rt && rt.room;
-  clearTimeout(pendTimer); pendTimer = null; resetFinals();
-  srStop();
+  micClose();
   sayBusy = false;
   spokenRecent = [];
-  stopWatch();
   try{ speechSynthesis.cancel(); }catch(e){}
   if(rt){
     try{ rt.ws && rt.ws.readyState===1 && rt.ws.send(JSON.stringify({type:'bye'})); }catch(e){}
