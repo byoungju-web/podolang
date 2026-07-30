@@ -386,7 +386,7 @@
   </section>
 
   <div class="foot-note">
-    <span class="b">podolang v4.1.0</span><br>
+    <span class="b">podolang v4.1.1</span><br>
     © 2026 BJ LEE · All Rights Reserved<br>
     PODOLANG.kr
   </div>
@@ -400,7 +400,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v4.1.0';
+const VER='v4.1.1';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -924,7 +924,9 @@ function sayOut(text, langCode){
     // 마이크를 끄지 않습니다. 껐다 켜면 딸깍 소리가 납니다.
     // 대신 이 말이 되돌아오면 sendVoice 에서 걸러냅니다.
     rememberSpoken(text);
-    // 지금까지 담긴 내 말은 깨끗하니 먼저 흘려보냅니다
+    // 지금까지 담긴 게 실제 말이면 흘려보내고, 조용하기만 했으면 버립니다.
+    // 무음을 Whisper 에 주면 한 구절을 열 번씩 반복해서 만들어냅니다.
+    if(speechMs < VAD_MINSPK) discardOnce = true;
     recCut();
     sayBusy = true;
     const u = new SpeechSynthesisUtterance(text);
