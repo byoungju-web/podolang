@@ -13,7 +13,7 @@
     --card:#ffffff;          /* 카드 */
     --bg:#fff; --fg:#141218; --sub:#77707f;
     --line:#e6e1ee;          /* 옅은 구분선 */
-    --line2:#ccb9e0;         /* 카드 테두리 — 또렷하게 */
+    --line2:#6D28D9;         /* 카드 테두리 — 로고의 진한 보라 */
     --grape:#5b2c83; --grape-soft:#f4eef9; --grape-ink:#3e1d5c;
     --sky:#0b7ea8; --sky-soft:#eaf4fa; --sky-line:#a9d4e6;
     --leaf:#2e9e5b;
@@ -32,15 +32,22 @@
     background:var(--card);border-bottom:1.5px solid var(--line2)}
   header h1{flex:1;margin:0;font-size:18px;font-weight:800;letter-spacing:-.4px;
     display:flex;align-items:center;gap:8px;color:var(--grape-ink)}
+  .help{flex:0 0 auto;width:38px;height:38px;border:1.5px solid var(--line2);
+    border-radius:999px;color:var(--grape)}
+  .help:active{background:var(--grape-soft)}
   header h1 .logo{width:24px;height:24px;display:block;flex-shrink:0}
   .ico{width:36px;height:36px;border:0;background:none;display:grid;place-items:center;border-radius:9px;color:var(--fg)}
   .ico:active{background:#f2f2f4}
   .ico svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 
-  .tabs{flex:0 0 auto;display:flex;background:var(--card);border-bottom:1.5px solid var(--line2)}
-  .tab{flex:1;padding:13px 2px;text-align:center;border:0;background:none;font:inherit;
-    font-size:14.5px;color:var(--sub);white-space:nowrap;font-weight:600}
-  .tab.on{color:var(--grape-ink);font-weight:800;box-shadow:inset 0 -3px 0 var(--grape)}
+  /* 세 가지 기능이 한눈에 보이도록 타원형으로 나눕니다 */
+  .tabs{flex:0 0 auto;display:flex;gap:7px;background:var(--card);
+    border-bottom:1.5px solid var(--line2);padding:9px 12px}
+  .tab{flex:1;padding:10px 2px;text-align:center;background:#fff;font:inherit;
+    font-size:14px;color:var(--grape);white-space:nowrap;font-weight:700;
+    border:1.5px solid var(--line2);border-radius:999px}
+  .tab.on{color:#fff;background:var(--grape);border-color:var(--grape);font-weight:800;box-shadow:none}
+  .tab:active{transform:scale(.97)}
 
   main{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px 20px;background:var(--ground)}
 
@@ -122,6 +129,18 @@
   .note b{color:#08384c}
   .rtctl{display:flex;align-items:center;gap:10px;margin:14px 0}
   .turn.live{border-color:var(--grape);background:#fcfaff}
+
+  /* 주고받은 말 — 채팅처럼 좌우로 나눕니다 */
+  .bub{max-width:84%;background:var(--card);border:1.5px solid var(--line2);
+    border-radius:18px;padding:12px 14px;margin-bottom:10px}
+  .bub.me{margin-left:auto;background:var(--grape-soft);border-bottom-right-radius:5px}
+  .bub.you{margin-right:auto;border-bottom-left-radius:5px}
+  .bub .who{font-size:11.5px;font-weight:800;color:var(--grape);margin-bottom:5px}
+  .bub.you .who{color:var(--sky)}
+  .bub .osrc{font-size:13.5px;color:var(--sub);line-height:1.5;margin-bottom:6px;word-break:break-word}
+  .bub .txt{font-size:17px;font-weight:600;line-height:1.55;word-break:break-word;white-space:pre-wrap}
+  .bub .bfoot{display:flex;gap:7px;margin-top:9px;justify-content:flex-end}
+  .bub.live{border-style:dashed}
   .seclabel{font-size:11.5px;color:var(--grape);margin:22px 0 9px;font-weight:800;
     letter-spacing:.06em;display:flex;align-items:center;gap:7px}
   .seclabel::before{content:'';width:9px;height:9px;border-radius:50%;
@@ -221,7 +240,10 @@
 <!-- ===================== 통역 앱 (첫 화면) ===================== -->
 <div id="app">
   <header>
-    <h1><svg class="logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="podolang"><path d="M60 14 C 62 10, 68 8, 72 12 C 76 16, 74 24, 60 26 C 46 24, 44 16, 48 12 C 52 8, 58 10, 60 14 Z" fill="#2ECC71"/><circle cx="46" cy="70" r="26" fill="#8B5CF6" stroke="#6D28D9" stroke-width="3"/><circle cx="76" cy="70" r="26" fill="#A78BFA" stroke="#6D28D9" stroke-width="3"/></svg>podolang</h1>
+    <h1 class="brand"><svg class="logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="podolang"><path d="M60 14 C 62 10, 68 8, 72 12 C 76 16, 74 24, 60 26 C 46 24, 44 16, 48 12 C 52 8, 58 10, 60 14 Z" fill="#2ECC71"/><circle cx="46" cy="70" r="26" fill="#8B5CF6" stroke="#6D28D9" stroke-width="3"/><circle cx="76" cy="70" r="26" fill="#A78BFA" stroke="#6D28D9" stroke-width="3"/></svg>podolang</h1>
+    <button class="ico help" onclick="openHelp()" aria-label="이용방법">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.2"/><path d="M9.4 9.2a2.7 2.7 0 015.2 1c0 1.8-2.6 2.2-2.6 4"/><circle cx="12" cy="17.4" r="1.05" fill="currentColor" stroke="none"/></svg>
+    </button>
   </header>
 
   <div class="tabs">
@@ -386,7 +408,7 @@
   </section>
 
   <div class="foot-note">
-    <span class="b">podolang v4.1.1</span><br>
+    <span class="b">podolang v5.0.0</span><br>
     © 2026 BJ LEE · All Rights Reserved<br>
     PODOLANG.kr
   </div>
@@ -400,7 +422,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v4.1.1';
+const VER='v5.0.0';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -1023,13 +1045,14 @@ function updateCallLog(){
   if(mode !== 'call') return;
   const el = $('#callLog'); if(!el || !rt) return;
   const rows = rt.log.map(m => `
-    <div class="turn">
-      <div class="src">${m.dir==='me'?'내 말':'상대'}${m.src?' · '+esc(m.src):''}</div>
-      <div class="dst ocr">${esc(m.text)}</div>
+    <div class="bub ${m.dir==='me'?'me':'you'}">
+      <div class="who">${m.dir==='me'?'내 말':'상대'}</div>
+      ${m.src?`<div class="osrc">${esc(m.src)}</div>`:''}
+      <div class="txt">${esc(m.text)}</div>
     </div>`).join('');
   const live = [];
-  if(rt.cur.peer) live.push(`<div class="turn live"><div class="src">상대 · 통역 중</div><div class="dst ocr">${esc(rt.cur.peer)}</div></div>`);
-  if(rt.cur.me)   live.push(`<div class="turn live"><div class="src">내 말 · 듣는 중</div><div class="dst ocr">${esc(rt.cur.me)}</div></div>`);
+  if(rt.cur.peer) live.push(`<div class="bub you live"><div class="who">상대 · 통역 중</div><div class="txt">${esc(rt.cur.peer)}</div></div>`);
+  if(rt.cur.me)   live.push(`<div class="bub me live"><div class="who">내 말 · 듣는 중</div><div class="txt">${esc(rt.cur.me)}</div></div>`);
   el.innerHTML = live.join('') + rows;
 }
 function setStatus(t){
@@ -1214,6 +1237,23 @@ function closeSheet(){
   $('#sheet').classList.remove('on');
   ['nvTel','nvSearch','nvSet','nvMy'].forEach(id => { const b=$('#'+id); if(b) b.classList.remove('on'); });
 }
+const sheetOpen = () => $('#sheet').classList.contains('on');
+
+// 뒤로가기를 누르면 홈(마주보고)으로 돌아옵니다.
+// 패널이 열려 있으면 먼저 닫고, 그다음 홈으로 갑니다.
+function goHome(){
+  if(sheetOpen()){ closeSheet(); return; }
+  if(rt && rt.active){ toast('통화 중입니다. 종료 버튼을 눌러주세요'); return; }
+  if(mode !== 'talk') tab('talk');
+}
+try{
+  history.replaceState({ podo:'home' }, '');
+  history.pushState({ podo:'page' }, '');
+  window.addEventListener('popstate', () => {
+    goHome();
+    history.pushState({ podo:'page' }, '');   // 다음 뒤로가기도 받도록 채워둡니다
+  });
+}catch(e){}
 /* ---------- 이용권 ---------- */
 async function licCheck(quiet){
   if(!licCode){ licInfo = null; return null; }
@@ -1266,11 +1306,11 @@ function openPanel(){
   const logRows = !clog.length
     ? `<div class="hint">아직 통화 기록이 없습니다.</div>`
     : (clogOpen ? clog.map((m,i)=>`
-        <div class="turn">
-          <div class="src">${m.dir==='me'?'내 말':'상대'} · ${hhmm(m.at)}${m.src?'<br>'+esc(m.src):''}</div>
-          <div class="dst ocr" style="font-size:16px">${esc(m.text)}</div>
-          <div class="foot">
-            <small>${esc(m.pair||'')}</small>
+        <div class="bub ${m.dir==='me'?'me':'you'}">
+          <div class="who">${m.dir==='me'?'내 말':'상대'} · ${hhmm(m.at)}</div>
+          ${m.src?`<div class="osrc">${esc(m.src)}</div>`:''}
+          <div class="txt" style="font-size:16px">${esc(m.text)}</div>
+          <div class="bfoot">
             <button class="mini" onclick="copyLog(${i})">복사</button>
             <button class="mini del" onclick="delLog(${i})">삭제</button>
           </div>
@@ -1339,6 +1379,66 @@ const hhmm = ts => {
 };
 let clogOpen = true;
 function toggleClog(){ clogOpen = !clogOpen; openPanel(); }
+
+/* ---------- 이용방법 ---------- */
+function openHelp(){
+  markNav('');
+  $('#card').innerHTML = `
+    <h2>이용방법</h2>
+
+    <div class="seclabel">마주보고 통역</div>
+    <div class="note">
+      한 폰을 사이에 두고 번갈아 말하면 즉석에서 통역됩니다.<br><br>
+      <b>1.</b> 내 언어와 상대 언어를 고릅니다<br>
+      <b>2.</b> 아래 마이크를 <b>누른 채로</b> 말하고, 끝나면 손을 뗍니다<br>
+      <b>3.</b> 번역된 문장이 뜨고 상대 언어 음성이 나옵니다<br><br>
+      손님 응대나 현장 소통에 씁니다.
+    </div>
+
+    <div class="seclabel">사진 번역</div>
+    <div class="note">
+      서류·라벨·인보이스를 찍으면 글자를 읽어 옮깁니다.<br><br>
+      <b>1.</b> 자동 감지 → 한국어로 두고 <b>사진 찍기</b><br>
+      <b>2.</b> 찍은 뒤 <b>이 사진 번역하기</b><br>
+      <b>3.</b> 번역이 크게, 원문은 <b>원문 보기</b>를 눌러 폅니다<br><br>
+      <b>숫자·단가·품번은 원문 그대로 옮깁니다.</b> 흐려서 안 보이는 자리는
+      추측하지 않고 [?] 로 표시합니다. 중요한 금액은 원문과 한 번 더 대조하세요.
+    </div>
+
+    <div class="seclabel">전화 통역</div>
+    <div class="note">
+      상대는 그냥 전화를 받아 평소처럼 말하면 됩니다. 앱을 깔 필요도, 버튼을 누를 필요도 없습니다.<br><br>
+      <b>1.</b> 이름(선택)과 전화번호를 넣습니다. 국가번호부터 — 미국 +1, 한국 +82(앞 0 빼고)<br>
+      <b>2.</b> <b>통역 전화 걸기</b><br>
+      <b>3.</b> 상대가 받으면 이 화면에 대고 말합니다<br>
+      <b>4.</b> 말이 끝나면 잠시 뒤 상대에게 전달됩니다<br><br>
+      <b>이어폰을 쓰세요.</b> 스피커로 들으면 통역 음성을 마이크가 다시 주워서 말이 꼬입니다.<br><br>
+      전화 통역은 통화 1분마다 비용이 들어 <b>이용권</b>이 필요합니다.
+      마주보고 통역과 사진 번역은 이용권 없이 씁니다.
+    </div>
+
+    <div class="seclabel">아래 네 개 탭</div>
+    <div class="note">
+      <b>내번호</b> — 저장된 번호와 통화 기록. 번호는 통화를 걸면 자동으로 저장됩니다.
+      이름을 붙이거나 지울 수 있습니다.<br><br>
+      <b>검색</b> — 번호·통화 기록·사진 번역을 한 번에 찾습니다.
+      "500개" 로 찾으면 그 말이 나온 통화가 같이 나옵니다.<br><br>
+      <b>설정</b> — 기본 언어를 바꿉니다.<br><br>
+      <b>마이</b> — 이용권 코드를 넣고, 저장 현황을 보고, 기록을 정리합니다.
+    </div>
+
+    <div class="seclabel">알아두실 것</div>
+    <div class="note">
+      기록은 <b>이 폰 안에만</b> 있습니다. 서버로 보내지 않습니다.
+      브라우저 데이터를 지우면 함께 사라지니 중요한 내용은 복사해 두세요.<br><br>
+      전화 통역은 <b>안드로이드 크롬</b>에서 열어주세요.<br><br>
+      상대 폰이 해외번호를 스팸으로 막을 수 있습니다.
+      상대 연락처에 <b>+14472841160</b> 을 저장해 두면 통과합니다.
+    </div>
+
+    <div class="ver">podolang ${VER}</div>`;
+  $('#sheet').classList.add('on');
+}
 
 function markNav(id){
   ['nvTel','nvSearch','nvSet','nvMy'].forEach(x => { const b=$('#'+x); if(b) b.classList.toggle('on', x===id); });
