@@ -386,7 +386,7 @@
   </section>
 
   <div class="foot-note">
-    <span class="b">podolang v4.0.2</span><br>
+    <span class="b">podolang v4.0.3</span><br>
     © 2026 BJ LEE · All Rights Reserved<br>
     PODOLANG.kr
   </div>
@@ -400,7 +400,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v4.0.2';
+const VER='v4.0.3';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -1030,7 +1030,7 @@ async function callStart(){
   save(K.tel, num);
   saveTel(num, nmEl ? nmEl.value : '');
   const me = $('#cFrom').value, peer = $('#cTo').value;
-  if(!SR){ toast('이 브라우저는 음성인식을 지원하지 않습니다'); return; }
+  if(!canRec){ toast('이 브라우저는 마이크 녹음을 지원하지 않습니다'); return; }
 
   const b = $('#callBtn'); b.disabled = true; b.textContent = '전화 거는 중…';
 
