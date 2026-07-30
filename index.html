@@ -386,7 +386,7 @@
   </section>
 
   <div class="foot-note">
-    <span class="b">podolang v4.0.0</span><br>
+    <span class="b">podolang v4.0.1</span><br>
     © 2026 BJ LEE · All Rights Reserved<br>
     PODOLANG.kr
   </div>
@@ -400,7 +400,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v4.0.0';
+const VER='v4.0.1';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -460,6 +460,7 @@ function render(){
 
 /* ---------- 마주보고 통역 ---------- */
 function renderTalk(){
+  if(mode !== 'talk') return;      // 다른 탭으로 옮겼으면 덮어쓰지 않습니다
   const list = hist.length ? hist.map((h,i)=>`
     <div class="turn">
       <div class="src">${esc(h.src)}</div>
@@ -559,6 +560,7 @@ let pFrom = load(K.pfrom,'AUTO'), pTo = load(K.pto,'KO');
 let phist = load(K.phist,[]);
 
 function renderPhoto(){
+  if(mode !== 'photo') return;     // 다른 탭으로 옮겼으면 덮어쓰지 않습니다
   const body = photoBusy
     ? `<div class="turn"><div class="src"><span class="spin"></span>사진을 읽고 있습니다… 글자가 많으면 20초쯤 걸립니다.</div></div>`
     : photoResult
@@ -926,6 +928,7 @@ function sayOut(text, langCode){
 
 /* ---------- 화면 ---------- */
 function renderCall(){
+  if(mode !== 'call') return;      // 다른 탭으로 옮겼으면 덮어쓰지 않습니다
   if(rt && rt.active) return renderCallActive();
 
   const noSR = !canRec;
@@ -980,6 +983,7 @@ function setCallLang(){
 }
 
 function renderCallActive(){
+  if(mode !== 'call') return;
   $('#main').innerHTML = `
     <div class="turn" style="border-color:var(--grape)">
       <div class="dst">통화 중 · ${langName(rt.me)} ↔ ${langName(rt.peer)}</div>
@@ -1000,6 +1004,7 @@ function renderCallActive(){
 }
 
 function updateCallLog(){
+  if(mode !== 'call') return;
   const el = $('#callLog'); if(!el || !rt) return;
   const rows = rt.log.map(m => `
     <div class="turn">
