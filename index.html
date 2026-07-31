@@ -14,7 +14,7 @@
     --bg:#fff; --fg:#141218; --sub:#77707f;
     --line:#e6e1ee;          /* 옅은 구분선 */
     --line2:#6D28D9;         /* 카드 테두리 — 로고의 진한 보라 */
-    --grape:#5b2c83; --grape-soft:#f4eef9; --grape-ink:#3e1d5c;
+    --grape:#4C1D95; --grape-soft:#efe7fa; --grape-ink:#2E1065;
     --sky:#0b7ea8; --sky-soft:#eaf4fa; --sky-line:#a9d4e6;
     --leaf:#2e9e5b;
     --rec:#c0392b;
@@ -25,8 +25,7 @@
     font-size:16px;-webkit-text-size-adjust:100%}
 
   /* ============ 통역 앱 (첫 화면 꽉 채움) ============ */
-  #app{height:100dvh;display:flex;flex-direction:column;overflow:hidden;
-    border-bottom:1px solid var(--line)}
+  #app{height:100dvh;display:flex;flex-direction:column;overflow:hidden}
 
   header{flex:0 0 auto;height:54px;display:flex;align-items:center;gap:8px;padding:0 16px;
     background:var(--card);border-bottom:1.5px solid var(--line2)}
@@ -40,14 +39,10 @@
   .ico:active{background:#f2f2f4}
   .ico svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 
-  /* 세 가지 기능이 한눈에 보이도록 타원형으로 나눕니다 */
-  .tabs{flex:0 0 auto;display:flex;gap:7px;background:var(--card);
-    border-bottom:1.5px solid var(--line2);padding:9px 12px}
-  .tab{flex:1;padding:10px 2px;text-align:center;background:#fff;font:inherit;
-    font-size:14px;color:var(--grape);white-space:nowrap;font-weight:700;
-    border:1.5px solid var(--line2);border-radius:999px}
-  .tab.on{color:#fff;background:var(--grape);border-color:var(--grape);font-weight:800;box-shadow:none}
-  .tab:active{transform:scale(.97)}
+  .tabs{flex:0 0 auto;display:flex;background:var(--card);border-bottom:2px solid var(--line2)}
+  .tab{flex:1;padding:14px 2px;text-align:center;border:0;background:none;font:inherit;
+    font-size:15px;color:var(--sub);white-space:nowrap;font-weight:600}
+  .tab.on{color:var(--grape);font-weight:800;box-shadow:inset 0 -4px 0 var(--grape)}
 
   main{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px 20px;background:var(--ground)}
 
@@ -71,7 +66,6 @@
   .empty{background:var(--card);border:1.5px dashed var(--line2);border-radius:16px;
     padding:38px 22px;text-align:center;color:var(--sub);font-size:15px;line-height:1.7}
   .empty b{display:block;color:var(--fg);font-size:17px;margin-bottom:6px}
-  .empty .scrollhint{margin-top:22px;font-size:13px;color:var(--grape);opacity:.85}
 
   footer{flex:0 0 auto;background:var(--card);border-top:1.5px solid var(--line2);
     padding:12px 14px calc(12px + env(safe-area-inset-bottom));
@@ -181,54 +175,7 @@
     padding:10px 16px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:99;max-width:82%;text-align:center;line-height:1.4}
   .toast.on{opacity:1}
 
-  /* ============ 소개 / 홍보 (스크롤 아래) ============ */
-  .promo{max-width:680px;margin:0 auto;padding:0 20px;background:var(--card)}
-  .promo section{padding:64px 0;border-bottom:1px solid var(--line)}
-  .promo section:last-child{border-bottom:0}
-  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--grape);margin:0 0 14px}
-  .promo h2{font-size:28px;line-height:1.3;font-weight:800;letter-spacing:-.6px;margin:0 0 16px}
-  .promo p{font-size:16px;line-height:1.75;color:#3a3a3d;margin:0 0 14px}
-  .promo p.lead{font-size:18px;color:var(--fg)}
-
-  .hero-brand{display:flex;align-items:center;gap:12px;margin-bottom:20px}
-  .hero-brand .mark{width:44px;height:44px;display:block;flex-shrink:0}
-  .hero-brand .name{font-size:20px;font-weight:800;letter-spacing:-.4px}
-  .hero-brand .name span{color:var(--sub);font-weight:500;font-size:13px;display:block;letter-spacing:0}
-
-  .how{list-style:none;padding:0;margin:20px 0 0;counter-reset:step}
-  .how li{position:relative;padding:18px 0 18px 52px;border-top:1px solid var(--line)}
-  .how li:first-child{border-top:0}
-  .how li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:16px;
-    width:34px;height:34px;border-radius:50%;background:var(--grape-soft);color:var(--grape);
-    font-weight:800;font-size:14px;display:grid;place-items:center}
-  .how li b{display:block;font-size:16px;margin-bottom:3px}
-  .how li span{font-size:14px;color:var(--sub);line-height:1.6}
-
-  .feat{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}
-  .feat .cell{border:1px solid var(--line);border-radius:14px;padding:18px}
-  .feat .cell h3{margin:0 0 6px;font-size:15px;font-weight:700}
-  .feat .cell p{margin:0;font-size:13px;color:var(--sub);line-height:1.6}
-
-  .plans{display:flex;flex-direction:column;gap:12px;margin-top:22px}
-  .plan{border:1px solid var(--line);border-radius:16px;padding:22px}
-  .plan.hi{border-color:var(--grape);background:var(--grape-soft)}
-  .plan .tag{font-size:12px;font-weight:700;color:var(--grape);margin-bottom:6px}
-  .plan .price{font-size:26px;font-weight:800;letter-spacing:-.5px}
-  .plan .price small{font-size:13px;font-weight:500;color:var(--sub)}
-  .plan ul{list-style:none;padding:0;margin:14px 0 0}
-  .plan ul li{font-size:14px;color:#3a3a3d;padding:6px 0 6px 22px;position:relative;line-height:1.5}
-  .plan ul li::before{content:"";position:absolute;left:2px;top:12px;width:10px;height:10px;
-    border-left:2px solid var(--grape);border-bottom:2px solid var(--grape);transform:rotate(-45deg);border-radius:1px}
-
-  .top-cta{display:inline-flex;align-items:center;gap:8px;margin-top:26px;padding:13px 22px;
-    background:var(--fg);color:#fff;border:0;border-radius:12px;font:inherit;font-weight:600;font-size:15px;cursor:pointer}
-  .top-cta svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-
-  .foot-note{text-align:center;color:var(--sub);font-size:12px;line-height:1.9;padding:40px 20px calc(40px + env(safe-area-inset-bottom))}
-  .foot-note .b{color:var(--fg);font-weight:700}
-
   @media (max-width:420px){
-    .promo h2{font-size:24px}
     .feat{grid-template-columns:1fr}
     .tab{font-size:13.5px}
   }
@@ -273,147 +220,6 @@
   </nav>
 </div>
 
-<!-- ===================== 소개 / 홍보 (스크롤) ===================== -->
-<div class="promo">
-
-  <section>
-    <div class="hero-brand">
-      <svg class="mark" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="podolang"><path d="M60 14 C 62 10, 68 8, 72 12 C 76 16, 74 24, 60 26 C 46 24, 44 16, 48 12 C 52 8, 58 10, 60 14 Z" fill="#2ECC71"/><circle cx="46" cy="70" r="26" fill="#8B5CF6" stroke="#6D28D9" stroke-width="3"/><circle cx="76" cy="70" r="26" fill="#A78BFA" stroke="#6D28D9" stroke-width="3"/></svg>
-      <div class="name">podolang<span>실시간 통역</span></div>
-    </div>
-    <p class="eyebrow">말하면, 바로 통역</p>
-    <h2>언어가 달라도<br>대화는 멈추지 않게.</h2>
-    <p class="lead">한국어로 말하면 상대의 언어로 바뀌어 소리까지 나옵니다. 마주 앉아서도, 사진 한 장으로도, 전화로도. 앱 설치도 회원가입도 없이 이 화면에서 바로 씁니다.</p>
-    <button class="top-cta" onclick="goTop()">
-      <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-      위로 올려서 지금 통역하기
-    </button>
-  </section>
-
-  <section>
-    <p class="eyebrow">쓰는 법</p>
-    <h2>세 번이면 끝.</h2>
-    <ol class="how">
-      <li><b>언어 고르기</b><span>내 언어와 상대 언어를 위에서 선택합니다. 한국어 ↔ 태국어, 영어, 중국어, 일본어 등.</span></li>
-      <li><b>누르고 말하기</b><span>마이크를 누른 채로 말하고, 끝나면 손을 뗍니다.</span></li>
-      <li><b>바로 들려주기</b><span>번역된 문장이 화면에 뜨고, 상대 언어 음성이 바로 재생됩니다.</span></li>
-    </ol>
-  </section>
-
-  <section>
-    <p class="eyebrow">읽는 법 · 사진 번역</p>
-    <h2>글자는 찍으면<br>읽어드립니다.</h2>
-    <ol class="how">
-      <li><b>찍는다</b><span>거래명세서, 인보이스, 제품 라벨, 포장 박스, 간판, 손으로 쓴 메모. 카메라로 찍거나 앨범에서 고르면 됩니다.</span></li>
-      <li><b>읽는다</b><span>사진 속 글자를 줄 순서 그대로 읽어서 우리말로 옮깁니다. 원문도 같이 남아 있어 나란히 대조할 수 있습니다.</span></li>
-      <li><b>확인한다</b><span>수량·단가·날짜·품번은 원문 그대로 옮깁니다. 흐려서 안 보이는 자리는 추측하지 않고 [?] 로 표시합니다.</span></li>
-    </ol>
-    <p style="font-size:14px;color:var(--sub);line-height:1.7;margin-top:16px">
-      숫자를 바꾸지 않는 것이 이 기능의 핵심입니다. 단가가 한 자리 달라지면 그대로 손해가 되기 때문에, 읽을 수 없는 글자는 비워두도록 만들었습니다. <b style="color:var(--fg)">중요한 금액은 원문과 한 번 더 대조해 보세요.</b>
-    </p>
-  </section>
-
-  <section>
-    <p class="eyebrow">받는 법 · 전화 통역</p>
-    <h2>기다리지 않고<br>그냥 대화하세요.</h2>
-    <p>번갈아 말하고 통역을 기다리는 방식이 아닙니다. 양쪽이 동시에 말해도 각자 자기 언어로 들립니다. 통역사가 옆에 앉아 있는 것과 같은 흐름입니다.</p>
-    <ol class="how">
-      <li><b>전화를 건다</b><span>상대 번호를 넣고 걸면 됩니다. 상대는 평소처럼 전화를 받으면 그만입니다. 앱을 깔 필요도, 뭘 누를 필요도 없습니다.</span></li>
-      <li><b>그냥 말한다</b><span>당신은 화면에 대고 한국어로, 상대는 전화에 대고 영어로 말합니다. 말하는 동안 이미 통역이 흘러갑니다.</span></li>
-      <li><b>글로도 남는다</b><span>주고받은 말이 자막으로 화면에 쌓입니다. 숫자나 날짜를 다시 확인할 때 유용합니다.</span></li>
-    </ol>
-    <p style="font-size:14px;color:var(--sub);line-height:1.7;margin-top:16px">
-      <b style="color:var(--fg)">이어폰을 쓰세요.</b> 스피커로 들으면 상대 목소리를 마이크가 다시 주워 담아 통역이 꼬입니다. 이어폰을 끼면 이 문제가 없어집니다.
-    </p>
-    <p style="font-size:14px;color:var(--sub);line-height:1.7">
-      실시간 통역이 되는 언어는 한국어·영어·일본어·중국어·스페인어·포르투갈어·프랑스어·독일어·이탈리아어·러시아어·힌디어·인도네시아어·베트남어입니다.
-    </p>
-  </section>
-
-  <section>
-    <p class="eyebrow">세 가지 방식</p>
-    <h2>마주 앉아도, 멀리 있어도.</h2>
-    <div class="feat">
-      <div class="cell">
-        <h3>마주보고 통역</h3>
-        <p>한 폰을 사이에 두고 번갈아 말하면 즉석에서 통역됩니다. 손님 응대, 현장 소통에 좋아요.</p>
-      </div>
-      <div class="cell">
-        <h3>사진 번역</h3>
-        <p>서류·라벨·인보이스를 찍으면 글자를 읽어 옮깁니다. 숫자와 품번은 원문 그대로 둡니다.</p>
-      </div>
-      <div class="cell">
-        <h3>전화 통역</h3>
-        <p>양쪽이 동시에 말해도 각자 자기 언어로 들립니다. 기다리지 않고 그냥 대화하세요.</p>
-      </div>
-      <div class="cell">
-        <h3>음성까지 자연스럽게</h3>
-        <p>글자만이 아니라 상대 언어 목소리로 읽어줍니다. 태국어·베트남어 등도 지원합니다.</p>
-      </div>
-      <div class="cell">
-        <h3>설치 없이 웹에서</h3>
-        <p>주소만 열면 끝. 폰이든 PC든 브라우저에서 그대로 동작합니다.</p>
-      </div>
-      <div class="cell">
-        <h3>기록은 내 폰에</h3>
-        <p>통역·번역 기록은 이 기기에만 남습니다. 필요 없으면 한 번에 지울 수 있어요.</p>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <p class="eyebrow">누구를 위해</p>
-    <h2>말이 통해야<br>일이 됩니다.</h2>
-    <p>해외 공장·거래처와 매일 소통하는 1인 사업자를 위해 만들었습니다. 통역사를 부르지 않아도, 번역기를 오가며 복사·붙여넣기 하지 않아도, 말하는 그대로 상대에게 전해집니다. 현장에서 바로 쓰라고 단순하게 만들었어요.</p>
-  </section>
-
-  <section>
-    <p class="eyebrow">요금</p>
-    <h2>가볍게 시작하세요.</h2>
-    <div class="plans">
-      <div class="plan">
-        <div class="tag">무료</div>
-        <div class="price">0원</div>
-        <ul>
-          <li>하루 5회 통역</li>
-          <li>마주보고 통역</li>
-          <li>사진 번역 하루 3장</li>
-          <li>주요 언어 지원</li>
-        </ul>
-      </div>
-      <div class="plan hi">
-        <div class="tag">프로</div>
-        <div class="price">$19<small> / 월</small></div>
-        <ul>
-          <li>무제한 통역</li>
-          <li>사진 번역 무제한</li>
-          <li>전화 통역 포함</li>
-          <li>대화 기록 저장</li>
-        </ul>
-      </div>
-      <div class="plan">
-        <div class="tag">비즈니스</div>
-        <div class="price">$49<small> / 월</small></div>
-        <ul>
-          <li>팀 공유</li>
-          <li>용어집 고정 번역</li>
-          <li>우선 지원</li>
-        </ul>
-      </div>
-    </div>
-    <button class="top-cta" onclick="goTop()">
-      <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-      지금 무료로 통역해보기
-    </button>
-  </section>
-
-  <div class="foot-note">
-    <span class="b">podolang v5.0.0</span><br>
-    © 2026 BJ LEE · All Rights Reserved<br>
-    PODOLANG.kr
-  </div>
-</div>
-
 <!-- 사진 입력 (화면 다시 그려도 살아있도록 main 바깥에 둡니다) -->
 <input type="file" id="fileCam" accept="image/*" capture="environment" style="display:none">
 <input type="file" id="fileAlb" accept="image/*" style="display:none">
@@ -422,7 +228,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v5.0.0';
+const VER='v5.2.0';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -433,7 +239,8 @@ const rtOk=c=>RT_OUT.includes(String(c||'').toUpperCase());
 const K={from:'podolang_from', to:'podolang_to', hist:'podolang_hist', tel:'podolang_tel',
          pfrom:'podolang_pfrom', pto:'podolang_pto', phist:'podolang_phist',
          tels:'podolang_tels', clog:'podolang_clog',
-         lic:'podolang_lic', dev:'podolang_dev'};
+         lic:'podolang_lic', dev:'podolang_dev',
+         gloss:'podolang_gloss', tone:'podolang_tone'};
 const LANGS=[['KO','한국어'],['TH','태국어'],['EN','영어'],['JA','일본어'],['ZH','중국어'],['VI','베트남어'],['ES','스페인어'],['ID','인도네시아어'],['DE','독일어'],['FR','프랑스어'],['AR','아랍어'],['IT','이탈리아어'],['RU','러시아어'],['PT','포르투갈어'],['HI','힌디어'],['NL','네덜란드어']];
 const $=s=>document.querySelector(s);
 let mode='talk', rec=null, chunks=[], busy=false;
@@ -459,9 +266,6 @@ const langName=c=>c==='AUTO'?'자동 감지':(LANGS.find(l=>l[0]===c)||[c,c])[1]
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2400)}
 const opts=sel=>LANGS.map(([c,n])=>`<option value="${c}" ${c===sel?'selected':''}>${n}</option>`).join('');
 const optsAuto=sel=>`<option value="AUTO" ${sel==='AUTO'?'selected':''}>자동 감지</option>`+opts(sel);
-
-/* 소개에서 통역으로 올라가기 */
-function goTop(){ window.scrollTo({top:0, behavior:'smooth'}); }
 
 /* ---------- 탭 ---------- */
 function tab(m){
@@ -494,7 +298,7 @@ function renderTalk(){
         <button class="mini del" onclick="delOne(${i})">삭제</button>
       </div>
     </div>`).join('')
-    : `<div class="empty"><b>마이크를 누르고 말하세요</b>말이 끝나면 손을 떼세요.<div class="scrollhint">↓ 아래로 내리면 podolang 소개를 볼 수 있어요</div></div>`;
+    : `<div class="empty"><b>마이크를 누르고 말하세요</b>말이 끝나면 손을 떼세요.</div>`;
 
   $('#main').innerHTML = `
     <div class="langbar">
@@ -640,7 +444,7 @@ function renderPhoto(){
         <b>서류를 찍으면 읽어드립니다</b>
         거래명세서 · 인보이스 · 제품 라벨 · 간판 · 손글씨<br>
         숫자와 품번은 원문 그대로 옮깁니다.
-        <div class="scrollhint">↓ 아래로 내리면 podolang 소개를 볼 수 있어요</div>
+        
       </div>`)}
 
     <div style="margin-top:14px">${body}</div>
@@ -772,6 +576,8 @@ function isEcho(text){
   return false;
 }
 // 이용권 코드와 기기 식별자 (기기 식별자는 한 번 만들고 계속 씁니다)
+let gloss = load(K.gloss, '');      // 용어집 — 흔들리면 안 되는 말
+let tone  = load(K.tone, 'normal'); // 말투
 let licCode = load(K.lic, '');
 let licInfo = null;
 let devId = load(K.dev, '');
@@ -1080,7 +886,8 @@ async function callStart(){
   try{
     const res = await fetch(RT_API + '/api/rt/start', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ to:num, myLang:me, peerLang:peer, code:licCode, device:devId })
+      body: JSON.stringify({ to:num, myLang:me, peerLang:peer, code:licCode, device:devId,
+                             glossary: gloss, tone })
     });
     d = await res.json();
     if(d.error) throw new Error(d.error);
@@ -1227,6 +1034,29 @@ function openSet(){
       <label>상대 언어 (기본)</label>
       <select id="setTo">${opts(to)}</select>
     </div>
+    <div class="seclabel">전화 통역 말투</div>
+    <div class="fld">
+      <select id="setTone">
+        <option value="formal" ${tone==='formal'?'selected':''}>정중하게 — 거래처·처음 만나는 사이</option>
+        <option value="normal" ${tone==='normal'?'selected':''}>보통 — 평소 거래하는 사이</option>
+        <option value="casual" ${tone==='casual'?'selected':''}>편하게 — 친한 사이·직원</option>
+      </select>
+    </div>
+
+    <div class="seclabel">용어집</div>
+    <div class="fld">
+      <label>흔들리면 안 되는 말을 줄마다 하나씩</label>
+      <textarea id="setGloss" rows="6" spellcheck="false"
+        style="width:100%;border:1.5px solid var(--line2);border-radius:11px;padding:12px;
+               font:inherit;font-size:15px;background:#fff;outline:none;resize:vertical"
+        placeholder="유안마을 = Yuan Village&#10;포도랑 = Podolang&#10;선적 = shipment">${esc(gloss)}</textarea>
+    </div>
+    <div class="note">
+      회사명·제품명·지명처럼 매번 같아야 하는 말을 적어두세요.
+      같은 이름이 통화마다 다르게 번역되는 것을 막습니다.<br>
+      <b>전화 통역에만 적용됩니다.</b>
+    </div>
+
     <button class="btn" onclick="saveSet()">저장</button>
     <button class="btn ghost" onclick="checkApi()">연결 확인</button>
     <div class="hint" style="margin-top:12px">번역·음성은 서버에서 처리됩니다. API 키는 서버에만 있고 이 기기에는 저장되지 않습니다. 사진은 번역할 때만 서버로 보내고 따로 보관하지 않습니다.</div>
@@ -1423,7 +1253,8 @@ function openHelp(){
       이름을 붙이거나 지울 수 있습니다.<br><br>
       <b>검색</b> — 번호·통화 기록·사진 번역을 한 번에 찾습니다.
       "500개" 로 찾으면 그 말이 나온 통화가 같이 나옵니다.<br><br>
-      <b>설정</b> — 기본 언어를 바꿉니다.<br><br>
+      <b>설정</b> — 기본 언어, 전화 통역 말투, 용어집을 정합니다.
+      용어집에 회사명·제품명·지명을 적어두면 통화마다 같은 말로 번역됩니다.<br><br>
       <b>마이</b> — 이용권 코드를 넣고, 저장 현황을 보고, 기록을 정리합니다.
     </div>
 
@@ -1436,7 +1267,12 @@ function openHelp(){
       상대 연락처에 <b>+14472841160</b> 을 저장해 두면 통과합니다.
     </div>
 
-    <div class="ver">podolang ${VER}</div>`;
+    <div class="seclabel">만든 곳</div>
+    <div class="note" style="text-align:center;line-height:2">
+      <b>podolang ${VER}</b><br>
+      © 2026 BJ LEE · All Rights Reserved<br>
+      PODOLANG.kr
+    </div>`;
   $('#sheet').classList.add('on');
 }
 
@@ -1545,6 +1381,9 @@ function openMy(){
 function saveSet(){
   from=$('#setFrom').value; to=$('#setTo').value;
   save(K.from,from); save(K.to,to);
+  const g=$('#setGloss'), t=$('#setTone');
+  if(g){ gloss = g.value.slice(0,4000); save(K.gloss, gloss); }
+  if(t){ tone = t.value; save(K.tone, tone); }
   closeSheet(); render(); toast('저장했습니다');
 }
 async function checkApi(){
