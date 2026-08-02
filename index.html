@@ -10,8 +10,8 @@
 :root{
   /* 탭마다 색이 바뀝니다 */
   --talk-1:#6D28D9; --talk-2:#6D28D9; --talk-bg:#F5F3FF; --talk-soft:#EDE9FE;
-  --photo-1:#0891B2; --photo-2:#22D3EE; --photo-bg:#ECFEFF; --photo-soft:#CFFAFE;
-  --tel-1:#2563EB;  --tel-2:#60A5FA;  --tel-bg:#EFF6FF;  --tel-soft:#DBEAFE;
+  --photo-1:#22D3EE; --photo-2:#22D3EE; --photo-bg:#ECFEFF; --photo-soft:#CFFAFE;
+  --tel-1:#1D4ED8;  --tel-2:#1D4ED8;  --tel-bg:#EFF6FF;  --tel-soft:#DBEAFE;
 
   --fg:#111113; --sub:#6B7280; --sub2:#9CA3AF;
   --line:rgba(0,0,0,0.07);
@@ -77,6 +77,18 @@ main{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 16
   box-shadow:0 8px 20px rgba(0,0,0,0.18)}
 body[data-theme="talk"] .turn.you{background:var(--talk-soft);color:#5B21B6;
   border:1px solid #DDD6FE;box-shadow:none}
+/* 밝은 청록 위에서는 흰 글씨가 안 읽혀서 진한 글씨를 씁니다 */
+body[data-theme="photo"] header,
+body[data-theme="photo"] header h1,
+body[data-theme="photo"] .tab.on,
+body[data-theme="photo"] .turn.you,
+body[data-theme="photo"] .btn,
+body[data-theme="photo"] .mic,
+body[data-theme="photo"] .ico{color:#083344}
+body[data-theme="photo"] .ico{border-color:rgba(8,51,68,.22);background:rgba(255,255,255,.45)}
+body[data-theme="photo"] header h1 .logo{background:rgba(8,51,68,.14);border-color:rgba(8,51,68,.2)}
+body[data-theme="photo"] header h1 .logo path,
+body[data-theme="photo"] header h1 .logo circle{fill:#083344}
 .turn.live{border-style:dashed;opacity:.9}
 .turn.chat{max-width:88%}
 .turn.chat.me{margin-left:auto}
@@ -257,7 +269,7 @@ footer{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:10px 18px 
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v7.2.1';
+const VER='v7.3.1';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -300,8 +312,8 @@ const optsAuto=sel=>`<option value="AUTO" ${sel==='AUTO'?'selected':''}>자동 �
 // 탭마다 색이 바뀝니다. 헤더·배경·버튼·말풍선이 한꺼번에 따라옵니다.
 const THEME = {
   talk : { c1:'#6D28D9', c2:'#6D28D9', bg:'#F5F3FF', soft:'#EDE9FE' },
-  photo: { c1:'#0891B2', c2:'#22D3EE', bg:'#ECFEFF', soft:'#CFFAFE' },
-  call : { c1:'#2563EB', c2:'#60A5FA', bg:'#EFF6FF', soft:'#DBEAFE' }
+  photo: { c1:'#22D3EE', c2:'#22D3EE', bg:'#ECFEFF', soft:'#CFFAFE' },
+  call : { c1:'#1D4ED8', c2:'#1D4ED8', bg:'#EFF6FF', soft:'#DBEAFE' }
 };
 function paint(m){
   const t = THEME[m] || THEME.talk;
