@@ -55,9 +55,14 @@ main{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 16
 
 /* ---------- 언어 고르기 ---------- */
 .langbar{display:flex;align-items:center;gap:8px;margin-bottom:16px}
-.langbar select{flex:1;height:52px;border-radius:16px;border:0;padding:0 14px;
-  background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;font:inherit;
-  font-weight:800;font-size:14.5px;outline:none;box-shadow:0 6px 16px rgba(0,0,0,0.15)}
+/* 말풍선과 짝을 맞춥니다 — 내 언어는 노랑, 상대 언어는 그 탭의 연한 색 */
+.langbar select{flex:1;height:52px;border-radius:16px;padding:0 14px;font:inherit;
+  font-weight:800;font-size:14.5px;outline:none;
+  background:#FEF3C7;color:#92400E;border:1.5px solid #FDE68A}
+.langbar select:last-of-type{background:var(--csoft);color:var(--c1);border-color:var(--c2)}
+/* 사진 번역은 '원문 → 내 언어' 라 방향이 반대입니다 */
+.langbar select.peerside{background:var(--csoft);color:var(--c1);border-color:var(--c2)}
+.langbar select.meside{background:#FEF3C7;color:#92400E;border-color:#FDE68A}
 .swap{width:48px;height:48px;border-radius:50%;background:#111113;color:#fff;border:0;
   flex:0 0 auto;display:grid;place-items:center;box-shadow:0 6px 16px rgba(0,0,0,0.15)}
 .swap svg{width:17px;height:17px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
@@ -252,7 +257,7 @@ footer{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:10px 18px 
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v7.1.0';
+const VER='v7.2.0';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -464,9 +469,9 @@ function renderPhoto(){
 
   $('#main').innerHTML = `
     <div class="langbar">
-      <select id="pFromSel" onchange="setPhotoLang()">${optsAuto(pFrom)}</select>
-      <div style="width:36px;text-align:center;color:var(--sub)">→</div>
-      <select id="pToSel" onchange="setPhotoLang()">${opts(pTo)}</select>
+      <select id="pFromSel" class="peerside" onchange="setPhotoLang()">${optsAuto(pFrom)}</select>
+      <div style="width:36px;text-align:center;color:var(--sub);font-weight:900">→</div>
+      <select id="pToSel" class="meside" onchange="setPhotoLang()">${opts(pTo)}</select>
     </div>
 
     <div class="shots">
