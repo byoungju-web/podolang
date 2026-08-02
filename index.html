@@ -257,7 +257,7 @@ footer{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:10px 18px 
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v7.2.0';
+const VER='v7.2.1';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -311,8 +311,7 @@ function paint(m){
   r.setProperty('--cbg', t.bg);
   r.setProperty('--csoft', t.soft);
   document.body.setAttribute('data-theme', m);
-  const meta = document.querySelector('meta[name="theme-color"]');
-  if(meta) meta.setAttribute('content', t.c1);
+  // 브라우저 주소창 색은 건드리지 않습니다. 흰색 그대로 둡니다.
 }
 
 function tab(m){
@@ -335,8 +334,9 @@ function render(){
 /* ---------- 마주보고 통역 ---------- */
 function renderTalk(){
   if(mode !== 'talk') return;      // 다른 탭으로 옮겼으면 덮어쓰지 않습니다
+  // 말한 사람이 번갈아 바뀌니 색도 번갈아 나옵니다
   const list = hist.length ? hist.map((h,i)=>`
-    <div class="turn me">
+    <div class="turn ${i % 2 === 0 ? 'me' : 'you'}">
       <div class="src">${esc(h.src)}</div>
       <div class="dst">${esc(h.dst)}</div>
       <div class="foot">
