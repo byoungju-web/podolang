@@ -33,8 +33,8 @@ header{flex:0 0 auto;height:62px;display:flex;align-items:center;gap:12px;paddin
   background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;transition:background .4s}
 header h1{flex:1;margin:0;font-size:17px;font-weight:900;letter-spacing:-.5px;
   display:flex;align-items:center;gap:10px;color:#fff}
-header h1 .logo{width:34px;height:34px;display:block;flex-shrink:0;border-radius:11px;
-  background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.25);padding:3px}
+header h1 .logo{width:36px;height:36px;display:block;flex-shrink:0;border-radius:11px;
+  background:#fff;padding:4px;box-shadow:0 2px 8px rgba(0,0,0,0.12)}
 .ico{width:36px;height:36px;border-radius:12px;border:1px solid rgba(255,255,255,0.25);
   background:rgba(255,255,255,0.16);color:#fff;display:grid;place-items:center;flex:0 0 auto}
 .ico:active{background:rgba(255,255,255,0.3)}
@@ -87,9 +87,7 @@ body[data-theme="photo"] .btn,
 body[data-theme="photo"] .mic,
 body[data-theme="photo"] .ico{color:#083344}
 body[data-theme="photo"] .ico{border-color:rgba(8,51,68,.22);background:rgba(255,255,255,.45)}
-body[data-theme="photo"] header h1 .logo{background:rgba(8,51,68,.14);border-color:rgba(8,51,68,.2)}
-body[data-theme="photo"] header h1 .logo path,
-body[data-theme="photo"] header h1 .logo circle{fill:#083344}
+
 .turn.live{border-style:dashed;opacity:.9}
 .turn.chat{max-width:88%}
 .turn.chat.me{margin-left:auto}
@@ -232,16 +230,16 @@ footer{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:10px 18px 
 <!-- ===================== 통역 앱 (첫 화면) ===================== -->
 <div id="app">
   <header>
-    <h1><svg class="logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="podolang"><path d="M60 20 C 62 15, 69 13, 73 18 C 77 23, 75 33, 60 35 C 45 33, 43 23, 47 18 C 51 13, 58 15, 60 20 Z" fill="#fff" opacity=".95"/><circle cx="46" cy="76" r="24" fill="#fff" opacity=".95"/><circle cx="76" cy="76" r="24" fill="#fff" opacity=".65"/></svg>podolang</h1>
+    <h1><svg class="logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="podolang"><path d="M60 14 C 62 10, 68 8, 72 12 C 76 16, 74 24, 60 26 C 46 24, 44 16, 48 12 C 52 8, 58 10, 60 14 Z" fill="#2ECC71"/><circle cx="46" cy="70" r="26" fill="#8B5CF6" stroke="#6D28D9" stroke-width="3"/><circle cx="76" cy="70" r="26" fill="#A78BFA" stroke="#6D28D9" stroke-width="3"/></svg>podolang</h1>
     <button class="ico help" onclick="openHelp()" aria-label="이용방법">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.2"/><path d="M9.4 9.2a2.7 2.7 0 015.2 1c0 1.8-2.6 2.2-2.6 4"/><circle cx="12" cy="17.4" r="1.05" fill="currentColor" stroke="none"/></svg>
     </button>
   </header>
 
   <div class="tabs">
-    <button class="tab on" id="tabTalk" onclick="tab('talk')">마주보고</button>
-    <button class="tab" id="tabPhoto" onclick="tab('photo')">사진 번역</button>
-    <button class="tab" id="tabCall" onclick="tab('call')">전화 통역</button>
+    <button class="tab on" id="tabTalk" onclick="tab('talk')"></button>
+    <button class="tab" id="tabPhoto" onclick="tab('photo')"></button>
+    <button class="tab" id="tabCall" onclick="tab('call')"></button>
   </div>
 
   <main id="main"></main>
@@ -252,16 +250,16 @@ footer{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:10px 18px 
       <button class="mic" id="mic" aria-label="녹음">
         <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 00-3 3v7a3 3 0 006 0V5a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v3"/></svg>
       </button>
-      <div class="micLabel" id="micLabel">누르고 있는 동안 말하세요</div>
+      <div class="micLabel" id="micLabel"></div>
     </div>
     <div class="foot-spacer"></div>
   </footer>
 
   <nav class="botnav" id="botnav">
-    <button id="nvTel"    onclick="openPanel()"><span class="dot"></span><span class="lb">내번호</span></button>
-    <button id="nvSearch" onclick="openSearch()"><span class="dot"></span><span class="lb">검색</span></button>
-    <button id="nvSet"    onclick="openSet()"><span class="dot"></span><span class="lb">설정</span></button>
-    <button id="nvMy"     onclick="openMy()"><span class="dot"></span><span class="lb">마이</span></button>
+    <button id="nvTel"    onclick="openPanel()"><span class="dot"></span><span class="lb" id="lbTel"></span></button>
+    <button id="nvSearch" onclick="openSearch()"><span class="dot"></span><span class="lb" id="lbSearch"></span></button>
+    <button id="nvSet"    onclick="openSet()"><span class="dot"></span><span class="lb" id="lbSet"></span></button>
+    <button id="nvMy"     onclick="openMy()"><span class="dot"></span><span class="lb" id="lbMy"></span></button>
   </nav>
 </div>
 
@@ -273,7 +271,7 @@ footer{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:10px 18px 
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v7.5.0';
+const VER='v8.0.1';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -312,6 +310,74 @@ function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');setT
 const opts=sel=>LANGS.map(([c,n])=>`<option value="${c}" ${c===sel?'selected':''}>${n}</option>`).join('');
 const optsAuto=sel=>`<option value="AUTO" ${sel==='AUTO'?'selected':''}>자동 감지</option>`+opts(sel);
 
+
+/* ================= 화면 글씨 번역 =================
+   내 언어를 따릅니다. 자동이면 폰이 쓰는 언어, 직접 고르면 그 언어입니다.
+   적어두지 않은 언어는 영어로 나옵니다.                              */
+const I18N = {
+ talk:{KO:'마주보고',EN:'Face to Face',JA:'対面',ZH:'面对面',TH:'พบหน้า',VI:'Trực tiếp',ES:'Cara a cara',ID:'Tatap muka',DE:'Vor Ort',FR:'En personne',IT:'Di persona',RU:'Лицом к лицу',PT:'Cara a cara',HI:'आमने-सामने',AR:'وجهاً لوجه',NL:'Persoonlijk'},
+ photo:{KO:'사진 번역',EN:'Photo',JA:'写真翻訳',ZH:'拍照翻译',TH:'แปลภาพ',VI:'Dịch ảnh',ES:'Foto',ID:'Foto',DE:'Foto',FR:'Photo',IT:'Foto',RU:'Фото',PT:'Foto',HI:'फ़ोटो',AR:'صورة',NL:'Foto'},
+ call:{KO:'전화 통역',EN:'Phone Call',JA:'電話通訳',ZH:'电话翻译',TH:'แปลทางโทรศัพท์',VI:'Gọi điện',ES:'Llamada',ID:'Telepon',DE:'Anruf',FR:'Appel',IT:'Chiamata',RU:'Звонок',PT:'Chamada',HI:'कॉल',AR:'مكالمة',NL:'Bellen'},
+
+ navLog:{KO:'통화기록',EN:'Calls',JA:'通話履歴',ZH:'通话记录',TH:'บันทึกสาย',VI:'Cuộc gọi',ES:'Llamadas',ID:'Panggilan',DE:'Anrufe',FR:'Appels',IT:'Chiamate',RU:'Звонки',PT:'Chamadas',HI:'कॉल्स',AR:'المكالمات',NL:'Oproepen'},
+ navSearch:{KO:'검색',EN:'Search',JA:'検索',ZH:'搜索',TH:'ค้นหา',VI:'Tìm kiếm',ES:'Buscar',ID:'Cari',DE:'Suche',FR:'Recherche',IT:'Cerca',RU:'Поиск',PT:'Buscar',HI:'खोज',AR:'بحث',NL:'Zoeken'},
+ navSet:{KO:'설정',EN:'Settings',JA:'設定',ZH:'设置',TH:'ตั้งค่า',VI:'Cài đặt',ES:'Ajustes',ID:'Pengaturan',DE:'Einstellungen',FR:'Réglages',IT:'Impostazioni',RU:'Настройки',PT:'Ajustes',HI:'सेटिंग',AR:'الإعدادات',NL:'Instellingen'},
+ navMy:{KO:'마이',EN:'My',JA:'マイ',ZH:'我的',TH:'ของฉัน',VI:'Của tôi',ES:'Mi cuenta',ID:'Saya',DE:'Mein',FR:'Mon compte',IT:'Profilo',RU:'Профиль',PT:'Perfil',HI:'मेरा',AR:'حسابي',NL:'Mijn'},
+
+ copy:{KO:'복사',EN:'Copy',JA:'コピー',ZH:'复制',TH:'คัดลอก',VI:'Sao chép',ES:'Copiar',ID:'Salin',DE:'Kopieren',FR:'Copier',IT:'Copia',RU:'Копировать',PT:'Copiar',HI:'कॉपी',AR:'نسخ',NL:'Kopiëren'},
+ del:{KO:'삭제',EN:'Delete',JA:'削除',ZH:'删除',TH:'ลบ',VI:'Xóa',ES:'Borrar',ID:'Hapus',DE:'Löschen',FR:'Supprimer',IT:'Elimina',RU:'Удалить',PT:'Excluir',HI:'हटाएं',AR:'حذف',NL:'Verwijderen'},
+ clearAll:{KO:'전체 기록 지우기',EN:'Clear all',JA:'すべて削除',ZH:'清除全部',TH:'ล้างทั้งหมด',VI:'Xóa tất cả',ES:'Borrar todo',ID:'Hapus semua',DE:'Alles löschen',FR:'Tout effacer',IT:'Cancella tutto',RU:'Очистить всё',PT:'Limpar tudo',HI:'सब मिटाएं',AR:'مسح الكل',NL:'Alles wissen'},
+ replay:{KO:'다시 듣기',EN:'Play again',JA:'もう一度',ZH:'再听一次',TH:'ฟังอีกครั้ง',VI:'Nghe lại',ES:'Escuchar',ID:'Putar lagi',DE:'Nochmal',FR:'Réécouter',IT:'Riascolta',RU:'Ещё раз',PT:'Ouvir',HI:'फिर सुनें',AR:'استمع',NL:'Opnieuw'},
+ name:{KO:'이름',EN:'Name',JA:'名前',ZH:'姓名',TH:'ชื่อ',VI:'Tên',ES:'Nombre',ID:'Nama',DE:'Name',FR:'Nom',IT:'Nome',RU:'Имя',PT:'Nome',HI:'नाम',AR:'الاسم',NL:'Naam'},
+
+ pressSpeak:{KO:'누르고 있는 동안 말하세요',EN:'Hold and speak',JA:'押しながら話してください',ZH:'按住说话',TH:'กดค้างแล้วพูด',VI:'Giữ và nói',ES:'Mantén pulsado y habla',ID:'Tahan dan bicara',DE:'Halten und sprechen',FR:'Maintenez et parlez',IT:'Tieni premuto e parla',RU:'Держите и говорите',PT:'Segure e fale',HI:'दबाकर बोलें',AR:'اضغط وتحدث',NL:'Houd vast en spreek'},
+ hearing:{KO:'듣고 있습니다…',EN:'Listening…',JA:'聞いています…',ZH:'正在聆听…',TH:'กำลังฟัง…',VI:'Đang nghe…',ES:'Escuchando…',ID:'Mendengarkan…',DE:'Höre zu…',FR:'J\'écoute…',IT:'In ascolto…',RU:'Слушаю…',PT:'Ouvindo…',HI:'सुन रहे हैं…',AR:'أستمع…',NL:'Luisteren…'},
+ translating:{KO:'번역 중…',EN:'Translating…',JA:'翻訳中…',ZH:'翻译中…',TH:'กำลังแปล…',VI:'Đang dịch…',ES:'Traduciendo…',ID:'Menerjemahkan…',DE:'Übersetze…',FR:'Traduction…',IT:'Traduzione…',RU:'Перевожу…',PT:'Traduzindo…',HI:'अनुवाद…',AR:'جارٍ الترجمة…',NL:'Vertalen…'},
+ talkEmptyT:{KO:'마이크를 누르고 말하세요',EN:'Hold the mic and speak',JA:'マイクを押して話してください',ZH:'按住麦克风说话',TH:'กดไมค์แล้วพูด',VI:'Nhấn micro và nói',ES:'Pulsa el micro y habla',ID:'Tekan mikrofon dan bicara',DE:'Mikrofon halten und sprechen',FR:'Appuyez et parlez',IT:'Premi il microfono e parla',RU:'Нажмите микрофон и говорите',PT:'Segure o microfone e fale',HI:'माइक दबाकर बोलें',AR:'اضغط الميكروفون وتحدث',NL:'Houd de microfoon vast'},
+ talkEmptyD:{KO:'말이 끝나면 손을 떼세요.',EN:'Let go when you finish.',JA:'話し終えたら離してください。',ZH:'说完后松开。',TH:'ปล่อยเมื่อพูดจบ',VI:'Thả ra khi nói xong.',ES:'Suelta al terminar.',ID:'Lepaskan bila selesai.',DE:'Loslassen, wenn Sie fertig sind.',FR:'Relâchez à la fin.',IT:'Rilascia quando hai finito.',RU:'Отпустите, когда закончите.',PT:'Solte ao terminar.',HI:'बोलने के बाद छोड़ें।',AR:'اترك عند الانتهاء.',NL:'Loslaten als u klaar bent.'},
+
+ takePhoto:{KO:'사진 찍기',EN:'Take photo',JA:'写真を撮る',ZH:'拍照',TH:'ถ่ายรูป',VI:'Chụp ảnh',ES:'Tomar foto',ID:'Ambil foto',DE:'Foto machen',FR:'Prendre une photo',IT:'Scatta foto',RU:'Сделать фото',PT:'Tirar foto',HI:'फ़ोटो लें',AR:'التقاط صورة',NL:'Foto maken'},
+ fromAlbum:{KO:'앨범에서',EN:'From album',JA:'アルバムから',ZH:'从相册',TH:'จากอัลบั้ม',VI:'Từ thư viện',ES:'Desde galería',ID:'Dari album',DE:'Aus Album',FR:'Depuis la galerie',IT:'Dalla galleria',RU:'Из галереи',PT:'Da galeria',HI:'एल्बम से',AR:'من الألبوم',NL:'Uit album'},
+ pastPhoto:{KO:'지난 사진 번역',EN:'Past translations',JA:'過去の翻訳',ZH:'过往翻译',TH:'การแปลที่ผ่านมา',VI:'Bản dịch trước',ES:'Traducciones previas',ID:'Terjemahan lalu',DE:'Frühere Übersetzungen',FR:'Traductions passées',IT:'Traduzioni passate',RU:'Прошлые переводы',PT:'Traduções anteriores',HI:'पिछले अनुवाद',AR:'الترجمات السابقة',NL:'Eerdere vertalingen'},
+ clearPhoto:{KO:'사진 번역 기록 지우기',EN:'Clear photo history',JA:'写真の履歴を削除',ZH:'清除拍照记录',TH:'ล้างประวัติภาพ',VI:'Xóa lịch sử ảnh',ES:'Borrar historial de fotos',ID:'Hapus riwayat foto',DE:'Fotoverlauf löschen',FR:'Effacer l\'historique photo',IT:'Cancella cronologia foto',RU:'Очистить историю фото',PT:'Limpar histórico de fotos',HI:'फ़ोटो इतिहास मिटाएं',AR:'مسح سجل الصور',NL:'Fotogeschiedenis wissen'},
+ photoEmptyT:{KO:'서류를 찍으면 읽어드립니다',EN:'Photograph a document and we\'ll read it',JA:'書類を撮ると読み取ります',ZH:'拍下文件即可读取',TH:'ถ่ายเอกสารแล้วเราจะอ่านให้',VI:'Chụp tài liệu và chúng tôi sẽ đọc',ES:'Fotografía un documento y lo leeremos',ID:'Foto dokumen dan kami baca',DE:'Dokument fotografieren, wir lesen es',FR:'Photographiez un document, on le lit',IT:'Fotografa un documento e lo leggiamo',RU:'Сфотографируйте документ — мы прочтём',PT:'Fotografe um documento e nós lemos',HI:'दस्तावेज़ की फ़ोटो लें, हम पढ़ेंगे',AR:'صوّر مستنداً وسنقرأه',NL:'Fotografeer een document, wij lezen het'},
+ photoEmptyD:{KO:'거래명세서 · 인보이스 · 제품 라벨 · 간판 · 손글씨<br>숫자와 품번은 원문 그대로 옮깁니다.',EN:'Invoices · labels · signs · handwriting<br>Numbers and codes are copied exactly.',JA:'請求書・ラベル・看板・手書き<br>数字と品番はそのまま写します。',ZH:'发票 · 标签 · 招牌 · 手写<br>数字与品号原样保留。',TH:'ใบแจ้งหนี้ · ฉลาก · ป้าย · ลายมือ<br>ตัวเลขและรหัสคัดลอกตรงตามต้นฉบับ',VI:'Hóa đơn · nhãn · biển hiệu · chữ viết tay<br>Số và mã được giữ nguyên.',ES:'Facturas · etiquetas · letreros · manuscritos<br>Números y códigos se copian tal cual.',ID:'Faktur · label · papan · tulisan tangan<br>Angka dan kode disalin persis.',DE:'Rechnungen · Etiketten · Schilder · Handschrift<br>Zahlen und Codes bleiben exakt.',FR:'Factures · étiquettes · panneaux · écriture<br>Chiffres et codes copiés à l\'identique.',IT:'Fatture · etichette · insegne · scrittura<br>Numeri e codici copiati esattamente.',RU:'Счета · этикетки · вывески · рукописи<br>Цифры и коды копируются точно.',PT:'Faturas · etiquetas · placas · manuscritos<br>Números e códigos copiados exatamente.',HI:'चालान · लेबल · साइन · हस्तलेख<br>संख्याएँ और कोड ज्यों के त्यों।',AR:'فواتير · ملصقات · لافتات · خط اليد<br>الأرقام والرموز تُنسخ كما هي.',NL:'Facturen · labels · borden · handschrift<br>Cijfers en codes exact overgenomen.'},
+ doTranslate:{KO:'이 사진 번역하기',EN:'Translate this photo',JA:'この写真を翻訳',ZH:'翻译这张照片',TH:'แปลภาพนี้',VI:'Dịch ảnh này',ES:'Traducir esta foto',ID:'Terjemahkan foto ini',DE:'Dieses Foto übersetzen',FR:'Traduire cette photo',IT:'Traduci questa foto',RU:'Перевести это фото',PT:'Traduzir esta foto',HI:'इस फ़ोटो का अनुवाद',AR:'ترجم هذه الصورة',NL:'Vertaal deze foto'},
+ reading:{KO:'사진을 읽고 있습니다…',EN:'Reading the photo…',JA:'写真を読んでいます…',ZH:'正在读取照片…',TH:'กำลังอ่านภาพ…',VI:'Đang đọc ảnh…',ES:'Leyendo la foto…',ID:'Membaca foto…',DE:'Foto wird gelesen…',FR:'Lecture de la photo…',IT:'Lettura della foto…',RU:'Читаю фото…',PT:'Lendo a foto…',HI:'फ़ोटो पढ़ रहे हैं…',AR:'أقرأ الصورة…',NL:'Foto lezen…'},
+ seeOriginal:{KO:'원문 보기',EN:'Show original',JA:'原文を見る',ZH:'查看原文',TH:'ดูต้นฉบับ',VI:'Xem bản gốc',ES:'Ver original',ID:'Lihat asli',DE:'Original zeigen',FR:'Voir l\'original',IT:'Mostra originale',RU:'Показать оригинал',PT:'Ver original',HI:'मूल देखें',AR:'عرض الأصل',NL:'Toon origineel'},
+ retake:{KO:'새로 찍기',EN:'Retake',JA:'撮り直す',ZH:'重拍',TH:'ถ่ายใหม่',VI:'Chụp lại',ES:'Repetir',ID:'Foto ulang',DE:'Neu aufnehmen',FR:'Reprendre',IT:'Rifai',RU:'Переснять',PT:'Refazer',HI:'दोबारा लें',AR:'إعادة التقاط',NL:'Opnieuw'},
+
+ peerName:{KO:'상대 이름 (선택)',EN:'Their name (optional)',JA:'相手の名前(任意)',ZH:'对方姓名(可选)',TH:'ชื่อคู่สนทนา (ไม่บังคับ)',VI:'Tên đối phương (tùy chọn)',ES:'Su nombre (opcional)',ID:'Nama lawan bicara (opsional)',DE:'Name (optional)',FR:'Son nom (facultatif)',IT:'Nome (facoltativo)',RU:'Имя собеседника (необязательно)',PT:'Nome (opcional)',HI:'उनका नाम (वैकल्पिक)',AR:'اسم الطرف الآخر (اختياري)',NL:'Hun naam (optioneel)'},
+ peerPhone:{KO:'상대 전화번호',EN:'Their phone number',JA:'相手の電話番号',ZH:'对方电话号码',TH:'เบอร์โทรคู่สนทนา',VI:'Số điện thoại',ES:'Su número de teléfono',ID:'Nomor telepon',DE:'Telefonnummer',FR:'Son numéro',IT:'Numero di telefono',RU:'Номер телефона',PT:'Número de telefone',HI:'उनका फ़ोन नंबर',AR:'رقم هاتفه',NL:'Telefoonnummer'},
+ phoneHint:{KO:'국가번호부터 넣으세요. 미국 +1, 한국 +82(앞 0 빼고)',EN:'Start with the country code. US +1, Korea +82 (drop the leading 0)',JA:'国番号から入力してください。米国 +1、韓国 +82(先頭の0を除く)',ZH:'请从国家代码开始。美国 +1，韩国 +82(去掉开头的0)',TH:'เริ่มด้วยรหัสประเทศ สหรัฐฯ +1 เกาหลี +82 (ตัด 0 นำหน้า)',VI:'Bắt đầu bằng mã quốc gia. Mỹ +1, Hàn +82 (bỏ số 0 đầu)',ES:'Empieza con el código de país. EE.UU. +1, Corea +82 (sin el 0 inicial)',ID:'Mulai dengan kode negara. AS +1, Korea +82 (tanpa 0 di depan)',DE:'Mit Ländervorwahl beginnen. USA +1, Korea +82 (führende 0 weglassen)',FR:'Commencez par l\'indicatif. USA +1, Corée +82 (sans le 0)',IT:'Inizia con il prefisso. USA +1, Corea +82 (senza lo 0)',RU:'Начните с кода страны. США +1, Корея +82 (без ведущего 0)',PT:'Comece com o código do país. EUA +1, Coreia +82 (sem o 0)',HI:'देश कोड से शुरू करें। US +1, कोरिया +82 (शुरुआती 0 हटाएं)',AR:'ابدأ برمز الدولة. أمريكا +1، كوريا +82 (بدون الصفر)',NL:'Begin met de landcode. VS +1, Korea +82 (zonder de 0)'},
+ callBtn:{KO:'통역 전화 걸기',EN:'Start interpreted call',JA:'通訳通話を発信',ZH:'拨打翻译电话',TH:'โทรพร้อมล่าม',VI:'Gọi có phiên dịch',ES:'Llamar con intérprete',ID:'Panggil dengan penerjemah',DE:'Dolmetsch-Anruf starten',FR:'Appeler avec interprète',IT:'Chiama con interprete',RU:'Позвонить с переводом',PT:'Ligar com intérprete',HI:'दुभाषिया कॉल करें',AR:'اتصال مع ترجمة',NL:'Bellen met tolk'},
+ endCall:{KO:'통화 종료',EN:'End call',JA:'通話終了',ZH:'结束通话',TH:'วางสาย',VI:'Kết thúc',ES:'Colgar',ID:'Akhiri panggilan',DE:'Anruf beenden',FR:'Raccrocher',IT:'Termina chiamata',RU:'Завершить',PT:'Encerrar',HI:'कॉल समाप्त',AR:'إنهاء المكالمة',NL:'Beëindigen'},
+ closeBtn:{KO:'닫기',EN:'Close',JA:'閉じる',ZH:'关闭',TH:'ปิด',VI:'Đóng',ES:'Cerrar',ID:'Tutup',DE:'Schließen',FR:'Fermer',IT:'Chiudi',RU:'Закрыть',PT:'Fechar',HI:'बंद करें',AR:'إغلاق',NL:'Sluiten'},
+ pauseMic:{KO:'잠깐 멈춤',EN:'Pause',JA:'一時停止',ZH:'暂停',TH:'หยุดชั่วคราว',VI:'Tạm dừng',ES:'Pausar',ID:'Jeda',DE:'Pause',FR:'Pause',IT:'Pausa',RU:'Пауза',PT:'Pausar',HI:'रोकें',AR:'إيقاف مؤقت',NL:'Pauzeren'},
+ resumeMic:{KO:'다시 말하기',EN:'Resume',JA:'再開',ZH:'继续',TH:'พูดต่อ',VI:'Tiếp tục',ES:'Reanudar',ID:'Lanjutkan',DE:'Fortsetzen',FR:'Reprendre',IT:'Riprendi',RU:'Продолжить',PT:'Retomar',HI:'फिर बोलें',AR:'متابعة',NL:'Hervatten'},
+ diag:{KO:'진단',EN:'Status',JA:'状態',ZH:'状态',TH:'สถานะ',VI:'Trạng thái',ES:'Estado',ID:'Status',DE:'Status',FR:'État',IT:'Stato',RU:'Статус',PT:'Estado',HI:'स्थिति',AR:'الحالة',NL:'Status'},
+ room:{KO:'방',EN:'Room',JA:'ルーム',ZH:'房间',TH:'ห้อง',VI:'Phòng',ES:'Sala',ID:'Ruang',DE:'Raum',FR:'Salle',IT:'Stanza',RU:'Комната',PT:'Sala',HI:'रूम',AR:'غرفة',NL:'Kamer'},
+ onCall:{KO:'통화 중',EN:'On call',JA:'通話中',ZH:'通话中',TH:'กำลังโทร',VI:'Đang gọi',ES:'En llamada',ID:'Sedang menelepon',DE:'Im Gespräch',FR:'En appel',IT:'In chiamata',RU:'В разговоре',PT:'Em chamada',HI:'कॉल पर',AR:'في مكالمة',NL:'In gesprek'},
+ exchanged:{KO:'주고받은 말 · 아래로 내려서 보세요',EN:'What was said — scroll down',JA:'やり取り — 下にスクロール',ZH:'对话内容 — 向下滚动',TH:'บทสนทนา — เลื่อนลง',VI:'Nội dung — kéo xuống',ES:'Lo dicho — desliza abajo',ID:'Percakapan — gulir ke bawah',DE:'Gesagtes — nach unten scrollen',FR:'Échanges — faites défiler',IT:'Conversazione — scorri giù',RU:'Разговор — прокрутите вниз',PT:'Conversa — role para baixo',HI:'बातचीत — नीचे स्क्रॉल करें',AR:'المحادثة — مرّر لأسفل',NL:'Gesprek — scroll omlaag'},
+ meLbl:{KO:'나',EN:'Me',JA:'私',ZH:'我',TH:'ฉัน',VI:'Tôi',ES:'Yo',ID:'Saya',DE:'Ich',FR:'Moi',IT:'Io',RU:'Я',PT:'Eu',HI:'मैं',AR:'أنا',NL:'Ik'},
+ youLbl:{KO:'상대',EN:'Them',JA:'相手',ZH:'对方',TH:'คู่สนทนา',VI:'Đối phương',ES:'Ellos',ID:'Lawan bicara',DE:'Gegenüber',FR:'Interlocuteur',IT:'Interlocutore',RU:'Собеседник',PT:'Outro',HI:'वे',AR:'الطرف الآخر',NL:'Ander'},
+ earphone:{KO:'이어폰을 쓰세요.',EN:'Please use earphones.',JA:'イヤホンをお使いください。',ZH:'请使用耳机。',TH:'กรุณาใช้หูฟัง',VI:'Hãy dùng tai nghe.',ES:'Usa auriculares.',ID:'Gunakan earphone.',DE:'Bitte Kopfhörer benutzen.',FR:'Utilisez des écouteurs.',IT:'Usa gli auricolari.',RU:'Используйте наушники.',PT:'Use fones de ouvido.',HI:'ईयरफ़ोन का उपयोग करें।',AR:'استخدم السماعات.',NL:'Gebruik oordopjes.'},
+ earphoneD:{KO:'스피커로 들으면 통역 음성을 마이크가 다시 주워서 말이 꼬입니다.',EN:'On speaker, the mic picks up the interpreted voice and the call gets tangled.',JA:'スピーカーだと通訳音声をマイクが拾って会話が乱れます。',ZH:'外放时麦克风会收到翻译语音，导致混乱。',TH:'หากเปิดลำโพง ไมค์จะรับเสียงแปลกลับเข้าไปทำให้สับสน',VI:'Dùng loa ngoài, micro sẽ thu lại giọng dịch gây rối.',ES:'Con altavoz, el micro capta la voz traducida y se lía.',ID:'Dengan speaker, mikrofon menangkap suara terjemahan dan kacau.',DE:'Über Lautsprecher nimmt das Mikrofon die Übersetzung wieder auf.',FR:'Avec le haut-parleur, le micro capte la voix traduite.',IT:'Con l\'altoparlante il microfono riprende la voce tradotta.',RU:'На динамике микрофон ловит перевод и всё путается.',PT:'No alto-falante, o microfone capta a voz traduzida.',HI:'स्पीकर पर माइक अनुवाद की आवाज़ पकड़ लेता है।',AR:'مع مكبر الصوت يلتقط الميكروفون صوت الترجمة.',NL:'Op de speaker vangt de microfoon de vertaling weer op.'},
+ speakNow:{KO:'말씀하세요. 말이 끝나면 상대에게 전달됩니다.',EN:'Go ahead. When you stop, it goes to them.',JA:'お話しください。話し終えると相手に伝わります。',ZH:'请说话。说完后会传给对方。',TH:'พูดได้เลย เมื่อพูดจบจะส่งให้อีกฝ่าย',VI:'Hãy nói. Khi ngừng sẽ gửi cho họ.',ES:'Habla. Al terminar se envía.',ID:'Silakan bicara. Setelah selesai akan dikirim.',DE:'Sprechen Sie. Nach dem Ende wird übertragen.',FR:'Parlez. À la fin, c\'est transmis.',IT:'Parla pure. Alla fine viene inviato.',RU:'Говорите. Когда закончите — передадим.',PT:'Fale. Ao terminar, é enviado.',HI:'बोलिए। रुकने पर भेजा जाएगा।',AR:'تكلم. عند التوقف يُرسل.',NL:'Spreek maar. Als u stopt, gaat het door.'},
+ sending:{KO:'전달 중…',EN:'Sending…',JA:'送信中…',ZH:'发送中…',TH:'กำลังส่ง…',VI:'Đang gửi…',ES:'Enviando…',ID:'Mengirim…',DE:'Senden…',FR:'Envoi…',IT:'Invio…',RU:'Отправка…',PT:'Enviando…',HI:'भेज रहे हैं…',AR:'جارٍ الإرسال…',NL:'Verzenden…'},
+ recognizing:{KO:'알아듣는 중…',EN:'Recognizing…',JA:'認識中…',ZH:'识别中…',TH:'กำลังฟัง…',VI:'Đang nhận dạng…',ES:'Reconociendo…',ID:'Mengenali…',DE:'Erkenne…',FR:'Reconnaissance…',IT:'Riconoscimento…',RU:'Распознаю…',PT:'Reconhecendo…',HI:'पहचान रहे हैं…',AR:'جارٍ التعرف…',NL:'Herkennen…'},
+ delivered:{KO:'상대에게 전달했습니다.',EN:'Sent to them.',JA:'相手に伝えました。',ZH:'已传给对方。',TH:'ส่งให้อีกฝ่ายแล้ว',VI:'Đã gửi cho họ.',ES:'Enviado.',ID:'Terkirim.',DE:'Übermittelt.',FR:'Transmis.',IT:'Inviato.',RU:'Передано.',PT:'Enviado.',HI:'भेज दिया।',AR:'تم الإرسال.',NL:'Verzonden.'},
+ speaking:{KO:'말하는 중',EN:'Speaking',JA:'発話中',ZH:'说话中',TH:'กำลังพูด',VI:'Đang nói',ES:'Hablando',ID:'Berbicara',DE:'Spricht',FR:'Parle',IT:'Sta parlando',RU:'Говорит',PT:'Falando',HI:'बोल रहे हैं',AR:'يتحدث',NL:'Spreekt'},
+ listeningS:{KO:'듣는 중',EN:'Listening',JA:'聞いています',ZH:'聆听中',TH:'กำลังฟัง',VI:'Đang nghe',ES:'Escuchando',ID:'Mendengarkan',DE:'Hört zu',FR:'Écoute',IT:'In ascolto',RU:'Слушаю',PT:'Ouvindo',HI:'सुन रहे हैं',AR:'يستمع',NL:'Luistert'},
+ readingOut:{KO:'읽어주는 중',EN:'Reading out',JA:'読み上げ中',ZH:'朗读中',TH:'กำลังอ่านออกเสียง',VI:'Đang đọc',ES:'Leyendo',ID:'Membacakan',DE:'Liest vor',FR:'Lecture',IT:'Sta leggendo',RU:'Читаю вслух',PT:'Lendo',HI:'पढ़ रहे हैं',AR:'يقرأ',NL:'Leest voor'},
+ waitAnswer:{KO:'상대가 받기를 기다리는 중…',EN:'Waiting for them to answer…',JA:'相手の応答を待っています…',ZH:'等待对方接听…',TH:'รอปลายสายรับ…',VI:'Đang chờ họ nghe máy…',ES:'Esperando que contesten…',ID:'Menunggu dijawab…',DE:'Warte auf Antwort…',FR:'En attente de réponse…',IT:'In attesa di risposta…',RU:'Ждём ответа…',PT:'Aguardando atender…',HI:'उत्तर की प्रतीक्षा…',AR:'بانتظار الرد…',NL:'Wachten op antwoord…'},
+ needLic:{KO:'이용권이 필요합니다.',EN:'A pass is required.',JA:'利用券が必要です。',ZH:'需要使用券。',TH:'ต้องมีบัตรผ่าน',VI:'Cần có thẻ sử dụng.',ES:'Se necesita un pase.',ID:'Perlu tiket akses.',DE:'Ein Pass wird benötigt.',FR:'Un pass est requis.',IT:'Serve un pass.',RU:'Нужен пропуск.',PT:'É necessário um passe.',HI:'पास आवश्यक है।',AR:'يلزم تصريح.',NL:'Een pas is vereist.'},
+ goMy:{KO:'아래 마이 탭에서 코드를 넣으세요.',EN:'Enter your code in the My tab below.',JA:'下のマイタブでコードを入力してください。',ZH:'请在下方"我的"输入代码。',TH:'ใส่รหัสในแท็บของฉันด้านล่าง',VI:'Nhập mã ở tab Của tôi bên dưới.',ES:'Introduce el código en Mi cuenta.',ID:'Masukkan kode di tab Saya.',DE:'Code im Tab Mein eingeben.',FR:'Entrez le code dans Mon compte.',IT:'Inserisci il codice in Profilo.',RU:'Введите код во вкладке Профиль.',PT:'Insira o código em Perfil.',HI:'नीचे मेरा टैब में कोड डालें।',AR:'أدخل الرمز في تبويب حسابي.',NL:'Voer de code in bij Mijn.'},
+ peerJustAnswers:{KO:'상대는 그냥 전화를 받아 평소처럼 말하면 됩니다. 앱 설치도, 버튼 누를 것도 없습니다.',EN:'They just answer and talk normally. No app, no buttons.',JA:'相手は普通に電話に出て話すだけです。アプリも操作も不要です。',ZH:'对方只需接听并正常说话。无需安装应用或按任何按钮。',TH:'อีกฝ่ายเพียงรับสายและพูดตามปกติ ไม่ต้องติดตั้งแอปหรือกดปุ่ม',VI:'Họ chỉ cần nghe máy và nói bình thường. Không cần app hay nút bấm.',ES:'Solo contestan y hablan normal. Sin app ni botones.',ID:'Mereka cukup menjawab dan bicara biasa. Tanpa aplikasi atau tombol.',DE:'Sie nehmen einfach ab und sprechen normal. Keine App, keine Tasten.',FR:'Ils décrochent et parlent normalement. Aucune application.',IT:'Rispondono e parlano normalmente. Nessuna app.',RU:'Они просто отвечают и говорят как обычно. Ни приложения, ни кнопок.',PT:'Eles só atendem e falam normalmente. Sem app nem botões.',HI:'वे बस कॉल उठाकर सामान्य रूप से बात करें। कोई ऐप नहीं।',AR:'يكفي أن يردّوا ويتحدثوا كالمعتاد. لا تطبيق ولا أزرار.',NL:'Zij nemen gewoon op en praten. Geen app, geen knoppen.'}
+};
+function uiLang(){ return String(from || 'KO').toUpperCase(); }
+function T(k){ const r = I18N[k]; if(!r) return k; return r[uiLang()] || r.EN || k; }
+
 /* ---------- 탭 ---------- */
 // 탭마다 색이 바뀝니다. 헤더·배경·버튼·말풍선이 한꺼번에 따라옵니다.
 const THEME = {
@@ -319,6 +385,20 @@ const THEME = {
   photo: { c1:'#10d6df', c2:'#10d6df', bg:'#ECFEFF', soft:'#CFFAFE' },
   call : { c1:'#1D4ED8', c2:'#1D4ED8', bg:'#EFF6FF', soft:'#DBEAFE' }
 };
+// 화면 글씨를 지금 언어로 채웁니다
+function paintText(){
+  const set = (id, v) => { const e=$('#'+id); if(e) e.textContent = v; };
+  set('tabTalk',  T('talk'));
+  set('tabPhoto', T('photo'));
+  set('tabCall',  T('call'));
+  set('lbTel',    T('navLog'));
+  set('lbSearch', T('navSearch'));
+  set('lbSet',    T('navSet'));
+  set('lbMy',     T('navMy'));
+  const ml = $('#micLabel');
+  if(ml && mode === 'talk' && !busy) ml.textContent = T('pressSpeak');
+}
+
 function paint(m){
   const t = THEME[m] || THEME.talk;
   const r = document.documentElement.style;
@@ -327,6 +407,7 @@ function paint(m){
   r.setProperty('--cbg', t.bg);
   r.setProperty('--csoft', t.soft);
   document.body.setAttribute('data-theme', m);
+  paintText();
   // 브라우저 주소창 색은 건드리지 않습니다. 흰색 그대로 둡니다.
 }
 
@@ -357,12 +438,12 @@ function renderTalk(){
       <div class="dst">${esc(h.dst)}</div>
       <div class="foot">
         <small>${langName(h.from)} → ${langName(h.to)}${h.engine?' · '+esc(h.engine):''}</small>
-        ${h._audio?`<button class="mini" onclick="play(${i})">다시 듣기</button>`:''}
-        <button class="mini" onclick="copyOne(${i})">복사</button>
-        <button class="mini del" onclick="delOne(${i})">삭제</button>
+        ${h._audio?`<button class="mini" onclick="play(${i})">${T('replay')}</button>`:''}
+        <button class="mini" onclick="copyOne(${i})">${T('copy')}</button>
+        <button class="mini del" onclick="delOne(${i})">${T('del')}</button>
       </div>
     </div>`).join('')
-    : `<div class="empty"><b>마이크를 누르고 말하세요</b>말이 끝나면 손을 떼세요.</div>`;
+    : `<div class="empty"><b>${T('talkEmptyT')}</b>${T('talkEmptyD')}</div>`;
 
   $('#main').innerHTML = `
     <div class="langbar">
@@ -373,10 +454,10 @@ function renderTalk(){
       <select id="selTo" onchange="setLang()">${opts(to)}</select>
     </div>
     ${list}
-    ${hist.length?`<button class="btn ghost" onclick="clearHist()">전체 기록 지우기</button>`:''}`;
+    ${hist.length?`<button class="btn ghost" onclick="clearHist()">${T('clearAll')}</button>`:''}`;
 }
 function setLang(){ from=$('#selFrom').value; to=$('#selTo').value; save(K.from,from); save(K.to,to); }
-function swap(){ const t=from; from=to; to=t; save(K.from,from); save(K.to,to); render(); }
+function swap(){ const t=from; from=to; to=t; save(K.from,from); save(K.to,to); paintText(); render(); }
 function clearHist(){ if(!confirm('통역 기록을 모두 지웁니다.'))return; hist=[]; saveHist(); render(); }
 function delOne(i){ hist.splice(i,1); saveHist(); render(); }
 function copyOne(i){ navigator.clipboard.writeText(hist[i].dst).then(()=>toast('복사했습니다')); }
@@ -397,18 +478,18 @@ async function start(){
     rec.onstop = () => { stream.getTracks().forEach(t=>t.stop()); done(); };
     rec.start();
     mic.classList.add('rec');
-    $('#micLabel').textContent='듣고 있습니다…';
+    $('#micLabel').textContent=T('hearing');
   }catch(e){ toast('마이크를 사용할 수 없습니다. 브라우저 권한을 확인하세요.'); }
 }
 function stop(){
   if(!rec || rec.state==='inactive') return;
   rec.stop(); rec=null;
   mic.classList.remove('rec');
-  $('#micLabel').textContent='번역 중…';
+  $('#micLabel').textContent=T('translating');
 }
 async function done(){
   const blob = new Blob(chunks, {type:'audio/webm'});
-  if(blob.size < 1200){ $('#micLabel').textContent='누르고 있는 동안 말하세요'; return; }
+  if(blob.size < 1200){ $('#micLabel').textContent=T('pressSpeak'); return; }
   busy=true; mic.disabled=true;
   const fd = new FormData();
   fd.append('audio', blob, 'audio.webm');
@@ -427,7 +508,7 @@ async function done(){
     if(d.audioBase64) new Audio('data:audio/mpeg;base64,'+d.audioBase64).play();
   }catch(e){ toast(e.message||'통역에 실패했습니다'); }
   busy=false; mic.disabled=false;
-  $('#micLabel').textContent='누르고 있는 동안 말하세요';
+  $('#micLabel').textContent=T('pressSpeak');
 }
 
 // 저장할 때 음성(_audio)은 빼고 텍스트만 저장. 실패해도 통역은 계속되게.
@@ -452,34 +533,34 @@ let phist = load(K.phist,[]);
 function renderPhoto(){
   if(mode !== 'photo') return;     // 다른 탭으로 옮겼으면 덮어쓰지 않습니다
   const body = photoBusy
-    ? `<div class="turn you"><div class="who"><span class="spin"></span>사진을 읽고 있습니다… 글자가 많으면 20초쯤 걸립니다.</div></div>`
+    ? `<div class="turn you"><div class="who"><span class="spin"></span>${T('reading')}</div></div>`
     : photoResult
       ? `<div class="turn you">
            ${photoResult.kind?`<div class="kind">${esc(photoResult.kind)}</div>`:''}
            <div class="dst ocr">${esc(photoResult.translated)}</div>
            ${photoResult.original?`
              <details class="orig">
-               <summary>원문 보기 (숫자 대조용)</summary>
+               <summary>${T('seeOriginal')}</summary>
                <div class="ocr">${esc(photoResult.original)}</div>
              </details>`:''}
            <div class="foot">
              <small>${langName(pFrom)} → ${langName(pTo)}</small>
-             <button class="mini" onclick="copyPhoto()">복사</button>
-             <button class="mini" onclick="resetPhoto()">새로 찍기</button>
+             <button class="mini" onclick="copyPhoto()">${T('copy')}</button>
+             <button class="mini" onclick="resetPhoto()">${T('retake')}</button>
            </div>
          </div>`
       : '';
 
   const list = phist.length ? `
-    <div style="font-size:12px;color:var(--sub);margin:18px 0 8px">지난 사진 번역</div>` +
+    <div class="seclabel">${T('pastPhoto')}</div>` +
     phist.map((h,i)=>`
       <div class="turn you">
         ${h.kind?`<div class="kind">${esc(h.kind)}</div>`:''}
         <div class="dst ocr" style="font-size:16px">${esc(h.dst)}</div>
         <div class="foot">
           <small>${langName(h.from)} → ${langName(h.to)}</small>
-          <button class="mini" onclick="copyPhist(${i})">복사</button>
-          <button class="mini del" onclick="delPhist(${i})">삭제</button>
+          <button class="mini" onclick="copyPhist(${i})">${T('copy')}</button>
+          <button class="mini del" onclick="delPhist(${i})">${T('del')}</button>
         </div>
       </div>`).join('') : '';
 
@@ -491,8 +572,8 @@ function renderPhoto(){
     </div>
 
     <div class="shots">
-      <button class="btn cam" onclick="openCam()">사진 찍기</button>
-      <button class="btn alb" onclick="openAlbum()">앨범에서</button>
+      <button class="btn cam" onclick="openCam()">${T('takePhoto')}</button>
+      <button class="btn alb" onclick="openAlbum()">${T('fromAlbum')}</button>
     </div>
 
     ${photoData?`
@@ -501,19 +582,18 @@ function renderPhoto(){
         <button class="x" onclick="resetPhoto()" aria-label="사진 지우기">✕</button>
       </div>
       <button class="btn" style="margin-top:12px" onclick="photoTranslate()" ${photoBusy?'disabled':''}>
-        ${photoBusy?'읽는 중…':'이 사진 번역하기'}
+        ${photoBusy?T('reading'):T('doTranslate')}
       </button>`
       : (photoResult ? '' : `
       <div class="empty">
-        <b>서류를 찍으면 읽어드립니다</b>
-        거래명세서 · 인보이스 · 제품 라벨 · 간판 · 손글씨<br>
-        숫자와 품번은 원문 그대로 옮깁니다.
+        <b>${T('photoEmptyT')}</b>
+        ${T('photoEmptyD')}
         
       </div>`)}
 
     <div style="margin-top:14px">${body}</div>
     ${list}
-    ${phist.length?`<button class="btn ghost" onclick="clearPhist()">사진 번역 기록 지우기</button>`:''}`;
+    ${phist.length?`<button class="btn ghost" onclick="clearPhist()">${T('clearPhoto')}</button>`:''}`;
 }
 
 function setPhotoLang(){
@@ -974,7 +1054,7 @@ function updateCallLog(){
     </div>`).join('');
   const live = [];
   if(rt.cur.peer) live.push(`<div class="turn chat you live"><div class="who">상대 · 통역 중</div><div class="txt">${esc(rt.cur.peer)}</div></div>`);
-  if(rt.cur.me)   live.push(`<div class="turn chat me live"><div class="who">나 · 듣는 중</div><div class="txt">${esc(rt.cur.me)}</div></div>`);
+  if(rt.cur.me)   live.push(`<div class="turn chat me live"><div class="who">${T('meLbl')} · ${T('listeningS')}</div><div class="txt">${esc(rt.cur.me)}</div></div>`);
   el.innerHTML = live.join('') + rows;
 }
 function setStatus(t){
@@ -1244,8 +1324,8 @@ function openPanel(){
         <b>${esc(t.name || t.num)}</b>
         ${t.name ? `<span>${esc(t.num)}</span>` : ''}
       </button>
-      <button class="mini" onclick="renameTel(${i})">이름</button>
-      <button class="mini del" onclick="delTel(${i})">삭제</button>
+      <button class="mini" onclick="renameTel(${i})">${T('name')}</button>
+      <button class="mini del" onclick="delTel(${i})">${T('del')}</button>
     </div>`).join('')
     : `<div class="hint">아직 저장된 번호가 없습니다. 통화를 걸면 자동으로 저장됩니다.</div>`;
 
@@ -1253,14 +1333,14 @@ function openPanel(){
     ? `<div class="hint">아직 통화 기록이 없습니다.</div>`
     : (clogOpen ? clog.map((m,i)=>`
         <div class="turn chat ${m.dir==='me'?'me':'you'}">
-          <div class="who">${m.dir==='me'?'나':'상대'} · ${hhmm(m.at)}</div>
+          <div class="who">${m.dir==='me'?T('meLbl'):T('youLbl')} · ${hhmm(m.at)}</div>
           ${m.src?`<div class="osrc">${esc(m.src)}</div>`:''}
           <div class="txt" style="font-size:16px">${esc(m.text)}</div>
           <div class="bfoot">
-            <button class="mini" onclick="copyLog(${i})">복사</button>
-            <button class="mini del" onclick="delLog(${i})">삭제</button>
+            <button class="mini" onclick="copyLog(${i})">${T('copy')}</button>
+            <button class="mini del" onclick="delLog(${i})">${T('del')}</button>
           </div>
-        </div>`).join('') + `<button class="btn ghost" onclick="clearLog()">기록 전체 지우기</button>`
+        </div>`).join('') + `<button class="btn ghost" onclick="clearLog()">${T('clearAll')}</button>`
       : `<div class="hint">접혀 있습니다. 오른쪽 버튼으로 펼치세요.</div>`);
 
   $('#card').innerHTML = `
@@ -1425,13 +1505,13 @@ function openSearch(){
         <div class="turn">
           <div class="src">${m.dir==='me'?'내 말':'상대'} · ${hhmm(m.at)}${m.src?'<br>'+esc(m.src):''}</div>
           <div class="dst ocr" style="font-size:16px">${esc(m.text)}</div>
-          <div class="foot"><small></small><button class="mini" onclick="copyLog(${i})">복사</button></div>
+          <div class="foot"><small></small><button class="mini" onclick="copyLog(${i})">${T('copy')}</button></div>
         </div>`).join('') : ''}
       ${phoHits.length ? `<div class="seclabel">사진 번역 ${phoHits.length}</div>` + phoHits.map(({m,i})=>`
         <div class="turn">
           ${m.kind?`<div class="kind">${esc(m.kind)}</div>`:''}
           <div class="dst ocr" style="font-size:16px">${esc(m.dst)}</div>
-          <div class="foot"><small></small><button class="mini" onclick="copyPhist(${i})">복사</button></div>
+          <div class="foot"><small></small><button class="mini" onclick="copyPhist(${i})">${T('copy')}</button></div>
         </div>`).join('') : ''}
       ${(!telHits.length && !logHits.length && !phoHits.length) ? `<div class="empty">찾는 것이 없습니다.</div>` : ''}
     `}`;
@@ -1449,14 +1529,14 @@ function setAuto(v){
   langAuto = !!v;
   save(K.auto, langAuto);
   if(langAuto) applyAuto();
-  openMy(); render();
+  paintText(); openMy(); render();
   toast(langAuto ? '지금 계신 곳에 맞췄습니다' : '직접 고르시면 됩니다');
 }
 function setMyLang(){
   const f=$('#myFrom'), t=$('#myTo');
   if(f) from=f.value; if(t) to=t.value;
   save(K.from,from); save(K.to,to);
-  render();
+  paintText(); render(); openMy();
 }
 
 /* ---------- 마이 ---------- */
@@ -1532,6 +1612,7 @@ function openMy(){
 function saveSet(){
   from=$('#setFrom').value; to=$('#setTo').value;
   save(K.from,from); save(K.to,to);
+  paintText();
   const g=$('#setGloss'), t=$('#setTone');
   if(g){ gloss = g.value.slice(0,4000); save(K.gloss, gloss); }
   if(t){ tone = t.value; save(K.tone, tone); }
