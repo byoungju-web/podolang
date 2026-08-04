@@ -273,7 +273,7 @@ footer{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:10px 18px 
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v7.4.1';
+const VER='v7.5.0';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -285,7 +285,7 @@ const K={from:'podolang_from', to:'podolang_to', hist:'podolang_hist', tel:'podo
          pfrom:'podolang_pfrom', pto:'podolang_pto', phist:'podolang_phist',
          tels:'podolang_tels', clog:'podolang_clog',
          lic:'podolang_lic', dev:'podolang_dev',
-         gloss:'podolang_gloss', tone:'podolang_tone'};
+         gloss:'podolang_gloss', tone:'podolang_tone', auto:'podolang_auto'};
 const LANGS=[['KO','한국어'],['TH','태국어'],['EN','영어'],['JA','일본어'],['ZH','중국어'],['VI','베트남어'],['ES','스페인어'],['ID','인도네시아어'],['DE','독일어'],['FR','프랑스어'],['AR','아랍어'],['IT','이탈리아어'],['RU','러시아어'],['PT','포르투갈어'],['HI','힌디어'],['NL','네덜란드어']];
 const $=s=>document.querySelector(s);
 let mode='talk', rec=null, chunks=[], busy=false;
@@ -640,6 +640,58 @@ function isEcho(text){
   return false;
 }
 // 이용권 코드와 기기 식별자 (기기 식별자는 한 번 만들고 계속 씁니다)
+/* ---------- 지금 있는 곳의 언어 알아내기 ----------
+   폰의 시간대를 봅니다. 위치 권한이 필요 없고 곧바로 알 수 있습니다.
+   태국에 계시면 시간대가 Asia/Bangkok 이라 상대 언어를 태국어로 맞춥니다.   */
+const TZ_LANG = {
+  'Asia/Seoul':'KO',
+  'Asia/Bangkok':'TH',
+  'Asia/Tokyo':'JA',
+  'Asia/Shanghai':'ZH','Asia/Hong_Kong':'ZH','Asia/Taipei':'ZH','Asia/Macau':'ZH','Asia/Chongqing':'ZH',
+  'Asia/Ho_Chi_Minh':'VI','Asia/Saigon':'VI','Asia/Hanoi':'VI',
+  'Asia/Jakarta':'ID','Asia/Makassar':'ID','Asia/Jayapura':'ID','Asia/Pontianak':'ID',
+  'Asia/Kolkata':'HI','Asia/Calcutta':'HI',
+  'Asia/Dubai':'AR','Asia/Riyadh':'AR','Asia/Qatar':'AR','Asia/Kuwait':'AR','Africa/Cairo':'AR',
+  'Europe/Madrid':'ES','Atlantic/Canary':'ES',
+  'Europe/Berlin':'DE','Europe/Vienna':'DE','Europe/Zurich':'DE',
+  'Europe/Paris':'FR','Europe/Brussels':'FR',
+  'Europe/Rome':'IT','Europe/Moscow':'RU','Europe/Lisbon':'PT','Europe/Amsterdam':'NL',
+  'America/Sao_Paulo':'PT','America/Bahia':'PT','America/Fortaleza':'PT','America/Recife':'PT',
+  'America/Mexico_City':'ES','America/Bogota':'ES','America/Lima':'ES','America/Santiago':'ES',
+  'America/Caracas':'ES','America/Guatemala':'ES','America/Montevideo':'ES','America/Asuncion':'ES'
+};
+const TZ_COUNTRY = {
+  KO:'한국', TH:'태국', JA:'일본', ZH:'중국·대만', VI:'베트남', ID:'인도네시아',
+  HI:'인도', AR:'중동', ES:'스페인어권', DE:'독일어권', FR:'프랑스어권',
+  IT:'이탈리아', RU:'러시아', PT:'포르투갈어권', NL:'네덜란드', EN:'영어권'
+};
+function tzNow(){
+  try{ return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; }catch(e){ return ''; }
+}
+// 지금 있는 곳의 언어
+function hereLang(){
+  const tz = tzNow();
+  if(TZ_LANG[tz]) return TZ_LANG[tz];
+  if(/^America\/Argentina\//.test(tz)) return 'ES';
+  if(/^(America|Australia|Pacific|Europe\/London|Europe\/Dublin|Africa\/Johannesburg)/.test(tz)) return 'EN';
+  return 'EN';
+}
+// 내 폰이 쓰는 언어
+function myLang(){
+  const l = String((navigator.languages && navigator.languages[0]) || navigator.language || 'ko').toUpperCase();
+  const code = l.split('-')[0];
+  return LANGS.some(x => x[0] === code) ? code : 'KO';
+}
+// 자동일 때 언어를 맞춥니다
+function applyAuto(){
+  const mine = myLang();
+  let peer = hereLang();
+  if(peer === mine) peer = (mine === 'EN') ? 'KO' : 'EN';   // 같은 나라면 영어로
+  from = mine; to = peer;
+  save(K.from, from); save(K.to, to);
+}
+
+let langAuto = load(K.auto, true);   // 자동으로 맞출지
 let gloss = load(K.gloss, '');      // 용어집 — 흔들리면 안 되는 말
 let tone  = load(K.tone, 'normal'); // 말투
 let licCode = load(K.lic, '');
@@ -1317,9 +1369,10 @@ function openHelp(){
       이름을 붙이거나 지울 수 있습니다.<br><br>
       <b>검색</b> — 번호·통화 기록·사진 번역을 한 번에 찾습니다.
       "500개" 로 찾으면 그 말이 나온 통화가 같이 나옵니다.<br><br>
-      <b>설정</b> — 기본 언어, 전화 통역 말투, 용어집을 정합니다.
+      <b>설정</b> — 전화 통역 말투와 용어집을 정합니다.
       용어집에 회사명·제품명·지명을 적어두면 통화마다 같은 말로 번역됩니다.<br><br>
-      <b>마이</b> — 이용권 코드를 넣고, 저장 현황을 보고, 기록을 정리합니다.
+      <b>마이</b> — 언어 설정, 이용권 코드, 저장 현황, 기록 정리.
+      언어를 <b>자동</b>으로 두면 해외에 나가셨을 때 그 나라 말로 저절로 바뀝니다.
     </div>
 
     <div class="seclabel">알아두실 것</div>
@@ -1392,6 +1445,20 @@ function runSearch(){
   if(el2){ el2.focus(); if(pos!=null) try{ el2.setSelectionRange(pos,pos); }catch(e){} }
 }
 
+function setAuto(v){
+  langAuto = !!v;
+  save(K.auto, langAuto);
+  if(langAuto) applyAuto();
+  openMy(); render();
+  toast(langAuto ? '지금 계신 곳에 맞췄습니다' : '직접 고르시면 됩니다');
+}
+function setMyLang(){
+  const f=$('#myFrom'), t=$('#myTo');
+  if(f) from=f.value; if(t) to=t.value;
+  save(K.from,from); save(K.to,to);
+  render();
+}
+
 /* ---------- 마이 ---------- */
 function openMy(){
   markNav('nvMy');
@@ -1419,11 +1486,31 @@ function openMy(){
       <div class="src" style="margin:8px 0 0">통역 기록 ${hist.length}건 · 사진 번역 ${phist.length}건</div>
     </div>
 
-    <div class="seclabel">기본 언어</div>
-    <div class="turn">
-      <div class="dst" style="font-size:16px">${langName(from)} ↔ ${langName(to)}</div>
-      <div class="src" style="margin:8px 0 0">설정에서 바꿀 수 있습니다.</div>
+    <div class="seclabel">언어 설정</div>
+    <div class="fld">
+      <label>어떻게 정할까요</label>
+      <select id="myAuto" onchange="setAuto(this.value === '1')">
+        <option value="1" ${langAuto?'selected':''}>자동 — 지금 계신 곳에 맞춥니다</option>
+        <option value="0" ${!langAuto?'selected':''}>직접 선택</option>
+      </select>
     </div>
+
+    ${langAuto ? `
+      <div class="note">
+        지금 계신 곳: <b>${esc(TZ_COUNTRY[hereLang()] || '알 수 없음')}</b><br>
+        내 언어 <b>${esc(langName(from))}</b> · 상대 언어 <b>${esc(langName(to))}</b><br><br>
+        폰의 시간대를 보고 맞춥니다. 위치 권한을 묻지 않습니다.
+        해외에 나가시면 그 나라 말로 저절로 바뀝니다.
+      </div>`
+    : `
+      <div class="fld">
+        <label>내 언어</label>
+        <select id="myFrom" onchange="setMyLang()">${opts(from)}</select>
+      </div>
+      <div class="fld">
+        <label>상대 언어</label>
+        <select id="myTo" onchange="setMyLang()">${opts(to)}</select>
+      </div>`}
 
     <div class="seclabel">정리</div>
     <button class="btn ghost" onclick="clearHist()">마주보고 통역 기록 지우기</button>
@@ -1466,6 +1553,7 @@ if(window.visualViewport){
     else { $('#app').style.height='100dvh'; }
   });
 }
+if(langAuto) applyAuto();
 tab('talk');
 </script>
 </body>
