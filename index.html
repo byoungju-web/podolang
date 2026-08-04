@@ -10,7 +10,7 @@
 :root{
   /* 탭마다 색이 바뀝니다 */
   --talk-1:#6D28D9; --talk-2:#6D28D9; --talk-bg:#F5F3FF; --talk-soft:#EDE9FE;
-  --photo-1:#22D3EE; --photo-2:#22D3EE; --photo-bg:#ECFEFF; --photo-soft:#CFFAFE;
+  --photo-1:#10d6df; --photo-2:#10d6df; --photo-bg:#ECFEFF; --photo-soft:#CFFAFE;
   --tel-1:#1D4ED8;  --tel-2:#1D4ED8;  --tel-bg:#EFF6FF;  --tel-soft:#DBEAFE;
 
   --fg:#111113; --sub:#6B7280; --sub2:#9CA3AF;
@@ -63,9 +63,10 @@ main{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 16
 /* 사진 번역은 '원문 → 내 언어' 라 방향이 반대입니다 */
 .langbar select.peerside{background:var(--csoft);color:var(--c1);border-color:var(--c2)}
 .langbar select.meside{background:#FEF3C7;color:#92400E;border-color:#FDE68A}
-.swap{width:48px;height:48px;border-radius:50%;background:#111113;color:#fff;border:0;
-  flex:0 0 auto;display:grid;place-items:center;box-shadow:0 6px 16px rgba(0,0,0,0.15)}
-.swap svg{width:17px;height:17px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.swap{width:48px;height:48px;border-radius:50%;background:#fff;color:#111113;
+  border:2px solid #111113;flex:0 0 auto;display:grid;place-items:center}
+.swap:active{background:#F3F4F6}
+.swap svg{width:17px;height:17px;fill:none;stroke:#111113;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 
 /* ---------- 카드 · 대화 ---------- */
 .turn{border-radius:var(--r);padding:16px;margin-bottom:12px;position:relative;
@@ -155,7 +156,9 @@ body[data-theme="talk"] .turn.you .mini{background:#fff}
 
 /* ---------- 사진 번역 ---------- */
 .shots{display:flex;gap:10px;margin-bottom:12px}
-.shots .btn{flex:1;margin:0}
+.shots .btn{flex:1;margin:0;box-shadow:0 6px 16px rgba(0,0,0,0.12)}
+.btn.cam{background:#c6b0e7;color:#3B1F63;border:1.5px solid #ae94d6}
+.btn.alb{background:#f4b4ca;color:#6B2038;border:1.5px solid #e69bb5}
 .pv{border:1px solid var(--line);border-radius:var(--r);overflow:hidden;position:relative;
   background:#fff;box-shadow:var(--shadow);margin-bottom:12px}
 .pv img{display:block;width:100%;max-height:40dvh;object-fit:contain}
@@ -215,7 +218,8 @@ footer{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:10px 18px 
 .ver{text-align:center;color:var(--sub2);font-size:11px;font-weight:700;padding:22px 0 6px}
 
 .toast{position:fixed;left:50%;bottom:120px;transform:translateX(-50%);background:#111113;color:#fff;
-  padding:12px 18px;border-radius:var(--r-pill);font-size:13px;font-weight:700;opacity:0;
+  padding:12px 18px;border-radius:var(--r-pill);border:2px solid #10d6df;
+  font-size:13px;font-weight:700;opacity:0;
   transition:opacity .2s;pointer-events:none;z-index:99;max-width:82%;text-align:center;
   line-height:1.45;box-shadow:0 10px 30px rgba(0,0,0,.25)}
 .toast.on{opacity:1}
@@ -269,7 +273,7 @@ footer{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:10px 18px 
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v7.3.1';
+const VER='v7.4.1';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -312,7 +316,7 @@ const optsAuto=sel=>`<option value="AUTO" ${sel==='AUTO'?'selected':''}>자동 �
 // 탭마다 색이 바뀝니다. 헤더·배경·버튼·말풍선이 한꺼번에 따라옵니다.
 const THEME = {
   talk : { c1:'#6D28D9', c2:'#6D28D9', bg:'#F5F3FF', soft:'#EDE9FE' },
-  photo: { c1:'#22D3EE', c2:'#22D3EE', bg:'#ECFEFF', soft:'#CFFAFE' },
+  photo: { c1:'#10d6df', c2:'#10d6df', bg:'#ECFEFF', soft:'#CFFAFE' },
   call : { c1:'#1D4ED8', c2:'#1D4ED8', bg:'#EFF6FF', soft:'#DBEAFE' }
 };
 function paint(m){
@@ -487,8 +491,8 @@ function renderPhoto(){
     </div>
 
     <div class="shots">
-      <button class="btn" onclick="openCam()">사진 찍기</button>
-      <button class="btn ghost" style="margin-top:0" onclick="openAlbum()">앨범에서</button>
+      <button class="btn cam" onclick="openCam()">사진 찍기</button>
+      <button class="btn alb" onclick="openAlbum()">앨범에서</button>
     </div>
 
     ${photoData?`
