@@ -38,7 +38,10 @@ header h1 .logo{width:36px;height:36px;display:block;flex-shrink:0;border-radius
 .ico{width:36px;height:36px;border-radius:12px;border:1px solid rgba(255,255,255,0.25);
   background:rgba(255,255,255,0.16);color:#fff;display:grid;place-items:center;flex:0 0 auto}
 .ico:active{background:rgba(255,255,255,0.3)}
-.help{}
+.helpbtn{flex:0 0 auto;height:34px;padding:0 14px;border-radius:999px;
+  border:1px solid rgba(255,255,255,0.35);background:rgba(255,255,255,0.18);
+  color:#fff;font:inherit;font-size:12.5px;font-weight:800;white-space:nowrap}
+.helpbtn:active{background:rgba(255,255,255,0.32)}
 .ico svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
 /* ---------- 상단 탭 ---------- */
@@ -231,9 +234,7 @@ footer{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:10px 18px 
 <div id="app">
   <header>
     <h1><svg class="logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="podolang"><path d="M60 14 C 62 10, 68 8, 72 12 C 76 16, 74 24, 60 26 C 46 24, 44 16, 48 12 C 52 8, 58 10, 60 14 Z" fill="#2ECC71"/><circle cx="46" cy="70" r="26" fill="#8B5CF6" stroke="#6D28D9" stroke-width="3"/><circle cx="76" cy="70" r="26" fill="#A78BFA" stroke="#6D28D9" stroke-width="3"/></svg>podolang</h1>
-    <button class="ico help" onclick="openHelp()" aria-label="이용방법">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.2"/><path d="M9.4 9.2a2.7 2.7 0 015.2 1c0 1.8-2.6 2.2-2.6 4"/><circle cx="12" cy="17.4" r="1.05" fill="currentColor" stroke="none"/></svg>
-    </button>
+    <button class="helpbtn" id="helpBtn" onclick="openHelp()"></button>
   </header>
 
   <div class="tabs">
@@ -373,9 +374,84 @@ const I18N = {
  waitAnswer:{KO:'상대가 받기를 기다리는 중…',EN:'Waiting for them to answer…',JA:'相手の応答を待っています…',ZH:'等待对方接听…',TH:'รอปลายสายรับ…',VI:'Đang chờ họ nghe máy…',ES:'Esperando que contesten…',ID:'Menunggu dijawab…',DE:'Warte auf Antwort…',FR:'En attente de réponse…',IT:'In attesa di risposta…',RU:'Ждём ответа…',PT:'Aguardando atender…',HI:'उत्तर की प्रतीक्षा…',AR:'بانتظار الرد…',NL:'Wachten op antwoord…'},
  needLic:{KO:'이용권이 필요합니다.',EN:'A pass is required.',JA:'利用券が必要です。',ZH:'需要使用券。',TH:'ต้องมีบัตรผ่าน',VI:'Cần có thẻ sử dụng.',ES:'Se necesita un pase.',ID:'Perlu tiket akses.',DE:'Ein Pass wird benötigt.',FR:'Un pass est requis.',IT:'Serve un pass.',RU:'Нужен пропуск.',PT:'É necessário um passe.',HI:'पास आवश्यक है।',AR:'يلزم تصريح.',NL:'Een pas is vereist.'},
  goMy:{KO:'아래 마이 탭에서 코드를 넣으세요.',EN:'Enter your code in the My tab below.',JA:'下のマイタブでコードを入力してください。',ZH:'请在下方"我的"输入代码。',TH:'ใส่รหัสในแท็บของฉันด้านล่าง',VI:'Nhập mã ở tab Của tôi bên dưới.',ES:'Introduce el código en Mi cuenta.',ID:'Masukkan kode di tab Saya.',DE:'Code im Tab Mein eingeben.',FR:'Entrez le code dans Mon compte.',IT:'Inserisci il codice in Profilo.',RU:'Введите код во вкладке Профиль.',PT:'Insira o código em Perfil.',HI:'नीचे मेरा टैब में कोड डालें।',AR:'أدخل الرمز في تبويب حسابي.',NL:'Voer de code in bij Mijn.'},
- peerJustAnswers:{KO:'상대는 그냥 전화를 받아 평소처럼 말하면 됩니다. 앱 설치도, 버튼 누를 것도 없습니다.',EN:'They just answer and talk normally. No app, no buttons.',JA:'相手は普通に電話に出て話すだけです。アプリも操作も不要です。',ZH:'对方只需接听并正常说话。无需安装应用或按任何按钮。',TH:'อีกฝ่ายเพียงรับสายและพูดตามปกติ ไม่ต้องติดตั้งแอปหรือกดปุ่ม',VI:'Họ chỉ cần nghe máy và nói bình thường. Không cần app hay nút bấm.',ES:'Solo contestan y hablan normal. Sin app ni botones.',ID:'Mereka cukup menjawab dan bicara biasa. Tanpa aplikasi atau tombol.',DE:'Sie nehmen einfach ab und sprechen normal. Keine App, keine Tasten.',FR:'Ils décrochent et parlent normalement. Aucune application.',IT:'Rispondono e parlano normalmente. Nessuna app.',RU:'Они просто отвечают и говорят как обычно. Ни приложения, ни кнопок.',PT:'Eles só atendem e falam normalmente. Sem app nem botões.',HI:'वे बस कॉल उठाकर सामान्य रूप से बात करें। कोई ऐप नहीं।',AR:'يكفي أن يردّوا ويتحدثوا كالمعتاد. لا تطبيق ولا أزرار.',NL:'Zij nemen gewoon op en praten. Geen app, geen knoppen.'}
+ peerJustAnswers:{KO:'상대는 그냥 전화를 받아 평소처럼 말하면 됩니다. 앱 설치도, 버튼 누를 것도 없습니다. 당신은 이 화면에 대고 말하세요. 말이 끝나면 잠시 뒤 상대에게 전달됩니다.',EN:'They just answer and talk normally. No app, no buttons.',JA:'相手は普通に電話に出て話すだけです。アプリも操作も不要です。',ZH:'对方只需接听并正常说话。无需安装应用或按任何按钮。',TH:'อีกฝ่ายเพียงรับสายและพูดตามปกติ ไม่ต้องติดตั้งแอปหรือกดปุ่ม',VI:'Họ chỉ cần nghe máy và nói bình thường. Không cần app hay nút bấm.',ES:'Solo contestan y hablan normal. Sin app ni botones.',ID:'Mereka cukup menjawab dan bicara biasa. Tanpa aplikasi atau tombol.',DE:'Sie nehmen einfach ab und sprechen normal. Keine App, keine Tasten.',FR:'Ils décrochent et parlent normalement. Aucune application.',IT:'Rispondono e parlano normalmente. Nessuna app.',RU:'Они просто отвечают и говорят как обычно. Ни приложения, ни кнопок.',PT:'Eles só atendem e falam normalmente. Sem app nem botões.',HI:'वे बस कॉल उठाकर सामान्य रूप से बात करें। कोई ऐप नहीं।',AR:'يكفي أن يردّوا ويتحدثوا كالمعتاد. لا تطبيق ولا أزرار.',NL:'Zij nemen gewoon op en praten. Geen app, geen knoppen.'}
 };
 function uiLang(){ return String(from || 'KO').toUpperCase(); }
+
+/* ================= 긴 안내문 =================
+   16개 언어를 다 적어두면 파일이 세 배가 되어 첫 화면이 느려집니다.
+   그래서 한국어만 두고, 다른 언어는 처음 열 때 한 번 옮겨서 폰에 저장해 둡니다.
+   두 번째부터는 곧바로 나옵니다.                                        */
+const L = {
+ helpTitle:'이용방법',
+ hTalk:'마주보고 통역', hPhoto:'사진 번역', hCall:'전화 통역',
+ hNav:'아래 네 개 탭', hKnow:'알아두실 것', hMade:'만든 곳',
+
+ hTalkBody:'한 폰을 사이에 두고 번갈아 말하면 즉석에서 통역됩니다.\n\n<b>1.</b> 내 언어와 상대 언어를 고릅니다\n<b>2.</b> 아래 마이크를 <b>누른 채로</b> 말하고, 끝나면 손을 뗍니다\n<b>3.</b> 번역된 문장이 뜨고 상대 언어 음성이 나옵니다\n\n손님 응대나 현장 소통에 씁니다.',
+ hPhotoBody:'서류·라벨·인보이스를 찍으면 글자를 읽어 옮깁니다.\n\n<b>1.</b> 자동 감지 → 내 언어로 두고 <b>사진 찍기</b>\n<b>2.</b> 찍은 뒤 <b>이 사진 번역하기</b>\n<b>3.</b> 번역이 크게, 원문은 <b>원문 보기</b>를 눌러 폅니다\n\n<b>숫자·단가·품번은 원문 그대로 옮깁니다.</b> 흐려서 안 보이는 자리는 추측하지 않고 [?] 로 표시합니다. 중요한 금액은 원문과 한 번 더 대조하세요.',
+ hCallBody:'상대는 그냥 전화를 받아 평소처럼 말하면 됩니다. 앱을 깔 필요도, 버튼을 누를 필요도 없습니다.\n\n<b>1.</b> 이름(선택)과 전화번호를 넣습니다. 국가번호부터 — 미국 +1, 한국 +82(앞 0 빼고)\n<b>2.</b> <b>통역 전화 걸기</b>\n<b>3.</b> 상대가 받으면 이 화면에 대고 말합니다\n<b>4.</b> 말이 끝나면 잠시 뒤 상대에게 전달됩니다\n\n<b>이어폰을 쓰세요.</b> 스피커로 들으면 통역 음성을 마이크가 다시 주워서 말이 꼬입니다.\n\n전화 통역은 통화 1분마다 비용이 들어 <b>이용권</b>이 필요합니다. 마주보고 통역과 사진 번역은 이용권 없이 씁니다.',
+ hNavBody:'<b>통화기록</b> — 저장된 번호와 주고받은 말. 번호는 통화를 걸면 자동으로 저장됩니다. 이름을 붙이거나 지울 수 있습니다.\n\n<b>검색</b> — 번호·통화 기록·사진 번역을 한 번에 찾습니다. 숫자나 낱말로 찾으면 그 말이 나온 통화가 같이 나옵니다.\n\n<b>설정</b> — 전화 통역 말투와 용어집을 정합니다. 용어집에 회사명·제품명·지명을 적어두면 통화마다 같은 말로 번역됩니다.\n\n<b>마이</b> — 언어 설정, 이용권 코드, 저장 현황, 기록 정리. 언어를 <b>자동</b>으로 두면 해외에 나가셨을 때 그 나라 말로 저절로 바뀝니다.',
+ hKnowBody:'기록은 <b>이 폰 안에만</b> 있습니다. 서버로 보내지 않습니다. 브라우저 데이터를 지우면 함께 사라지니 중요한 내용은 복사해 두세요.\n\n전화 통역은 <b>안드로이드 크롬</b>에서 열어주세요.\n\n상대 폰이 해외번호를 스팸으로 막을 수 있습니다. 상대 연락처에 <b>+14472841160</b> 을 저장해 두면 통과합니다.',
+
+ pTel:'저장된 번호', pTelNone:'아직 저장된 번호가 없습니다. 통화를 걸면 자동으로 저장됩니다.',
+ pLog:'통화 기록', pLogNone:'아직 통화 기록이 없습니다.',
+ pFolded:'접혀 있습니다. 오른쪽 버튼으로 펼치세요.', pFold:'접기', pUnfold:'펼치기',
+ sSearch:'검색', sSearchPh:'이름 · 번호 · 통역 내용 · 사진 번역',
+ sSearchNone:'찾고 싶은 말을 넣으세요.\n저장된 번호, 통화 기록, 사진 번역을 한 번에 찾습니다.',
+ sNoHit:'찾는 것이 없습니다.', sNum:'번호', sLog:'통화 기록', sPhoto:'사진 번역',
+ setTitle:'설정', setMine:'내 언어 (기본)', setPeer:'상대 언어 (기본)',
+ setSave:'저장', setCheck:'연결 확인',
+ setTone:'전화 통역 말투', setToneF:'정중하게 — 거래처·처음 만나는 사이',
+ setToneN:'보통 — 평소 거래하는 사이', setToneC:'편하게 — 친한 사이·직원',
+ setGloss:'용어집', setGlossL:'흔들리면 안 되는 말을 줄마다 하나씩',
+ setGlossD:'회사명·제품명·지명처럼 매번 같아야 하는 말을 적어두세요. 같은 이름이 통화마다 다르게 번역되는 것을 막습니다.\n<b>전화 통역에만 적용됩니다.</b>',
+ setKeyD:'번역·음성은 서버에서 처리됩니다. API 키는 서버에만 있고 이 기기에는 저장되지 않습니다.',
+ myTitle:'마이', myLangSet:'언어 설정', myHow:'어떻게 정할까요',
+ myAuto:'자동 — 지금 계신 곳에 맞춥니다', myManual:'직접 선택',
+ myHere:'지금 계신 곳', myMine:'내 언어', myPeer:'상대 언어',
+ myAutoD:'폰의 시간대를 보고 맞춥니다. 위치 권한을 묻지 않습니다. 해외에 나가시면 그 나라 말로 저절로 바뀝니다.',
+ myLic:'이용권', myLicCode:'이용권 코드', myLicCheck:'이용권 확인', myLicDel:'이 기기에서 코드 지우기',
+ myLicD:'전화 통역은 통화 1분마다 비용이 들어서 이용권이 필요합니다. 마주보고 통역과 사진 번역은 이용권 없이 쓸 수 있습니다.',
+ myStore:'저장 현황', myClean:'정리',
+ myClrTalk:'마주보고 통역 기록 지우기', myClrPhoto:'사진 번역 기록 지우기', myClrLog:'통화 기록 지우기',
+ myOnPhone:'<b>이 기기에만 저장됩니다.</b>\n번호와 기록은 이 폰 안에만 있습니다. 서버로 보내지 않습니다. 브라우저 데이터를 지우면 함께 사라지니, 중요한 내용은 복사해 두세요.',
+ myEar:'<b>전화 통역은 이어폰을 쓰세요.</b>\n스피커로 들으면 통역 음성을 마이크가 다시 주워서 말이 꼬입니다.'
+};
+
+const UIVER = '1';                       // 글이 바뀌면 이 숫자를 올립니다
+let pack = load('podolang_pack', {});    // 옮겨둔 글 (언어별)
+let packBusy = false;
+
+// 긴 글을 지금 언어로 꺼냅니다
+function LT(k){
+  const lg = uiLang();
+  if(lg === 'KO') return L[k] || k;
+  const p = pack[lg + ':' + UIVER];
+  return (p && p[k]) || L[k] || k;
+}
+// 아직 안 옮겼으면 한 번 옮겨서 폰에 저장합니다
+async function ensurePack(after){
+  const lg = uiLang();
+  if(lg === 'KO' || packBusy) return;
+  if(pack[lg + ':' + UIVER]) return;
+  packBusy = true;
+  try{
+    const items = Object.keys(L).map(k => ({ k, ko: L[k] }));
+    const r = await fetch(RT_API + '/api/ui/translate', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ to: lg, ver: UIVER, items })
+    });
+    const d = await r.json();
+    if(d && d.ok && d.texts){
+      pack[lg + ':' + UIVER] = d.texts;
+      try{ localStorage.setItem('podolang_pack', JSON.stringify(pack)); }catch(e){}
+      if(typeof after === 'function') after();
+    }
+  }catch(e){ /* 못 옮기면 한국어로 나옵니다 */ }
+  finally{ packBusy = false; }
+}
+
+
 function T(k){ const r = I18N[k]; if(!r) return k; return r[uiLang()] || r.EN || k; }
 
 /* ---------- 탭 ---------- */
@@ -395,6 +471,7 @@ function paintText(){
   set('lbSearch', T('navSearch'));
   set('lbSet',    T('navSet'));
   set('lbMy',     T('navMy'));
+  set('helpBtn',  LT('helpTitle'));
   const ml = $('#micLabel');
   if(ml && mode === 'talk' && !busy) ml.textContent = T('pressSpeak');
 }
@@ -1089,7 +1166,7 @@ async function callStart(){
     if(d.error) throw new Error(d.error);
     if(d['이용권']) licInfo = { ok:true, ...d['이용권'] };
   }catch(e){
-    toast(e.message || '전화를 걸지 못했습니다');
+    toast(reasonText(e.message) || LT('licBad'));
     b.disabled = false; b.textContent = '통역 전화 걸기';
     renderCall(); return;
   }
@@ -1220,44 +1297,41 @@ async function callEnd(){
 /* ---------- 설정 (서버 주소 없음 — 언어 기본값 · 정보만) ---------- */
 function openSet(){
   markNav('nvSet');
+  const nl = x => String(x).replace(/\n/g,'<br>');
   $('#card').innerHTML=`
-    <h2>설정</h2>
+    <h2>${esc(LT('setTitle'))}</h2>
     <div class="fld">
-      <label>내 언어 (기본)</label>
+      <label>${esc(LT('setMine'))}</label>
       <select id="setFrom">${opts(from)}</select>
     </div>
     <div class="fld">
-      <label>상대 언어 (기본)</label>
+      <label>${esc(LT('setPeer'))}</label>
       <select id="setTo">${opts(to)}</select>
     </div>
-    <div class="seclabel">전화 통역 말투</div>
+
+    <div class="seclabel">${esc(LT('setTone'))}</div>
     <div class="fld">
       <select id="setTone">
-        <option value="formal" ${tone==='formal'?'selected':''}>정중하게 — 거래처·처음 만나는 사이</option>
-        <option value="normal" ${tone==='normal'?'selected':''}>보통 — 평소 거래하는 사이</option>
-        <option value="casual" ${tone==='casual'?'selected':''}>편하게 — 친한 사이·직원</option>
+        <option value="formal" ${tone==='formal'?'selected':''}>${esc(LT('setToneF'))}</option>
+        <option value="normal" ${tone==='normal'?'selected':''}>${esc(LT('setToneN'))}</option>
+        <option value="casual" ${tone==='casual'?'selected':''}>${esc(LT('setToneC'))}</option>
       </select>
     </div>
 
-    <div class="seclabel">용어집</div>
+    <div class="seclabel">${esc(LT('setGloss'))}</div>
     <div class="fld">
-      <label>흔들리면 안 되는 말을 줄마다 하나씩</label>
+      <label>${esc(LT('setGlossL'))}</label>
       <textarea id="setGloss" rows="6" spellcheck="false"
-        style="width:100%;border:1.5px solid var(--line2);border-radius:11px;padding:12px;
-               font:inherit;font-size:15px;background:#fff;outline:none;resize:vertical"
-        placeholder="유안마을 = Yuan Village&#10;포도랑 = Podolang&#10;선적 = shipment">${esc(gloss)}</textarea>
+        placeholder="Yuan Village = 유안마을&#10;Podolang = 포도랑">${esc(gloss)}</textarea>
     </div>
-    <div class="note">
-      회사명·제품명·지명처럼 매번 같아야 하는 말을 적어두세요.
-      같은 이름이 통화마다 다르게 번역되는 것을 막습니다.<br>
-      <b>전화 통역에만 적용됩니다.</b>
-    </div>
+    <div class="note">${nl(LT('setGlossD'))}</div>
 
-    <button class="btn" onclick="saveSet()">저장</button>
-    <button class="btn ghost" onclick="checkApi()">연결 확인</button>
-    <div class="hint" style="margin-top:12px">번역·음성은 서버에서 처리됩니다. API 키는 서버에만 있고 이 기기에는 저장되지 않습니다. 사진은 번역할 때만 서버로 보내고 따로 보관하지 않습니다.</div>
+    <button class="btn" onclick="saveSet()">${esc(LT('setSave'))}</button>
+    <button class="btn ghost" onclick="checkApi()">${esc(LT('setCheck'))}</button>
+    <div class="note" style="margin-top:12px">${esc(LT('setKeyD'))}</div>
     <div class="ver">podolang ${VER}</div>`;
   $('#sheet').classList.add('on');
+  ensurePack(openSet);
 }
 function closeSheet(){
   $('#sheet').classList.remove('on');
@@ -1309,10 +1383,10 @@ function clearLic(){
   openMy(); renderCall();
 }
 const licLine = () => {
-  if(!licCode) return '이용권 없음 — 전화 통역을 쓸 수 없습니다';
-  if(!licInfo) return '확인 중…';
-  if(!licInfo.ok) return licInfo.reason || '쓸 수 없는 이용권';
-  return `${licInfo.plan} · 남은 통역 ${licInfo['남은분']}분 · ${licInfo['만료일']} 까지`;
+  if(!licCode) return LT('licNone');
+  if(!licInfo) return LT('licChecking');
+  if(!licInfo.ok) return reasonText(licInfo.reason) || LT('licBad');
+  return `${licInfo.plan} · ${LT('licLeft')} ${licInfo['남은분']}${LT('licMin')} · ${licInfo['만료일']} ${LT('licUntil')}`;
 };
 
 /* ---------- 창문 패널: 저장된 번호 + 통화 기록 ---------- */
@@ -1327,10 +1401,10 @@ function openPanel(){
       <button class="mini" onclick="renameTel(${i})">${T('name')}</button>
       <button class="mini del" onclick="delTel(${i})">${T('del')}</button>
     </div>`).join('')
-    : `<div class="hint">아직 저장된 번호가 없습니다. 통화를 걸면 자동으로 저장됩니다.</div>`;
+    : `<div class="hint">${esc(LT('pTelNone'))}</div>`;
 
   const logRows = !clog.length
-    ? `<div class="hint">아직 통화 기록이 없습니다.</div>`
+    ? `<div class="hint">${esc(LT('pLogNone'))}</div>`
     : (clogOpen ? clog.map((m,i)=>`
         <div class="turn chat ${m.dir==='me'?'me':'you'}">
           <div class="who">${m.dir==='me'?T('meLbl'):T('youLbl')} · ${hhmm(m.at)}</div>
@@ -1341,18 +1415,19 @@ function openPanel(){
             <button class="mini del" onclick="delLog(${i})">${T('del')}</button>
           </div>
         </div>`).join('') + `<button class="btn ghost" onclick="clearLog()">${T('clearAll')}</button>`
-      : `<div class="hint">접혀 있습니다. 오른쪽 버튼으로 펼치세요.</div>`);
+      : `<div class="hint">${esc(LT('pFolded'))}</div>`);
 
   $('#card').innerHTML = `
-    <h2>저장된 번호</h2>
+    <h2>${esc(LT('pTel'))}</h2>
     ${telRows}
     <div class="seclabel row">
-      <span>통화 기록 · ${clog.length}줄</span>
-      <button class="foldbtn" onclick="toggleClog()">${clogOpen ? '접기 ▲' : '펼치기 ▼'}</button>
+      <span>${esc(LT('pLog'))} · ${clog.length}</span>
+      <button class="foldbtn" onclick="toggleClog()">${clogOpen ? LT('pFold')+' ▲' : LT('pUnfold')+' ▼'}</button>
     </div>
     ${logRows}
     <div class="ver">podolang ${VER}</div>`;
   $('#sheet').classList.add('on');
+  ensurePack(openPanel);
 }
 
 /* ---------- 전화번호 목록 ---------- */
@@ -1409,68 +1484,27 @@ function toggleClog(){ clogOpen = !clogOpen; openPanel(); }
 /* ---------- 이용방법 ---------- */
 function openHelp(){
   markNav('');
+  const nl = x => String(x).replace(/\n/g,'<br>');
   $('#card').innerHTML = `
-    <h2>이용방법</h2>
-
-    <div class="seclabel">마주보고 통역</div>
-    <div class="note">
-      한 폰을 사이에 두고 번갈아 말하면 즉석에서 통역됩니다.<br><br>
-      <b>1.</b> 내 언어와 상대 언어를 고릅니다<br>
-      <b>2.</b> 아래 마이크를 <b>누른 채로</b> 말하고, 끝나면 손을 뗍니다<br>
-      <b>3.</b> 번역된 문장이 뜨고 상대 언어 음성이 나옵니다<br><br>
-      손님 응대나 현장 소통에 씁니다.
-    </div>
-
-    <div class="seclabel">사진 번역</div>
-    <div class="note">
-      서류·라벨·인보이스를 찍으면 글자를 읽어 옮깁니다.<br><br>
-      <b>1.</b> 자동 감지 → 한국어로 두고 <b>사진 찍기</b><br>
-      <b>2.</b> 찍은 뒤 <b>이 사진 번역하기</b><br>
-      <b>3.</b> 번역이 크게, 원문은 <b>원문 보기</b>를 눌러 폅니다<br><br>
-      <b>숫자·단가·품번은 원문 그대로 옮깁니다.</b> 흐려서 안 보이는 자리는
-      추측하지 않고 [?] 로 표시합니다. 중요한 금액은 원문과 한 번 더 대조하세요.
-    </div>
-
-    <div class="seclabel">전화 통역</div>
-    <div class="note">
-      상대는 그냥 전화를 받아 평소처럼 말하면 됩니다. 앱을 깔 필요도, 버튼을 누를 필요도 없습니다.<br><br>
-      <b>1.</b> 이름(선택)과 전화번호를 넣습니다. 국가번호부터 — 미국 +1, 한국 +82(앞 0 빼고)<br>
-      <b>2.</b> <b>통역 전화 걸기</b><br>
-      <b>3.</b> 상대가 받으면 이 화면에 대고 말합니다<br>
-      <b>4.</b> 말이 끝나면 잠시 뒤 상대에게 전달됩니다<br><br>
-      <b>이어폰을 쓰세요.</b> 스피커로 들으면 통역 음성을 마이크가 다시 주워서 말이 꼬입니다.<br><br>
-      전화 통역은 통화 1분마다 비용이 들어 <b>이용권</b>이 필요합니다.
-      마주보고 통역과 사진 번역은 이용권 없이 씁니다.
-    </div>
-
-    <div class="seclabel">아래 네 개 탭</div>
-    <div class="note">
-      <b>내번호</b> — 저장된 번호와 통화 기록. 번호는 통화를 걸면 자동으로 저장됩니다.
-      이름을 붙이거나 지울 수 있습니다.<br><br>
-      <b>검색</b> — 번호·통화 기록·사진 번역을 한 번에 찾습니다.
-      "500개" 로 찾으면 그 말이 나온 통화가 같이 나옵니다.<br><br>
-      <b>설정</b> — 전화 통역 말투와 용어집을 정합니다.
-      용어집에 회사명·제품명·지명을 적어두면 통화마다 같은 말로 번역됩니다.<br><br>
-      <b>마이</b> — 언어 설정, 이용권 코드, 저장 현황, 기록 정리.
-      언어를 <b>자동</b>으로 두면 해외에 나가셨을 때 그 나라 말로 저절로 바뀝니다.
-    </div>
-
-    <div class="seclabel">알아두실 것</div>
-    <div class="note">
-      기록은 <b>이 폰 안에만</b> 있습니다. 서버로 보내지 않습니다.
-      브라우저 데이터를 지우면 함께 사라지니 중요한 내용은 복사해 두세요.<br><br>
-      전화 통역은 <b>안드로이드 크롬</b>에서 열어주세요.<br><br>
-      상대 폰이 해외번호를 스팸으로 막을 수 있습니다.
-      상대 연락처에 <b>+14472841160</b> 을 저장해 두면 통과합니다.
-    </div>
-
-    <div class="seclabel">만든 곳</div>
+    <h2>${esc(LT('helpTitle'))}</h2>
+    <div class="seclabel">${esc(LT('hTalk'))}</div>
+    <div class="note">${nl(LT('hTalkBody'))}</div>
+    <div class="seclabel">${esc(LT('hPhoto'))}</div>
+    <div class="note">${nl(LT('hPhotoBody'))}</div>
+    <div class="seclabel">${esc(LT('hCall'))}</div>
+    <div class="note">${nl(LT('hCallBody'))}</div>
+    <div class="seclabel">${esc(LT('hNav'))}</div>
+    <div class="note">${nl(LT('hNavBody'))}</div>
+    <div class="seclabel">${esc(LT('hKnow'))}</div>
+    <div class="note">${nl(LT('hKnowBody'))}</div>
+    <div class="seclabel">${esc(LT('hMade'))}</div>
     <div class="note" style="text-align:center;line-height:2">
       <b>podolang ${VER}</b><br>
       © 2026 BJ LEE · All Rights Reserved<br>
       PODOLANG.kr
     </div>`;
   $('#sheet').classList.add('on');
+  ensurePack(openHelp);
 }
 
 function markNav(id){
@@ -1489,33 +1523,34 @@ function openSearch(){
   const phoHits = !k ? [] : phist.map((m,i)=>({m,i})).filter(({m}) => hit(m.dst) || hit(m.src) || hit(m.kind));
 
   $('#card').innerHTML = `
-    <h2>검색</h2>
+    <h2>${esc(LT('sSearch'))}</h2>
     <div class="fld">
-      <input id="qBox" type="text" placeholder="이름 · 번호 · 통역 내용 · 사진 번역"
+      <input id="qBox" type="text" placeholder="${esc(LT('sSearchPh'))}"
         autocomplete="off" value="${esc(q)}" oninput="q=this.value; runSearch()">
     </div>
-    ${!k ? `<div class="empty">찾고 싶은 말을 넣으세요.<br>저장된 번호, 통화 기록, 사진 번역을 한 번에 찾습니다.</div>` : `
-      ${telHits.length ? `<div class="seclabel">번호 ${telHits.length}</div>` + telHits.map(({t,i})=>`
+    ${!k ? `<div class="empty">${String(esc(LT('sSearchNone'))).replace(/\n/g,'<br>')}</div>` : `
+      ${telHits.length ? `<div class="seclabel">${esc(LT('sNum'))} ${telHits.length}</div>` + telHits.map(({t,i})=>`
         <div class="telrow">
           <button class="telpick" onclick="pickTel(${i})">
             <b>${esc(t.name || t.num)}</b>${t.name?`<span>${esc(t.num)}</span>`:''}
           </button>
         </div>`).join('') : ''}
-      ${logHits.length ? `<div class="seclabel">통화 기록 ${logHits.length}</div>` + logHits.map(({m,i})=>`
+      ${logHits.length ? `<div class="seclabel">${esc(LT('sLog'))} ${logHits.length}</div>` + logHits.map(({m,i})=>`
         <div class="turn">
           <div class="src">${m.dir==='me'?'내 말':'상대'} · ${hhmm(m.at)}${m.src?'<br>'+esc(m.src):''}</div>
           <div class="dst ocr" style="font-size:16px">${esc(m.text)}</div>
           <div class="foot"><small></small><button class="mini" onclick="copyLog(${i})">${T('copy')}</button></div>
         </div>`).join('') : ''}
-      ${phoHits.length ? `<div class="seclabel">사진 번역 ${phoHits.length}</div>` + phoHits.map(({m,i})=>`
+      ${phoHits.length ? `<div class="seclabel">${esc(LT('sPhoto'))} ${phoHits.length}</div>` + phoHits.map(({m,i})=>`
         <div class="turn">
           ${m.kind?`<div class="kind">${esc(m.kind)}</div>`:''}
           <div class="dst ocr" style="font-size:16px">${esc(m.dst)}</div>
           <div class="foot"><small></small><button class="mini" onclick="copyPhist(${i})">${T('copy')}</button></div>
         </div>`).join('') : ''}
-      ${(!telHits.length && !logHits.length && !phoHits.length) ? `<div class="empty">찾는 것이 없습니다.</div>` : ''}
+      ${(!telHits.length && !logHits.length && !phoHits.length) ? `<div class="empty">${esc(LT('sNoHit'))}</div>` : ''}
     `}`;
   $('#sheet').classList.add('on');
+  ensurePack(openSearch);
 }
 function runSearch(){
   const el = $('#qBox');
@@ -1542,73 +1577,65 @@ function setMyLang(){
 /* ---------- 마이 ---------- */
 function openMy(){
   markNav('nvMy');
+  const nl = x => String(x).replace(/\n/g,'<br>');
   $('#card').innerHTML = `
-    <h2>마이</h2>
+    <h2>${esc(LT('myTitle'))}</h2>
 
-    <div class="seclabel">이용권</div>
+    <div class="seclabel">${esc(LT('myLangSet'))}</div>
     <div class="fld">
-      <label>이용권 코드</label>
-      <input id="licBox" type="text" placeholder="PODO-XXXX-XXXX"
-        autocomplete="off" autocorrect="off" spellcheck="false"
-        style="letter-spacing:.08em;font-weight:700" value="${esc(licCode)}">
-    </div>
-    <div class="${licInfo && licInfo.ok ? 'rtbadge' : 'note'}">${esc(licLine())}</div>
-    <button class="btn" onclick="saveLic()">이용권 확인</button>
-    ${licCode ? `<button class="btn ghost" onclick="clearLic()">이 기기에서 코드 지우기</button>` : ''}
-    <div class="note" style="margin-top:11px">
-      전화 통역은 통화 1분마다 비용이 들어서 이용권이 필요합니다.
-      마주보고 통역과 사진 번역은 이용권 없이 쓸 수 있습니다.
-    </div>
-
-    <div class="seclabel">저장 현황</div>
-    <div class="turn">
-      <div class="dst" style="font-size:16px">번호 ${tels.length}개 · 통화 기록 ${clog.length}줄</div>
-      <div class="src" style="margin:8px 0 0">통역 기록 ${hist.length}건 · 사진 번역 ${phist.length}건</div>
-    </div>
-
-    <div class="seclabel">언어 설정</div>
-    <div class="fld">
-      <label>어떻게 정할까요</label>
+      <label>${esc(LT('myHow'))}</label>
       <select id="myAuto" onchange="setAuto(this.value === '1')">
-        <option value="1" ${langAuto?'selected':''}>자동 — 지금 계신 곳에 맞춥니다</option>
-        <option value="0" ${!langAuto?'selected':''}>직접 선택</option>
+        <option value="1" ${langAuto?'selected':''}>${esc(LT('myAuto'))}</option>
+        <option value="0" ${!langAuto?'selected':''}>${esc(LT('myManual'))}</option>
       </select>
     </div>
 
     ${langAuto ? `
       <div class="note">
-        지금 계신 곳: <b>${esc(TZ_COUNTRY[hereLang()] || '알 수 없음')}</b><br>
-        내 언어 <b>${esc(langName(from))}</b> · 상대 언어 <b>${esc(langName(to))}</b><br><br>
-        폰의 시간대를 보고 맞춥니다. 위치 권한을 묻지 않습니다.
-        해외에 나가시면 그 나라 말로 저절로 바뀝니다.
+        ${esc(LT('myHere'))}: <b>${esc(TZ_COUNTRY[hereLang()] || '—')}</b><br>
+        ${esc(LT('myMine'))} <b>${esc(langName(from))}</b> · ${esc(LT('myPeer'))} <b>${esc(langName(to))}</b><br><br>
+        ${nl(LT('myAutoD'))}
       </div>`
     : `
       <div class="fld">
-        <label>내 언어</label>
+        <label>${esc(LT('myMine'))}</label>
         <select id="myFrom" onchange="setMyLang()">${opts(from)}</select>
       </div>
       <div class="fld">
-        <label>상대 언어</label>
+        <label>${esc(LT('myPeer'))}</label>
         <select id="myTo" onchange="setMyLang()">${opts(to)}</select>
       </div>`}
 
-    <div class="seclabel">정리</div>
-    <button class="btn ghost" onclick="clearHist()">마주보고 통역 기록 지우기</button>
-    <button class="btn ghost" onclick="clearPhist()">사진 번역 기록 지우기</button>
-    <button class="btn ghost" onclick="clearLog()">통화 기록 지우기</button>
+    <div class="seclabel">${esc(LT('myLic'))}</div>
+    <div class="fld">
+      <label>${esc(LT('myLicCode'))}</label>
+      <input id="licBox" type="text" placeholder="PODO-XXXX-XXXX"
+        autocomplete="off" autocorrect="off" spellcheck="false"
+        style="letter-spacing:.08em;font-weight:800" value="${esc(licCode)}">
+    </div>
+    <div class="${licInfo && licInfo.ok ? 'rtbadge' : 'note'}">${esc(licLine())}</div>
+    <button class="btn" onclick="saveLic()">${esc(LT('myLicCheck'))}</button>
+    ${licCode ? `<button class="btn ghost" onclick="clearLic()">${esc(LT('myLicDel'))}</button>` : ''}
+    <div class="note" style="margin-top:11px">${esc(LT('myLicD'))}</div>
 
-    <div class="note" style="margin-top:16px">
-      <b>이 기기에만 저장됩니다.</b><br>
-      번호와 기록은 이 폰 안에만 있습니다. 서버로 보내지 않습니다.
-      브라우저 데이터를 지우면 함께 사라지니, 중요한 내용은 복사해 두세요.
+    <div class="seclabel">${esc(LT('myStore'))}</div>
+    <div class="turn">
+      <div class="dst" style="font-size:16px">${esc(LT('pTel'))} ${tels.length} · ${esc(LT('pLog'))} ${clog.length}</div>
+      <div class="src" style="margin:8px 0 0">${esc(T('talk'))} ${hist.length} · ${esc(T('photo'))} ${phist.length}</div>
     </div>
-    <div class="note">
-      <b>전화 통역은 이어폰을 쓰세요.</b><br>
-      스피커로 들으면 통역 음성을 마이크가 다시 주워서 말이 꼬입니다.
-    </div>
+
+    <div class="seclabel">${esc(LT('myClean'))}</div>
+    <button class="btn ghost" onclick="clearHist()">${esc(LT('myClrTalk'))}</button>
+    <button class="btn ghost" onclick="clearPhist()">${esc(LT('myClrPhoto'))}</button>
+    <button class="btn ghost" onclick="clearLog()">${esc(LT('myClrLog'))}</button>
+
+    <div class="note" style="margin-top:16px">${nl(LT('myOnPhone'))}</div>
+    <div class="note">${nl(LT('myEar'))}</div>
     <div class="ver">podolang ${VER}</div>`;
   $('#sheet').classList.add('on');
+  ensurePack(openMy);
 }
+
 function saveSet(){
   from=$('#setFrom').value; to=$('#setTo').value;
   save(K.from,from); save(K.to,to);
