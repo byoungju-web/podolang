@@ -1907,5 +1907,131 @@ tab('talk');
 })();
 </script>
 <!-- ================= 오역 고지 블록 끝 ================= -->
+<!-- ============ 마이 탭 · 이용약관 / 개인정보처리방침 ============
+     index.html 의 </body> 바로 위에 이 블록을 붙이세요.
+     앞서 붙인 "오역 고지" 블록 아래에 이어 붙이면 됩니다.
+     기존 코드는 건드리지 않습니다. 지우면 원래대로 돌아갑니다.
+============================================================= -->
+<script>
+(function(){
+  var TERMS = '/terms.html', PRIV = '/privacy.html';
+
+  var W = {
+    KO:{sec:'약관 및 정책', t:'이용약관', p:'개인정보처리방침',
+        note:'통역 기록은 이 기기에만 저장됩니다. 자세한 내용은 개인정보처리방침을 봐주세요.'},
+    EN:{sec:'Terms & Policy', t:'Terms of Service', p:'Privacy Policy',
+        note:'Your records stay on this device. See the privacy policy for details.'},
+    JA:{sec:'規約・ポリシー', t:'利用規約', p:'プライバシーポリシー',
+        note:'記録はこの端末にのみ保存されます。詳細はプライバシーポリシーをご覧ください。'},
+    ZH:{sec:'条款与政策', t:'服务条款', p:'隐私政策',
+        note:'记录仅保存在本设备。详情请查看隐私政策。'},
+    TH:{sec:'ข้อกำหนดและนโยบาย', t:'ข้อกำหนดการใช้งาน', p:'นโยบายความเป็นส่วนตัว',
+        note:'บันทึกเก็บไว้ในเครื่องนี้เท่านั้น ดูรายละเอียดในนโยบายความเป็นส่วนตัว'},
+    VI:{sec:'Điều khoản & Chính sách', t:'Điều khoản sử dụng', p:'Chính sách bảo mật',
+        note:'Dữ liệu chỉ lưu trên máy này. Xem chi tiết ở chính sách bảo mật.'},
+    ES:{sec:'Términos y política', t:'Términos de uso', p:'Política de privacidad',
+        note:'Tus registros se guardan solo en este dispositivo.'},
+    ID:{sec:'Ketentuan & Kebijakan', t:'Ketentuan Layanan', p:'Kebijakan Privasi',
+        note:'Data hanya tersimpan di perangkat ini.'}
+  };
+  function t(){
+    var v='KO';
+    try{ v = JSON.parse(localStorage.getItem('podolang_from')) || 'KO'; }catch(e){}
+    v = String(v||'KO').toUpperCase();
+    return W[v] || W.EN;
+  }
+
+  function row(label, href){
+    var a = document.createElement('a');
+    a.href = href; a.target = '_blank'; a.rel = 'noopener';
+    a.textContent = label;
+    a.style.cssText = 'display:flex;align-items:center;justify-content:space-between;' +
+      'background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:16px;' +
+      'padding:15px 16px;margin-bottom:9px;text-decoration:none;color:#111113;' +
+      'font-size:14.5px;font-weight:800;letter-spacing:-.2px;' +
+      'box-shadow:0 2px 8px rgba(0,0,0,.04)';
+    var arrow = document.createElement('span');
+    arrow.textContent = '›';
+    arrow.style.cssText = 'color:#9CA3AF;font-size:20px;font-weight:700;line-height:1';
+    a.appendChild(arrow);
+    return a;
+  }
+
+  function addLinks(){
+    var card = document.getElementById('card');
+    if(!card) return;
+    if(!card.querySelector('#licBox')) return;      // 마이 탭이 아니면 넘어갑니다
+    if(card.querySelector('#pdLegal')) return;      // 이미 붙었으면 넘어갑니다
+
+    var x = t();
+    var wrap = document.createElement('div');
+    wrap.id = 'pdLegal';
+
+    var lab = document.createElement('div');
+    lab.textContent = x.sec;
+    lab.style.cssText = 'font-size:11px;font-weight:900;letter-spacing:.7px;color:#6B7280;' +
+      'margin:22px 0 10px;display:flex;align-items:center;gap:9px';
+    var line = document.createElement('span');
+    line.style.cssText = 'flex:1;height:1px;background:rgba(0,0,0,.07)';
+    lab.appendChild(line);
+
+    var note = document.createElement('div');
+    note.textContent = x.note;
+    note.style.cssText = 'font-size:12px;line-height:1.6;color:#6B7280;font-weight:600;' +
+      'padding:0 4px;margin-top:2px';
+
+    wrap.appendChild(lab);
+    wrap.appendChild(row(x.t, TERMS));
+    wrap.appendChild(row(x.p, PRIV));
+    wrap.appendChild(note);
+
+    // 통화 기록 지우기 버튼 바로 아래에 넣습니다
+    var anchor = null;
+    var btns = card.querySelectorAll('button');
+    for(var i=0;i<btns.length;i++){
+      var oc = btns[i].getAttribute('onclick') || '';
+      if(oc.indexOf('clearLog') >= 0) anchor = btns[i];
+    }
+    if(anchor && anchor.parentNode){
+      anchor.parentNode.insertBefore(wrap, anchor.nextSibling);
+    }else{
+      var ver = card.querySelector('.ver');
+      if(ver) card.insertBefore(wrap, ver); else card.appendChild(wrap);
+    }
+  }
+
+  // openMy 를 감싸서 그릴 때마다 이어 붙입니다 (원본은 그대로 실행됩니다)
+  function hook(){
+    if(typeof window.openMy !== 'function') return false;
+    if(window.openMy.__pdLegal) return true;
+    var orig = window.openMy;
+    var wrapped = function(){
+      var r = orig.apply(this, arguments);
+      try{ addLinks(); }catch(e){}
+      return r;
+    };
+    wrapped.__pdLegal = true;
+    window.openMy = wrapped;
+    return true;
+  }
+
+  function boot(){
+    if(!hook()){
+      var n = 0, iv = setInterval(function(){
+        if(hook() || ++n > 40) clearInterval(iv);
+      }, 150);
+    }
+    // 번역 문구가 늦게 도착해 다시 그려도 따라붙게 지켜봅니다
+    var card = document.getElementById('card');
+    if(card){
+      try{ new MutationObserver(function(){ try{ addLinks(); }catch(e){} })
+        .observe(card, {childList:true}); }catch(e){}
+    }
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+</script>
+<!-- ============ 마이 탭 약관 링크 블록 끝 ============ -->
 </body>
 </html>
