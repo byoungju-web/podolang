@@ -81,11 +81,20 @@ main{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 16
   box-shadow:0 8px 20px rgba(0,0,0,0.18)}
 body[data-theme="talk"] .turn.you{background:var(--talk-soft);color:#5B21B6;
   border:1px solid #DDD6FE;box-shadow:none}
+/* 사진 번역 결과는 흰 바탕에 검정 글씨로 읽습니다 — 서류라 또렷해야 합니다 */
+body[data-theme="photo"] .turn.you{background:#fff;color:#111113;
+  border:2px solid #10d6df;box-shadow:0 4px 14px rgba(16,214,223,0.16)}
+body[data-theme="photo"] .turn.you .who,
+body[data-theme="photo"] .turn.you .src,
+body[data-theme="photo"] .turn.you .osrc{color:#0E7490;opacity:1}
+body[data-theme="photo"] .turn.you .kind{background:#E0FBFF;color:#0E7490}
+body[data-theme="photo"] .turn.you .mini{background:#fff;border:1px solid #10d6df;color:#0E7490}
+body[data-theme="photo"] .turn.you .mini.del{border-color:rgba(220,38,38,.35);color:#DC2626}
+body[data-theme="photo"] details.orig{border-top-color:rgba(16,214,223,.35)}
 /* 밝은 청록 위에서는 흰 글씨가 안 읽혀서 진한 글씨를 씁니다 */
 body[data-theme="photo"] header,
 body[data-theme="photo"] header h1,
 body[data-theme="photo"] .tab.on,
-body[data-theme="photo"] .turn.you,
 body[data-theme="photo"] .btn,
 body[data-theme="photo"] .mic,
 body[data-theme="photo"] .ico{color:#083344}
@@ -141,6 +150,10 @@ body[data-theme="talk"] .turn.you .mini{background:#fff}
 .seclabel{font-size:11px;font-weight:900;letter-spacing:.7px;color:var(--sub);
   margin:22px 0 10px;display:flex;align-items:center;gap:9px}
 .seclabel::after{content:'';flex:1;height:1px;background:var(--line)}
+/* 이용방법의 항목 제목은 크고 두껍게 */
+.card .seclabel.big{font-size:19px;font-weight:900;letter-spacing:-.4px;
+  color:var(--fg);margin:26px 0 12px}
+.card .seclabel.big::after{display:none}
 .seclabel.row span{flex:0 0 auto}
 .foldbtn{border:1px solid var(--line);background:#fff;border-radius:var(--r-pill);
   padding:5px 12px;font:inherit;font-size:11.5px;font-weight:800;color:var(--sub)}
@@ -385,7 +398,7 @@ function uiLang(){ return String(from || 'KO').toUpperCase(); }
 const L = {
  helpTitle:'이용방법',
  hTalk:'마주보고 통역', hPhoto:'사진 번역', hCall:'전화 통역',
- hNav:'아래 네 개 탭', hKnow:'알아두실 것', hMade:'만든 곳',
+ hNav:'아래 네 개 탭', hKnow:'알아두실 것',
 
  hTalkBody:'한 폰을 사이에 두고 번갈아 말하면 즉석에서 통역됩니다.\n\n<b>1.</b> 내 언어와 상대 언어를 고릅니다\n<b>2.</b> 아래 마이크를 <b>누른 채로</b> 말하고, 끝나면 손을 뗍니다\n<b>3.</b> 번역된 문장이 뜨고 상대 언어 음성이 나옵니다\n\n손님 응대나 현장 소통에 씁니다.',
  hPhotoBody:'서류·라벨·인보이스를 찍으면 글자를 읽어 옮깁니다.\n\n<b>1.</b> 자동 감지 → 내 언어로 두고 <b>사진 찍기</b>\n<b>2.</b> 찍은 뒤 <b>이 사진 번역하기</b>\n<b>3.</b> 번역이 크게, 원문은 <b>원문 보기</b>를 눌러 폅니다\n\n<b>숫자·단가·품번은 원문 그대로 옮깁니다.</b> 흐려서 안 보이는 자리는 추측하지 않고 [?] 로 표시합니다. 중요한 금액은 원문과 한 번 더 대조하세요.',
@@ -1487,22 +1500,17 @@ function openHelp(){
   const nl = x => String(x).replace(/\n/g,'<br>');
   $('#card').innerHTML = `
     <h2>${esc(LT('helpTitle'))}</h2>
-    <div class="seclabel">${esc(LT('hTalk'))}</div>
+    <div class="seclabel big">${esc(LT('hTalk'))}</div>
     <div class="note">${nl(LT('hTalkBody'))}</div>
-    <div class="seclabel">${esc(LT('hPhoto'))}</div>
+    <div class="seclabel big">${esc(LT('hPhoto'))}</div>
     <div class="note">${nl(LT('hPhotoBody'))}</div>
-    <div class="seclabel">${esc(LT('hCall'))}</div>
+    <div class="seclabel big">${esc(LT('hCall'))}</div>
     <div class="note">${nl(LT('hCallBody'))}</div>
-    <div class="seclabel">${esc(LT('hNav'))}</div>
+    <div class="seclabel big">${esc(LT('hNav'))}</div>
     <div class="note">${nl(LT('hNavBody'))}</div>
-    <div class="seclabel">${esc(LT('hKnow'))}</div>
+    <div class="seclabel big">${esc(LT('hKnow'))}</div>
     <div class="note">${nl(LT('hKnowBody'))}</div>
-    <div class="seclabel">${esc(LT('hMade'))}</div>
-    <div class="note" style="text-align:center;line-height:2">
-      <b>podolang ${VER}</b><br>
-      © 2026 BJ LEE · All Rights Reserved<br>
-      PODOLANG.kr
-    </div>`;
+    <div class="ver">podolang ${VER} · PODOLANG.kr</div>`;
   $('#sheet').classList.add('on');
   ensurePack(openHelp);
 }
