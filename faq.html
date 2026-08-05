@@ -17,6 +17,13 @@
     --ink-3:#5f5f65;
     --line:#e6e6e2;
     --wash:#f5f5f2;
+    --vine:#6D28D9;
+    --grape:#8B5CF6;
+    --grape-2:#A78BFA;
+    --grape-soft:#F2ECFF;
+    --leaf:#15803D;
+    --leaf-2:#34D399;
+    --leaf-soft:#E4F8EC;
     --sans:'Pretendard',-apple-system,BlinkMacSystemFont,system-ui,'Apple SD Gothic Neo',sans-serif;
     --mono:'JetBrains Mono',ui-monospace,'SF Mono','Menlo','Consolas',monospace;
   }
@@ -37,15 +44,34 @@
   }
   .wrap{max-width:760px;margin:0 auto;padding:0 20px}
 
-  nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 0 18px;
-    border-bottom:1.5px solid var(--ink);flex-wrap:wrap;max-width:1120px;margin:0 auto}
-  .navwrap{padding:0 20px}
-  .logo{font-weight:900;font-size:20px;letter-spacing:-.5px;display:flex;align-items:center;gap:9px}
+  nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 0 17px;
+    position:relative;flex-wrap:wrap;max-width:1120px;margin:0 auto}
+  nav::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;border-radius:3px;
+    background:linear-gradient(90deg,var(--leaf-2) 0%,var(--grape-2) 34%,var(--grape) 64%,var(--vine) 100%)}
+  .logo{font-weight:900;font-size:19px;letter-spacing:-.6px;display:flex;align-items:center;gap:9px}
   .logo a{color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:9px}
-  .logo svg{width:26px;height:26px;display:block;flex-shrink:0}
-  .tabs{display:flex;gap:4px;border:1.5px solid var(--ink);border-radius:11px;padding:3px;background:var(--paper)}
-  .tabs a{padding:8px 15px;border-radius:8px;font-size:14px;font-weight:700;text-decoration:none;color:var(--ink-3)}
-  .tabs a.active{background:var(--ink);color:#fff}
+  .logo svg{width:28px;height:28px;display:block;flex-shrink:0;filter:drop-shadow(0 2px 5px rgba(109,40,217,.3))}
+  .logo .path{background:linear-gradient(90deg,var(--grape),var(--vine));-webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;color:var(--vine)}
+  .logo .path.leaf{background:linear-gradient(90deg,var(--leaf-2),var(--leaf))}
+  .tabs{display:flex;gap:5px;border:1.5px solid var(--line);border-radius:13px;padding:4px;background:var(--paper);
+    box-shadow:0 3px 12px rgba(109,40,217,.09)}
+  .tabs a{padding:8px 14px;border-radius:9px;font-size:14px;font-weight:700;text-decoration:none;white-space:nowrap;
+    transition:transform .16s ease,box-shadow .16s ease}
+  .tabs a.t-clone{color:var(--vine);background:var(--grape-soft)}
+  .tabs a.t-faq{color:var(--leaf);background:var(--leaf-soft)}
+  .tabs a.t-clone.active{background:linear-gradient(135deg,var(--grape-2),var(--vine));color:#fff;
+    box-shadow:0 4px 12px rgba(109,40,217,.38)}
+  .tabs a.t-faq.active{background:linear-gradient(135deg,var(--leaf-2),var(--leaf));color:#fff;
+    box-shadow:0 4px 12px rgba(21,128,61,.34)}
+  .tabs a:active{transform:translateY(1px)}
+  .tabs a:focus-visible{outline:2px solid var(--vine);outline-offset:2px}
+  @media(max-width:430px){
+    .logo{font-size:16px;gap:7px}
+    .logo svg{width:24px;height:24px}
+    .tabs a{padding:7px 11px;font-size:13px}
+  }
+  .navwrap{padding:0 20px}
 
   .head{padding:52px 0 8px;text-align:center}
   .kicker{font-family:var(--mono);font-size:13px;letter-spacing:2px;color:var(--ink-3);text-transform:uppercase;margin-bottom:18px;font-weight:600}
@@ -94,10 +120,10 @@
 
 <div class="navwrap">
   <nav>
-    <div class="logo"><a href="/faq"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="Podolang"><path d="M60 14 C 62 10, 68 8, 72 12 C 76 16, 74 24, 60 26 C 46 24, 44 16, 48 12 C 52 8, 58 10, 60 14 Z" fill="#2ECC71"/><circle cx="46" cy="70" r="26" fill="#8B5CF6" stroke="#6D28D9" stroke-width="3"/><circle cx="76" cy="70" r="26" fill="#A78BFA" stroke="#6D28D9" stroke-width="3"/></svg> PODOLANG.kr</a></div>
+    <div class="logo"><a href="/faq"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="Podolang"><path d="M60 14 C 62 10, 68 8, 72 12 C 76 16, 74 24, 60 26 C 46 24, 44 16, 48 12 C 52 8, 58 10, 60 14 Z" fill="#2ECC71"/><circle cx="46" cy="70" r="26" fill="#8B5CF6" stroke="#6D28D9" stroke-width="3"/><circle cx="76" cy="70" r="26" fill="#A78BFA" stroke="#6D28D9" stroke-width="3"/></svg> <span>podolang.kr<span class="path leaf">/faq</span></span></a></div>
     <div class="tabs">
-      <a href="/clone">Clone 30개국</a>
-      <a href="/faq" class="active">FAQ</a>
+      <a href="/clone" class="t-clone">Clone 30개국</a>
+      <a href="/faq" class="t-faq active">FAQ</a>
     </div>
   </nav>
 </div>
