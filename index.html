@@ -1675,10 +1675,237 @@ tab('talk');
 </body>
 </html>
 </script>
-
 <!-- ===================== 오역 고지 · 첫 실행 동의 =====================
-     ... (붙여넣은 내용 전체) ...
-<!-- ================= 오역 고지 블록 끝 ================= -->
+     index.html 의 맨 아래 </body> 바로 위에 이 블록을 통째로 붙이세요.
+     기존 코드는 하나도 건드리지 않습니다. 지우면 원래대로 돌아갑니다.
+     글이 바뀌면 PD_AGREE_VER 숫자를 올리면 다시 동의를 받습니다.
+================================================================= -->
+<script>
+(function(){
+  var VERK = 'podolang_agree', PD_AGREE_VER = '1';
+  var TERMS = '/terms.html';
 
+  /* ---- 화면 글씨 ---- */
+  var W = {
+    KO:{t:'포도랑을 쓰기 전에 확인해 주세요',
+        c1:'포도랑은 <b>AI 자동 통역</b>이며, 오역이 발생할 수 있습니다.',
+        c2:'계약 · 의료 · 법률 · 금융 · 안전에 관한 자리에서는 <b>전문 통역사</b>를 이용하겠습니다.',
+        c3:'전화 통역을 쓸 때 <b>상대방에게 알리고 동의</b>를 받겠습니다.',
+        go:'확인하고 시작', terms:'이용약관 전문 보기',
+        need:'세 가지를 모두 확인해 주세요',
+        sTalk:'AI 자동 통역 · 오역될 수 있습니다',
+        sCall:'AI 통역 · 상대방에게 미리 알려주세요',
+        more:'약관'},
+    EN:{t:'Before you use Podolang',
+        c1:'Podolang is <b>AI interpretation</b>. Mistranslations can happen.',
+        c2:'For contracts, medical, legal, financial or safety matters I will use a <b>professional interpreter</b>.',
+        c3:'For phone calls I will <b>tell the other person and get their consent</b>.',
+        go:'I understand — start', terms:'Read the full terms',
+        need:'Please check all three',
+        sTalk:'AI interpretation · errors are possible',
+        sCall:'AI interpretation · tell the other person first',
+        more:'Terms'},
+    JA:{t:'ご利用の前にご確認ください',
+        c1:'ポドランは<b>AI自動通訳</b>です。誤訳が起こることがあります。',
+        c2:'契約・医療・法律・金融・安全に関わる場面では<b>専門の通訳者</b>を利用します。',
+        c3:'電話通訳では<b>相手に伝えて同意</b>を得ます。',
+        go:'確認して開始', terms:'利用規約を読む',
+        need:'3つすべてご確認ください',
+        sTalk:'AI自動通訳 · 誤訳の可能性があります',
+        sCall:'AI通訳 · 相手に先にお伝えください',
+        more:'規約'},
+    ZH:{t:'使用前请确认',
+        c1:'葡萄郎是<b>AI自动翻译</b>，可能出现误译。',
+        c2:'涉及合同·医疗·法律·金融·安全时，我会使用<b>专业口译员</b>。',
+        c3:'电话翻译时我会<b>告知对方并取得同意</b>。',
+        go:'确认并开始', terms:'查看完整条款',
+        need:'请全部确认',
+        sTalk:'AI自动翻译 · 可能出现误译',
+        sCall:'AI翻译 · 请先告知对方',
+        more:'条款'},
+    TH:{t:'โปรดอ่านก่อนใช้งาน',
+        c1:'Podolang เป็น<b>ล่าม AI อัตโนมัติ</b> อาจแปลผิดได้',
+        c2:'เรื่องสัญญา การแพทย์ กฎหมาย การเงิน ความปลอดภัย ฉันจะใช้<b>ล่ามมืออาชีพ</b>',
+        c3:'เมื่อใช้แปลทางโทรศัพท์ ฉันจะ<b>แจ้งและขอความยินยอม</b>จากอีกฝ่าย',
+        go:'รับทราบและเริ่ม', terms:'อ่านข้อกำหนดทั้งหมด',
+        need:'กรุณายืนยันทั้งสามข้อ',
+        sTalk:'ล่าม AI · อาจแปลผิดได้',
+        sCall:'ล่าม AI · โปรดแจ้งอีกฝ่ายก่อน',
+        more:'ข้อกำหนด'},
+    VI:{t:'Vui lòng đọc trước khi dùng',
+        c1:'Podolang là <b>phiên dịch AI tự động</b>, có thể dịch sai.',
+        c2:'Với hợp đồng, y tế, pháp lý, tài chính, an toàn tôi sẽ dùng <b>phiên dịch viên chuyên nghiệp</b>.',
+        c3:'Khi gọi điện tôi sẽ <b>báo và xin phép</b> đối phương.',
+        go:'Đã hiểu — bắt đầu', terms:'Xem điều khoản đầy đủ',
+        need:'Vui lòng xác nhận cả ba',
+        sTalk:'Phiên dịch AI · có thể sai sót',
+        sCall:'Phiên dịch AI · hãy báo trước cho họ',
+        more:'Điều khoản'},
+    ES:{t:'Antes de usar Podolang',
+        c1:'Podolang es <b>interpretación con IA</b>. Puede haber errores.',
+        c2:'En contratos, salud, temas legales, financieros o de seguridad usaré un <b>intérprete profesional</b>.',
+        c3:'En llamadas <b>avisaré a la otra persona y pediré su consentimiento</b>.',
+        go:'Entendido — empezar', terms:'Ver términos completos',
+        need:'Marca las tres casillas',
+        sTalk:'Interpretación IA · puede haber errores',
+        sCall:'Interpretación IA · avisa antes a la otra persona',
+        more:'Términos'},
+    ID:{t:'Baca dulu sebelum memakai',
+        c1:'Podolang adalah <b>penerjemah AI otomatis</b>. Kesalahan bisa terjadi.',
+        c2:'Untuk kontrak, medis, hukum, keuangan, keselamatan saya akan memakai <b>penerjemah profesional</b>.',
+        c3:'Saat menelepon saya akan <b>memberi tahu dan meminta izin</b> lawan bicara.',
+        go:'Mengerti — mulai', terms:'Baca ketentuan lengkap',
+        need:'Centang ketiganya',
+        sTalk:'Penerjemah AI · bisa keliru',
+        sCall:'Penerjemah AI · beri tahu lawan bicara dulu',
+        more:'Ketentuan'}
+  };
+  function lg(){
+    var v='KO';
+    try{ v = JSON.parse(localStorage.getItem('podolang_from')) || 'KO'; }catch(e){}
+    v = String(v||'KO').toUpperCase();
+    return W[v] ? v : (W[v]||null ? v : 'EN');
+  }
+  function t(){ return W[lg()] || W.EN; }
+
+  /* ---- 이미 동의했는지 ---- */
+  function agreed(){
+    try{
+      var v = JSON.parse(localStorage.getItem(VERK) || 'null');
+      return !!(v && v.ver === PD_AGREE_VER);
+    }catch(e){ return false; }
+  }
+
+  /* ---- 항상 보이는 얇은 안내줄 ---- */
+  var strip = null;
+  function makeStrip(){
+    var app = document.getElementById('app');
+    var mainEl = document.getElementById('main');
+    if(!app || !mainEl || strip) return;
+    strip = document.createElement('div');
+    strip.id = 'pdStrip';
+    strip.style.cssText = 'flex:0 0 auto;display:flex;align-items:center;justify-content:center;' +
+      'gap:8px;margin:0 16px 10px;padding:8px 12px;border-radius:12px;' +
+      'background:#FFFBEB;border:1px solid #FDE68A;color:#B45309;' +
+      'font-size:11.5px;font-weight:800;letter-spacing:-.2px;line-height:1.4;text-align:center';
+    var txt = document.createElement('span'); txt.id = 'pdStripTxt';
+    var a = document.createElement('a');
+    a.href = TERMS; a.target = '_blank'; a.rel = 'noopener';
+    a.style.cssText = 'color:#92400E;font-weight:900;text-decoration:underline;flex:0 0 auto';
+    a.id = 'pdStripLink';
+    strip.appendChild(txt); strip.appendChild(a);
+    app.insertBefore(strip, mainEl);
+    paintStrip();
+    // 탭이 바뀌면 문구도 바뀝니다 (기존 코드를 고치지 않고 지켜봅니다)
+    try{
+      new MutationObserver(paintStrip).observe(document.body, {attributes:true, attributeFilter:['data-theme']});
+    }catch(e){}
+  }
+  function paintStrip(){
+    var x = t();
+    var call = document.body.getAttribute('data-theme') === 'call';
+    var e1 = document.getElementById('pdStripTxt');
+    var e2 = document.getElementById('pdStripLink');
+    if(e1) e1.textContent = call ? x.sCall : x.sTalk;
+    if(e2) e2.textContent = x.more;
+  }
+
+  /* ---- 첫 실행 동의 화면 ---- */
+  function gate(){
+    var x = t();
+    var wrap = document.createElement('div');
+    wrap.id = 'pdGate';
+    wrap.style.cssText = 'position:fixed;inset:0;z-index:9999;background:#F5F3FF;' +
+      'display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto;' +
+      'font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif';
+
+    var box = document.createElement('div');
+    box.style.cssText = 'background:#fff;border-radius:26px;padding:26px 22px 22px;max-width:420px;width:100%;' +
+      'box-shadow:0 20px 50px rgba(0,0,0,.14);color:#111113';
+
+    var logo = document.createElement('div');
+    logo.style.cssText = 'text-align:center;margin-bottom:14px';
+    logo.innerHTML = '<svg viewBox="0 0 120 120" width="52" height="52" xmlns="http://www.w3.org/2000/svg">' +
+      '<path d="M60 14 C 62 10, 68 8, 72 12 C 76 16, 74 24, 60 26 C 46 24, 44 16, 48 12 C 52 8, 58 10, 60 14 Z" fill="#2ECC71"/>' +
+      '<circle cx="46" cy="70" r="26" fill="#8B5CF6" stroke="#6D28D9" stroke-width="3"/>' +
+      '<circle cx="76" cy="70" r="26" fill="#A78BFA" stroke="#6D28D9" stroke-width="3"/></svg>';
+
+    var h = document.createElement('div');
+    h.style.cssText = 'font-size:19px;font-weight:900;letter-spacing:-.5px;text-align:center;' +
+      'line-height:1.4;margin-bottom:20px';
+    h.textContent = x.t;
+
+    var list = document.createElement('div');
+    [x.c1, x.c2, x.c3].forEach(function(s, i){
+      var row = document.createElement('label');
+      row.style.cssText = 'display:flex;gap:11px;align-items:flex-start;background:#F8FAFC;' +
+        'border:1.5px solid rgba(0,0,0,.07);border-radius:15px;padding:14px;margin-bottom:9px;cursor:pointer';
+      var cb = document.createElement('input');
+      cb.type = 'checkbox'; cb.className = 'pdChk';
+      cb.style.cssText = 'width:21px;height:21px;flex:0 0 auto;margin:1px 0 0;accent-color:#6D28D9';
+      var sp = document.createElement('span');
+      sp.style.cssText = 'font-size:14px;font-weight:650;line-height:1.6;letter-spacing:-.2px';
+      sp.innerHTML = s;
+      cb.addEventListener('change', function(){
+        row.style.background = cb.checked ? '#F5F3FF' : '#F8FAFC';
+        row.style.borderColor = cb.checked ? '#DDD6FE' : 'rgba(0,0,0,.07)';
+        sync();
+      });
+      row.appendChild(cb); row.appendChild(sp);
+      list.appendChild(row);
+    });
+
+    var link = document.createElement('a');
+    link.href = TERMS; link.target = '_blank'; link.rel = 'noopener';
+    link.textContent = x.terms;
+    link.style.cssText = 'display:block;text-align:center;margin:14px 0 16px;color:#6B7280;' +
+      'font-size:12.5px;font-weight:800;text-decoration:underline';
+
+    var btn = document.createElement('button');
+    btn.textContent = x.go;
+    btn.disabled = true;
+    btn.style.cssText = 'width:100%;padding:17px;border:0;border-radius:16px;color:#fff;' +
+      'background:#6D28D9;font:inherit;font-size:15.5px;font-weight:900;opacity:.35;' +
+      'box-shadow:0 8px 20px rgba(109,40,217,.25)';
+
+    var msg = document.createElement('div');
+    msg.style.cssText = 'text-align:center;font-size:12px;font-weight:700;color:#9CA3AF;margin-top:11px;min-height:16px';
+
+    function sync(){
+      var all = Array.prototype.slice.call(box.querySelectorAll('.pdChk'));
+      var ok = all.length === 3 && all.every(function(c){ return c.checked; });
+      btn.disabled = !ok;
+      btn.style.opacity = ok ? '1' : '.35';
+      msg.textContent = ok ? '' : x.need;
+    }
+
+    btn.addEventListener('click', function(){
+      if(btn.disabled) return;
+      try{
+        localStorage.setItem(VERK, JSON.stringify({
+          ver: PD_AGREE_VER, at: Date.now(),
+          when: new Date().toISOString(), lang: lg()
+        }));
+      }catch(e){}
+      wrap.parentNode && wrap.parentNode.removeChild(wrap);
+      makeStrip();
+    });
+
+    box.appendChild(logo); box.appendChild(h); box.appendChild(list);
+    box.appendChild(link); box.appendChild(btn); box.appendChild(msg);
+    wrap.appendChild(box);
+    document.body.appendChild(wrap);
+    sync();
+  }
+
+  function boot(){
+    if(agreed()) makeStrip();
+    else gate();
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+</script>
+<!-- ================= 오역 고지 블록 끝 ================= -->
 </body>
 </html>
