@@ -1088,7 +1088,8 @@ function renderCall(){
     : (licInfo && licInfo.ok
         ? `<div class="rtbadge">${esc(licLine())}</div>`
         : `<div class="note"><b>이용권이 필요합니다.</b><br>${esc(licLine())}<br>
-             아래 <b>마이</b> 탭에서 코드를 넣으세요.</div>`)}
+             ${EMBED_CALL ? '포도톡 <b>설정 → 전화통역 → 이용권</b> 에서 코드를 넣으세요.'
+                          : '아래 <b>마이</b> 탭에서 코드를 넣으세요.'}</div>`)}
 
     <button class="btn" id="callBtn" onclick="callStart()"
       ${(noSR || !(licInfo && licInfo.ok)) ? 'disabled' : ''}>통역 전화 걸기</button>
@@ -1313,11 +1314,11 @@ function openSet(){
   const nl = x => String(x).replace(/\n/g,'<br>');
   $('#card').innerHTML=`
     <h2>${esc(LT('setTitle'))}</h2>
-    <div class="fld">
+    <div class="fld" data-emb="lang">
       <label>${esc(LT('setMine'))}</label>
       <select id="setFrom">${opts(from)}</select>
     </div>
-    <div class="fld">
+    <div class="fld" data-emb="lang">
       <label>${esc(LT('setPeer'))}</label>
       <select id="setTo">${opts(to)}</select>
     </div>
@@ -1438,6 +1439,7 @@ function openPanel(){
       <button class="foldbtn" onclick="toggleClog()">${clogOpen ? LT('pFold')+' ▲' : LT('pUnfold')+' ▼'}</button>
     </div>
     ${logRows}
+    ${clog.length ? `<button class="btn ghost" onclick="clearLog()">${esc(LT('myClrLog'))}</button>` : ''}
     <div class="ver">podolang ${VER}</div>`;
   $('#sheet').classList.add('on');
   ensurePack(openPanel);
@@ -1589,8 +1591,8 @@ function openMy(){
   $('#card').innerHTML = `
     <h2>${esc(LT('myTitle'))}</h2>
 
-    <div class="seclabel">${esc(LT('myLangSet'))}</div>
-    <div class="fld">
+    <div class="seclabel" data-emb="lang">${esc(LT('myLangSet'))}</div>
+    <div class="fld" data-emb="lang">
       <label>${esc(LT('myHow'))}</label>
       <select id="myAuto" onchange="setAuto(this.value === '1')">
         <option value="1" ${langAuto?'selected':''}>${esc(LT('myAuto'))}</option>
@@ -1599,17 +1601,17 @@ function openMy(){
     </div>
 
     ${langAuto ? `
-      <div class="note">
+      <div class="note" data-emb="lang">
         ${esc(LT('myHere'))}: <b>${esc(TZ_COUNTRY[hereLang()] || '—')}</b><br>
         ${esc(LT('myMine'))} <b>${esc(langName(from))}</b> · ${esc(LT('myPeer'))} <b>${esc(langName(to))}</b><br><br>
         ${nl(LT('myAutoD'))}
       </div>`
     : `
-      <div class="fld">
+      <div class="fld" data-emb="lang">
         <label>${esc(LT('myMine'))}</label>
         <select id="myFrom" onchange="setMyLang()">${opts(from)}</select>
       </div>
-      <div class="fld">
+      <div class="fld" data-emb="lang">
         <label>${esc(LT('myPeer'))}</label>
         <select id="myTo" onchange="setMyLang()">${opts(to)}</select>
       </div>`}
@@ -1632,10 +1634,10 @@ function openMy(){
       <div class="src" style="margin:8px 0 0">${esc(T('talk'))} ${hist.length} · ${esc(T('photo'))} ${phist.length}</div>
     </div>
 
-    <div class="seclabel">${esc(LT('myClean'))}</div>
-    <button class="btn ghost" onclick="clearHist()">${esc(LT('myClrTalk'))}</button>
-    <button class="btn ghost" onclick="clearPhist()">${esc(LT('myClrPhoto'))}</button>
-    <button class="btn ghost" onclick="clearLog()">${esc(LT('myClrLog'))}</button>
+    <div class="seclabel" data-emb="clean">${esc(LT('myClean'))}</div>
+    <button class="btn ghost" data-emb="clean" onclick="clearHist()">${esc(LT('myClrTalk'))}</button>
+    <button class="btn ghost" data-emb="clean" onclick="clearPhist()">${esc(LT('myClrPhoto'))}</button>
+    <button class="btn ghost" data-emb="clean" onclick="clearLog()">${esc(LT('myClrLog'))}</button>
 
     <div class="note" style="margin-top:16px">${nl(LT('myOnPhone'))}</div>
     <div class="note">${nl(LT('myEar'))}</div>
@@ -1702,7 +1704,11 @@ if(EMBED){
     'body.embed-panel .sheet{position:static!important;display:block!important;' +
       'background:none!important;backdrop-filter:none!important;padding:0!important;inset:auto!important}' +
     'body.embed-panel .sheet .card{max-height:none!important;height:auto!important;' +
-      'overflow:visible!important;border-radius:0;box-shadow:none;margin:0}';
+      'overflow:visible!important;border-radius:0;box-shadow:none;margin:0}' +
+    /* 언어는 통역톡 화면에서 바로 고르므로 여기서는 감춘다.
+       '정리' 의 마주보고·사진 기록 지우기는 포도톡에 없는 기능이라 감춘다.
+       통화 기록 지우기는 통화기록 화면으로 옮겼다. */
+    'body.embed [data-emb="lang"],body.embed [data-emb="clean"]{display:none!important}';
   document.head.appendChild(_est);
   document.body.classList.add('embed');
   if(EMBED_PANEL) document.body.classList.add('embed-panel');
