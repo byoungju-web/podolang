@@ -1665,6 +1665,8 @@ async function checkApi(){
 /* 통역 앱은 100dvh 고정. 키보드가 올라올 때만 통역 영역 높이를 조정(전화 탭 입력용). */
 if(window.visualViewport){
   visualViewport.addEventListener('resize',()=>{
+    /* 포도톡 안에 끼워 넣은 경우엔 높이를 고정하지 않는다 (안쪽 스크롤이 생긴다) */
+    if(document.body.classList.contains('embed')) return;
     if(window.scrollY < 4){ $('#app').style.height=visualViewport.height+'px'; }
     else { $('#app').style.height='100dvh'; }
   });
@@ -1672,37 +1674,71 @@ if(window.visualViewport){
 if(langAuto) applyAuto();
 
 /* ───────── 포도톡 안에서 열릴 때 쓰는 '끼워넣기' 모드 ─────────
-   주소에 ?call 또는 ?log 가 붙으면 포도랑 자기 머리글(로고·이용방법),
-   위 탭(마주보고·사진번역·전화통역), 아래 차림표(통화기록·검색·설정·마이)를
-   감춥니다. 내용만 보이게 해서 포도톡 화면 안에 깔끔하게 들어갑니다.
-   주소에 아무것도 안 붙으면 지금까지와 100% 똑같습니다. */
-var EMBED_CALL = location.search.indexOf('call') >= 0;
-var EMBED_LOG  = location.search.indexOf('log')  >= 0;
-if(EMBED_CALL || EMBED_LOG){
+   주소 뒤에 무엇이 붙느냐로 어느 화면을 보여줄지 정합니다.
+     ?call — 전화 통역
+     ?log  — 통화기록
+     ?set  — 전화통역 설정 (말투 · 용어집)
+     ?my   — 이용권 · 저장현황 · 기록 지우기
+   이 때 포도랑 자기 머리글(로고 · 이용방법), 위 탭 3개, 아래 차림표를 감춥니다.
+   안쪽 스크롤도 없앱니다. 내용 길이만큼 늘어나고 바깥(포도톡) 화면이 스크롤합니다.
+   주소에 아무것도 안 붙으면(그냥 podolang.kr) 지금까지와 100% 똑같습니다. */
+var _eq = location.search;
+var EMBED_CALL  = _eq.indexOf('call') >= 0;
+var EMBED_PANEL = _eq.indexOf('log') >= 0 ? 'log'
+                : _eq.indexOf('set') >= 0 ? 'set'
+                : _eq.indexOf('my')  >= 0 ? 'my'  : '';
+var EMBED = EMBED_CALL || !!EMBED_PANEL;
+
+if(EMBED){
   var _est = document.createElement('style');
   _est.textContent =
+    'body.embed{background:transparent}' +
     'body.embed header,body.embed .tabs,body.embed .botnav{display:none!important}' +
-    'body.embed #app{height:100dvh}' +
-    'body.embed main{padding-top:12px}' +
-    /* 통화기록만 볼 때는 덮개를 씌우지 않고 화면 그대로 씁니다 */
-    'body.embed-log .sheet{position:static;background:none;backdrop-filter:none;padding:0}' +
-    'body.embed-log .sheet .card{max-height:none;border-radius:0;box-shadow:none}';
+    /* 안쪽 스크롤을 없앤다. 내용만큼 늘어나게 둔다 */
+    'body.embed #app{height:auto!important;min-height:0;overflow:visible}' +
+    'body.embed main{flex:none;overflow:visible;padding-top:12px}' +
+    /* 통화기록 · 설정 · 마이 는 덮개(모달) 대신 화면 그대로 씁니다 */
+    'body.embed-panel #app{display:none!important}' +
+    'body.embed-panel .sheet{position:static!important;display:block!important;' +
+      'background:none!important;backdrop-filter:none!important;padding:0!important;inset:auto!important}' +
+    'body.embed-panel .sheet .card{max-height:none!important;height:auto!important;' +
+      'overflow:visible!important;border-radius:0;box-shadow:none;margin:0}';
   document.head.appendChild(_est);
   document.body.classList.add('embed');
-  if(EMBED_LOG) document.body.classList.add('embed-log');
+  if(EMBED_PANEL) document.body.classList.add('embed-panel');
 }
 
 tab(EMBED_CALL ? 'call' : 'talk');
 
-/* ?log 로 열면 통화기록만 보여줍니다. 닫아도 빈 화면이 되지 않게 다시 엽니다. */
-if(EMBED_LOG){
-  openPanel();
+if(EMBED_PANEL){
+  var _open = EMBED_PANEL === 'set' ? openSet : EMBED_PANEL === 'my' ? openMy : openPanel;
+  _open();
+  /* 안에서 닫아도 빈 화면이 되지 않게 다시 엽니다 */
   try{
     var _sh = document.getElementById('sheet');
     new MutationObserver(function(){
-      if(!_sh.classList.contains('on')) setTimeout(openPanel, 0);
+      if(!_sh.classList.contains('on')) setTimeout(_open, 0);
     }).observe(_sh, { attributes:true, attributeFilter:['class'] });
   }catch(e){}
+}
+
+/* 내용이 얼마나 긴지 포도톡에 알려줍니다. 포도톡은 그 높이만큼 창을 늘려서
+   안쪽 스크롤 없이 전부 보이게 합니다. */
+if(EMBED){
+  var _lastH = 0;
+  function _sendH(){
+    var h = Math.max(
+      document.body.scrollHeight, document.body.offsetHeight,
+      document.documentElement.scrollHeight, document.documentElement.offsetHeight
+    );
+    if(!h || Math.abs(h - _lastH) < 4) return;
+    _lastH = h;
+    try{ parent.postMessage({ podolang:'h', h:h }, '*'); }catch(e){}
+  }
+  window.addEventListener('load', _sendH);
+  window.addEventListener('resize', _sendH);
+  setInterval(_sendH, 400);
+  setTimeout(_sendH, 60);
 }
 </script>
 </body>
