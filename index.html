@@ -580,11 +580,22 @@ function stop(){
 async function done(){
   const blob = new Blob(chunks, {type:'audio/webm'});
   if(blob.size < 1200){ $('#micLabel').textContent=T('pressSpeak'); return; }
+
+  /* 마주보고 통역도 이용권이 있어야 합니다.
+     한 번 말할 때마다 음성 인식·번역·음성 합성이 돌아가고, 그때마다 돈이
+     나갑니다. 공짜로 두면 쓰는 사람이 늘수록 손해만 커집니다. */
+  if(!(licInfo && licInfo.ok)){
+    $('#micLabel').textContent = T('pressSpeak');
+    toast('이용권이 필요합니다. 포도톡 설정 → 전화통역 → 이용권에서 코드를 넣으세요.');
+    return;
+  }
+
   busy=true; mic.disabled=true;
   const fd = new FormData();
   fd.append('audio', blob, 'audio.webm');
   fd.append('sourceLang', from);
   fd.append('targetLang', to);
+  fd.append('code', licCode || '');
   try{
     const res = await fetch(url('/api/podolang'), {method:'POST', body:fd});
     const d = await res.json();
