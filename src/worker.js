@@ -42,10 +42,63 @@ const ALLOWED = [
   'https://www.podolang.kr',
   'https://byoungju-web.github.io',
   'https://podolang.hasin7jk.workers.dev',
+  'https://podotalk.kr',
+  'https://www.podotalk.kr',
   'http://localhost:8788'
 ];
 
 // ===== Podoclone: 30개국 데이터 (clone.html 과 동일) =====
+/* ===================== 크레딧 (포도톡과 하나로) =====================
+   이 워커는 지금까지 아무나 부를 수 있었습니다. 주소만 알면 남이 우리 돈으로
+   번역하고 음성을 만들고 국제전화를 걸 수 있었다는 뜻입니다.
+   ALLOWED 로 막고 있었지만 그건 브라우저에만 걸리는 장치라
+   명령창 한 줄이면 넘어갑니다.
+
+   이제 돈이 드는 길은 전부 포도톡 크레딧을 보고 엽니다.
+
+   워커 설정에 두 가지를 넣어야 합니다 (Settings → Variables and Secrets)
+     TALK_API   (Text)   https://podotalk-api.hasin7jk.workers.dev
+     LINK_KEY   (Secret) 포도톡 워커에 넣은 것과 똑같은 글자           */
+
+const CD_PHOTO = 5;    // 사진 번역 1장
+const CD_VOICE = 1;    // 음성 통역 한 마디
+const CD_PHONE = 60;   // 전화통역 1분
+
+const talkApi = env => String(env.TALK_API || 'https://podotalk-api.hasin7jk.workers.dev')
+  .replace(/\/+$/, '');
+const uidOk = v => /^[a-zA-Z0-9_-]{6,64}$/.test(v || '');
+
+async function cdCheck(env, uid) {
+  if (!env.LINK_KEY) return { ok: false, reason: '서버 설정이 끝나지 않았습니다. (LINK_KEY)' };
+  if (!uidOk(uid)) return { ok: false, reason: '포도톡에서 열어주세요. 사용자 정보가 없습니다.' };
+  try {
+    const r = await fetch(`${talkApi(env)}/link/credits?uid=${encodeURIComponent(uid)}`, {
+      headers: { 'X-Link-Key': env.LINK_KEY }
+    });
+    const d = await r.json();
+    if (!d || !d.ok) return { ok: false, reason: '크레딧을 확인하지 못했습니다.' };
+    if ((d.balance || 0) <= 0) {
+      return { ok: false, reason: '크레딧이 없습니다. 포도톡 설정 → 크레딧에서 채워주세요.' };
+    }
+    return { ok: true, balance: d.balance };
+  } catch (_) {
+    return { ok: false, reason: '크레딧 서버에 닿지 못했습니다.' };
+  }
+}
+
+/* 먼저 깎습니다. 부르고 나서 깎으면 실패한 요청으로 얼마든지 뽑아갑니다. */
+async function cdSpend(env, uid, amount, kind) {
+  if (!env.LINK_KEY || !uid || !amount) return { ok: false, took: 0 };
+  try {
+    const r = await fetch(`${talkApi(env)}/link/credits`, {
+      method: 'POST',
+      headers: { 'X-Link-Key': env.LINK_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ uid, amount, kind: kind || 'podolang' })
+    });
+    return await r.json();
+  } catch (_) { return { ok: false, took: 0 }; }
+}
+
 const PODOCLONE_BASE_PRICE = 29.99;   // 대표 상품가 (USD)
 const PODOCLONE_PRODUCTS = 24;        // 크롤링 상품 수 → 24 × 30 = 720 번역
 const PODOCLONE_COUNTRIES = [
@@ -93,7 +146,7 @@ export default {
       // 0. 상태 확인
       if (url.pathname === '/api/health') {
         return json({
-          ok: true, app: 'podolang', version: '1.6',
+          ok: true, app: 'podolang', version: '1.7',
           gateway: OPENAI_BASE.includes('gateway.ai') ? 'ai-gateway' : 'direct',
           routes: ['/api/podolang', '/api/translate', '/api/speak', '/api/vision', '/api/clone', '/api/call/start', '/api/call/say', '/api/call/poll'],
           keys: {
@@ -221,7 +274,7 @@ export default {
       //   ② application/json    : { imageBase64, mime, sourceLang, targetLang, speak }
       if (url.pathname === '/api/vision' && request.method === 'POST') {
         const ct = (request.headers.get('Content-Type') || '').toLowerCase();
-        let dataUrl, sourceLang = 'AUTO', targetLang = 'KO', wantSpeak = false;
+        let dataUrl, sourceLang = 'AUTO', targetLang = 'KO', wantSpeak = false, vUid = '';
 
         if (ct.includes('application/json')) {
           const b = await request.json();
@@ -232,6 +285,7 @@ export default {
           if (b.sourceLang) sourceLang = String(b.sourceLang);
           if (b.targetLang) targetLang = String(b.targetLang);
           wantSpeak = b.speak === true || b.speak === '1';
+          vUid = String(b.uid || '');
         } else {
           const fd = await request.formData();
           const image = fd.get('image') || fd.get('file') || fd.get('photo');
@@ -247,7 +301,13 @@ export default {
           if (fd.get('sourceLang')) sourceLang = String(fd.get('sourceLang'));
           if (fd.get('targetLang')) targetLang = String(fd.get('targetLang'));
           wantSpeak = String(fd.get('speak') || '') === '1';
+          vUid = String(fd.get('uid') || '');
         }
+
+        // 사진 한 장에 크레딧이 듭니다. 먼저 깎고 부릅니다.
+        const vChk = await cdCheck(env, vUid);
+        if (!vChk.ok) return json({ error: vChk.reason, needCredit: true }, 402, H);
+        await cdSpend(env, vUid, CD_PHOTO, 'photo');
 
         const r = await visionRead(env, dataUrl, sourceLang, targetLang);
         if (!r.original && !r.translated) {
@@ -289,6 +349,11 @@ export default {
         const sourceLang = (fd.get('sourceLang') || 'KO').toUpperCase();
         const targetLang = (fd.get('targetLang') || 'TH').toUpperCase();
         const voiceId = fd.get('voiceId') || VOICE_DEFAULT;
+
+        const pUid = String(fd.get('uid') || '');
+        const pChk = await cdCheck(env, pUid);
+        if (!pChk.ok) return json({ error: pChk.reason, needCredit: true }, 402, H);
+        await cdSpend(env, pUid, CD_VOICE, 'voice');
 
         const original = await transcribe(env, audio, sourceLang);
         if (!original || !original.trim()) {
@@ -332,8 +397,19 @@ export default {
         if (!env.PODOLANG_KV) {
           return json({ error: '전화 통역 저장소(KV)가 연결되지 않았습니다.' }, 400, H);
         }
-        const { to, fromLang, toLang } = await request.json();
+        const callBody = await request.json();
+        const { to, fromLang, toLang } = callBody;
         if (!/^\+\d{8,15}$/.test(to || '')) return json({ error: '전화번호 형식이 맞지 않습니다.' }, 400, H);
+
+        // ⚠️ 여기가 문입니다. 이게 없으면 아무나 아무 번호로 국제전화를 겁니다.
+        const cUid = String(callBody.uid || '');
+        const cChk = await cdCheck(env, cUid);
+        if (!cChk.ok) return json({ error: cChk.reason, needCredit: true }, 402, H);
+        if (cChk.balance < CD_PHONE) {
+          return json({ error: '통화 1분치 크레딧이 필요합니다.', needCredit: true }, 402, H);
+        }
+        // 잔액만큼만 통화하게 시간을 미리 재둡니다. 이게 없으면 마이너스가 납니다.
+        const cMaxMin = Math.max(1, Math.floor(cChk.balance / CD_PHONE));
         const f = (fromLang || 'KO').toUpperCase();   // 내 언어
         const t = (toLang || 'TH').toUpperCase();     // 상대 언어
 
@@ -344,6 +420,7 @@ export default {
         form.append('Url', `${url.origin}/twiml/answer?me=${f}&peer=${t}`);
         form.append('StatusCallback', `${url.origin}/api/call/status`);
         form.append('StatusCallbackEvent', 'completed');
+        form.append('TimeLimit', String(cMaxMin * 60));   // 잔액이 다하면 저절로 끊깁니다
 
         const res = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${env.TWILIO_ACCOUNT_SID}/Calls.json`, {
           method: 'POST',
@@ -354,7 +431,7 @@ export default {
         if (d.code) return json({ error: d.message }, 400, H);
 
         await env.PODOLANG_KV.put(`call:${d.sid}`,
-          JSON.stringify({ to, me: f, peer: t, seq: 0, status: 'initiated', created: Date.now() }),
+          JSON.stringify({ to, me: f, peer: t, seq: 0, status: 'initiated', created: Date.now(), uid: cUid }),
           { expirationTtl: 60 * 60 * 6 });
         return json({ callSid: d.sid, status: d.status, message: `${to} 연결 중입니다.` }, 200, H);
       }
@@ -483,6 +560,13 @@ export default {
         const sid = fd.get('CallSid'), st = fd.get('CallStatus');
         if (env.PODOLANG_KV && sid) {
           const old = await env.PODOLANG_KV.get(`call:${sid}`, 'json') || {};
+
+          // 실제 통화 시간만큼 깎습니다. Twilio 는 분 단위라 올림합니다.
+          if (String(st) === 'completed' && old.uid) {
+            const secs = parseInt(String(fd.get('CallDuration') || '0'), 10) || 0;
+            const mins = Math.ceil(secs / 60);
+            if (mins > 0) await cdSpend(env, old.uid, mins * CD_PHONE, 'phone');
+          }
           await env.PODOLANG_KV.put(`call:${sid}`,
             JSON.stringify({ ...old, status: st, updated: Date.now() }),
             { expirationTtl: 60 * 60 * 6 });
@@ -490,7 +574,7 @@ export default {
         return new Response('OK');
       }
 
-      return new Response('🍇 PodoLang API by BJ LEE · v1.6', { headers: H });
+      return new Response('🍇 PodoLang API by BJ LEE · v1.7', { headers: H });
 
     } catch (e) {
       return json({ error: e.message || '처리 중 오류가 발생했습니다.' }, 500, H);
