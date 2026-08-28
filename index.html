@@ -586,7 +586,7 @@ async function done(){
      나갑니다. 공짜로 두면 쓰는 사람이 늘수록 손해만 커집니다. */
   if(!(licInfo && licInfo.ok)){
     $('#micLabel').textContent = T('pressSpeak');
-    toast('이용권이 필요합니다. 포도톡 설정 → 전화통역 → 이용권에서 코드를 넣으세요.');
+    toast('크레딧이 필요합니다. 포도톡 설정 → 크레딧에서 채워주세요.');
     return;
   }
 
@@ -596,6 +596,7 @@ async function done(){
   fd.append('sourceLang', from);
   fd.append('targetLang', to);
   fd.append('code', licCode || '');
+  fd.append('uid', ptUid || '');
   try{
     const res = await fetch(url('/api/podolang'), {method:'POST', body:fd});
     const d = await res.json();
@@ -877,6 +878,16 @@ let gloss = load(K.gloss, '');      // 용어집 — 흔들리면 안 되는 말
 let tone  = load(K.tone, 'normal'); // 말투
 let licCode = load(K.lic, '');
 let licInfo = null;
+/* 포도톡에서 열릴 때 주소에 uid 가 함께 옵니다. 그 번호로 포도톡 크레딧을
+   확인하고 깎습니다. 이용권을 따로 사지 않아도 되게 하려고 붙였습니다.
+   한 번 받으면 저장해 두어, 새로고침해도 잃지 않습니다. */
+let ptUid = '';
+try {
+  const _u = new URLSearchParams(location.search).get('uid') || '';
+  if (_u) { ptUid = _u; localStorage.setItem('podolang_pt_uid', _u); }
+  else ptUid = localStorage.getItem('podolang_pt_uid') || '';
+} catch (e) {}
+
 let devId = load(K.dev, '');
 if(!devId){
   devId = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()+Math.random())).slice(0,18);
@@ -1016,7 +1027,7 @@ async function sendVoice(blob, type){
   if(!blob || blob.size < 4000) return;                 // 너무 짧으면 잡음
   if(!rt || !rt.active || rt.muted) return;
   if(sayBusy) return;                                    // 읽어주는 중이면 보내지 않습니다
-  if(!licCode){ return; }
+  if(!licCode && !ptUid){ return; }
   if(sttBusy) return;                                    // 겹치지 않게
   sttBusy = true;
   setStatus('알아듣는 중…');
@@ -1026,6 +1037,7 @@ async function sendVoice(blob, type){
     fd.append('audio', blob, 'voice.' + ext);
     fd.append('lang', String(rt.me || 'ko').toLowerCase());
     fd.append('code', licCode);
+    fd.append('uid', ptUid || '');
     const r = await fetch(RT_API + '/api/stt', { method:'POST', body: fd });
     const d = await r.json();
     if(d.error) throw new Error(d.error);
@@ -1099,7 +1111,7 @@ function renderCall(){
     : (licInfo && licInfo.ok
         ? `<div class="rtbadge">${esc(licLine())}</div>`
         : `<div class="note"><b>이용권이 필요합니다.</b><br>${esc(licLine())}<br>
-             ${EMBED_CALL ? '포도톡 <b>설정 → 전화통역 → 이용권</b> 에서 코드를 넣으세요.'
+             ${EMBED_CALL ? '포도톡 <b>설정 → 크레딧</b> 에서 채워주세요.'
                           : '아래 <b>마이</b> 탭에서 코드를 넣으세요.'}</div>`)}
 
     <button class="btn" id="callBtn" onclick="callStart()"
@@ -1184,7 +1196,7 @@ async function callStart(){
   try{
     const res = await fetch(RT_API + '/api/rt/start', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ to:num, myLang:me, peerLang:peer, code:licCode, device:devId,
+      body: JSON.stringify({ to:num, myLang:me, peerLang:peer, code:licCode, device:devId, uid:ptUid,
                              glossary: gloss, tone })
     });
     d = await res.json();
@@ -1381,11 +1393,11 @@ try{
 }catch(e){}
 /* ---------- 이용권 ---------- */
 async function licCheck(quiet){
-  if(!licCode){ licInfo = null; return null; }
+  if(!licCode && !ptUid){ licInfo = null; return null; }
   try{
     const r = await fetch(RT_API + '/api/lic/check', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ code: licCode, device: devId })
+      body: JSON.stringify({ code: licCode, device: devId, uid: ptUid })
     });
     licInfo = await r.json();
   }catch(e){ licInfo = { ok:false, reason:'서버에 연결하지 못했습니다.' }; }
@@ -1627,17 +1639,17 @@ function openMy(){
         <select id="myTo" onchange="setMyLang()">${opts(to)}</select>
       </div>`}
 
-    <div class="seclabel">${esc(LT('myLic'))}</div>
-    <div class="fld">
+    <div class="seclabel" data-emb="lic">${esc(LT('myLic'))}</div>
+    <div class="fld" data-emb="lic">
       <label>${esc(LT('myLicCode'))}</label>
       <input id="licBox" type="text" placeholder="PODO-XXXX-XXXX"
         autocomplete="off" autocorrect="off" spellcheck="false"
         style="letter-spacing:.08em;font-weight:800" value="${esc(licCode)}">
     </div>
     <div class="${licInfo && licInfo.ok ? 'rtbadge' : 'note'}">${esc(licLine())}</div>
-    <button class="btn" onclick="saveLic()">${esc(LT('myLicCheck'))}</button>
-    ${licCode ? `<button class="btn ghost" onclick="clearLic()">${esc(LT('myLicDel'))}</button>` : ''}
-    <div class="note" style="margin-top:11px">${esc(LT('myLicD'))}</div>
+    <button class="btn" data-emb="lic" onclick="saveLic()">${esc(LT('myLicCheck'))}</button>
+    ${licCode ? `<button class="btn ghost" data-emb="lic" onclick="clearLic()">${esc(LT('myLicDel'))}</button>` : ''}
+    <div class="note" data-emb="lic" style="margin-top:11px">${esc(LT('myLicD'))}</div>
 
     <div class="seclabel">${esc(LT('myStore'))}</div>
     <div class="turn">
@@ -1719,7 +1731,9 @@ if(EMBED){
     /* 언어는 통역톡 화면에서 바로 고르므로 여기서는 감춘다.
        '정리' 의 마주보고·사진 기록 지우기는 포도톡에 없는 기능이라 감춘다.
        통화 기록 지우기는 통화기록 화면으로 옮겼다. */
-    'body.embed [data-emb="lang"],body.embed [data-emb="clean"]{display:none!important}';
+    'body.embed [data-emb="lang"],body.embed [data-emb="clean"]{display:none!important}' +
+    /* 이용권은 포도톡 크레딧으로 합쳤습니다. 코드 칸을 감춥니다. */
+    'body.embed [data-emb="lic"]{display:none!important}';
   document.head.appendChild(_est);
   document.body.classList.add('embed');
   if(EMBED_PANEL) document.body.classList.add('embed-panel');
