@@ -63,16 +63,31 @@ const ALLOWED = [
 const CD_PHOTO = 5;    // 사진 번역 1장
 const CD_VOICE = 1;    // 음성 통역 한 마디
 const CD_PHONE = 60;   // 전화통역 1분
+const CD_SPEAK = 1;    // 서버 읽어주기 한 번 (폰이 직접 읽으면 공짜)
+const SPEAK_MAX = 500; // 한 번에 읽어줄 글자 수. 긴 글로 요금이 튀는 걸 막는다
 
 const talkApi = env => String(env.TALK_API || 'https://podotalk-api.hasin7jk.workers.dev')
   .replace(/\/+$/, '');
 const uidOk = v => /^[a-zA-Z0-9_-]{6,64}$/.test(v || '');
 
+/* 같은 계정의 워커를 workers.dev 주소로 부르면 Cloudflare 가 막습니다
+   (error code 1042). 그래서 Service Binding(TALK) 으로 직접 부릅니다.
+   wrangler.toml 에 이미 적혀 있습니다.
+     [[services]]
+     binding = "TALK"
+     service = "podotalk-api"
+   연결이 없으면 예전처럼 주소로 부릅니다. */
+async function talkFetch(env, path, init) {
+  const req = new Request(talkApi(env) + path, init);
+  if (env.TALK && typeof env.TALK.fetch === 'function') return await env.TALK.fetch(req);
+  return await fetch(req);
+}
+
 async function cdCheck(env, uid) {
   if (!env.LINK_KEY) return { ok: false, reason: '서버 설정이 끝나지 않았습니다. (LINK_KEY)' };
   if (!uidOk(uid)) return { ok: false, reason: '포도톡에서 열어주세요. 사용자 정보가 없습니다.' };
   try {
-    const r = await fetch(`${talkApi(env)}/link/credits?uid=${encodeURIComponent(uid)}`, {
+    const r = await talkFetch(env, `/link/credits?uid=${encodeURIComponent(uid)}`, {
       headers: { 'X-Link-Key': env.LINK_KEY }
     });
     const d = await r.json();
@@ -90,7 +105,7 @@ async function cdCheck(env, uid) {
 async function cdSpend(env, uid, amount, kind) {
   if (!env.LINK_KEY || !uid || !amount) return { ok: false, took: 0 };
   try {
-    const r = await fetch(`${talkApi(env)}/link/credits`, {
+    const r = await talkFetch(env, `/link/credits`, {
       method: 'POST',
       headers: { 'X-Link-Key': env.LINK_KEY, 'Content-Type': 'application/json' },
       body: JSON.stringify({ uid, amount, kind: kind || 'podolang' })
@@ -146,7 +161,7 @@ export default {
       // 0. 상태 확인
       if (url.pathname === '/api/health') {
         return json({
-          ok: true, app: 'podolang', version: '1.7',
+          ok: true, app: 'podolang', version: '1.8',
           gateway: OPENAI_BASE.includes('gateway.ai') ? 'ai-gateway' : 'direct',
           routes: ['/api/podolang', '/api/translate', '/api/speak', '/api/vision', '/api/clone', '/api/call/start', '/api/call/say', '/api/call/poll'],
           keys: {
@@ -261,9 +276,19 @@ export default {
       }
 
       // 3. 텍스트 -> 음성
+      //  폰이 직접 못 읽을 때만 씁니다. ElevenLabs 는 글자 수만큼 돈이 나가므로
+      //  먼저 깎고 부릅니다. 부르고 나서 깎으면 실패한 요청으로 얼마든지 뽑아갑니다.
       if (url.pathname === '/api/speak' && request.method === 'POST') {
-        const { text, voiceId, lang } = await request.json();
-        const r = await speak(env, text, voiceId, lang || 'EN');
+        const sb = await request.json();
+        const sText = String(sb.text || '').slice(0, SPEAK_MAX);
+        if (!sText.trim()) return json({ error: '읽을 내용이 없습니다.' }, 400, H);
+
+        const sUid = String(sb.uid || '');
+        const sChk = await cdCheck(env, sUid);
+        if (!sChk.ok) return json({ error: sChk.reason, needCredit: true }, 402, H);
+        await cdSpend(env, sUid, CD_SPEAK, 'speak');
+
+        const r = await speak(env, sText, sb.voiceId, sb.lang || 'EN');
         return new Response(r.audio, { headers: { 'Content-Type': 'audio/mpeg', ...H } });
       }
 
@@ -574,7 +599,10 @@ export default {
         return new Response('OK');
       }
 
-      return new Response('🍇 PodoLang API by BJ LEE · v1.7', { headers: H });
+      /* 없는 주소는 404 로 돌려준다. 200 으로 글자를 돌려주면 앱이 성공으로
+         알아듣고, 그 글자를 소리나 데이터인 줄 알고 쓰려다 엉뚱한 데서 깨진다. */
+      return json({ ok: false, error: '없는 경로입니다: ' + url.pathname,
+                    app: 'podolang', version: '1.8' }, 404, H);
 
     } catch (e) {
       return json({ error: e.message || '처리 중 오류가 발생했습니다.' }, 500, H);
