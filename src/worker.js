@@ -146,7 +146,7 @@ export default {
       // 0. 상태 확인
       if (url.pathname === '/api/health') {
         return json({
-          ok: true, app: 'podolang', version: '1.7',
+          ok: true, app: 'podolang', version: '1.8',
           gateway: OPENAI_BASE.includes('gateway.ai') ? 'ai-gateway' : 'direct',
           routes: ['/api/podolang', '/api/translate', '/api/speak', '/api/vision', '/api/clone', '/api/call/start', '/api/call/say', '/api/call/poll'],
           keys: {
@@ -262,8 +262,23 @@ export default {
 
       // 3. 텍스트 -> 음성
       if (url.pathname === '/api/speak' && request.method === 'POST') {
-        const { text, voiceId, lang } = await request.json();
-        const r = await speak(env, text, voiceId, lang || 'EN');
+        const sb = await request.json();
+        const { text, voiceId, lang } = sb;
+
+        // ⚠️ 여기가 문입니다. 이게 없으면 주소를 아는 사람이
+        //    우리 ElevenLabs 로 공짜 음성을 무한정 뽑아갑니다.
+        const sUid = String(sb.uid || '');
+        const sChk = await cdCheck(env, sUid);
+        if (!sChk.ok) return json({ error: sChk.reason, needCredit: true }, 402, H);
+
+        // 너무 긴 글은 값이 많이 듭니다. 한 마디 분량으로 끊습니다.
+        const say = String(text || '').slice(0, 500);
+        if (!say.trim()) return json({ error: '읽을 글이 없습니다.' }, 400, H);
+
+        // 먼저 깎고 부릅니다. 부르고 나서 깎으면 실패한 요청으로 뽑아갑니다.
+        await cdSpend(env, sUid, CD_VOICE, 'speak');
+
+        const r = await speak(env, say, voiceId, lang || 'EN');
         return new Response(r.audio, { headers: { 'Content-Type': 'audio/mpeg', ...H } });
       }
 
@@ -574,7 +589,7 @@ export default {
         return new Response('OK');
       }
 
-      return new Response('🍇 PodoLang API by BJ LEE · v1.7', { headers: H });
+      return new Response('🍇 PodoLang API by BJ LEE · v1.8', { headers: H });
 
     } catch (e) {
       return json({ error: e.message || '처리 중 오류가 발생했습니다.' }, 500, H);
