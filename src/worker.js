@@ -81,8 +81,10 @@ async function cdCheck(env, uid) {
       return { ok: false, reason: '크레딧이 없습니다. 포도톡 설정 → 크레딧에서 채워주세요.' };
     }
     return { ok: true, balance: d.balance };
-  } catch (_) {
-    return { ok: false, reason: '크레딧 서버에 닿지 못했습니다.' };
+  } catch (e) {
+    /* 왜 못 갔는지 그대로 알려줍니다. 예전에는 "닿지 못했습니다" 한 마디뿐이라
+       열쇠 문제인지 주소 문제인지 구분할 수가 없었습니다. */
+    return { ok: false, reason: '크레딧 서버에 닿지 못했습니다: ' + ((e && e.message) || e) };
   }
 }
 
@@ -146,7 +148,7 @@ export default {
       // 0. 상태 확인
       if (url.pathname === '/api/health') {
         return json({
-          ok: true, app: 'podolang', version: '1.9',
+          ok: true, app: 'podolang', version: '2.0',
           gateway: OPENAI_BASE.includes('gateway.ai') ? 'ai-gateway' : 'direct',
           routes: ['/api/podolang', '/api/translate', '/api/speak', '/api/vision', '/api/clone', '/api/call/start', '/api/call/say', '/api/call/poll'],
           keys: {
@@ -240,6 +242,23 @@ export default {
       }
 
       // 0-4. 사진 번역 진단 (브라우저 주소창으로 확인용)
+      /* 크레딧 연결 진단. 포도톡을 실제로 불러보고 받은 답을 그대로 보여줍니다.
+         podolang.hasin7jk.workers.dev/api/link/test?uid=(내 번호) */
+      if (url.pathname === '/api/link/test') {
+        const uid = url.searchParams.get('uid') || 'test123456';
+        const out = { talkApi: talkApi(env), hasKey: !!env.LINK_KEY, uid };
+        try {
+          const r = await fetch(`${talkApi(env)}/link/credits?uid=${encodeURIComponent(uid)}`, {
+            headers: { 'X-Link-Key': env.LINK_KEY || '' }
+          });
+          out.status = r.status;
+          out.body = (await r.text()).slice(0, 400);
+        } catch (e) {
+          out.fetchError = (e && e.message) || String(e);
+        }
+        return json(out, 200, H);
+      }
+
       if (url.pathname === '/api/vision/test') {
         return json({
           ok: true,
@@ -593,7 +612,7 @@ export default {
         return new Response('OK');
       }
 
-      return new Response('🍇 PodoLang API by BJ LEE · v1.9', { headers: H });
+      return new Response('🍇 PodoLang API by BJ LEE · v2.0', { headers: H });
 
     } catch (e) {
       return json({ error: e.message || '처리 중 오류가 발생했습니다.' }, 500, H);
