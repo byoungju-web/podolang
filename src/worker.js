@@ -146,7 +146,7 @@ export default {
       // 0. 상태 확인
       if (url.pathname === '/api/health') {
         return json({
-          ok: true, app: 'podolang', version: '1.8',
+          ok: true, app: 'podolang', version: '1.9',
           gateway: OPENAI_BASE.includes('gateway.ai') ? 'ai-gateway' : 'direct',
           routes: ['/api/podolang', '/api/translate', '/api/speak', '/api/vision', '/api/clone', '/api/call/start', '/api/call/say', '/api/call/poll'],
           keys: {
@@ -154,7 +154,11 @@ export default {
             deepl: !!env.DEEPL_API_KEY,
             elevenlabs: !!env.ELEVENLABS_API_KEY,
             twilio: !!(env.TWILIO_ACCOUNT_SID && env.TWILIO_PHONE_NUMBER),
-            kv: !!env.PODOLANG_KV
+            kv: !!env.PODOLANG_KV,
+            /* 크레딧 연결이 되어 있는지 눈으로 보려고 넣었습니다.
+               linkKey 가 false 면 워커가 LINK_KEY 를 못 보고 있다는 뜻입니다. */
+            linkKey: !!env.LINK_KEY,
+            talkApi: String(env.TALK_API || '(없음)')
           }
         }, 200, H);
       }
@@ -589,7 +593,7 @@ export default {
         return new Response('OK');
       }
 
-      return new Response('🍇 PodoLang API by BJ LEE · v1.8', { headers: H });
+      return new Response('🍇 PodoLang API by BJ LEE · v1.9', { headers: H });
 
     } catch (e) {
       return json({ error: e.message || '처리 중 오류가 발생했습니다.' }, 500, H);
