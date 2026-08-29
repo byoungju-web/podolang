@@ -37,13 +37,17 @@ const VISION_MAX_BYTES = 8 * 1024 * 1024;   // 8MB
 const V2_LANGS = ['EN','JA','ZH','DE','HI','FR','KO','PT','IT','ES','ID','NL','TR',
                   'FIL','PL','SV','BG','RO','AR','CS','EL','FI','HR','MS','SK','DA','TA','UK','RU'];
 
+/* 브라우저에서 이 워커를 부를 수 있는 곳만 남깁니다.
+   뺀 것 : byoungju-web.github.io (옛 시험용), podolang.hasin7jk.workers.dev (워커 자기 주소)
+   남긴 것 : podolang.kr 은 반드시 있어야 합니다. 포도톡의 전화통역 칸이
+             이 주소의 화면을 창 안에 그대로 불러오기 때문입니다. 빼면 전화통역이 멎습니다.
+   ⚠️ 이건 브라우저에만 걸리는 장치입니다. 명령창으로 부르면 그냥 넘어갑니다.
+      실제로 돈을 지키는 것은 아래 크레딧 문입니다. */
 const ALLOWED = [
-  'https://podolang.kr',
-  'https://www.podolang.kr',
-  'https://byoungju-web.github.io',
-  'https://podolang.hasin7jk.workers.dev',
   'https://podotalk.kr',
   'https://www.podotalk.kr',
+  'https://podolang.kr',
+  'https://www.podolang.kr',
   'http://localhost:8788'
 ];
 
@@ -64,6 +68,7 @@ const CD_PHOTO = 5;    // 사진 번역 1장
 const CD_VOICE = 1;    // 음성 통역 한 마디
 const CD_PHONE = 60;   // 전화통역 1분
 const CD_SPEAK = 1;    // 서버 읽어주기 한 번 (폰이 직접 읽으면 공짜)
+const CD_TR    = 1;    // GPT·DeepL 번역 한 줄
 const SPEAK_MAX = 500; // 한 번에 읽어줄 글자 수. 긴 글로 요금이 튀는 걸 막는다
 
 const talkApi = env => String(env.TALK_API || 'https://podotalk-api.hasin7jk.workers.dev')
@@ -161,7 +166,7 @@ export default {
       // 0. 상태 확인
       if (url.pathname === '/api/health') {
         return json({
-          ok: true, app: 'podolang', version: '1.8',
+          ok: true, app: 'podolang', version: '1.9',
           gateway: OPENAI_BASE.includes('gateway.ai') ? 'ai-gateway' : 'direct',
           routes: ['/api/podolang', '/api/translate', '/api/speak', '/api/vision', '/api/clone', '/api/call/start', '/api/call/say', '/api/call/poll'],
           keys: {
@@ -269,8 +274,20 @@ export default {
       }
 
       // 2. 번역
+      //  GPT·DeepL 은 부를 때마다 돈이 나갑니다. 지금까지 이 길만 문이 없어서
+      //  주소만 알면 누구나 우리 돈으로 번역할 수 있었습니다.
+      //  크레딧이 없으면 402 를 돌려줍니다. 그러면 앱이 스스로 무료 번역기로
+      //  넘어가므로 번역이 멎지는 않습니다. 품질만 낮아집니다.
       if (url.pathname === '/api/translate' && request.method === 'POST') {
-        const { text, targetLang, sourceLang } = await request.json();
+        const tb = await request.json();
+        const { text, targetLang, sourceLang } = tb;
+        if (!String(text || '').trim()) return json({ error: '번역할 내용이 없습니다.' }, 400, H);
+
+        const tUid = String(tb.uid || '');
+        const tChk = await cdCheck(env, tUid);
+        if (!tChk.ok) return json({ error: tChk.reason, needCredit: true }, 402, H);
+        await cdSpend(env, tUid, CD_TR, 'tr');
+
         const r = await translate(env, text, sourceLang, targetLang);
         return json({ translated: r.translated, engine: r.engine }, 200, H);
       }
@@ -602,7 +619,7 @@ export default {
       /* 없는 주소는 404 로 돌려준다. 200 으로 글자를 돌려주면 앱이 성공으로
          알아듣고, 그 글자를 소리나 데이터인 줄 알고 쓰려다 엉뚱한 데서 깨진다. */
       return json({ ok: false, error: '없는 경로입니다: ' + url.pathname,
-                    app: 'podolang', version: '1.8' }, 404, H);
+                    app: 'podolang', version: '1.9' }, 404, H);
 
     } catch (e) {
       return json({ error: e.message || '처리 중 오류가 발생했습니다.' }, 500, H);
