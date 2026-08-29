@@ -22,5 +22,7 @@ TALK_API = "https://podotalk-api.hasin7jk.workers.dev"
 [[kv_namespaces]]
 binding = "PODOLANG_KV"
 id = "476d9f97ec1b45aa956dc2b36e0a003a"
-
+[[services]]
+binding = "TALK"
+service = "podotalk-api"
 
