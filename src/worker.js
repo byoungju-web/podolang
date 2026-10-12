@@ -64,11 +64,12 @@ const ALLOWED = [
      TALK_API   (Text)   https://podotalk-api.hasin7jk.workers.dev
      LINK_KEY   (Secret) 포도톡 워커에 넣은 것과 똑같은 글자           */
 
-const CD_PHOTO = 5;    // 사진 번역 1장
-const CD_VOICE = 1;    // 음성 통역 한 마디
-const CD_PHONE = 60;   // 전화통역 1분
-const CD_SPEAK = 1;    // 서버 읽어주기 한 번 (폰이 직접 읽으면 공짜)
-const CD_TR    = 1;    // GPT·DeepL 번역 한 줄
+/* 1:1 (포도톡 크레딧 = coverfo 크레딧, 1 = 99원) */
+const CD_PHOTO = 0.5;  // 사진 번역 1장
+const CD_VOICE = 0.1;  // 음성 통역 한 마디
+const CD_PHONE = 6;    // 전화통역 1분
+const CD_SPEAK = 0.1;  // 서버 읽어주기 한 번 (폰이 직접 읽으면 공짜)
+const CD_TR    = 0.1;  // GPT·DeepL 번역 한 줄
 const SPEAK_MAX = 500; // 한 번에 읽어줄 글자 수. 긴 글로 요금이 튀는 걸 막는다
 
 const talkApi = env => String(env.TALK_API || 'https://podotalk-api.hasin7jk.workers.dev')
