@@ -79,8 +79,8 @@ main{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 16
 /* 상대 말 — 탭 색 */
 .turn.you{background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;border:0;
   box-shadow:0 8px 20px rgba(0,0,0,0.18)}
-body[data-theme="talk"] .turn.you{background:#FCE7F3;color:#9D174D;
-  border:1px solid #FBCFE8;box-shadow:none}
+body[data-theme="talk"] .turn.you{background:#E0E7FF;color:#3730A3;
+  border:1px solid #C7D2FE;box-shadow:none}
 /* 사진 번역 결과는 흰 바탕에 검정 글씨로 읽습니다 — 서류라 또렷해야 합니다 */
 body[data-theme="photo"] .turn.you{background:#fff;color:#111113;
   border:2px solid #10d6df;box-shadow:0 4px 14px rgba(16,214,223,0.16)}
@@ -217,7 +217,7 @@ footer{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:10px 18px 
   box-shadow:0 8px 20px rgba(0,0,0,0.18);transform:translateY(-2px)}
 .botnav button.on .dot{background:#fff}
 /* v9.3 아래 5탭 — 탭마다 제 색 (검정 대신). 안 고른 탭은 글씨·점이 그 색, 고른 탭은 그 색으로 채움 */
-#nvTalk{--nc:#6D28D9;--nb:#F5F3FF} #nvFace{--nc:#BE185D;--nb:#FDF2F8} #nvCall{--nc:#1D4ED8;--nb:#EFF6FF}
+#nvTalk{--nc:#6D28D9;--nb:#F5F3FF} #nvFace{--nc:#4338CA;--nb:#EEF2FF} #nvCall{--nc:#1D4ED8;--nb:#EFF6FF}
 #nvPhoto{--nc:#0E7490;--nb:#ECFEFF} #nvMy{--nc:#C2410C;--nb:#FFF7ED}
 body[data-theme="multi"] #nvTalk{--nc:#047857;--nb:#ECFDF5}
 .botnav button{color:var(--nc);background:var(--nb);border-color:transparent}
@@ -308,6 +308,11 @@ button.myrow:active,a.myrow:active{background:#F8FAFC}
 .bizinfo dt{color:var(--sub);font-weight:800;white-space:nowrap}
 .bizinfo dd{margin:0;color:var(--fg);font-weight:700;word-break:keep-all}
 .bizinfo a{color:inherit}
+/* v9.3 마이 제목 — 크고 진하게, 왼쪽에 색 아이콘 칸 */
+.card .seclabel[data-ic]{font-size:16.5px;font-weight:900;letter-spacing:-.4px;color:var(--fg);margin:28px 2px 12px;gap:10px}
+.card .seclabel[data-ic]::before{content:attr(data-ic);width:32px;height:32px;flex:0 0 auto;border-radius:10px;display:grid;place-items:center;
+  font-size:16px;background:var(--csoft);box-shadow:inset 0 0 0 1.5px var(--c1)}
+.card .seclabel[data-ic]::after{height:2px;border-radius:2px;background:linear-gradient(90deg,var(--c1),transparent);opacity:.35}
 /* v9.3 다중 동시통역 — 최대 인원 고르기 */
 .capwrap{display:flex;align-items:center;gap:10px}
 .fld .capwrap input{width:110px;flex:0 0 auto;text-align:center;font-size:18px;font-weight:900}
@@ -589,7 +594,7 @@ function T(k){ const r = I18N[k]; if(!r) return k; return r[uiLang()] || r.EN ||
 const THEME = {
   one  : { c1:'#6D28D9', c2:'#6D28D9', bg:'#F5F3FF', soft:'#EDE9FE' },
   multi: { c1:'#047857', c2:'#047857', bg:'#ECFDF5', soft:'#D1FAE5' },   // v9.3 다중 동시통역 = 초록
-  talk : { c1:'#BE185D', c2:'#BE185D', bg:'#FDF2F8', soft:'#FCE7F3' },   // v9.3 마주보고 = 장미색
+  talk : { c1:'#4338CA', c2:'#4338CA', bg:'#EEF2FF', soft:'#E0E7FF' },   // v9.3 마주보고 = 남색(인디고)
   photo: { c1:'#10d6df', c2:'#10d6df', bg:'#ECFEFF', soft:'#CFFAFE' },
   call : { c1:'#1D4ED8', c2:'#1D4ED8', bg:'#EFF6FF', soft:'#DBEAFE' }
 };
@@ -1780,7 +1785,7 @@ function openMy(){
   $('#card').innerHTML = `
     <h2>${esc(LT('myTitle'))}</h2>
 
-    <div class="seclabel" data-emb="lang">${esc(LT('myLangSet'))}</div>
+    <div class="seclabel" data-ic="🌐" data-emb="lang">${esc(LT('myLangSet'))}</div>
     <div class="fld" data-emb="lang">
       <label>${esc(LT('myHow'))}</label>
       <select id="myAuto" onchange="setAuto(this.value === '1')">
@@ -1805,10 +1810,10 @@ function openMy(){
         <select id="myTo" onchange="setMyLang()">${opts(to)}</select>
       </div>`}
 
-    <div class="seclabel" data-emb="pl">${esc(LT('plAcc'))}</div>
+    <div class="seclabel" data-ic="👤" data-emb="pl">${esc(LT('plAcc'))}</div>
     <div id="plBox" data-emb="pl">${plBoxHtml()}</div>
 
-    <div class="seclabel" data-emb="log">${esc(LT('myMore'))}</div>
+    <div class="seclabel" data-ic="📂" data-emb="log">${esc(LT('myMore'))}</div>
     <div class="mylist" data-emb="log">
       ${myRow('📞', T('navLog'), 'openPanel()', `${esc(LT('pTel'))} ${tels.length} · ${esc(LT('pLog'))} ${clog.length}`)}
       ${myRow('🔎', T('navSearch'), 'openSearch()')}
@@ -1820,7 +1825,7 @@ function openMy(){
       <input id="licBox" type="hidden" value="${esc(licCode)}">
     </div>
 
-    <div class="seclabel">${esc(LT('myStore'))}</div>
+    <div class="seclabel" data-ic="📊">${esc(LT('myStore'))}</div>
     <div class="mylist">
       ${myRow('☎️', LT('pTel'), '', String(tels.length))}
       ${myRow('🧾', LT('pLog'), '', String(clog.length))}
@@ -1828,7 +1833,7 @@ function openMy(){
       ${myRow('📷', T('photo'), '', String(phist.length))}
     </div>
 
-    <div class="seclabel" data-emb="clean">${esc(LT('myClean'))}</div>
+    <div class="seclabel" data-ic="🧹" data-emb="clean">${esc(LT('myClean'))}</div>
     <div class="mylist" data-emb="clean">
       ${myRow('🗑️', LT('myClrTalk'), 'clearHist()')}
       ${myRow('🗑️', LT('myClrPhoto'), 'clearPhist()')}
@@ -1836,17 +1841,19 @@ function openMy(){
     </div>
 
     <div id="pdLegal">
-      <div class="seclabel">${esc(LT('myLegal'))}</div>
+      <div class="seclabel" data-ic="📜">${esc(LT('myLegal'))}</div>
       <div class="mylist">
         ${myLink('📄', LT('myTerms'), '/terms.html')}
         ${myLink('🔒', LT('myPriv'), '/privacy.html')}
       </div>
     </div>
 
+    <div id="plAccBox" data-emb="pl">${plAccHtml()}</div>
+
     <div class="note" style="margin-top:16px">${nl(LT('myOnPhone'))}</div>
     <div class="note">${nl(LT('myEar'))}</div>
 
-    <div class="seclabel">${esc(LT('myBiz'))}</div>
+    <div class="seclabel" data-ic="🏢">${esc(LT('myBiz'))}</div>
     <div class="bizinfo">${BIZ_HTML}</div>
     <div class="ver">podolang ${VER}</div>`;
   $('#sheet').classList.add('on');
@@ -1934,8 +1941,7 @@ async function plOnGoogle(resp){
   }catch(e){ toast(e.message); }
 }
 function plBoxHtml(){
-  if(!plTok) return `<div class="note">${LT('plLoginD')}</div><div class="gbtn" id="gbtnMy"></div>
-    <div class="mylist">${myRow('🚪', LT('plDel'), 'plDelete()', '', 'danger')}</div>`;
+  if(!plTok) return `<div class="note">${LT('plLoginD')}</div><div class="gbtn" id="gbtnMy"></div>`;
   const me = plMe;
   const cfg = plCfg && plCfg.ok ? plCfg : null;
   const prods = cfg ? (cfg.products || []) : [];
@@ -1948,16 +1954,20 @@ function plBoxHtml(){
         <div style="font-size:12px;color:var(--sub);font-weight:700">${esc(LT('plPriceD'))}</div>
       </div>
     </div>
-    <div class="seclabel">${esc(LT('plBuy'))}</div>
+    <div class="seclabel" data-ic="💳">${esc(LT('plBuy'))}</div>
     ${PLAY.on ? `<div class="plbuy">${prods.map(p => `<button onclick="plBuy('${esc(p.id)}')">${esc(String(p.credits))} ${esc(LT('plCr'))}<span>${esc(PLAY.price[p.id] || ('₩' + Number(p.amount).toLocaleString('ko-KR')))}</span></button>`).join('') || `<div class="note">…</div>`}</div>
        <div class="note" style="font-size:12px">${esc(LT('plPlayD'))}</div>`
     : `<div class="note">${LT('plAppOnly')}</div>
        ${cfg && cfg.pkg ? `<a class="btn" style="display:block;text-align:center;text-decoration:none;margin-bottom:10px" href="https://play.google.com/store/apps/details?id=${encodeURIComponent(cfg.pkg)}" target="_blank" rel="noopener">📲 ${esc(LT('plGetApp'))}</a>` : ''}`}
-    <div class="seclabel">${esc(LT('plOrders'))}</div>
+    <div class="seclabel" data-ic="🧾">${esc(LT('plOrders'))}</div>
     ${plOrders ? (plOrders.length ? plOrders.map(o => `<div class="note" style="padding:11px 14px">+${esc(String(o.credits))} · ₩${Number(o.amount).toLocaleString('ko-KR')} · ${esc(o.method || '')} · ${new Date(o.at).toLocaleDateString()}</div>`).join('') : `<div class="note">${esc(LT('plNoOrders'))}</div>`) : `<div class="note">…</div>`}
-    <div class="seclabel">${esc(LT('plAccMng'))}</div>
+`;
+}
+/* v9.3 계정 관리 — 약관 및 정책 아래 (로그인 안 했으면 탈퇴 줄만) */
+function plAccHtml(){
+  return `<div class="seclabel" data-ic="🔐">${esc(LT('plAccMng'))}</div>
     <div class="mylist">
-      ${myRow('↪️', LT('plLogout'), 'plLogout()')}
+      ${plTok ? myRow('↪️', LT('plLogout'), 'plLogout()') : ''}
       ${myRow('🚪', LT('plDel'), 'plDelete()', '', 'danger')}
     </div>`;
 }
@@ -1976,6 +1986,7 @@ async function plMyFill(){
   }catch(e){ if(!e.login) toast(e.message); }
   const b2 = document.getElementById('plBox'); if(!b2) return;
   b2.innerHTML = plBoxHtml();
+  const ab = document.getElementById('plAccBox'); if(ab) ab.innerHTML = plAccHtml();   // 로그인이 풀렸으면 로그아웃 줄도 빼기
   if(!plTok) plLoginButton(document.getElementById('gbtnMy'));
 }
 /* ── 구글 플레이 결제 (포도랑 앱 = TWA 안에서만 · Digital Goods API) ── */
