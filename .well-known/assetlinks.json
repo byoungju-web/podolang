@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls", "delegate_permission/common.get_login_creds"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "kr.podolang.app",
+    "sha256_cert_fingerprints": [
+      "AA:07:3A:6D:2E:73:2E:0E:74:5A:25:3E:77:C1:43:8F:24:45:FE:35:DE:B4:30:6D:46:61:4A:FD:44:8C:9B:AA"
+    ]
+  }
+}]
