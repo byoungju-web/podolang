@@ -325,8 +325,8 @@ body{background-image:radial-gradient(70% 45% at 100% 0%,rgba(255,255,255,.75),t
 main{background:transparent}
 /* 머리 — 두 색 그라데이션, 아래 모서리 둥글게 */
 header{height:auto;min-height:68px;padding:12px 18px 14px;border-radius:0 0 26px 26px;
-  background:radial-gradient(120% 140% at 85% -30%,rgba(255,255,255,.28),transparent 55%),linear-gradient(135deg,var(--c1),var(--c2));
-  box-shadow:0 10px 26px rgba(60,40,160,.18)}
+  background:radial-gradient(90% 120% at 100% -20%,rgba(255,255,255,.12),transparent 60%),linear-gradient(120deg,var(--c1) 0%,var(--c2) 100%);
+  box-shadow:0 12px 28px rgba(20,10,80,.28)}
 header h1{font-size:19px;letter-spacing:-.4px}
 header h1 .logo{width:40px;height:40px;border-radius:13px;padding:5px;box-shadow:0 4px 12px rgba(0,0,0,.14)}
 .helpbtn{height:32px;padding:0 12px 0 14px;font-size:12.5px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);backdrop-filter:blur(8px)}
@@ -339,7 +339,7 @@ header h1 .logo{width:40px;height:40px;border-radius:13px;padding:5px;box-shadow
   -webkit-mask:var(--ti) center/contain no-repeat;mask:var(--ti) center/contain no-repeat}
 #tabOne{--ti:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3.5c-4.7 0-8.5 3.3-8.5 7.5 0 2.1 1 4 2.6 5.4L5.4 20l4-1.9c.8.2 1.7.4 2.6.4 4.7 0 8.5-3.3 8.5-7.5S16.7 3.5 12 3.5zM8 12.3a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6zm4 0a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6zm4 0a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6z'/%3E%3C/svg%3E")}
 #tabMulti{--ti:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='9' cy='8' r='3.4'/%3E%3Ccircle cx='17' cy='9' r='2.7'/%3E%3Cpath d='M2.5 19.5c.5-3.6 3.1-5.6 6.5-5.6s6 2 6.5 5.6zM15.6 14.1c3.1-.3 5.4 1.5 5.9 5.4h-4.3c-.2-2.1-.7-3.8-1.6-5.4z'/%3E%3C/svg%3E")}
-.tab.on{background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;box-shadow:0 8px 18px rgba(80,50,200,.28)}
+.tab.on{background:linear-gradient(120deg,var(--c1),var(--c2));color:#fff;box-shadow:0 8px 18px rgba(20,10,80,.30)}
 /* 오역 고지 줄 — 알약 모양 */
 #pdStrip{border-radius:999px!important;border:0!important;background:linear-gradient(180deg,#FFF8E8,#FFF1D9)!important;
   box-shadow:0 4px 12px rgba(217,119,6,.08)!important;padding:9px 14px!important;margin:0 16px 12px!important}
@@ -352,7 +352,7 @@ header h1 .logo{width:40px;height:40px;border-radius:13px;padding:5px;box-shadow
 .fld label{font-size:12px;color:#4B4F63;letter-spacing:0}
 .seclabel{font-size:12.5px;color:#4B4F63;letter-spacing:0}
 /* 단추 — 그라데이션 알약 */
-.btn{border-radius:18px;background:linear-gradient(135deg,var(--c1),var(--c2));box-shadow:0 10px 22px rgba(80,50,200,.24)}
+.btn{border-radius:18px;background:linear-gradient(120deg,var(--c1),var(--c2));box-shadow:0 10px 22px rgba(20,10,80,.26)}
 .btn.ghost{background:var(--glass);border:1px solid var(--edge);color:var(--fg);box-shadow:var(--soft-sh)}
 body .shots .btn.cam{background:linear-gradient(135deg,#F1ECFF,#E6DDFF);color:#4C1D95;border:0;box-shadow:var(--soft-sh)}
 body .shots .btn.alb{background:linear-gradient(135deg,#E8F1FF,#DCE8FF);color:#1E40AF;border:0;box-shadow:var(--soft-sh)}
@@ -360,7 +360,7 @@ body .shots .btn.alb{background:linear-gradient(135deg,#E8F1FF,#DCE8FF);color:#1
 /* 말풍선 */
 .turn.me{background:linear-gradient(135deg,#FFF6DB,#FEEFC3);border:1px solid #FDE7A6}
 .turn.you{background:linear-gradient(135deg,var(--c1),var(--c2))}
-body[data-theme="talk"] .turn.you{background:linear-gradient(135deg,#E7EDFF,#DCE4FF);color:#1E3A8A;border:1px solid #C9D6FF}
+body[data-theme="talk"] .turn.you{background:linear-gradient(135deg,#E6EEFF,#D8E4FF);color:#1E3A8A;border:1px solid #BFD0FF}
 /* 언어 고르기 — 알약 */
 .langbar{gap:10px}
 .langbar select{height:50px;border-radius:999px;padding:0 16px;box-shadow:var(--soft-sh);font-size:15px}
@@ -374,16 +374,16 @@ footer{background:transparent;border-top:0;padding:14px 18px 8px}
 .mic svg{width:32px;height:32px}
 .micLabel{margin-top:16px;font-size:12px}
 /* 아래 5탭 — 흰 유리 막대, 고른 탭은 제 색 그라데이션 */
-#nvTalk{--nc:#7C3AED;--nc2:#A855F7} #nvFace{--nc:#2563EB;--nc2:#6366F1} #nvCall{--nc:#5B3FE0;--nc2:#8B5CF6}
-#nvPhoto{--nc:#0D9488;--nc2:#06B6D4} #nvMy{--nc:#F97316;--nc2:#FB923C}
-body[data-theme="multi"] #nvTalk{--nc:#059669;--nc2:#10B981}
+#nvTalk{--nc:#5B21B6;--nc2:#8B3DFF} #nvFace{--nc:#1E40AF;--nc2:#2F6BFF} #nvCall{--nc:#312E81;--nc2:#5B4BFF}
+#nvPhoto{--nc:#0B6E68;--nc2:#0EA5B7} #nvMy{--nc:#C2410C;--nc2:#F97316}
+body[data-theme="multi"] #nvTalk{--nc:#065F46;--nc2:#059669}
 .botnav{gap:4px;padding:10px 10px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.94);border-top:0;
   border-radius:26px 26px 0 0;box-shadow:0 -8px 26px rgba(76,52,170,.08);backdrop-filter:blur(14px)}
-.botnav button{height:60px;border:0;border-radius:18px;background:transparent;color:#7A7F93;gap:3px;position:relative;box-shadow:none}
+.botnav button{height:60px;border:0;border-radius:18px;background:transparent;color:#4B5066;gap:3px;position:relative;box-shadow:none}
 .botnav .nic svg{width:23px;height:23px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .botnav .lb{font-size:11.5px;font-weight:800;letter-spacing:-.4px}
 .botnav button.on{color:#fff;background:linear-gradient(145deg,var(--nc),var(--nc2));transform:translateY(-4px);
-  box-shadow:0 10px 20px rgba(60,40,160,.25)}
+  box-shadow:0 10px 20px rgba(20,10,80,.30)}
 .botnav button.on::after{content:'';position:absolute;bottom:-9px;left:50%;width:22px;height:3px;margin-left:-11px;border-radius:3px;background:var(--nc);opacity:.6}
 @media (max-width:360px){.botnav .lb{font-size:10.5px}}
 /* 올라오는 창 (마이 · 설정 · 이용방법) */
@@ -391,7 +391,7 @@ body[data-theme="multi"] #nvTalk{--nc:#059669;--nc2:#10B981}
 .card h2{background:transparent;backdrop-filter:blur(10px);background-color:rgba(248,246,255,.92)}
 .card h2::before{border-radius:12px;box-shadow:0 6px 14px rgba(80,50,200,.25)}
 .myprof{padding:18px;gap:16px;background:#fff}
-.myprof .av{width:64px;height:64px;font-size:28px;background:linear-gradient(135deg,#7C3AED,#A855F7);box-shadow:0 8px 18px rgba(124,58,237,.3)}
+.myprof .av{width:64px;height:64px;font-size:28px;background:linear-gradient(120deg,var(--c1),var(--c2));box-shadow:0 8px 18px rgba(20,10,80,.28)}
 .myprof .bal{font-size:28px}
 .mylist{background:#fff}
 .myrow{min-height:58px}
@@ -475,7 +475,7 @@ body .shots .btn.alb{--bi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.or
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v9.4';
+const VER='v9.4.2';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -694,12 +694,12 @@ function T(k){ const r = I18N[k]; if(!r) return k; return r[uiLang()] || r.EN ||
 
 /* ---------- 탭 ---------- */
 // 탭마다 색이 바뀝니다. 헤더·배경·버튼·말풍선이 한꺼번에 따라옵니다.
-const THEME = {   // v9.4 새 디자인 — 탭마다 두 색 그라데이션
-  one  : { c1:'#7C3AED', c2:'#A855F7', bg:'#F5F2FF', soft:'#EDE9FE' },   // 통역톡 = 보라
-  multi: { c1:'#059669', c2:'#10B981', bg:'#EFFBF6', soft:'#D1FAE5' },   // 다중 동시통역 = 초록
-  talk : { c1:'#2563EB', c2:'#6366F1', bg:'#F0F4FF', soft:'#DBE4FF' },   // 마주보고 = 파랑
-  photo: { c1:'#0D9488', c2:'#06B6D4', bg:'#EDFBFA', soft:'#CCFBF1' },   // 사진 번역 = 청록
-  call : { c1:'#5B3FE0', c2:'#8B5CF6', bg:'#F3F1FF', soft:'#E4DEFF' }    // 전화 통역 = 남보라
+const THEME = {   // v9.4.2 선명한 보석 톤 — 진한 색 → 밝은 색 그라데이션
+  one  : { c1:'#5B21B6', c2:'#8B3DFF', bg:'#F3EEFF', soft:'#E9DFFF' },   // 통역톡 = 자수정 보라
+  multi: { c1:'#065F46', c2:'#059669', bg:'#ECFAF4', soft:'#CCF3E2' },   // 다중 동시통역 = 에메랄드
+  talk : { c1:'#1E40AF', c2:'#2F6BFF', bg:'#EEF3FF', soft:'#D8E4FF' },   // 마주보고 = 사파이어
+  photo: { c1:'#0B6E68', c2:'#0EA5B7', bg:'#EAF8F8', soft:'#C9EFEF' },   // 사진 번역 = 딥 틸
+  call : { c1:'#312E81', c2:'#5B4BFF', bg:'#F0F0FF', soft:'#DEDCFF' }    // 전화 통역 = 인디고
 };
 // 화면 글씨를 지금 언어로 채웁니다
 function paintText(){
@@ -735,11 +735,18 @@ function paint(m){
 /* v9.2 아래 탭 → 화면. 통역톡은 언제나 1:1 부터 (방에 들어가 있으면 그 방) */
 const NAV_OF = { one:'nvTalk', multi:'nvTalk', talk:'nvFace', call:'nvCall', photo:'nvPhoto' };
 function navTo(m){
+  const wasMy = sheetOpen() && sheetName === 'my';
+  if(wasMy){ const c = $('#card'); if(c) myScroll = c.scrollTop; }
   if(sheetOpen()) closeSheet();
+  bkMy = wasMy;
   if(m === 'one' && typeof RM !== 'undefined' && RM.room) m = RM.room.kind === 'multi' ? 'multi' : 'one';
   tab(m);
 }
+/* v9.4 화면 발자취 — 뒤로가기 하면 바로 전 화면으로 */
+var BK = [], bkGoing = false, bkMy = false;
 function tab(m){
+  if(!bkGoing && m !== mode){ BK.push({ mode, my: bkMy }); if(BK.length > 30) BK.shift(); }
+  bkMy = false;
   mode=m;
   paint(m);
   $('#tabOne').classList.toggle('on',m==='one');
@@ -1580,10 +1587,11 @@ async function callEnd(){
 
 /* ---------- 설정 (서버 주소 없음 — 언어 기본값 · 정보만) ---------- */
 function openSet(){
+  sheetGo('set');
   markNav('nvSet');
   const nl = x => String(x).replace(/\n/g,'<br>');
   $('#card').innerHTML=`
-    <button class="btn ghost" data-emb="log" style="margin-bottom:12px;padding:11px" onclick="openMy()">← ${esc(T('navMy'))}</button>
+    <button class="btn ghost" data-emb="log" style="margin-bottom:12px;padding:11px" onclick="myBack()">← ${esc(T('navMy'))}</button>
     <h2>${esc(LT('setTitle'))}</h2>
     <div class="fld" data-emb="lang">
       <label>${esc(LT('setMine'))}</label>
@@ -1618,7 +1626,20 @@ function openSet(){
   $('#sheet').classList.add('on');
   ensurePack(openSet);
 }
+/* v9.4 창 바꾸기 — 다른 창으로 바뀌면 맨 위부터 보이게.
+   마이에서 연 창(통화기록 · 검색 · 설정)은 뒤로가기 하면 마이로 돌아갑니다. */
+var sheetName = '', sheetParent = '', myScroll = 0;
+function myBack(){ openMy(); const c = $('#card'); if(c) c.scrollTop = myScroll; }   // 마이로 돌아갈 때 보던 자리로
+function sheetGo(name){
+  const card = $('#card');
+  if(card && sheetOpen() && sheetName === 'my' && name !== 'my') myScroll = card.scrollTop;
+  if(name === 'my') sheetParent = '';
+  else if(sheetOpen() && sheetName === 'my') sheetParent = 'my';
+  if(card && (!sheetOpen() || sheetName !== name)) card.scrollTop = 0;
+  sheetName = name;
+}
 function closeSheet(){
+  sheetName = ''; sheetParent = '';
   $('#sheet').classList.remove('on');
   markNav(NAV_OF[mode] || 'nvTalk');
 }
@@ -1627,9 +1648,18 @@ const sheetOpen = () => $('#sheet').classList.contains('on');
 // 뒤로가기를 누르면 홈(마주보고)으로 돌아옵니다.
 // 패널이 열려 있으면 먼저 닫고, 그다음 홈으로 갑니다.
 function goHome(){
-  if(sheetOpen()){ closeSheet(); return; }
+  if(sheetOpen()){
+    if(sheetParent === 'my' && sheetName !== 'my'){ myBack(); return; }   // v9.4 마이에서 연 창 → 마이
+    closeSheet(); return;
+  }
   if(rt && rt.active){ toast('통화 중입니다. 종료 버튼을 눌러주세요'); return; }
   if(RM.room && (mode === 'one' || mode === 'multi')){ rmBack(); return; }   // v9.0 방 → 방 목록
+  if(!EMBED && BK.length){   // v9.4 바로 전 화면으로 (마이에서 왔으면 마이도 다시 열기)
+    const prev = BK.pop();
+    bkGoing = true; try{ tab(prev.mode); }finally{ bkGoing = false; }
+    if(prev.my) myBack();
+    return;
+  }
   if(EMBED){ if(mode !== 'talk') tab('talk'); return; }
   if(mode !== 'one') tab('one');   // v9.2 첫 화면은 1:1 동시통역
 }
@@ -1679,6 +1709,7 @@ const licLine = () => {
 
 /* ---------- 창문 패널: 저장된 번호 + 통화 기록 ---------- */
 function openPanel(){
+  sheetGo('panel');
   markNav('nvTel');
   const telRows = tels.length ? tels.map((t,i)=>`
     <div class="telrow">
@@ -1706,7 +1737,7 @@ function openPanel(){
       : `<div class="hint">${esc(LT('pFolded'))}</div>`);
 
   $('#card').innerHTML = `
-    <button class="btn ghost" data-emb="log" style="margin-bottom:12px;padding:11px" onclick="openMy()">← ${esc(T('navMy'))}</button>
+    <button class="btn ghost" data-emb="log" style="margin-bottom:12px;padding:11px" onclick="myBack()">← ${esc(T('navMy'))}</button>
     <h2>${esc(LT('pTel'))}</h2>
     ${telRows}
     <div class="seclabel row">
@@ -1802,6 +1833,7 @@ function markNav(id){
 /* ---------- 검색 ---------- */
 let q = '';
 function openSearch(){
+  sheetGo('search');
   markNav('nvSearch');
   const k = q.trim().toLowerCase();
   const hit = t => t && String(t).toLowerCase().includes(k);
@@ -1811,7 +1843,7 @@ function openSearch(){
   const phoHits = !k ? [] : phist.map((m,i)=>({m,i})).filter(({m}) => hit(m.dst) || hit(m.src) || hit(m.kind));
 
   $('#card').innerHTML = `
-    <button class="btn ghost" data-emb="log" style="margin-bottom:12px;padding:11px" onclick="openMy()">← ${esc(T('navMy'))}</button>
+    <button class="btn ghost" data-emb="log" style="margin-bottom:12px;padding:11px" onclick="myBack()">← ${esc(T('navMy'))}</button>
     <h2>${esc(LT('sSearch'))}</h2>
     <div class="fld">
       <input id="qBox" type="text" placeholder="${esc(LT('sSearchPh'))}"
@@ -1883,6 +1915,7 @@ const BIZ_HTML = `<dl>
   <dt>전화</dt><dd><a href="tel:010-6540-7338">010-6540-7338</a></dd>
 </dl>`;
 function openMy(){
+  sheetGo('my');
   markNav('nvMy');
   const nl = x => String(x).replace(/\n/g,'<br>');
   $('#card').innerHTML = `
@@ -2438,6 +2471,7 @@ if(EMBED){
 }
 
 tab(EMBED_CALL ? 'call' : (EMBED ? 'talk' : 'one'));   // v9.2 첫 화면 = 1:1 동시통역
+BK.length = 0;   // v9.4 첫 화면은 발자취에 넣지 않음
 plStart();   // v9.0 결제 돌아옴 · 초대 코드 · 지갑 확인
 
 if(EMBED_PANEL){
