@@ -287,12 +287,10 @@ footer{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:10px 18px 
     <button class="helpbtn" id="helpBtn" onclick="openHelp()"></button>
   </header>
 
-  <!-- v9.0 통역톡 4칸: 1:1 동시통역 · 다중 동시통역 · 마주보기 통역 · 전화 통역 (사진 번역은 아래 탭으로) -->
+  <!-- v9.2 통역톡 위 칸: 1:1 동시통역 · 다중 동시통역 (마주보고 · 전화통역 · 사진번역은 아래 탭) -->
   <div class="tabs">
-    <button class="tab" id="tabOne" onclick="tab('one')"></button>
+    <button class="tab on" id="tabOne" onclick="tab('one')"></button>
     <button class="tab" id="tabMulti" onclick="tab('multi')"></button>
-    <button class="tab on" id="tabTalk" onclick="tab('talk')"></button>
-    <button class="tab" id="tabCall" onclick="tab('call')"></button>
   </div>
 
   <main id="main"></main>
@@ -315,13 +313,13 @@ footer{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:10px 18px 
     <button class="rbs" id="rbSend" onclick="rmSend()"></button>
   </div>
 
-  <!-- v9.0 하단 5탭: 통역톡 · 사진번역 · 검색 · 설정 · 마이 (통화기록은 마이 안으로) -->
+  <!-- v9.2 하단 5탭: 통역톡(1:1·다중) · 마주보고 · 전화통역 · 사진번역 · 마이 (설정·검색·통화기록은 마이 안) -->
   <nav class="botnav" id="botnav">
-    <button id="nvTalk"   onclick="tabGroup()"><span class="dot"></span><span class="lb" id="lbTalk"></span></button>
-    <button id="nvPhoto"  onclick="tab('photo')"><span class="dot"></span><span class="lb" id="lbPhoto"></span></button>
-    <button id="nvSearch" onclick="openSearch()"><span class="dot"></span><span class="lb" id="lbSearch"></span></button>
-    <button id="nvSet"    onclick="openSet()"><span class="dot"></span><span class="lb" id="lbSet"></span></button>
-    <button id="nvMy"     onclick="openMy()"><span class="dot"></span><span class="lb" id="lbMy"></span></button>
+    <button id="nvTalk"  onclick="navTo('one')"><span class="dot"></span><span class="lb" id="lbTalk"></span></button>
+    <button id="nvFace"  onclick="navTo('talk')"><span class="dot"></span><span class="lb" id="lbFace"></span></button>
+    <button id="nvCall"  onclick="navTo('call')"><span class="dot"></span><span class="lb" id="lbCall"></span></button>
+    <button id="nvPhoto" onclick="navTo('photo')"><span class="dot"></span><span class="lb" id="lbPhoto"></span></button>
+    <button id="nvMy"    onclick="openMy()"><span class="dot"></span><span class="lb" id="lbMy"></span></button>
   </nav>
 </div>
 
@@ -333,7 +331,7 @@ footer{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:10px 18px 
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v9.1';
+const VER='v9.2';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -446,13 +444,18 @@ function uiLang(){ return String(from || 'KO').toUpperCase(); }
 const L = {
  helpTitle:'이용방법',
  hTalk:'마주보고 통역', hPhoto:'사진 번역', hCall:'전화 통역',
- hNav:'아래 네 개 탭', hKnow:'알아두실 것',
+ hRoom:'통역톡 — 1:1 · 다중 동시통역',
+ hRoomBody:'사람마다 <b>자기 폰에서 자기 말로</b> 대화하면, 상대에게는 상대 말로 번역되어 보이고 폰이 읽어 줍니다.\n\n<b>1.</b> <b>마이</b>에서 구글로 로그인합니다 (처음 가입하면 크레딧 선물)\n<b>2.</b> 내 언어와 이름을 고르고 <b>방 만들기</b>\n<b>3.</b> <b>초대</b>를 눌러 링크나 6자리 코드를 상대에게 보냅니다\n<b>4.</b> 상대는 링크를 열거나 코드를 넣어 <b>참여</b>합니다\n<b>5.</b> 글로 쓰거나 🎤 를 눌러 말하면 됩니다\n\n1:1 은 2명, 다중은 10명까지. 번역 1개에 0.1 크레딧 (방 안의 다른 언어 수만큼 · 말한 사람만). 불쾌한 말은 눌러서 차단 · 신고할 수 있습니다.',
+ myMore:'더 보기',
+ licNone:'마이에서 구글로 로그인하면 크레딧으로 통화할 수 있습니다', licChecking:'크레딧 확인 중…', licBad:'크레딧을 확인하지 못했습니다',
+ licLeft:'통화', licMin:'분 가능', licUntil:'까지',
+ hNav:'아래 다섯 개 탭', hKnow:'알아두실 것',
 
  hTalkBody:'한 폰을 사이에 두고 번갈아 말하면 즉석에서 통역됩니다.\n\n<b>1.</b> 내 언어와 상대 언어를 고릅니다\n<b>2.</b> 아래 마이크를 <b>누른 채로</b> 말하고, 끝나면 손을 뗍니다\n<b>3.</b> 번역된 문장이 뜨고 상대 언어 음성이 나옵니다\n\n손님 응대나 현장 소통에 씁니다.',
  hPhotoBody:'서류·라벨·인보이스를 찍으면 글자를 읽어 옮깁니다.\n\n<b>1.</b> 자동 감지 → 내 언어로 두고 <b>사진 찍기</b>\n<b>2.</b> 찍은 뒤 <b>이 사진 번역하기</b>\n<b>3.</b> 번역이 크게, 원문은 <b>원문 보기</b>를 눌러 폅니다\n\n<b>숫자·단가·품번은 원문 그대로 옮깁니다.</b> 흐려서 안 보이는 자리는 추측하지 않고 [?] 로 표시합니다. 중요한 금액은 원문과 한 번 더 대조하세요.',
- hCallBody:'상대는 그냥 전화를 받아 평소처럼 말하면 됩니다. 앱을 깔 필요도, 버튼을 누를 필요도 없습니다.\n\n<b>1.</b> 이름(선택)과 전화번호를 넣습니다. 국가번호부터 — 미국 +1, 한국 +82(앞 0 빼고)\n<b>2.</b> <b>통역 전화 걸기</b>\n<b>3.</b> 상대가 받으면 이 화면에 대고 말합니다\n<b>4.</b> 말이 끝나면 잠시 뒤 상대에게 전달됩니다\n\n<b>이어폰을 쓰세요.</b> 스피커로 들으면 통역 음성을 마이크가 다시 주워서 말이 꼬입니다.\n\n전화 통역은 통화 1분마다 비용이 들어 <b>이용권</b>이 필요합니다. 마주보고 통역과 사진 번역은 이용권 없이 씁니다.',
- hNavBody:'<b>통화기록</b> — 저장된 번호와 주고받은 말. 번호는 통화를 걸면 자동으로 저장됩니다. 이름을 붙이거나 지울 수 있습니다.\n\n<b>검색</b> — 번호·통화 기록·사진 번역을 한 번에 찾습니다. 숫자나 낱말로 찾으면 그 말이 나온 통화가 같이 나옵니다.\n\n<b>설정</b> — 전화 통역 말투와 용어집을 정합니다. 용어집에 회사명·제품명·지명을 적어두면 통화마다 같은 말로 번역됩니다.\n\n<b>마이</b> — 언어 설정, 이용권 코드, 저장 현황, 기록 정리. 언어를 <b>자동</b>으로 두면 해외에 나가셨을 때 그 나라 말로 저절로 바뀝니다.',
- hKnowBody:'기록은 <b>이 폰 안에만</b> 있습니다. 서버로 보내지 않습니다. 브라우저 데이터를 지우면 함께 사라지니 중요한 내용은 복사해 두세요.\n\n전화 통역은 <b>안드로이드 크롬</b>에서 열어주세요.\n\n상대 폰이 해외번호를 스팸으로 막을 수 있습니다. 상대 연락처에 <b>+14472841160</b> 을 저장해 두면 통과합니다.',
+ hCallBody:'상대는 그냥 전화를 받아 평소처럼 말하면 됩니다. 앱을 깔 필요도, 버튼을 누를 필요도 없습니다.\n\n<b>1.</b> 이름(선택)과 전화번호를 넣습니다. 국가번호부터 — 미국 +1, 한국 +82(앞 0 빼고)\n<b>2.</b> <b>통역 전화 걸기</b>\n<b>3.</b> 상대가 받으면 이 화면에 대고 말합니다\n<b>4.</b> 말이 끝나면 잠시 뒤 상대에게 전달됩니다\n\n<b>이어폰을 쓰세요.</b> 스피커로 들으면 통역 음성을 마이크가 다시 주워서 말이 꼬입니다.\n\n전화 통역은 통화 1분에 <b>6 크레딧</b>입니다 (통화한 시간만큼, 분 단위 올림). 크레딧은 <b>마이</b>에서 구글로 로그인하면 쓸 수 있습니다.',
+ hNavBody:'<b>통역톡</b> — 1:1 · 다중 동시통역. 누르면 늘 1:1 동시통역부터 나옵니다. 위의 칸으로 다중 동시통역으로 바꿉니다.\n\n<b>마주보고</b> — 한 폰으로 마주 보고 통역합니다.\n\n<b>전화 통역</b> — 상대에게 통역 전화를 겁니다.\n\n<b>사진 번역</b> — 서류·라벨·간판을 찍어 옮깁니다.\n\n<b>마이</b> — 구글 로그인 · 크레딧 · 언어 설정 · 통화기록 · 검색 · 설정(전화 통역 말투와 용어집)이 모두 여기 있습니다. 언어를 <b>자동</b>으로 두면 해외에 나가셨을 때 그 나라 말로 저절로 바뀝니다.',
+ hKnowBody:'마주보고 · 사진 번역 · 전화 통역 기록은 <b>이 폰 안에만</b> 있습니다. 브라우저 데이터를 지우면 함께 사라지니 중요한 내용은 복사해 두세요.\n\n1:1 · 다중 동시통역 대화는 방 사람들이 함께 보도록 서버에 저장되고 <b>30일 뒤 자동으로 지워집니다</b>. 개인정보는 올리지 마세요.\n\n크레딧: 1 크레딧 = 99원 · 마주보고 한 마디 0.2 · 사진 1장 0.5 · 전화 1분 6 · 동시통역 번역 1개 0.1. 충전은 <b>포도랑 앱</b>(구글 플레이)에서 합니다.\n\n전화 통역은 <b>안드로이드 크롬</b>이나 포도랑 앱에서 열어주세요. 상대 폰이 해외번호를 스팸으로 막을 수 있습니다. 상대 연락처에 <b>+14472841160</b> 을 저장해 두면 통과합니다.',
 
  pTel:'저장된 번호', pTelNone:'아직 저장된 번호가 없습니다. 통화를 걸면 자동으로 저장됩니다.',
  pLog:'통화 기록', pLogNone:'아직 통화 기록이 없습니다.',
@@ -491,7 +494,7 @@ const L = {
  rmBlockQ:'이 사람을 차단할까요? 이 사람의 말이 보이지 않습니다 (모든 방).', rmBlocked:'차단했습니다',
  rmUnblockQ:'차단한 사람을 모두 풀까요?', rmReportQ:'신고 이유를 적어 주세요 (예: 욕설, 광고, 사기)', rmReported:'신고했습니다. 운영자가 확인합니다.',
  rmLeaveQ:'이 방에서 나갈까요?', rmDelQ:'방과 대화를 모두 지울까요?', rmCopied:'초대 링크를 복사했습니다',
- rmSendBtn:'보내기', rmTextPh:'내 말로 쓰세요 · 상대 말로 번역됩니다', rmNoMic:'이 브라우저는 말로 입력을 지원하지 않습니다. 글로 써 주세요.',
+ rmSendBtn:'보내기', rmTextPh:'내 말로 쓰세요', rmNoMic:'이 브라우저는 말로 입력을 지원하지 않습니다. 글로 써 주세요.',
  rmCredit:'남은 크레딧', plCr:'크레딧',
  plAcc:'포도랑 계정 · 크레딧', plLoginT:'구글로 로그인', plLoginD:'1:1·다중 동시통역과 크레딧 충전은 로그인 후 쓸 수 있습니다. 처음 가입하면 크레딧을 선물로 드립니다.',
  plLoginPrep:'로그인 준비 중입니다. 잠시 뒤 다시 열어 주세요.', plHello:'로그인했습니다',
@@ -507,7 +510,7 @@ const L = {
  myEar:'<b>전화 통역은 이어폰을 쓰세요.</b>\n스피커로 들으면 통역 음성을 마이크가 다시 주워서 말이 꼬입니다.'
 };
 
-const UIVER = '3';   // v9.0 새 글(통역톡 4칸·동시통역 방·포도랑 계정)이 늘어 2로                       // 글이 바뀌면 이 숫자를 올립니다
+const UIVER = '4';   // v9.2 탭·이용방법 글이 바뀌어 4로   // v9.0 새 글(통역톡 4칸·동시통역 방·포도랑 계정)이 늘어 2로                       // 글이 바뀌면 이 숫자를 올립니다
 let pack = load('podolang_pack', {});    // 옮겨둔 글 (언어별)
 let packBusy = false;
 
@@ -557,9 +560,9 @@ function paintText(){
   const set = (id, v) => { const e=$('#'+id); if(e) e.textContent = v; };
   set('tabOne',   LT('tabOne'));
   set('tabMulti', LT('tabMulti'));
-  set('tabTalk',  T('talk'));
-  set('tabCall',  T('call'));
   set('lbTalk',   LT('navTalk'));
+  set('lbFace',   T('talk'));
+  set('lbCall',   T('call'));
   set('lbPhoto',  T('photo'));
   set('rbSend',   LT('rmSendBtn'));
   const rbt = $('#rbText'); if(rbt) rbt.placeholder = LT('rmTextPh');
@@ -583,20 +586,21 @@ function paint(m){
   // 브라우저 주소창 색은 건드리지 않습니다. 흰색 그대로 둡니다.
 }
 
-const GROUP = ['one','multi','talk','call'];   // v9.0 통역톡 4칸
-let lastGroup = 'talk';
-function tabGroup(){ if(sheetOpen()) closeSheet(); tab(lastGroup); }
+/* v9.2 아래 탭 → 화면. 통역톡은 언제나 1:1 부터 (방에 들어가 있으면 그 방) */
+const NAV_OF = { one:'nvTalk', multi:'nvTalk', talk:'nvFace', call:'nvCall', photo:'nvPhoto' };
+function navTo(m){
+  if(sheetOpen()) closeSheet();
+  if(m === 'one' && typeof RM !== 'undefined' && RM.room) m = RM.room.kind === 'multi' ? 'multi' : 'one';
+  tab(m);
+}
 function tab(m){
   mode=m;
-  if(GROUP.includes(m)) lastGroup = m;
   paint(m);
   $('#tabOne').classList.toggle('on',m==='one');
   $('#tabMulti').classList.toggle('on',m==='multi');
-  $('#tabTalk').classList.toggle('on',m==='talk');
-  $('#tabCall').classList.toggle('on',m==='call');
-  // 통역톡 4칸은 통역톡 탭에서만 (사진 번역에서는 감춤)
-  $('.tabs').style.display = GROUP.includes(m) ? '' : 'none';
-  if(!sheetOpen()) markNav(m==='photo' ? 'nvPhoto' : 'nvTalk');
+  // 위 칸(1:1 · 다중)은 통역톡에서만
+  $('.tabs').style.display = (m==='one' || m==='multi') ? '' : 'none';
+  if(!sheetOpen()) markNav(NAV_OF[m] || 'nvTalk');
   // 마주보고 통역에서만 아래 마이크(푸터)를 보여줍니다
   $('#foot').style.display = (m==='talk') ? 'flex' : 'none';
   rmStop(); rmBar(false);
@@ -1433,6 +1437,7 @@ function openSet(){
   markNav('nvSet');
   const nl = x => String(x).replace(/\n/g,'<br>');
   $('#card').innerHTML=`
+    <button class="btn ghost" data-emb="log" style="margin-bottom:12px;padding:11px" onclick="openMy()">← ${esc(T('navMy'))}</button>
     <h2>${esc(LT('setTitle'))}</h2>
     <div class="fld" data-emb="lang">
       <label>${esc(LT('setMine'))}</label>
@@ -1469,7 +1474,7 @@ function openSet(){
 }
 function closeSheet(){
   $('#sheet').classList.remove('on');
-  markNav(mode==='photo' ? 'nvPhoto' : 'nvTalk');
+  markNav(NAV_OF[mode] || 'nvTalk');
 }
 const sheetOpen = () => $('#sheet').classList.contains('on');
 
@@ -1479,7 +1484,8 @@ function goHome(){
   if(sheetOpen()){ closeSheet(); return; }
   if(rt && rt.active){ toast('통화 중입니다. 종료 버튼을 눌러주세요'); return; }
   if(RM.room && (mode === 'one' || mode === 'multi')){ rmBack(); return; }   // v9.0 방 → 방 목록
-  if(mode !== 'talk') tab('talk');
+  if(EMBED){ if(mode !== 'talk') tab('talk'); return; }
+  if(mode !== 'one') tab('one');   // v9.2 첫 화면은 1:1 동시통역
 }
 try{
   history.replaceState({ podo:'home' }, '');
@@ -1519,7 +1525,7 @@ function clearLic(){
 }
 const licLine = () => {
   if(!licCode && !walletId()) return LT('licNone');
-  if(licInfo && licInfo.ok && !licInfo['만료일']) return `${licInfo.plan} · ${licInfo['남은크레딧']} · ${LT('licLeft')} ${licInfo['남은분']}${LT('licMin')}`;
+  if(licInfo && licInfo.ok && !licInfo['만료일']) return `${LT('plCr')} ${licInfo['남은크레딧']} · ${LT('licLeft')} ${licInfo['남은분']}${LT('licMin')}`;
   if(!licInfo) return LT('licChecking');
   if(!licInfo.ok) return reasonText(licInfo.reason) || LT('licBad');
   return `${licInfo.plan} · ${LT('licLeft')} ${licInfo['남은분']}${LT('licMin')} · ${licInfo['만료일']} ${LT('licUntil')}`;
@@ -1554,6 +1560,7 @@ function openPanel(){
       : `<div class="hint">${esc(LT('pFolded'))}</div>`);
 
   $('#card').innerHTML = `
+    <button class="btn ghost" data-emb="log" style="margin-bottom:12px;padding:11px" onclick="openMy()">← ${esc(T('navMy'))}</button>
     <h2>${esc(LT('pTel'))}</h2>
     ${telRows}
     <div class="seclabel row">
@@ -1624,6 +1631,8 @@ function openHelp(){
   const nl = x => String(x).replace(/\n/g,'<br>');
   $('#card').innerHTML = `
     <h2>${esc(LT('helpTitle'))}</h2>
+    <div class="seclabel big">${esc(LT('hRoom'))}</div>
+    <div class="note">${nl(LT('hRoomBody'))}</div>
     <div class="seclabel big">${esc(LT('hTalk'))}</div>
     <div class="note">${nl(LT('hTalkBody'))}</div>
     <div class="seclabel big">${esc(LT('hPhoto'))}</div>
@@ -1640,8 +1649,8 @@ function openHelp(){
 }
 
 function markNav(id){
-  if(id === 'nvTel') id = 'nvMy';          // v9.0 통화기록은 마이 안에 있음
-  ['nvTalk','nvPhoto','nvSearch','nvSet','nvMy'].forEach(x => { const b=$('#'+x); if(b) b.classList.toggle('on', x===id); });
+  if(id === 'nvTel' || id === 'nvSearch' || id === 'nvSet') id = 'nvMy';   // v9.2 통화기록 · 검색 · 설정은 마이 안에 있음
+  ['nvTalk','nvFace','nvCall','nvPhoto','nvMy'].forEach(x => { const b=$('#'+x); if(b) b.classList.toggle('on', x===id); });
 }
 
 /* ---------- 검색 ---------- */
@@ -1656,6 +1665,7 @@ function openSearch(){
   const phoHits = !k ? [] : phist.map((m,i)=>({m,i})).filter(({m}) => hit(m.dst) || hit(m.src) || hit(m.kind));
 
   $('#card').innerHTML = `
+    <button class="btn ghost" data-emb="log" style="margin-bottom:12px;padding:11px" onclick="openMy()">← ${esc(T('navMy'))}</button>
     <h2>${esc(LT('sSearch'))}</h2>
     <div class="fld">
       <input id="qBox" type="text" placeholder="${esc(LT('sSearchPh'))}"
@@ -1742,8 +1752,10 @@ function openMy(){
     <div class="seclabel" data-emb="pl">${esc(LT('plAcc'))}</div>
     <div id="plBox" data-emb="pl">${plBoxHtml()}</div>
 
-    <div class="seclabel" data-emb="log">${esc(T('navLog'))}</div>
+    <div class="seclabel" data-emb="log">${esc(LT('myMore'))}</div>
     <button class="btn ghost" data-emb="log" onclick="openPanel()">📞 ${esc(T('navLog'))} · ${esc(LT('pTel'))} ${tels.length} · ${esc(LT('pLog'))} ${clog.length}</button>
+    <button class="btn ghost" data-emb="log" onclick="openSearch()">🔎 ${esc(T('navSearch'))}</button>
+    <button class="btn ghost" data-emb="log" onclick="openSet()">⚙️ ${esc(T('navSet'))}</button>
 
     <div class="seclabel" data-emb="lic">${esc(LT('myLic'))}</div>
     <div class="fld" data-emb="lic">
@@ -2206,7 +2218,7 @@ if(EMBED){
   if(EMBED_PANEL) document.body.classList.add('embed-panel');
 }
 
-tab(EMBED_CALL ? 'call' : 'talk');
+tab(EMBED_CALL ? 'call' : (EMBED ? 'talk' : 'one'));   // v9.2 첫 화면 = 1:1 동시통역
 plStart();   // v9.0 결제 돌아옴 · 초대 코드 · 지갑 확인
 
 if(EMBED_PANEL){
