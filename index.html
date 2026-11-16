@@ -317,6 +317,109 @@ button.myrow:active,a.myrow:active{background:#F8FAFC}
 .capwrap{display:flex;align-items:center;gap:10px}
 .fld .capwrap input{width:110px;flex:0 0 auto;text-align:center;font-size:18px;font-weight:900}
 .capwrap span{font-size:15px;font-weight:800;color:var(--sub)}
+
+/* ═════════ v9.4 새 디자인 (시안) — 색·모양·아이콘만. 글·기능은 그대로 ═════════ */
+:root{--glass:rgba(255,255,255,.9);--edge:rgba(255,255,255,.85);--soft-sh:0 10px 28px rgba(76,52,170,.09),0 2px 6px rgba(76,52,170,.05);--r:22px}
+html,body{background:var(--cbg)}
+body{background-image:radial-gradient(70% 45% at 100% 0%,rgba(255,255,255,.75),transparent 70%),radial-gradient(60% 40% at 0% 100%,rgba(255,255,255,.6),transparent 70%)}
+main{background:transparent}
+/* 머리 — 두 색 그라데이션, 아래 모서리 둥글게 */
+header{height:auto;min-height:68px;padding:12px 18px 14px;border-radius:0 0 26px 26px;
+  background:radial-gradient(120% 140% at 85% -30%,rgba(255,255,255,.28),transparent 55%),linear-gradient(135deg,var(--c1),var(--c2));
+  box-shadow:0 10px 26px rgba(60,40,160,.18)}
+header h1{font-size:19px;letter-spacing:-.4px}
+header h1 .logo{width:40px;height:40px;border-radius:13px;padding:5px;box-shadow:0 4px 12px rgba(0,0,0,.14)}
+.helpbtn{height:32px;padding:0 12px 0 14px;font-size:12.5px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);backdrop-filter:blur(8px)}
+.helpbtn::after{content:'›';margin-left:6px;font-size:15px;font-weight:700;opacity:.85}
+/* 위 칸 (1:1 · 다중) — 흰 유리 카드 안의 알약 */
+.tabs{margin:14px 16px 12px;padding:6px;gap:6px;border-radius:22px;background:var(--glass);border:1px solid var(--edge);
+  box-shadow:var(--soft-sh);backdrop-filter:blur(12px)}
+.tab{height:48px;border-radius:16px;display:flex;align-items:center;justify-content:center;gap:8px;color:#5B5F72}
+.tab::before{content:'';width:22px;height:22px;flex:0 0 auto;background:currentColor;
+  -webkit-mask:var(--ti) center/contain no-repeat;mask:var(--ti) center/contain no-repeat}
+#tabOne{--ti:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3.5c-4.7 0-8.5 3.3-8.5 7.5 0 2.1 1 4 2.6 5.4L5.4 20l4-1.9c.8.2 1.7.4 2.6.4 4.7 0 8.5-3.3 8.5-7.5S16.7 3.5 12 3.5zM8 12.3a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6zm4 0a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6zm4 0a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6z'/%3E%3C/svg%3E")}
+#tabMulti{--ti:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='9' cy='8' r='3.4'/%3E%3Ccircle cx='17' cy='9' r='2.7'/%3E%3Cpath d='M2.5 19.5c.5-3.6 3.1-5.6 6.5-5.6s6 2 6.5 5.6zM15.6 14.1c3.1-.3 5.4 1.5 5.9 5.4h-4.3c-.2-2.1-.7-3.8-1.6-5.4z'/%3E%3C/svg%3E")}
+.tab.on{background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;box-shadow:0 8px 18px rgba(80,50,200,.28)}
+/* 오역 고지 줄 — 알약 모양 */
+#pdStrip{border-radius:999px!important;border:0!important;background:linear-gradient(180deg,#FFF8E8,#FFF1D9)!important;
+  box-shadow:0 4px 12px rgba(217,119,6,.08)!important;padding:9px 14px!important;margin:0 16px 12px!important}
+#pdStripTxt::before{content:'📣';margin-right:6px}
+/* 카드 — 둥글고 부드러운 그림자 */
+.turn,.fld,.note,.rtbadge,.telpick,.pv,.rmhead,.rmrow,.mylist,.myprof,.plcard{border-radius:22px;border:1px solid var(--edge);box-shadow:var(--soft-sh)}
+.empty{border-radius:24px;background:var(--glass);border:1.5px dashed rgba(124,92,230,.22);box-shadow:var(--soft-sh);padding:44px 22px}
+.empty b{font-size:18px;letter-spacing:-.4px}
+.fld input,.fld select,.fld textarea{border-radius:14px;background:#F6F5FB;border:1px solid rgba(90,70,180,.08)}
+.fld label{font-size:12px;color:#4B4F63;letter-spacing:0}
+.seclabel{font-size:12.5px;color:#4B4F63;letter-spacing:0}
+/* 단추 — 그라데이션 알약 */
+.btn{border-radius:18px;background:linear-gradient(135deg,var(--c1),var(--c2));box-shadow:0 10px 22px rgba(80,50,200,.24)}
+.btn.ghost{background:var(--glass);border:1px solid var(--edge);color:var(--fg);box-shadow:var(--soft-sh)}
+body .shots .btn.cam{background:linear-gradient(135deg,#F1ECFF,#E6DDFF);color:#4C1D95;border:0;box-shadow:var(--soft-sh)}
+body .shots .btn.alb{background:linear-gradient(135deg,#E8F1FF,#DCE8FF);color:#1E40AF;border:0;box-shadow:var(--soft-sh)}
+.mini{border:0;background:#fff;box-shadow:0 2px 8px rgba(76,52,170,.10)}
+/* 말풍선 */
+.turn.me{background:linear-gradient(135deg,#FFF6DB,#FEEFC3);border:1px solid #FDE7A6}
+.turn.you{background:linear-gradient(135deg,var(--c1),var(--c2))}
+body[data-theme="talk"] .turn.you{background:linear-gradient(135deg,#E7EDFF,#DCE4FF);color:#1E3A8A;border:1px solid #C9D6FF}
+/* 언어 고르기 — 알약 */
+.langbar{gap:10px}
+.langbar select{height:50px;border-radius:999px;padding:0 16px;box-shadow:var(--soft-sh);font-size:15px}
+.langbar select:last-of-type,.langbar select.peerside{background:#fff;color:var(--c1);border:1.5px solid var(--csoft)}
+.swap{width:40px;height:40px;border:0;background:transparent;color:#6B7280}
+.swap svg{stroke:#6B7280}
+/* 마이크 — 큰 원 + 물결 테 */
+footer{background:transparent;border-top:0;padding:14px 18px 8px}
+.mic{width:84px;height:84px;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.35),transparent 45%),linear-gradient(135deg,var(--c1),var(--c2));
+  box-shadow:0 14px 30px rgba(60,60,200,.30),0 0 0 12px var(--csoft),0 0 0 26px rgba(255,255,255,.55)}
+.mic svg{width:32px;height:32px}
+.micLabel{margin-top:16px;font-size:12px}
+/* 아래 5탭 — 흰 유리 막대, 고른 탭은 제 색 그라데이션 */
+#nvTalk{--nc:#7C3AED;--nc2:#A855F7} #nvFace{--nc:#2563EB;--nc2:#6366F1} #nvCall{--nc:#5B3FE0;--nc2:#8B5CF6}
+#nvPhoto{--nc:#0D9488;--nc2:#06B6D4} #nvMy{--nc:#F97316;--nc2:#FB923C}
+body[data-theme="multi"] #nvTalk{--nc:#059669;--nc2:#10B981}
+.botnav{gap:4px;padding:10px 10px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.94);border-top:0;
+  border-radius:26px 26px 0 0;box-shadow:0 -8px 26px rgba(76,52,170,.08);backdrop-filter:blur(14px)}
+.botnav button{height:60px;border:0;border-radius:18px;background:transparent;color:#7A7F93;gap:3px;position:relative;box-shadow:none}
+.botnav .nic svg{width:23px;height:23px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.botnav .lb{font-size:11.5px;font-weight:800;letter-spacing:-.4px}
+.botnav button.on{color:#fff;background:linear-gradient(145deg,var(--nc),var(--nc2));transform:translateY(-4px);
+  box-shadow:0 10px 20px rgba(60,40,160,.25)}
+.botnav button.on::after{content:'';position:absolute;bottom:-9px;left:50%;width:22px;height:3px;margin-left:-11px;border-radius:3px;background:var(--nc);opacity:.6}
+@media (max-width:360px){.botnav .lb{font-size:10.5px}}
+/* 올라오는 창 (마이 · 설정 · 이용방법) */
+.card{background:linear-gradient(180deg,#F7F5FF 0%,#FBFAFF 40%,#fff 100%);border-radius:30px 30px 0 0}
+.card h2{background:transparent;backdrop-filter:blur(10px);background-color:rgba(248,246,255,.92)}
+.card h2::before{border-radius:12px;box-shadow:0 6px 14px rgba(80,50,200,.25)}
+.myprof{padding:18px;gap:16px;background:#fff}
+.myprof .av{width:64px;height:64px;font-size:28px;background:linear-gradient(135deg,#7C3AED,#A855F7);box-shadow:0 8px 18px rgba(124,58,237,.3)}
+.myprof .bal{font-size:28px}
+.mylist{background:#fff}
+.myrow{min-height:58px}
+.myrow .ic{width:36px;height:36px;border-radius:50%;background:#F1EEFF}
+.myrow.danger .ic{background:#FEECEC}
+.plbuy button{border-radius:18px;border:1px solid var(--edge);box-shadow:var(--soft-sh)}
+.bizinfo{border-radius:20px;background:rgba(255,255,255,.7)}
+/* 사진 번역(청록) — 흰 글씨로 */
+body[data-theme="photo"] header,body[data-theme="photo"] header h1,body[data-theme="photo"] .tab.on,
+body[data-theme="photo"] .btn:not(.cam):not(.alb):not(.ghost),body[data-theme="photo"] .mic{color:#fff}
+body[data-theme="photo"] .turn.you{border:1.5px solid #5EEAD4}
+/* 다듬기 */
+.tabs{margin-bottom:0}
+#pdStrip{margin:12px 16px 12px!important}
+.swap svg{width:22px;height:22px;stroke-width:2.4}
+body .shots .btn.cam,body .shots .btn.alb{display:flex;align-items:center;justify-content:center;gap:8px}
+body .shots .btn.cam::before,body .shots .btn.alb::before{content:'';width:22px;height:22px;flex:0 0 auto;background:currentColor;
+  -webkit-mask:var(--bi) center/contain no-repeat;mask:var(--bi) center/contain no-repeat}
+body .shots .btn.cam{--bi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 4.5 7.6 6.5H5A2.5 2.5 0 0 0 2.5 9v8.5A2.5 2.5 0 0 0 5 20h14a2.5 2.5 0 0 0 2.5-2.5V9A2.5 2.5 0 0 0 19 6.5h-2.6L15 4.5zM12 9.3a3.9 3.9 0 1 1 0 7.8 3.9 3.9 0 0 1 0-7.8z'/%3E%3C/svg%3E")}
+body .shots .btn.alb{--bi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 3.5h12A2.5 2.5 0 0 1 20.5 6v12a2.5 2.5 0 0 1-2.5 2.5H6A2.5 2.5 0 0 1 3.5 18V6A2.5 2.5 0 0 1 6 3.5zm3 4a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm9.5 9.6-4-4.3-6 6.7h9a1 1 0 0 0 1-1z'/%3E%3C/svg%3E")}
+/* 동시통역 방 */
+.rmm{border-radius:18px}
+.rmm.me{background:linear-gradient(135deg,var(--c1),var(--c2))}
+.rmm.you{border:1px solid var(--edge);box-shadow:var(--soft-sh)}
+.roombar{background:rgba(255,255,255,.94);border-top:0;box-shadow:0 -6px 20px rgba(76,52,170,.06)}
+.roombar textarea{border-radius:999px;background:#F6F5FB;padding:12px 16px}
+.roombar .rbs{border-radius:999px;background:linear-gradient(135deg,var(--c1),var(--c2));box-shadow:0 8px 16px rgba(80,50,200,.22)}
+.roombar .rbm{background:#F1EEFF}
 </style>
 </head>
 <body>
@@ -356,11 +459,11 @@ button.myrow:active,a.myrow:active{background:#F8FAFC}
 
   <!-- v9.2 하단 5탭: 통역톡(1:1·다중) · 마주보고 · 전화통역 · 사진번역 · 마이 (설정·검색·통화기록은 마이 안) -->
   <nav class="botnav" id="botnav">
-    <button id="nvTalk"  onclick="navTo('one')"><span class="dot"></span><span class="lb" id="lbTalk"></span></button>
-    <button id="nvFace"  onclick="navTo('talk')"><span class="dot"></span><span class="lb" id="lbFace"></span></button>
-    <button id="nvCall"  onclick="navTo('call')"><span class="dot"></span><span class="lb" id="lbCall"></span></button>
-    <button id="nvPhoto" onclick="navTo('photo')"><span class="dot"></span><span class="lb" id="lbPhoto"></span></button>
-    <button id="nvMy"    onclick="openMy()"><span class="dot"></span><span class="lb" id="lbMy"></span></button>
+    <button id="nvTalk"  onclick="navTo('one')"><span class="nic"><svg viewBox="0 0 24 24"><path d="M20 11.5a7.5 7.5 0 0 1-10.9 6.7L4 19.5l1.3-4.4A7.5 7.5 0 1 1 20 11.5z"/><path d="M9 11.5h.01M12.5 11.5h.01M16 11.5h.01"/></svg></span><span class="lb" id="lbTalk"></span></button>
+    <button id="nvFace"  onclick="navTo('talk')"><span class="nic"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="16.5" cy="9" r="2.6"/><path d="M15.5 14.2c2.6-.2 4.6 1.4 5 4.3"/></svg></span><span class="lb" id="lbFace"></span></button>
+    <button id="nvCall"  onclick="navTo('call')"><span class="nic"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></span><span class="lb" id="lbCall"></span></button>
+    <button id="nvPhoto" onclick="navTo('photo')"><span class="nic"><svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="M20 16l-4.5-4.5L7 20"/></svg></span><span class="lb" id="lbPhoto"></span></button>
+    <button id="nvMy"    onclick="openMy()"><span class="nic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c.9-3.7 3.9-6 7.5-6s6.6 2.3 7.5 6"/></svg></span><span class="lb" id="lbMy"></span></button>
   </nav>
 </div>
 
@@ -372,7 +475,7 @@ button.myrow:active,a.myrow:active{background:#F8FAFC}
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v9.3';
+const VER='v9.4';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -591,12 +694,12 @@ function T(k){ const r = I18N[k]; if(!r) return k; return r[uiLang()] || r.EN ||
 
 /* ---------- 탭 ---------- */
 // 탭마다 색이 바뀝니다. 헤더·배경·버튼·말풍선이 한꺼번에 따라옵니다.
-const THEME = {
-  one  : { c1:'#6D28D9', c2:'#6D28D9', bg:'#F5F3FF', soft:'#EDE9FE' },
-  multi: { c1:'#047857', c2:'#047857', bg:'#ECFDF5', soft:'#D1FAE5' },   // v9.3 다중 동시통역 = 초록
-  talk : { c1:'#4338CA', c2:'#4338CA', bg:'#EEF2FF', soft:'#E0E7FF' },   // v9.3 마주보고 = 남색(인디고)
-  photo: { c1:'#10d6df', c2:'#10d6df', bg:'#ECFEFF', soft:'#CFFAFE' },
-  call : { c1:'#1D4ED8', c2:'#1D4ED8', bg:'#EFF6FF', soft:'#DBEAFE' }
+const THEME = {   // v9.4 새 디자인 — 탭마다 두 색 그라데이션
+  one  : { c1:'#7C3AED', c2:'#A855F7', bg:'#F5F2FF', soft:'#EDE9FE' },   // 통역톡 = 보라
+  multi: { c1:'#059669', c2:'#10B981', bg:'#EFFBF6', soft:'#D1FAE5' },   // 다중 동시통역 = 초록
+  talk : { c1:'#2563EB', c2:'#6366F1', bg:'#F0F4FF', soft:'#DBE4FF' },   // 마주보고 = 파랑
+  photo: { c1:'#0D9488', c2:'#06B6D4', bg:'#EDFBFA', soft:'#CCFBF1' },   // 사진 번역 = 청록
+  call : { c1:'#5B3FE0', c2:'#8B5CF6', bg:'#F3F1FF', soft:'#E4DEFF' }    // 전화 통역 = 남보라
 };
 // 화면 글씨를 지금 언어로 채웁니다
 function paintText(){
