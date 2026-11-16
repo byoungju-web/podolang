@@ -79,8 +79,8 @@ main{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 16
 /* 상대 말 — 탭 색 */
 .turn.you{background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;border:0;
   box-shadow:0 8px 20px rgba(0,0,0,0.18)}
-body[data-theme="talk"] .turn.you{background:var(--talk-soft);color:#5B21B6;
-  border:1px solid #DDD6FE;box-shadow:none}
+body[data-theme="talk"] .turn.you{background:#FCE7F3;color:#9D174D;
+  border:1px solid #FBCFE8;box-shadow:none}
 /* 사진 번역 결과는 흰 바탕에 검정 글씨로 읽습니다 — 서류라 또렷해야 합니다 */
 body[data-theme="photo"] .turn.you{background:#fff;color:#111113;
   border:2px solid #10d6df;box-shadow:0 4px 14px rgba(16,214,223,0.16)}
@@ -216,6 +216,14 @@ footer{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:10px 18px 
 .botnav button.on{color:#fff;border:0;background:#111113;
   box-shadow:0 8px 20px rgba(0,0,0,0.18);transform:translateY(-2px)}
 .botnav button.on .dot{background:#fff}
+/* v9.3 아래 5탭 — 탭마다 제 색 (검정 대신). 안 고른 탭은 글씨·점이 그 색, 고른 탭은 그 색으로 채움 */
+#nvTalk{--nc:#6D28D9;--nb:#F5F3FF} #nvFace{--nc:#BE185D;--nb:#FDF2F8} #nvCall{--nc:#1D4ED8;--nb:#EFF6FF}
+#nvPhoto{--nc:#0E7490;--nb:#ECFEFF} #nvMy{--nc:#C2410C;--nb:#FFF7ED}
+body[data-theme="multi"] #nvTalk{--nc:#047857;--nb:#ECFDF5}
+.botnav button{color:var(--nc);background:var(--nb);border-color:transparent}
+.botnav button .dot{background:var(--nc);opacity:.55}
+.botnav button.on{background:var(--nc);color:#fff;box-shadow:0 8px 18px rgba(0,0,0,0.16)}
+.botnav button.on .dot{background:#fff;opacity:1}
 
 /* ---------- 올라오는 창 ---------- */
 .sheet{position:fixed;inset:0;background:rgba(15,23,42,0.45);backdrop-filter:blur(16px);
@@ -243,7 +251,8 @@ footer{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:10px 18px 
 /* ---------- v9.0 통역톡 4칸 · 하단 5탭 · 동시통역 방 · 포도랑 계정 ---------- */
 .tabs .tab{font-size:12.5px;line-height:1.2;padding:0 2px;white-space:pre-line}
 .botnav{gap:5px;padding-left:10px;padding-right:10px}
-.botnav .lb{font-size:10.5px;text-align:center;line-height:1.15}
+.botnav .lb{font-size:12.5px;font-weight:900;text-align:center;line-height:1.15;letter-spacing:-.4px}
+@media (max-width:360px){.botnav .lb{font-size:11.5px}}
 [data-emb="lic"]{display:none!important}
 .chip{display:inline-block;font-size:11px;font-weight:800;color:var(--sub);background:#F3F4F6;border-radius:999px;padding:3px 9px;margin-left:6px;vertical-align:middle}
 .rmrow{display:block;width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px 14px;margin-bottom:9px;box-shadow:var(--shadow);font:inherit;color:var(--fg)}
@@ -276,6 +285,33 @@ footer{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:10px 18px 
 .plbuy button{display:flex;justify-content:space-between;align-items:center;width:100%;padding:14px 16px;border-radius:14px;border:1px solid var(--line);background:#fff;font:inherit;font-size:15px;font-weight:900;color:var(--fg)}
 .plbuy button span{color:var(--c1)}
 .gbtn{min-height:44px;display:flex;justify-content:center;margin:6px 0}
+/* v9.3 마이 — 왼쪽 정렬 목록 (한 줄 = 아이콘 · 이름 · 오른쪽 값) */
+.mylist{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-bottom:8px;box-shadow:var(--shadow)}
+.myrow{display:flex;align-items:center;gap:12px;width:100%;min-height:54px;padding:12px 14px;border:0;border-top:1px solid var(--line);
+  background:#fff;text-align:left;font:inherit;font-size:15px;font-weight:800;color:var(--fg);text-decoration:none;letter-spacing:-.2px}
+.mylist>.myrow:first-child{border-top:0}
+button.myrow:active,a.myrow:active{background:#F8FAFC}
+.myrow .ic{width:32px;height:32px;border-radius:10px;flex:0 0 auto;display:grid;place-items:center;background:#F3F4F6;font-size:16px}
+.myrow .tx{flex:1;min-width:0}
+.myrow .v{flex:0 0 auto;margin-left:auto;color:var(--sub);font-size:13px;font-weight:800;text-align:right}
+.myrow .ch{flex:0 0 auto;color:var(--sub2);font-size:20px;font-weight:700;line-height:1}
+.myrow.danger,.myrow.danger .tx{color:var(--rec)}
+.myrow.danger .ic{background:#FEF2F2}
+.myprof{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:8px;box-shadow:var(--shadow)}
+.myprof .av{width:48px;height:48px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;font-size:22px;font-weight:900;color:#fff;background:linear-gradient(135deg,#6D28D9,#A78BFA)}
+.myprof .who{flex:1;min-width:0}
+.myprof .em{font-size:13px;color:var(--sub);font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.myprof .bal{font-size:24px;font-weight:900;margin-top:2px}
+.myprof .bal small{font-size:13px;color:var(--sub)}
+.bizinfo{background:#F8FAFC;border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:8px}
+.bizinfo dl{display:grid;grid-template-columns:auto 1fr;gap:7px 14px;margin:0;font-size:12.5px;line-height:1.45}
+.bizinfo dt{color:var(--sub);font-weight:800;white-space:nowrap}
+.bizinfo dd{margin:0;color:var(--fg);font-weight:700;word-break:keep-all}
+.bizinfo a{color:inherit}
+/* v9.3 다중 동시통역 — 최대 인원 고르기 */
+.capwrap{display:flex;align-items:center;gap:10px}
+.fld .capwrap input{width:110px;flex:0 0 auto;text-align:center;font-size:18px;font-weight:900}
+.capwrap span{font-size:15px;font-weight:800;color:var(--sub)}
 </style>
 </head>
 <body>
@@ -331,7 +367,7 @@ footer{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:10px 18px 
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v9.2';
+const VER='v9.3';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -445,7 +481,7 @@ const L = {
  helpTitle:'이용방법',
  hTalk:'마주보고 통역', hPhoto:'사진 번역', hCall:'전화 통역',
  hRoom:'통역톡 — 1:1 · 다중 동시통역',
- hRoomBody:'사람마다 <b>자기 폰에서 자기 말로</b> 대화하면, 상대에게는 상대 말로 번역되어 보이고 폰이 읽어 줍니다.\n\n<b>1.</b> <b>마이</b>에서 구글로 로그인합니다 (처음 가입하면 크레딧 선물)\n<b>2.</b> 내 언어와 이름을 고르고 <b>방 만들기</b>\n<b>3.</b> <b>초대</b>를 눌러 링크나 6자리 코드를 상대에게 보냅니다\n<b>4.</b> 상대는 링크를 열거나 코드를 넣어 <b>참여</b>합니다\n<b>5.</b> 글로 쓰거나 🎤 를 눌러 말하면 됩니다\n\n1:1 은 2명, 다중은 10명까지. 번역 1개에 0.1 크레딧 (방 안의 다른 언어 수만큼 · 말한 사람만). 불쾌한 말은 눌러서 차단 · 신고할 수 있습니다.',
+ hRoomBody:'사람마다 <b>자기 폰에서 자기 말로</b> 대화하면, 상대에게는 상대 말로 번역되어 보이고 폰이 읽어 줍니다.\n\n<b>1.</b> <b>마이</b>에서 구글로 로그인합니다 (처음 가입하면 크레딧 선물)\n<b>2.</b> 내 언어와 이름을 고르고 <b>방 만들기</b>\n<b>3.</b> <b>초대</b>를 눌러 링크나 6자리 코드를 상대에게 보냅니다\n<b>4.</b> 상대는 링크를 열거나 코드를 넣어 <b>참여</b>합니다\n<b>5.</b> 글로 쓰거나 🎤 를 눌러 말하면 됩니다\n\n1:1 은 2명, 다중은 방을 만들 때 적은 인원(3~100명)까지. 번역 1개에 0.1 크레딧 (방 안의 다른 언어 수만큼 · 말한 사람만). 불쾌한 말은 눌러서 차단 · 신고할 수 있습니다.',
  myMore:'더 보기',
  licNone:'마이에서 구글로 로그인하면 크레딧으로 통화할 수 있습니다', licChecking:'크레딧 확인 중…', licBad:'크레딧을 확인하지 못했습니다',
  licLeft:'통화', licMin:'분 가능', licUntil:'까지',
@@ -481,7 +517,7 @@ const L = {
  myOnPhone:'<b>이 기기에만 저장됩니다.</b>\n번호와 기록은 이 폰 안에만 있습니다. 서버로 보내지 않습니다. 브라우저 데이터를 지우면 함께 사라지니, 중요한 내용은 복사해 두세요.',
  tabOne:'1:1\n동시통역', tabMulti:'다중\n동시통역', navTalk:'통역톡',
  rmOneD:'두 사람이 <b>각자 자기 폰에서 자기 말로</b> 대화합니다. 상대에게는 상대 언어로 보이고, 폰이 읽어 줍니다.',
- rmMultiD:'여러 나라 사람이 <b>한 방에서 각자 자기 말로</b> 대화합니다 (최대 10명). 말한 사람의 글이 방 안의 다른 언어로 번역됩니다.',
+ rmMultiD:'여러 나라 사람이 <b>한 방에서 각자 자기 말로</b> 대화합니다 (방을 만들 때 최대 인원을 3~100명 사이 숫자로 적습니다). 말한 사람의 글이 방 안의 다른 언어로 번역됩니다.',
  rmPrice:'💳 번역 1개 0.1 크레딧 (방 안의 다른 언어 수만큼 · 같은 언어끼리는 무료) · 말한 사람만 차감',
  rmMyLang:'내 언어', rmNick:'내 이름 (상대에게 보여요)', rmNickPh:'예: 민지',
  rmNew:'새 통역방', rmNamePh:'방 이름 (선택)', rmCreate:'방 만들기',
@@ -503,14 +539,16 @@ const L = {
  plAppOnlyT:'크레딧 충전은 포도랑 앱(구글 플레이)에서 할 수 있습니다', plGetApp:'포도랑 앱 받기',
  plPlayD:'구글 플레이로 결제됩니다. 결제 후 크레딧이 바로 들어갑니다.', plRetryD:'결제는 구글에 남아 있어 마이를 다시 열면 크레딧이 들어갑니다',
  plPaid:'충전했습니다', plPayFail:'결제를 마치지 못했습니다', plOrders:'결제 내역', plNoOrders:'아직 결제 내역이 없습니다.',
- plLogout:'로그아웃', plDel:'계정 삭제', plDelQ:'계정을 지울까요? 남은 크레딧과 내가 만든 통역방이 함께 사라지며 되돌릴 수 없습니다.',
+ plLogout:'로그아웃', plDel:'계정 탈퇴 (계정 삭제)', plAccMng:'계정 관리', plDelNoAcc:'구글로 로그인한 계정만 탈퇴할 수 있어요. 로그인하지 않았다면 서버에 저장된 계정이 없어요. 이 기기의 기록은 마이 → 정리에서 지울 수 있어요.',
+ rmCapL:'최대 인원 (나 포함 · 3~100명)', rmCapUnit:'명까지', rmCapBad:'최대 인원은 3~100 사이 숫자로 적어 주세요', rmCapD:'정한 인원이 다 차면 더는 들어올 수 없어요.', rmMore:'외 N명',
+ myLegal:'약관 및 정책', myTerms:'이용약관', myPriv:'개인정보처리방침', myBiz:'사업자 정보', plDelQ:'계정을 지울까요? 남은 크레딧과 내가 만든 통역방이 함께 사라지며 되돌릴 수 없습니다.',
  plNeedLogin:'먼저 구글로 로그인해 주세요', plNeedCredit:'크레딧이 필요합니다. 마이 → 크레딧 충전에서 채워주세요.',
  plCallNeed:'아래 <b>마이</b> 탭에서 구글로 로그인하고 크레딧을 충전하세요.', plCharge:'충전하러 가기',
  plPriceD:'1 크레딧 = 99원 · 마주보고 한 마디 0.2 · 사진 1장 0.5 · 전화 1분 6 · 동시통역 번역 1개 0.1',
  myEar:'<b>전화 통역은 이어폰을 쓰세요.</b>\n스피커로 들으면 통역 음성을 마이크가 다시 주워서 말이 꼬입니다.'
 };
 
-const UIVER = '4';   // v9.2 탭·이용방법 글이 바뀌어 4로   // v9.0 새 글(통역톡 4칸·동시통역 방·포도랑 계정)이 늘어 2로                       // 글이 바뀌면 이 숫자를 올립니다
+const UIVER = '5';   // v9.3 마이 목록·탈퇴·다중 인원 글이 늘어 5로   // v9.2 탭·이용방법 글이 바뀌어 4로   // v9.0 새 글(통역톡 4칸·동시통역 방·포도랑 계정)이 늘어 2로                       // 글이 바뀌면 이 숫자를 올립니다
 let pack = load('podolang_pack', {});    // 옮겨둔 글 (언어별)
 let packBusy = false;
 
@@ -550,8 +588,8 @@ function T(k){ const r = I18N[k]; if(!r) return k; return r[uiLang()] || r.EN ||
 // 탭마다 색이 바뀝니다. 헤더·배경·버튼·말풍선이 한꺼번에 따라옵니다.
 const THEME = {
   one  : { c1:'#6D28D9', c2:'#6D28D9', bg:'#F5F3FF', soft:'#EDE9FE' },
-  multi: { c1:'#6D28D9', c2:'#6D28D9', bg:'#F5F3FF', soft:'#EDE9FE' },
-  talk : { c1:'#6D28D9', c2:'#6D28D9', bg:'#F5F3FF', soft:'#EDE9FE' },
+  multi: { c1:'#047857', c2:'#047857', bg:'#ECFDF5', soft:'#D1FAE5' },   // v9.3 다중 동시통역 = 초록
+  talk : { c1:'#BE185D', c2:'#BE185D', bg:'#FDF2F8', soft:'#FCE7F3' },   // v9.3 마주보고 = 장미색
   photo: { c1:'#10d6df', c2:'#10d6df', bg:'#ECFEFF', soft:'#CFFAFE' },
   call : { c1:'#1D4ED8', c2:'#1D4ED8', bg:'#EFF6FF', soft:'#DBEAFE' }
 };
@@ -1718,6 +1756,24 @@ function setMyLang(){
 }
 
 /* ---------- 마이 ---------- */
+/* v9.3 마이 목록 한 줄 — 왼쪽: 아이콘·이름, 오른쪽: 값·화살표 */
+function myRow(ic, label, onc, val, cls){
+  const inner = `<span class="ic">${ic}</span><span class="tx">${esc(label)}</span>${val ? `<span class="v">${val}</span>` : ''}${onc ? '<span class="ch">›</span>' : ''}`;
+  return onc ? `<button class="myrow ${cls || ''}" onclick="${onc}">${inner}</button>` : `<div class="myrow ${cls || ''}">${inner}</div>`;
+}
+function myLink(ic, label, href){
+  return `<a class="myrow" href="${href}" target="_blank" rel="noopener"><span class="ic">${ic}</span><span class="tx">${esc(label)}</span><span class="ch">›</span></a>`;
+}
+/* v9.3 사업자 정보 (마이 맨 아래) */
+const BIZ_HTML = `<dl>
+  <dt>서비스</dt><dd>포도랑 (podolang)</dd>
+  <dt>상호</dt><dd>커버포</dd>
+  <dt>대표자</dt><dd>이병주</dd>
+  <dt>사업자등록번호</dt><dd>701-14-02976</dd>
+  <dt>통신판매업 신고</dt><dd>제2026-서울송파-3066호</dd>
+  <dt>주소</dt><dd>서울특별시 송파구 오금로 527, 3층 C-6호 (거여동, 성암빌딩)</dd>
+  <dt>전화</dt><dd><a href="tel:010-6540-7338">010-6540-7338</a></dd>
+</dl>`;
 function openMy(){
   markNav('nvMy');
   const nl = x => String(x).replace(/\n/g,'<br>');
@@ -1753,35 +1809,45 @@ function openMy(){
     <div id="plBox" data-emb="pl">${plBoxHtml()}</div>
 
     <div class="seclabel" data-emb="log">${esc(LT('myMore'))}</div>
-    <button class="btn ghost" data-emb="log" onclick="openPanel()">📞 ${esc(T('navLog'))} · ${esc(LT('pTel'))} ${tels.length} · ${esc(LT('pLog'))} ${clog.length}</button>
-    <button class="btn ghost" data-emb="log" onclick="openSearch()">🔎 ${esc(T('navSearch'))}</button>
-    <button class="btn ghost" data-emb="log" onclick="openSet()">⚙️ ${esc(T('navSet'))}</button>
-
-    <div class="seclabel" data-emb="lic">${esc(LT('myLic'))}</div>
-    <div class="fld" data-emb="lic">
-      <label>${esc(LT('myLicCode'))}</label>
-      <input id="licBox" type="text" placeholder="PODO-XXXX-XXXX"
-        autocomplete="off" autocorrect="off" spellcheck="false"
-        style="letter-spacing:.08em;font-weight:800" value="${esc(licCode)}">
+    <div class="mylist" data-emb="log">
+      ${myRow('📞', T('navLog'), 'openPanel()', `${esc(LT('pTel'))} ${tels.length} · ${esc(LT('pLog'))} ${clog.length}`)}
+      ${myRow('🔎', T('navSearch'), 'openSearch()')}
+      ${myRow('⚙️', T('navSet'), 'openSet()')}
+      ${myRow('☎️', T('call'), "navTo('call')", esc(licLine()))}
     </div>
-    <div class="${licInfo && licInfo.ok ? 'rtbadge' : 'note'}">${esc(licLine())}</div>
-    <button class="btn" data-emb="lic" onclick="saveLic()">${esc(LT('myLicCheck'))}</button>
-    ${licCode ? `<button class="btn ghost" data-emb="lic" onclick="clearLic()">${esc(LT('myLicDel'))}</button>` : ''}
-    <div class="note" data-emb="lic" style="margin-top:11px">${esc(LT('myLicD'))}</div>
+
+    <div data-emb="lic" style="display:none">
+      <input id="licBox" type="hidden" value="${esc(licCode)}">
+    </div>
 
     <div class="seclabel">${esc(LT('myStore'))}</div>
-    <div class="turn">
-      <div class="dst" style="font-size:16px">${esc(LT('pTel'))} ${tels.length} · ${esc(LT('pLog'))} ${clog.length}</div>
-      <div class="src" style="margin:8px 0 0">${esc(T('talk'))} ${hist.length} · ${esc(T('photo'))} ${phist.length}</div>
+    <div class="mylist">
+      ${myRow('☎️', LT('pTel'), '', String(tels.length))}
+      ${myRow('🧾', LT('pLog'), '', String(clog.length))}
+      ${myRow('🔄', T('talk'), '', String(hist.length))}
+      ${myRow('📷', T('photo'), '', String(phist.length))}
     </div>
 
     <div class="seclabel" data-emb="clean">${esc(LT('myClean'))}</div>
-    <button class="btn ghost" data-emb="clean" onclick="clearHist()">${esc(LT('myClrTalk'))}</button>
-    <button class="btn ghost" data-emb="clean" onclick="clearPhist()">${esc(LT('myClrPhoto'))}</button>
-    <button class="btn ghost" data-emb="clean" onclick="clearLog()">${esc(LT('myClrLog'))}</button>
+    <div class="mylist" data-emb="clean">
+      ${myRow('🗑️', LT('myClrTalk'), 'clearHist()')}
+      ${myRow('🗑️', LT('myClrPhoto'), 'clearPhist()')}
+      ${myRow('🗑️', LT('myClrLog'), 'clearLog()')}
+    </div>
+
+    <div id="pdLegal">
+      <div class="seclabel">${esc(LT('myLegal'))}</div>
+      <div class="mylist">
+        ${myLink('📄', LT('myTerms'), '/terms.html')}
+        ${myLink('🔒', LT('myPriv'), '/privacy.html')}
+      </div>
+    </div>
 
     <div class="note" style="margin-top:16px">${nl(LT('myOnPhone'))}</div>
     <div class="note">${nl(LT('myEar'))}</div>
+
+    <div class="seclabel">${esc(LT('myBiz'))}</div>
+    <div class="bizinfo">${BIZ_HTML}</div>
     <div class="ver">podolang ${VER}</div>`;
   $('#sheet').classList.add('on');
   ensurePack(openMy);
@@ -1868,15 +1934,19 @@ async function plOnGoogle(resp){
   }catch(e){ toast(e.message); }
 }
 function plBoxHtml(){
-  if(!plTok) return `<div class="note">${LT('plLoginD')}</div><div class="gbtn" id="gbtnMy"></div>`;
+  if(!plTok) return `<div class="note">${LT('plLoginD')}</div><div class="gbtn" id="gbtnMy"></div>
+    <div class="mylist">${myRow('🚪', LT('plDel'), 'plDelete()', '', 'danger')}</div>`;
   const me = plMe;
   const cfg = plCfg && plCfg.ok ? plCfg : null;
   const prods = cfg ? (cfg.products || []) : [];
   return `
-    <div class="plcard">
-      <div style="font-size:12px;color:var(--sub);font-weight:800">${esc(me ? (me.email || me.name || '') : '…')}</div>
-      <div class="bal">${me ? esc(String(me.credits)) : '…'} <small style="font-size:13px;color:var(--sub)">${esc(LT('plBal'))}</small></div>
-      <div style="font-size:12px;color:var(--sub)">${esc(LT('plPriceD'))}</div>
+    <div class="myprof">
+      <div class="av">${esc(((me && (me.name || me.email)) || 'P').trim().charAt(0).toUpperCase())}</div>
+      <div class="who">
+        <div class="em">${esc(me ? (me.email || me.name || '') : '…')}</div>
+        <div class="bal">${me ? esc(String(me.credits)) : '…'} <small>${esc(LT('plBal'))}</small></div>
+        <div style="font-size:12px;color:var(--sub);font-weight:700">${esc(LT('plPriceD'))}</div>
+      </div>
     </div>
     <div class="seclabel">${esc(LT('plBuy'))}</div>
     ${PLAY.on ? `<div class="plbuy">${prods.map(p => `<button onclick="plBuy('${esc(p.id)}')">${esc(String(p.credits))} ${esc(LT('plCr'))}<span>${esc(PLAY.price[p.id] || ('₩' + Number(p.amount).toLocaleString('ko-KR')))}</span></button>`).join('') || `<div class="note">…</div>`}</div>
@@ -1885,8 +1955,11 @@ function plBoxHtml(){
        ${cfg && cfg.pkg ? `<a class="btn" style="display:block;text-align:center;text-decoration:none;margin-bottom:10px" href="https://play.google.com/store/apps/details?id=${encodeURIComponent(cfg.pkg)}" target="_blank" rel="noopener">📲 ${esc(LT('plGetApp'))}</a>` : ''}`}
     <div class="seclabel">${esc(LT('plOrders'))}</div>
     ${plOrders ? (plOrders.length ? plOrders.map(o => `<div class="note" style="padding:11px 14px">+${esc(String(o.credits))} · ₩${Number(o.amount).toLocaleString('ko-KR')} · ${esc(o.method || '')} · ${new Date(o.at).toLocaleDateString()}</div>`).join('') : `<div class="note">${esc(LT('plNoOrders'))}</div>`) : `<div class="note">…</div>`}
-    <button class="btn ghost" onclick="plLogout()">${esc(LT('plLogout'))}</button>
-    <button class="btn ghost" style="color:var(--rec,#e11d48);font-size:13px;padding:12px" onclick="plDelete()">${esc(LT('plDel'))}</button>`;
+    <div class="seclabel">${esc(LT('plAccMng'))}</div>
+    <div class="mylist">
+      ${myRow('↪️', LT('plLogout'), 'plLogout()')}
+      ${myRow('🚪', LT('plDel'), 'plDelete()', '', 'danger')}
+    </div>`;
 }
 /* 마이를 열 때 계정 칸을 채웁니다 */
 async function plMyFill(){
@@ -1966,6 +2039,7 @@ async function plLogout(){
   openMy(); if(mode === 'one' || mode === 'multi') render();
 }
 async function plDelete(){
+  if(!plTok){ toast(LT('plDelNoAcc')); return; }
   if(!confirm(LT('plDelQ'))) return;
   try{ await plApi('/api/pl/delete', {}); }catch(e){ toast(e.message); return; }
   plTok = ''; plMe = null; plOrders = null; licInfo = null; RM.room = null;
@@ -1987,7 +2061,21 @@ function plStart(){
 const RM = { room:null, list:[], after:0, poll:null, pulling:false, first:true, busy:false, rec:null, invite:'',
              lang:'', read: load('podolang_rm_read', true) };
 const rmLangPref = () => load('podolang_rm_lang', from || 'KO');
-function rmStop(){ if(RM.poll){ clearInterval(RM.poll); RM.poll = null; } if(RM.rec){ try{ RM.rec.stop(); }catch(e){} RM.rec = null; } }
+/* v9.3 새 글 묻는 간격 — 사람이 많을수록 길게 (서버 요청 줄이기). 화면을 안 보고 있으면 20초 */
+function rmGap(){
+  if(document.hidden) return 20000;
+  const n = RM.n || 0;
+  return n > 50 ? 10000 : n > 30 ? 8000 : n > 20 ? 6000 : n > 10 ? 4000 : 2500;
+}
+function rmTick(){
+  if(RM.poll) clearTimeout(RM.poll);
+  RM.poll = setTimeout(() => { RM.poll = null; if(!RM.room) return; rmPull(); rmTick(); }, rmGap());
+}
+document.addEventListener('visibilitychange', () => {
+  // 화면으로 돌아오면 바로 한 번 묻고 다시 간격대로
+  if(!document.hidden && RM.room && RM.poll){ rmPull(); rmTick(); }
+});
+function rmStop(){ if(RM.poll){ clearTimeout(RM.poll); RM.poll = null; } if(RM.rec){ try{ RM.rec.stop(); }catch(e){} RM.rec = null; } }
 function rmBar(on){ const b = $('#roomBar'); if(b) b.classList.toggle('on', !!on); }
 function rmErr(e){
   return `<div class="note" style="border-color:rgba(209,67,67,.3)"><b style="color:var(--rec,#e11d48)">${esc(e.message || e)}</b>` +
@@ -2017,6 +2105,9 @@ function renderRooms(){
     <div class="fld">
       <label>${esc(LT('rmNew'))}</label>
       <input id="rmName" maxlength="30" placeholder="${esc(LT('rmNamePh'))}">
+      ${mode === 'multi' ? `<label style="margin-top:12px">${esc(LT('rmCapL'))}</label>
+      <div class="capwrap"><input id="rmCap" type="number" inputmode="numeric" min="3" max="${RM_CAP_MAX}" step="1" value="${rmCapPref()}"><span>${esc(LT('rmCapUnit'))}</span></div>
+      <div class="hint">${esc(LT('rmCapD'))}</div>` : ''}
       <button class="btn" style="margin-top:10px" onclick="rmCreate()">＋ ${esc(LT('rmCreate'))}</button>
     </div>
     <div class="fld">
@@ -2033,7 +2124,7 @@ function renderRooms(){
     const el = $('#rmList'); if(!el) return;
     el.innerHTML = RM.list.length ? RM.list.map((r, i) => `
       <button class="rmrow" onclick="rmOpen(${i})">
-        <b>${kind === 'multi' ? '👪' : '💬'} ${esc(r.name)}</b><span class="chip">${esc(r.code)}</span><span class="chip">👥 ${r.members}</span>
+        <b>${kind === 'multi' ? '👪' : '💬'} ${esc(r.name)}</b><span class="chip">${esc(r.code)}</span><span class="chip">👥 ${r.members}${r.cap ? ' / ' + r.cap : ''}</span>
         <small>${esc(r.langs.map(langName).join(' · '))} · ${esc(r.last_body ? (r.last_nick ? r.last_nick + ': ' : '') + r.last_body : LT('rmNoTalk'))}</small>
       </button>`).join('') : `<div class="note">${esc(LT('rmNone'))}</div>`;
   }, e => { if(e.login) return render(); const el = $('#rmList'); if(el) el.innerHTML = rmErr(e); });
@@ -2044,9 +2135,22 @@ function rmForm(){
   save('podolang_rm_lang', lang); save('podolang_rm_nick', nick);
   return { lang, nick };
 }
+/* v9.3 다중 동시통역 — 방을 만들 때 최대 인원을 숫자로 적기 (3~100명, 처음엔 10명) */
+const RM_CAP_MIN = 3, RM_CAP_MAX = 100;
+function rmCapPref(){ const n = parseInt(load('podolang_rm_cap', 10), 10); return (n >= RM_CAP_MIN && n <= RM_CAP_MAX) ? n : 10; }
+/* 적은 숫자를 확인합니다. 틀리면 알려 주고 null */
+function rmCapRead(){
+  const el = $('#rmCap'); if(!el) return rmCapPref();
+  const v = String(el.value).trim(), n = Number(v);
+  if(!/^\d+$/.test(v) || n < RM_CAP_MIN || n > RM_CAP_MAX){ toast(LT('rmCapBad')); el.focus(); return null; }
+  save('podolang_rm_cap', n);
+  return n;
+}
 async function rmCreate(){
+  const cap = mode === 'multi' ? rmCapRead() : 2;
+  if(cap === null) return;
   const f = rmForm(), nm = $('#rmName');
-  try{ const d = await plApi('/api/pl/room', { op:'create', kind: mode, name: nm ? nm.value.trim() : '', lang: f.lang, nick: f.nick });
+  try{ const d = await plApi('/api/pl/room', { op:'create', kind: mode, name: nm ? nm.value.trim() : '', lang: f.lang, nick: f.nick, cap });
        RM.room = Object.assign({ mine:true }, d.room); RM.lang = f.lang; render(); }
   catch(e){ toast(e.message); if(e.login) render(); }
 }
@@ -2080,7 +2184,7 @@ function rmRoomView(){
     <div class="rmchat" id="rmChat"></div>`;
   rmBar(true); paintText();
   RM.after = 0; RM.first = true;
-  rmPull(); RM.poll = setInterval(rmPull, 2500);
+  RM.n = 0; rmPull(); rmTick();
 }
 function rmPull(){
   if(!RM.room || RM.pulling) return;
@@ -2092,7 +2196,8 @@ function rmPull(){
     if(d.room) RM.room.mine = d.room.mine;
     if(d.me && !RM.lang){ RM.lang = d.me.lang; const sl = $('#rmRLang'); if(sl) sl.value = d.me.lang; }
     const cr = $('#rmCr'); if(cr) cr.textContent = LT('rmCredit') + ' ' + d.credits;
-    const mem = $('#rmMem'); if(mem && d.members) mem.textContent = '👥 ' + d.members.map(x => langName(x.lang) + ' ' + x.nick + (x.me ? LT('rmMe') : '')).join(' · ');
+    if(d.members) RM.n = d.members.length;
+    const mem = $('#rmMem'); if(mem && d.members) mem.textContent = '👥 ' + (d.cap ? d.members.length + '/' + d.cap + ' · ' : '') + d.members.slice(0, 12).map(x => langName(x.lang) + ' ' + x.nick + (x.me ? LT('rmMe') : '')).join(' · ') + (d.members.length > 12 ? ' ' + LT('rmMore').replace('N', d.members.length - 12) : '');
     const ub = $('#rmUnb'); if(ub){ ub.hidden = !d.blocked; ub.textContent = LT('rmUnblock') + ' (' + (d.blocked || 0) + ')'; }
     const box = $('#rmChat'); if(!box) return;
     (d.msgs || []).forEach(x => {

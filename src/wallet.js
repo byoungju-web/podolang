@@ -34,7 +34,9 @@ const PRODUCTS = [                  // 충전 상품 (1 크레딧 = 99원) — P
 const ROOM_STEP = 1;                // 방 번역 1개 = 0.1 크레딧
 const MAX_TEXT = 500;
 const KEEP_DAYS = 30;
-const LIMIT = { one: 2, multi: 10 };
+const LIMIT = { one: 2, multi: 100 };   // v9.3 다중 방 최대 100명
+// v9.3 다중 방은 만든 사람이 최대 인원(3~100)을 적습니다. pl_rooms.cap 칸이 없으면(아직 안 만들었으면) 100명.
+const capOf = (room) => { const n = parseInt(room && room.cap, 10); const max = LIMIT[room && room.kind] || 2; return room && room.kind === 'multi' && n >= 3 && n <= max ? n : max; };
 const LANGS = {
   KO: 'Korean', TH: 'Thai', EN: 'English', JA: 'Japanese', ZH: 'Chinese (Simplified)', VI: 'Vietnamese', ES: 'Spanish',
   ID: 'Indonesian', DE: 'German', FR: 'French', AR: 'Arabic', IT: 'Italian', RU: 'Russian', PT: 'Portuguese (Brazil)',
@@ -216,7 +218,7 @@ async function roomOp(env, ctx, b) {
     const out = [];
     for (const r of rs) {
       const ms = await all(env, 'SELECT nick, lang FROM pl_members WHERE room_id = ?', r.id);
-      out.push({ id: r.id, code: r.code, kind: r.kind, name: r.name, mine: r.owner === u.id, members: ms.length, langs: [...new Set(ms.map((m) => m.lang))], last_body: r.last_body || '', last_nick: r.last_nick || '' });
+      out.push({ id: r.id, code: r.code, kind: r.kind, name: r.name, mine: r.owner === u.id, members: ms.length, langs: [...new Set(ms.map((m) => m.lang))], last_body: r.last_body || '', last_nick: r.last_nick || '', cap: r.kind === 'multi' ? capOf(r) : 0 });
     }
     return { ok: true, rooms: out };
   }
@@ -224,10 +226,16 @@ async function roomOp(env, ctx, b) {
     const kind = b.kind === 'multi' ? 'multi' : 'one';
     const lang = langOk(b.lang) ? b.lang : 'KO';
     const name = clean(b.name, 30) || (kind === 'multi' ? 'Group room' : '1:1 room');
+    const cap = capOf({ kind, cap: b.cap });
     let room = null;
     for (let i = 0; i < 4 && !room; i++) {
       const id = 'r_' + b64u(rand(12)), code = newCode();
-      try { await run(env, 'INSERT INTO pl_rooms (id, code, kind, name, owner, last_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)', id, code, kind, name, u.id, now(), now()); room = { id, code, kind, name }; } catch (e) {}
+      try {
+        try { await run(env, 'INSERT INTO pl_rooms (id, code, kind, name, owner, last_at, created_at, cap) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', id, code, kind, name, u.id, now(), now(), kind === 'multi' ? cap : 2); }
+        catch (e) { if (!/no column|has no column named cap/i.test(String(e && e.message))) throw e;
+          await run(env, 'INSERT INTO pl_rooms (id, code, kind, name, owner, last_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)', id, code, kind, name, u.id, now(), now()); }
+        room = { id, code, kind, name, cap: kind === 'multi' ? cap : 0 };
+      } catch (e) {}
     }
     if (!room) throw httpErr(500, '방을 만들지 못했어요');
     await run(env, 'INSERT INTO pl_members (room_id, user_id, nick, lang, joined_at) VALUES (?, ?, ?, ?, ?)', room.id, u.id, nickOf(u, b.nick), lang, now());
@@ -241,7 +249,7 @@ async function roomOp(env, ctx, b) {
     const lang = langOk(b.lang) ? b.lang : 'KO';
     const ms = await all(env, 'SELECT user_id FROM pl_members WHERE room_id = ?', room.id);
     if (!ms.some((m) => m.user_id === u.id)) {
-      const cap = LIMIT[room.kind] || 2;
+      const cap = capOf(room);
       if (ms.length >= cap) throw httpErr(409, room.kind === 'one' ? '1:1 통역방은 2명까지예요' : '이 방은 꽉 찼어요 (' + cap + '명)');
       await run(env, 'INSERT INTO pl_members (room_id, user_id, nick, lang, joined_at) VALUES (?, ?, ?, ?, ?)', room.id, u.id, nickOf(u, b.nick), lang, now());
     }
@@ -256,7 +264,7 @@ async function roomOp(env, ctx, b) {
   if (op === 'msgs') {
     const me = await member(env, u.id, b.room);
     const after = Math.max(0, parseInt(b.after, 10) || 0);
-    const room = await one(env, 'SELECT id, code, kind, name, owner FROM pl_rooms WHERE id = ?', b.room);
+    const room = await one(env, 'SELECT * FROM pl_rooms WHERE id = ?', b.room);
     const ms = await all(env, 'SELECT user_id, nick, lang FROM pl_members WHERE room_id = ?', b.room);
     const rows = await all(env, 'SELECT id, user_id, nick, lang, body, tr, created_at FROM pl_msgs WHERE room_id = ? AND id > ? AND created_at > ? ORDER BY id ASC LIMIT 100', b.room, after, now() - KEEP_DAYS * 864e5);
     const bl = new Set((await all(env, 'SELECT blocked FROM pl_blocks WHERE user_id = ?', u.id)).map((x) => x.blocked));
@@ -265,6 +273,7 @@ async function roomOp(env, ctx, b) {
       room: room ? { id: room.id, code: room.code, kind: room.kind, name: room.name, mine: room.owner === u.id } : null,
       me: { lang: me.lang, nick: me.nick },
       members: ms.map((m) => ({ nick: m.nick, lang: m.lang, me: m.user_id === u.id })),
+      cap: room && room.kind === 'multi' ? capOf(room) : 0,
       blocked: bl.size,
       credits: cr(u.tenths),
       msgs: rows.map((m) => {

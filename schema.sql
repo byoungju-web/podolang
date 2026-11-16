@@ -97,3 +97,7 @@ CREATE TABLE IF NOT EXISTS pl_reports (
   reason TEXT,
   created_at INTEGER
 );
+
+-- v9.3 다중 동시통역 최대 인원(3~100명) 칸 — 이미 만든 DB 에는 아래 한 줄만 따로 한 번 실행하세요.
+-- (안 해도 앱은 동작하며, 그때는 모든 다중 방이 100명으로 정해집니다)
+-- ALTER TABLE pl_rooms ADD COLUMN cap INTEGER;
