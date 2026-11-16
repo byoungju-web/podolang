@@ -3,6 +3,12 @@
  * Cloudflare Workers · v1.6
  * © 2026 BJ LEE. All Rights Reserved.
  *
+ * v9.0 (2026-11-16) 포도랑 자체 회원·지갑 — src/wallet.js
+ *  - 구글 로그인 · 토스 결제 · D1(바인딩 DB) · 1:1/다중 동시통역 방 (/api/pl/*)
+ *  - uid 자리에 'pl.' 로 시작하는 포도랑 로그인 키가 오면 포도톡이 아니라 포도랑 지갑에서 확인·차감
+ *  - 전화통역 서버(podolang-realtime)는 /api/link/wallet 으로 포도랑 지갑을 쓴다 (LINK_KEY)
+ *  - 포도톡 uid · coverfo 표로 여는 기존 길은 그대로
+ *
  * v1.6 변경점
  *  - 사진 번역(OCR) 추가: POST /api/vision
  *    이미지 안의 글자를 읽어서 번역. 서류·라벨·인보이스·간판·손글씨.
@@ -18,6 +24,8 @@
  *  - OpenAI(Whisper·GPT) 호출을 Cloudflare AI Gateway 경유로 (지역차단 우회)
  *  - CORS 허용목록에 podolang.hasin7jk.workers.dev 추가
  */
+
+import { plRoute, isPl, plBalance, plSpend } from './wallet.js';
 
 // ===== Cloudflare AI Gateway (OpenAI 지역차단 우회) =====
 const CF_ACCOUNT_ID = '8e3361d320715cc98e7b66cb3127ca76';
@@ -90,6 +98,15 @@ async function talkFetch(env, path, init) {
 }
 
 async function cdCheck(env, uid) {
+  /* v9.0 포도랑 지갑 (로그인 키 pl.…) */
+  if (isPl(uid)) {
+    try {
+      const b = await plBalance(env, uid);
+      if (!b.ok) return { ok: false, reason: b.reason };
+      if ((b.balance || 0) <= 0) return { ok: false, reason: '크레딧이 없습니다. 마이 → 크레딧 충전에서 채워주세요.' };
+      return { ok: true, balance: b.balance };
+    } catch (e) { return { ok: false, reason: (e && e.message) || '포도랑 지갑을 확인하지 못했습니다.' }; }
+  }
   if (!env.LINK_KEY) return { ok: false, reason: '서버 설정이 끝나지 않았습니다. (LINK_KEY)' };
   if (!uidOk(uid)) return { ok: false, reason: '포도톡에서 열어주세요. 사용자 정보가 없습니다.' };
   try {
@@ -109,6 +126,7 @@ async function cdCheck(env, uid) {
 
 /* 먼저 깎습니다. 부르고 나서 깎으면 실패한 요청으로 얼마든지 뽑아갑니다. */
 async function cdSpend(env, uid, amount, kind) {
+  if (isPl(uid)) { try { return await plSpend(env, uid, amount, kind, true); } catch (_) { return { ok: false, took: 0 }; } }
   if (!env.LINK_KEY || !uid || !amount) return { ok: false, took: 0 };
   try {
     const r = await talkFetch(env, `/link/credits`, {
@@ -161,6 +179,10 @@ export default {
     const H = cors(request);
 
     if (request.method === 'OPTIONS') return new Response(null, { headers: H });
+
+    /* v9.0 포도랑 지갑 · 로그인 · 결제 · 동시통역 방 */
+    const plr = await plRoute(request, env, url, H, { OPENAI_BASE });
+    if (plr) return plr;
 
     try {
 

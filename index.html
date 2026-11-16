@@ -239,6 +239,43 @@ footer{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:10px 18px 
 .toast.on{opacity:1}
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---------- v9.0 통역톡 4칸 · 하단 5탭 · 동시통역 방 · 포도랑 계정 ---------- */
+.tabs .tab{font-size:12.5px;line-height:1.2;padding:0 2px;white-space:pre-line}
+.botnav{gap:5px;padding-left:10px;padding-right:10px}
+.botnav .lb{font-size:10.5px;text-align:center;line-height:1.15}
+[data-emb="lic"]{display:none!important}
+.chip{display:inline-block;font-size:11px;font-weight:800;color:var(--sub);background:#F3F4F6;border-radius:999px;padding:3px 9px;margin-left:6px;vertical-align:middle}
+.rmrow{display:block;width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px 14px;margin-bottom:9px;box-shadow:var(--shadow);font:inherit;color:var(--fg)}
+.rmrow b{font-size:15px}
+.rmrow small{display:block;color:var(--sub);font-size:12.5px;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rmhead{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px 13px;margin-bottom:10px;box-shadow:var(--shadow)}
+.rmtop{font-size:15px;margin-bottom:8px}
+.rmbtns{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.rmbtns select{border:1px solid var(--line);border-radius:999px;padding:6px 10px;font:inherit;font-size:12px;font-weight:800;background:#fff;max-width:130px}
+.rmmem,.rmwarn{font-size:12px;color:var(--sub);margin-top:8px;line-height:1.5}
+.rmchat{display:flex;flex-direction:column;gap:8px;padding-bottom:8px}
+.rmm{max-width:84%;border-radius:16px;padding:10px 13px;font-size:15px;line-height:1.5;word-break:break-word}
+.rmm.me{align-self:flex-end;background:var(--c1);color:#fff;border-bottom-right-radius:5px}
+.rmm.you{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:5px;cursor:pointer}
+.rmm .who{font-size:11.5px;font-weight:900;color:var(--c1);margin-bottom:3px}
+.rmm small{display:block;font-size:12px;opacity:.65;margin-top:4px}
+.rmm .act{display:none;gap:6px;margin-top:8px}
+.rmm.sel .act{display:flex}
+.rmm .act button{border:1px solid var(--line);background:#F8FAFC;border-radius:10px;padding:6px 10px;min-height:36px;font:inherit;font-size:12.5px;font-weight:800}
+.rmm.hid{background:#F3F4F6;color:var(--sub);font-size:13px;font-style:italic;cursor:default}
+.roombar{flex:0 0 auto;display:none;gap:8px;align-items:flex-end;padding:10px 12px;background:#fff;border-top:1px solid var(--line)}
+.roombar.on{display:flex}
+.roombar textarea{flex:1;min-height:44px;max-height:120px;border:1px solid var(--line);border-radius:14px;padding:11px 12px;font:inherit;font-size:15px;resize:none;background:#F8FAFC}
+.roombar .rbm{width:46px;height:46px;border-radius:50%;border:0;background:#F3F4F6;font-size:20px;flex:0 0 auto}
+.roombar .rbm.on{background:var(--rec,#e11d48);color:#fff}
+.roombar .rbs{height:46px;border-radius:14px;border:0;background:var(--c1);color:#fff;font:inherit;font-weight:900;padding:0 16px;flex:0 0 auto}
+.plcard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow)}
+.plcard .bal{font-size:26px;font-weight:900;margin:4px 0 2px}
+.plbuy{display:grid;grid-template-columns:1fr;gap:8px;margin:10px 0}
+.plbuy button{display:flex;justify-content:space-between;align-items:center;width:100%;padding:14px 16px;border-radius:14px;border:1px solid var(--line);background:#fff;font:inherit;font-size:15px;font-weight:900;color:var(--fg)}
+.plbuy button span{color:var(--c1)}
+.gbtn{min-height:44px;display:flex;justify-content:center;margin:6px 0}
 </style>
 </head>
 <body>
@@ -250,9 +287,11 @@ footer{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:10px 18px 
     <button class="helpbtn" id="helpBtn" onclick="openHelp()"></button>
   </header>
 
+  <!-- v9.0 통역톡 4칸: 1:1 동시통역 · 다중 동시통역 · 마주보기 통역 · 전화 통역 (사진 번역은 아래 탭으로) -->
   <div class="tabs">
+    <button class="tab" id="tabOne" onclick="tab('one')"></button>
+    <button class="tab" id="tabMulti" onclick="tab('multi')"></button>
     <button class="tab on" id="tabTalk" onclick="tab('talk')"></button>
-    <button class="tab" id="tabPhoto" onclick="tab('photo')"></button>
     <button class="tab" id="tabCall" onclick="tab('call')"></button>
   </div>
 
@@ -269,8 +308,17 @@ footer{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:10px 18px 
     <div class="foot-spacer"></div>
   </footer>
 
+  <!-- v9.0 동시통역 방의 입력줄 (방 안에서만 보임) -->
+  <div class="roombar" id="roomBar">
+    <button class="rbm" id="rbMic" onclick="rmMic()" aria-label="mic">🎤</button>
+    <textarea id="rbText" maxlength="500" rows="1"></textarea>
+    <button class="rbs" id="rbSend" onclick="rmSend()"></button>
+  </div>
+
+  <!-- v9.0 하단 5탭: 통역톡 · 사진번역 · 검색 · 설정 · 마이 (통화기록은 마이 안으로) -->
   <nav class="botnav" id="botnav">
-    <button id="nvTel"    onclick="openPanel()"><span class="dot"></span><span class="lb" id="lbTel"></span></button>
+    <button id="nvTalk"   onclick="tabGroup()"><span class="dot"></span><span class="lb" id="lbTalk"></span></button>
+    <button id="nvPhoto"  onclick="tab('photo')"><span class="dot"></span><span class="lb" id="lbPhoto"></span></button>
     <button id="nvSearch" onclick="openSearch()"><span class="dot"></span><span class="lb" id="lbSearch"></span></button>
     <button id="nvSet"    onclick="openSet()"><span class="dot"></span><span class="lb" id="lbSet"></span></button>
     <button id="nvMy"     onclick="openMy()"><span class="dot"></span><span class="lb" id="lbMy"></span></button>
@@ -285,7 +333,7 @@ footer{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:10px 18px 
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v8.0.1';
+const VER='v9.1';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -428,10 +476,38 @@ const L = {
  myStore:'저장 현황', myClean:'정리',
  myClrTalk:'마주보고 통역 기록 지우기', myClrPhoto:'사진 번역 기록 지우기', myClrLog:'통화 기록 지우기',
  myOnPhone:'<b>이 기기에만 저장됩니다.</b>\n번호와 기록은 이 폰 안에만 있습니다. 서버로 보내지 않습니다. 브라우저 데이터를 지우면 함께 사라지니, 중요한 내용은 복사해 두세요.',
+ tabOne:'1:1\n동시통역', tabMulti:'다중\n동시통역', navTalk:'통역톡',
+ rmOneD:'두 사람이 <b>각자 자기 폰에서 자기 말로</b> 대화합니다. 상대에게는 상대 언어로 보이고, 폰이 읽어 줍니다.',
+ rmMultiD:'여러 나라 사람이 <b>한 방에서 각자 자기 말로</b> 대화합니다 (최대 10명). 말한 사람의 글이 방 안의 다른 언어로 번역됩니다.',
+ rmPrice:'💳 번역 1개 0.1 크레딧 (방 안의 다른 언어 수만큼 · 같은 언어끼리는 무료) · 말한 사람만 차감',
+ rmMyLang:'내 언어', rmNick:'내 이름 (상대에게 보여요)', rmNickPh:'예: 민지',
+ rmNew:'새 통역방', rmNamePh:'방 이름 (선택)', rmCreate:'방 만들기',
+ rmJoin:'초대 코드로 참여', rmJoinBtn:'코드로 참여', rmMine:'내 통역방',
+ rmNone:'아직 통역방이 없습니다. 방을 만들고 초대 코드를 상대에게 보내 주세요.', rmNoTalk:'아직 대화가 없습니다',
+ rmInvite:'초대', rmLeave:'나가기', rmDel:'방 지우기', rmBack:'목록', rmUnblock:'차단 풀기',
+ rmReadOn:'🔊 읽어주기 켬', rmReadOff:'🔇 읽어주기 끔', rmMe:'(나)',
+ rmWarn:'전화번호·주소 같은 개인정보는 올리지 마세요. 상대 말을 누르면 🚫 차단 · 🚨 신고할 수 있습니다.',
+ rmHidden:'🚫 차단한 사람의 말입니다', rmBlock:'🚫 차단', rmReport:'🚨 신고',
+ rmBlockQ:'이 사람을 차단할까요? 이 사람의 말이 보이지 않습니다 (모든 방).', rmBlocked:'차단했습니다',
+ rmUnblockQ:'차단한 사람을 모두 풀까요?', rmReportQ:'신고 이유를 적어 주세요 (예: 욕설, 광고, 사기)', rmReported:'신고했습니다. 운영자가 확인합니다.',
+ rmLeaveQ:'이 방에서 나갈까요?', rmDelQ:'방과 대화를 모두 지울까요?', rmCopied:'초대 링크를 복사했습니다',
+ rmSendBtn:'보내기', rmTextPh:'내 말로 쓰세요 · 상대 말로 번역됩니다', rmNoMic:'이 브라우저는 말로 입력을 지원하지 않습니다. 글로 써 주세요.',
+ rmCredit:'남은 크레딧', plCr:'크레딧',
+ plAcc:'포도랑 계정 · 크레딧', plLoginT:'구글로 로그인', plLoginD:'1:1·다중 동시통역과 크레딧 충전은 로그인 후 쓸 수 있습니다. 처음 가입하면 크레딧을 선물로 드립니다.',
+ plLoginPrep:'로그인 준비 중입니다. 잠시 뒤 다시 열어 주세요.', plHello:'로그인했습니다',
+ plBal:'남은 크레딧', plBuy:'크레딧 충전',
+ plAppOnly:'크레딧 충전은 <b>포도랑 앱</b>(구글 플레이)에서 할 수 있습니다. 같은 구글 계정으로 로그인하면 충전한 크레딧을 여기서도 그대로 씁니다.',
+ plAppOnlyT:'크레딧 충전은 포도랑 앱(구글 플레이)에서 할 수 있습니다', plGetApp:'포도랑 앱 받기',
+ plPlayD:'구글 플레이로 결제됩니다. 결제 후 크레딧이 바로 들어갑니다.', plRetryD:'결제는 구글에 남아 있어 마이를 다시 열면 크레딧이 들어갑니다',
+ plPaid:'충전했습니다', plPayFail:'결제를 마치지 못했습니다', plOrders:'결제 내역', plNoOrders:'아직 결제 내역이 없습니다.',
+ plLogout:'로그아웃', plDel:'계정 삭제', plDelQ:'계정을 지울까요? 남은 크레딧과 내가 만든 통역방이 함께 사라지며 되돌릴 수 없습니다.',
+ plNeedLogin:'먼저 구글로 로그인해 주세요', plNeedCredit:'크레딧이 필요합니다. 마이 → 크레딧 충전에서 채워주세요.',
+ plCallNeed:'아래 <b>마이</b> 탭에서 구글로 로그인하고 크레딧을 충전하세요.', plCharge:'충전하러 가기',
+ plPriceD:'1 크레딧 = 99원 · 마주보고 한 마디 0.2 · 사진 1장 0.5 · 전화 1분 6 · 동시통역 번역 1개 0.1',
  myEar:'<b>전화 통역은 이어폰을 쓰세요.</b>\n스피커로 들으면 통역 음성을 마이크가 다시 주워서 말이 꼬입니다.'
 };
 
-const UIVER = '1';                       // 글이 바뀌면 이 숫자를 올립니다
+const UIVER = '3';   // v9.0 새 글(통역톡 4칸·동시통역 방·포도랑 계정)이 늘어 2로                       // 글이 바뀌면 이 숫자를 올립니다
 let pack = load('podolang_pack', {});    // 옮겨둔 글 (언어별)
 let packBusy = false;
 
@@ -470,6 +546,8 @@ function T(k){ const r = I18N[k]; if(!r) return k; return r[uiLang()] || r.EN ||
 /* ---------- 탭 ---------- */
 // 탭마다 색이 바뀝니다. 헤더·배경·버튼·말풍선이 한꺼번에 따라옵니다.
 const THEME = {
+  one  : { c1:'#6D28D9', c2:'#6D28D9', bg:'#F5F3FF', soft:'#EDE9FE' },
+  multi: { c1:'#6D28D9', c2:'#6D28D9', bg:'#F5F3FF', soft:'#EDE9FE' },
   talk : { c1:'#6D28D9', c2:'#6D28D9', bg:'#F5F3FF', soft:'#EDE9FE' },
   photo: { c1:'#10d6df', c2:'#10d6df', bg:'#ECFEFF', soft:'#CFFAFE' },
   call : { c1:'#1D4ED8', c2:'#1D4ED8', bg:'#EFF6FF', soft:'#DBEAFE' }
@@ -477,10 +555,14 @@ const THEME = {
 // 화면 글씨를 지금 언어로 채웁니다
 function paintText(){
   const set = (id, v) => { const e=$('#'+id); if(e) e.textContent = v; };
+  set('tabOne',   LT('tabOne'));
+  set('tabMulti', LT('tabMulti'));
   set('tabTalk',  T('talk'));
-  set('tabPhoto', T('photo'));
   set('tabCall',  T('call'));
-  set('lbTel',    T('navLog'));
+  set('lbTalk',   LT('navTalk'));
+  set('lbPhoto',  T('photo'));
+  set('rbSend',   LT('rmSendBtn'));
+  const rbt = $('#rbText'); if(rbt) rbt.placeholder = LT('rmTextPh');
   set('lbSearch', T('navSearch'));
   set('lbSet',    T('navSet'));
   set('lbMy',     T('navMy'));
@@ -501,19 +583,29 @@ function paint(m){
   // 브라우저 주소창 색은 건드리지 않습니다. 흰색 그대로 둡니다.
 }
 
+const GROUP = ['one','multi','talk','call'];   // v9.0 통역톡 4칸
+let lastGroup = 'talk';
+function tabGroup(){ if(sheetOpen()) closeSheet(); tab(lastGroup); }
 function tab(m){
   mode=m;
+  if(GROUP.includes(m)) lastGroup = m;
   paint(m);
+  $('#tabOne').classList.toggle('on',m==='one');
+  $('#tabMulti').classList.toggle('on',m==='multi');
   $('#tabTalk').classList.toggle('on',m==='talk');
-  $('#tabPhoto').classList.toggle('on',m==='photo');
   $('#tabCall').classList.toggle('on',m==='call');
+  // 통역톡 4칸은 통역톡 탭에서만 (사진 번역에서는 감춤)
+  $('.tabs').style.display = GROUP.includes(m) ? '' : 'none';
+  if(!sheetOpen()) markNav(m==='photo' ? 'nvPhoto' : 'nvTalk');
   // 마주보고 통역에서만 아래 마이크(푸터)를 보여줍니다
   $('#foot').style.display = (m==='talk') ? 'flex' : 'none';
+  rmStop(); rmBar(false);
   render();
 }
 function render(){
-  if(mode==='call' && licCode && !licInfo) licCheck(true).then(renderCall);
-  if(mode==='talk') renderTalk();
+  if(mode==='call' && (licCode || walletId()) && !licInfo) licCheck(true).then(renderCall);
+  if(mode==='one' || mode==='multi') renderRooms();
+  else if(mode==='talk') renderTalk();
   else if(mode==='photo') renderPhoto();
   else renderCall();
 }
@@ -584,9 +676,10 @@ async function done(){
   /* 마주보고 통역도 이용권이 있어야 합니다.
      한 번 말할 때마다 음성 인식·번역·음성 합성이 돌아가고, 그때마다 돈이
      나갑니다. 공짜로 두면 쓰는 사람이 늘수록 손해만 커집니다. */
+  if(!(licInfo && licInfo.ok) && walletId()) await licCheck(true);   // v9.0 아직 확인 전이면 한 번 확인
   if(!(licInfo && licInfo.ok)){
     $('#micLabel').textContent = T('pressSpeak');
-    toast('크레딧이 필요합니다. 포도톡 설정 → 크레딧에서 채워주세요.');
+    toast(EMBED ? '크레딧이 필요합니다. 포도톡 설정 → 크레딧에서 채워주세요.' : LT('plNeedCredit'));
     return;
   }
 
@@ -596,7 +689,7 @@ async function done(){
   fd.append('sourceLang', from);
   fd.append('targetLang', to);
   fd.append('code', licCode || '');
-  fd.append('uid', ptUid || '');
+  fd.append('uid', walletId());
   try{
     const res = await fetch(url('/api/podolang'), {method:'POST', body:fd});
     const d = await res.json();
@@ -763,7 +856,7 @@ async function photoTranslate(){
   try{
     const r = await fetch(url('/api/vision'),{
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ imageBase64: photoData, sourceLang: pFrom, targetLang: pTo })
+      body: JSON.stringify({ imageBase64: photoData, sourceLang: pFrom, targetLang: pTo, uid: walletId() })
     });
     const d = await r.json();
     if(d.error) throw new Error(d.error);
@@ -882,6 +975,10 @@ let licInfo = null;
    확인하고 깎습니다. 이용권을 따로 사지 않아도 되게 하려고 붙였습니다.
    한 번 받으면 저장해 두어, 새로고침해도 잃지 않습니다. */
 let ptUid = '';
+/* v9.0 포도랑 자체 지갑: 구글 로그인 키(pl.…). 포도톡·coverfo 안에서 열 때(끼워넣기)는 그쪽 지갑을 그대로 씁니다 */
+let plTok = '';
+try { plTok = localStorage.getItem('podolang_pl_tk') || ''; } catch (e) {}
+function walletId(){ return (EMBED ? ptUid : (plTok || ptUid)) || ''; }
 try {
   const _u = new URLSearchParams(location.search).get('uid') || '';
   if (_u) { ptUid = _u; localStorage.setItem('podolang_pt_uid', _u); }
@@ -1027,7 +1124,7 @@ async function sendVoice(blob, type){
   if(!blob || blob.size < 4000) return;                 // 너무 짧으면 잡음
   if(!rt || !rt.active || rt.muted) return;
   if(sayBusy) return;                                    // 읽어주는 중이면 보내지 않습니다
-  if(!licCode && !ptUid){ return; }
+  if(!licCode && !walletId()){ return; }
   if(sttBusy) return;                                    // 겹치지 않게
   sttBusy = true;
   setStatus('알아듣는 중…');
@@ -1037,7 +1134,7 @@ async function sendVoice(blob, type){
     fd.append('audio', blob, 'voice.' + ext);
     fd.append('lang', String(rt.me || 'ko').toLowerCase());
     fd.append('code', licCode);
-    fd.append('uid', ptUid || '');
+    fd.append('uid', walletId());
     const r = await fetch(RT_API + '/api/stt', { method:'POST', body: fd });
     const d = await r.json();
     if(d.error) throw new Error(d.error);
@@ -1112,7 +1209,7 @@ function renderCall(){
         ? `<div class="rtbadge">${esc(licLine())}</div>`
         : `<div class="note"><b>이용권이 필요합니다.</b><br>${esc(licLine())}<br>
              ${EMBED_CALL ? '포도톡 <b>설정 → 크레딧</b> 에서 채워주세요.'
-                          : '아래 <b>마이</b> 탭에서 코드를 넣으세요.'}</div>`)}
+                          : LT('plCallNeed')}</div>`)}
 
     <button class="btn" id="callBtn" onclick="callStart()"
       ${(noSR || !(licInfo && licInfo.ok)) ? 'disabled' : ''}>통역 전화 걸기</button>
@@ -1196,7 +1293,7 @@ async function callStart(){
   try{
     const res = await fetch(RT_API + '/api/rt/start', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ to:num, myLang:me, peerLang:peer, code:licCode, device:devId, uid:ptUid,
+      body: JSON.stringify({ to:num, myLang:me, peerLang:peer, code:licCode, device:devId, uid:walletId(),
                              glossary: gloss, tone })
     });
     d = await res.json();
@@ -1372,7 +1469,7 @@ function openSet(){
 }
 function closeSheet(){
   $('#sheet').classList.remove('on');
-  ['nvTel','nvSearch','nvSet','nvMy'].forEach(id => { const b=$('#'+id); if(b) b.classList.remove('on'); });
+  markNav(mode==='photo' ? 'nvPhoto' : 'nvTalk');
 }
 const sheetOpen = () => $('#sheet').classList.contains('on');
 
@@ -1381,6 +1478,7 @@ const sheetOpen = () => $('#sheet').classList.contains('on');
 function goHome(){
   if(sheetOpen()){ closeSheet(); return; }
   if(rt && rt.active){ toast('통화 중입니다. 종료 버튼을 눌러주세요'); return; }
+  if(RM.room && (mode === 'one' || mode === 'multi')){ rmBack(); return; }   // v9.0 방 → 방 목록
   if(mode !== 'talk') tab('talk');
 }
 try{
@@ -1393,11 +1491,11 @@ try{
 }catch(e){}
 /* ---------- 이용권 ---------- */
 async function licCheck(quiet){
-  if(!licCode && !ptUid){ licInfo = null; return null; }
+  if(!licCode && !walletId()){ licInfo = null; return null; }
   try{
     const r = await fetch(RT_API + '/api/lic/check', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ code: licCode, device: devId, uid: ptUid })
+      body: JSON.stringify({ code: licCode, device: devId, uid: walletId() })
     });
     licInfo = await r.json();
   }catch(e){ licInfo = { ok:false, reason:'서버에 연결하지 못했습니다.' }; }
@@ -1420,7 +1518,8 @@ function clearLic(){
   openMy(); renderCall();
 }
 const licLine = () => {
-  if(!licCode) return LT('licNone');
+  if(!licCode && !walletId()) return LT('licNone');
+  if(licInfo && licInfo.ok && !licInfo['만료일']) return `${licInfo.plan} · ${licInfo['남은크레딧']} · ${LT('licLeft')} ${licInfo['남은분']}${LT('licMin')}`;
   if(!licInfo) return LT('licChecking');
   if(!licInfo.ok) return reasonText(licInfo.reason) || LT('licBad');
   return `${licInfo.plan} · ${LT('licLeft')} ${licInfo['남은분']}${LT('licMin')} · ${licInfo['만료일']} ${LT('licUntil')}`;
@@ -1541,7 +1640,8 @@ function openHelp(){
 }
 
 function markNav(id){
-  ['nvTel','nvSearch','nvSet','nvMy'].forEach(x => { const b=$('#'+x); if(b) b.classList.toggle('on', x===id); });
+  if(id === 'nvTel') id = 'nvMy';          // v9.0 통화기록은 마이 안에 있음
+  ['nvTalk','nvPhoto','nvSearch','nvSet','nvMy'].forEach(x => { const b=$('#'+x); if(b) b.classList.toggle('on', x===id); });
 }
 
 /* ---------- 검색 ---------- */
@@ -1639,6 +1739,12 @@ function openMy(){
         <select id="myTo" onchange="setMyLang()">${opts(to)}</select>
       </div>`}
 
+    <div class="seclabel" data-emb="pl">${esc(LT('plAcc'))}</div>
+    <div id="plBox" data-emb="pl">${plBoxHtml()}</div>
+
+    <div class="seclabel" data-emb="log">${esc(T('navLog'))}</div>
+    <button class="btn ghost" data-emb="log" onclick="openPanel()">📞 ${esc(T('navLog'))} · ${esc(LT('pTel'))} ${tels.length} · ${esc(LT('pLog'))} ${clog.length}</button>
+
     <div class="seclabel" data-emb="lic">${esc(LT('myLic'))}</div>
     <div class="fld" data-emb="lic">
       <label>${esc(LT('myLicCode'))}</label>
@@ -1667,6 +1773,7 @@ function openMy(){
     <div class="ver">podolang ${VER}</div>`;
   $('#sheet').classList.add('on');
   ensurePack(openMy);
+  plMyFill();
 }
 
 function saveSet(){
@@ -1698,6 +1805,364 @@ if(window.visualViewport){
 }
 if(langAuto) applyAuto();
 
+/* ═════════════════ v9.0 포도랑 계정 · 지갑 · 동시통역 방 ═════════════════
+   서버: 포도랑 워커 /api/pl/* (src/wallet.js) · 로그인 키는 이 기기에만 저장합니다. */
+let plCfg = null, plMe = null, plOrders = null, plGsiOn = false;
+async function plConfig(){
+  if(plCfg && plCfg.ok) return plCfg;
+  try{ const r = await fetch(url('/api/pl/config'), { method:'POST', headers:{'Content-Type':'application/json'}, body:'{}' }); plCfg = await r.json(); }
+  catch(e){ plCfg = { ok:false }; }
+  return plCfg;
+}
+async function plApi(path, body){
+  const r = await fetch(url(path), { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(Object.assign({ tk: plTok }, body || {})) });
+  const d = await r.json().catch(() => ({}));
+  if(!r.ok || d.error){
+    const e = new Error(d.error || ('오류 ' + r.status)); e.status = r.status; e.login = !!d.login; e.needCredit = !!d.needCredit || r.status === 402;
+    if(e.login && plTok){ plTok = ''; plMe = null; try{ localStorage.removeItem('podolang_pl_tk'); }catch(x){} }
+    throw e;
+  }
+  return d;
+}
+function loadJs(id, src){
+  return new Promise((res, rej) => {
+    let s = document.getElementById(id);
+    if(s && s.dataset.ok) return res();
+    if(!s){ s = document.createElement('script'); s.id = id; s.src = src; s.async = true; document.head.appendChild(s); }
+    s.addEventListener('load', () => { s.dataset.ok = '1'; res(); });
+    s.addEventListener('error', () => rej(new Error('불러오지 못했습니다')));
+  });
+}
+/* 구글 로그인 단추를 el 안에 그립니다 */
+async function plLoginButton(el){
+  if(!el) return;
+  const cfg = await plConfig();
+  if(!cfg.google){ el.innerHTML = `<div class="note">${esc(LT('plLoginPrep'))}</div>`; return; }
+  try{ await loadJs('gsiJs', 'https://accounts.google.com/gsi/client'); }catch(e){ el.innerHTML = `<div class="note">${esc(LT('plLoginPrep'))}</div>`; return; }
+  if(!window.google || !google.accounts || !google.accounts.id) return;
+  if(!plGsiOn){ google.accounts.id.initialize({ client_id: cfg.google, callback: plOnGoogle }); plGsiOn = true; }
+  el.innerHTML = '';
+  google.accounts.id.renderButton(el, { theme:'outline', size:'large', shape:'pill', text:'signin_with', locale: uiLang().toLowerCase() });
+}
+async function plOnGoogle(resp){
+  try{
+    const d = await plApi('/api/pl/login', { credential: resp && resp.credential });
+    plTok = d.tk; plMe = d.me; plOrders = null;
+    try{ localStorage.setItem('podolang_pl_tk', d.tk); }catch(e){}
+    toast(LT('plHello'));
+    licInfo = null; licCheck(true);
+    if(sheetOpen()) openMy();
+    if(mode === 'one' || mode === 'multi') render();
+  }catch(e){ toast(e.message); }
+}
+function plBoxHtml(){
+  if(!plTok) return `<div class="note">${LT('plLoginD')}</div><div class="gbtn" id="gbtnMy"></div>`;
+  const me = plMe;
+  const cfg = plCfg && plCfg.ok ? plCfg : null;
+  const prods = cfg ? (cfg.products || []) : [];
+  return `
+    <div class="plcard">
+      <div style="font-size:12px;color:var(--sub);font-weight:800">${esc(me ? (me.email || me.name || '') : '…')}</div>
+      <div class="bal">${me ? esc(String(me.credits)) : '…'} <small style="font-size:13px;color:var(--sub)">${esc(LT('plBal'))}</small></div>
+      <div style="font-size:12px;color:var(--sub)">${esc(LT('plPriceD'))}</div>
+    </div>
+    <div class="seclabel">${esc(LT('plBuy'))}</div>
+    ${PLAY.on ? `<div class="plbuy">${prods.map(p => `<button onclick="plBuy('${esc(p.id)}')">${esc(String(p.credits))} ${esc(LT('plCr'))}<span>${esc(PLAY.price[p.id] || ('₩' + Number(p.amount).toLocaleString('ko-KR')))}</span></button>`).join('') || `<div class="note">…</div>`}</div>
+       <div class="note" style="font-size:12px">${esc(LT('plPlayD'))}</div>`
+    : `<div class="note">${LT('plAppOnly')}</div>
+       ${cfg && cfg.pkg ? `<a class="btn" style="display:block;text-align:center;text-decoration:none;margin-bottom:10px" href="https://play.google.com/store/apps/details?id=${encodeURIComponent(cfg.pkg)}" target="_blank" rel="noopener">📲 ${esc(LT('plGetApp'))}</a>` : ''}`}
+    <div class="seclabel">${esc(LT('plOrders'))}</div>
+    ${plOrders ? (plOrders.length ? plOrders.map(o => `<div class="note" style="padding:11px 14px">+${esc(String(o.credits))} · ₩${Number(o.amount).toLocaleString('ko-KR')} · ${esc(o.method || '')} · ${new Date(o.at).toLocaleDateString()}</div>`).join('') : `<div class="note">${esc(LT('plNoOrders'))}</div>`) : `<div class="note">…</div>`}
+    <button class="btn ghost" onclick="plLogout()">${esc(LT('plLogout'))}</button>
+    <button class="btn ghost" style="color:var(--rec,#e11d48);font-size:13px;padding:12px" onclick="plDelete()">${esc(LT('plDel'))}</button>`;
+}
+/* 마이를 열 때 계정 칸을 채웁니다 */
+async function plMyFill(){
+  if(EMBED) return;
+  await plConfig();
+  await playInit();
+  await playRecover();
+  const box = document.getElementById('plBox'); if(!box) return;
+  if(!plTok){ box.innerHTML = plBoxHtml(); plLoginButton(document.getElementById('gbtnMy')); return; }
+  box.innerHTML = plBoxHtml();
+  try{
+    const d = await plApi('/api/pl/me', {});
+    plMe = d.me; plOrders = d.orders || [];
+  }catch(e){ if(!e.login) toast(e.message); }
+  const b2 = document.getElementById('plBox'); if(!b2) return;
+  b2.innerHTML = plBoxHtml();
+  if(!plTok) plLoginButton(document.getElementById('gbtnMy'));
+}
+/* ── 구글 플레이 결제 (포도랑 앱 = TWA 안에서만 · Digital Goods API) ── */
+const PLAY_METHOD = 'https://play.google.com/billing';
+const PLAY = { on: false, svc: null, price: {}, busy: false };
+async function playInit(){
+  if(PLAY.svc || !('getDigitalGoodsService' in window)) return PLAY.on;
+  try{
+    PLAY.svc = await window.getDigitalGoodsService(PLAY_METHOD);
+    PLAY.on = !!PLAY.svc;
+    const cfg = await plConfig();
+    const ids = ((cfg && cfg.products) || []).map(p => p.id);
+    if(PLAY.on && ids.length){
+      const det = await PLAY.svc.getDetails(ids);
+      (det || []).forEach(d => { try{ PLAY.price[d.itemId] = new Intl.NumberFormat(undefined, { style:'currency', currency: d.price.currency }).format(Number(d.price.value)); }catch(e){} });
+    }
+  }catch(e){ PLAY.svc = null; PLAY.on = false; }
+  return PLAY.on;
+}
+/* 결제는 됐는데 크레딧이 아직 안 들어간 것 (앱이 꺼졌거나 인터넷이 끊김) 다시 보내기 */
+async function playRecover(){
+  if(!PLAY.on || !plTok || PLAY.busy) return;
+  try{
+    const list = await PLAY.svc.listPurchases();
+    for(const pu of (list || [])){
+      try{ const d = await plApi('/api/pl/play', { sku: pu.itemId, token: pu.purchaseToken }); plMe = d.me; plOrders = null; if(!d.already) toast(LT('plPaid')); }catch(e){}
+    }
+  }catch(e){}
+}
+async function plBuy(pid){
+  if(!plTok){ toast(LT('plNeedLogin')); return; }
+  if(!(await playInit())){ toast(LT('plAppOnlyT')); return; }
+  if(PLAY.busy) return;
+  PLAY.busy = true;
+  try{
+    const req = new PaymentRequest([{ supportedMethods: PLAY_METHOD, data: { sku: pid } }],
+                                   { total: { label: 'Total', amount: { currency: 'KRW', value: '0' } } });
+    const res = await req.show();
+    const token = res && res.details && res.details.purchaseToken;
+    if(!token){ try{ await res.complete('fail'); }catch(e){} throw new Error(LT('plPayFail')); }
+    try{
+      const d = await plApi('/api/pl/play', { sku: pid, token });
+      try{ await res.complete('success'); }catch(e){}
+      plMe = d.me; plOrders = null; licInfo = null; licCheck(true);
+      toast(LT('plPaid'));
+    }catch(e){
+      try{ await res.complete('fail'); }catch(x){}
+      toast(e.message + ' · ' + LT('plRetryD'));
+    }
+  }catch(e){
+    if(!(e && (e.name === 'AbortError'))) toast((e && e.message) || LT('plPayFail'));
+  }
+  PLAY.busy = false;
+  if(sheetOpen()) openMy();
+}
+async function plLogout(){
+  try{ await plApi('/api/pl/logout', {}); }catch(e){}
+  plTok = ''; plMe = null; plOrders = null; licInfo = null;
+  try{ localStorage.removeItem('podolang_pl_tk'); }catch(e){}
+  try{ if(window.google && google.accounts && google.accounts.id) google.accounts.id.disableAutoSelect(); }catch(e){}
+  openMy(); if(mode === 'one' || mode === 'multi') render();
+}
+async function plDelete(){
+  if(!confirm(LT('plDelQ'))) return;
+  try{ await plApi('/api/pl/delete', {}); }catch(e){ toast(e.message); return; }
+  plTok = ''; plMe = null; plOrders = null; licInfo = null; RM.room = null;
+  try{ localStorage.removeItem('podolang_pl_tk'); }catch(e){}
+  openMy(); if(mode === 'one' || mode === 'multi') render();
+}
+/* 처음 열 때: 결제에서 돌아왔는지 · 초대 링크인지 · 지갑 확인 */
+function plStart(){
+  if(EMBED) return;
+  const p = new URLSearchParams(location.search);
+  const room = (p.get('room') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+  if(room){ try{ history.replaceState(history.state, '', location.pathname); }catch(e){} }
+  if(room){ RM.invite = room; tab('one'); }
+  playInit().then(on => { if(on) playRecover(); });   // 앱이면 못 끝낸 결제부터 정리
+  if(walletId() && !licInfo) licCheck(true);
+}
+
+/* ───── 1:1 · 다중 동시통역 방 ───── */
+const RM = { room:null, list:[], after:0, poll:null, pulling:false, first:true, busy:false, rec:null, invite:'',
+             lang:'', read: load('podolang_rm_read', true) };
+const rmLangPref = () => load('podolang_rm_lang', from || 'KO');
+function rmStop(){ if(RM.poll){ clearInterval(RM.poll); RM.poll = null; } if(RM.rec){ try{ RM.rec.stop(); }catch(e){} RM.rec = null; } }
+function rmBar(on){ const b = $('#roomBar'); if(b) b.classList.toggle('on', !!on); }
+function rmErr(e){
+  return `<div class="note" style="border-color:rgba(209,67,67,.3)"><b style="color:var(--rec,#e11d48)">${esc(e.message || e)}</b>` +
+    (e.needCredit ? `<br><button class="mini" style="margin-top:8px" onclick="openMy()">${esc(LT('plCharge'))}</button>` : '') + `</div>`;
+}
+function renderRooms(){
+  rmStop();
+  const m = $('#main');
+  const intro = mode === 'multi' ? LT('rmMultiD') : LT('rmOneD');
+  if(!plTok){
+    rmBar(false);
+    m.innerHTML = `<div class="note">${intro}<br>${LT('rmPrice')}</div>
+      <div class="fld"><label>${esc(LT('plLoginT'))}</label><div class="gbtn" id="gbtnRoom"></div></div>
+      <div class="note">${LT('plLoginD')}</div>`;
+    plLoginButton(document.getElementById('gbtnRoom'));
+    return;
+  }
+  if(RM.room) return rmRoomView();
+  rmBar(false);
+  m.innerHTML = `
+    <div class="note">${intro}<br>${LT('rmPrice')}</div>
+    <div class="fld">
+      <label>${esc(LT('rmMyLang'))}</label><select id="rmLang">${opts(rmLangPref())}</select>
+      <label style="margin-top:12px">${esc(LT('rmNick'))}</label>
+      <input id="rmNick" maxlength="20" value="${esc(load('podolang_rm_nick', ''))}" placeholder="${esc(LT('rmNickPh'))}">
+    </div>
+    <div class="fld">
+      <label>${esc(LT('rmNew'))}</label>
+      <input id="rmName" maxlength="30" placeholder="${esc(LT('rmNamePh'))}">
+      <button class="btn" style="margin-top:10px" onclick="rmCreate()">＋ ${esc(LT('rmCreate'))}</button>
+    </div>
+    <div class="fld">
+      <label>${esc(LT('rmJoin'))}</label>
+      <input id="rmCode" maxlength="6" placeholder="ABC123" value="${esc(RM.invite || '')}" style="text-transform:uppercase;letter-spacing:.18em;font-weight:900">
+      <button class="btn ghost" style="margin-top:10px" onclick="rmJoin()">${esc(LT('rmJoinBtn'))}</button>
+    </div>
+    <div class="seclabel">${esc(LT('rmMine'))}</div>
+    <div id="rmList"><div class="note">…</div></div>`;
+  const kind = mode;
+  plApi('/api/pl/room', { op:'rooms', kind }).then(d => {
+    if(mode !== kind || RM.room) return;
+    RM.list = d.rooms || [];
+    const el = $('#rmList'); if(!el) return;
+    el.innerHTML = RM.list.length ? RM.list.map((r, i) => `
+      <button class="rmrow" onclick="rmOpen(${i})">
+        <b>${kind === 'multi' ? '👪' : '💬'} ${esc(r.name)}</b><span class="chip">${esc(r.code)}</span><span class="chip">👥 ${r.members}</span>
+        <small>${esc(r.langs.map(langName).join(' · '))} · ${esc(r.last_body ? (r.last_nick ? r.last_nick + ': ' : '') + r.last_body : LT('rmNoTalk'))}</small>
+      </button>`).join('') : `<div class="note">${esc(LT('rmNone'))}</div>`;
+  }, e => { if(e.login) return render(); const el = $('#rmList'); if(el) el.innerHTML = rmErr(e); });
+}
+function rmForm(){
+  const l = $('#rmLang'), n = $('#rmNick');
+  const lang = l ? l.value : rmLangPref(), nick = n ? n.value.trim() : load('podolang_rm_nick', '');
+  save('podolang_rm_lang', lang); save('podolang_rm_nick', nick);
+  return { lang, nick };
+}
+async function rmCreate(){
+  const f = rmForm(), nm = $('#rmName');
+  try{ const d = await plApi('/api/pl/room', { op:'create', kind: mode, name: nm ? nm.value.trim() : '', lang: f.lang, nick: f.nick });
+       RM.room = Object.assign({ mine:true }, d.room); RM.lang = f.lang; render(); }
+  catch(e){ toast(e.message); if(e.login) render(); }
+}
+async function rmJoin(){
+  const f = rmForm(), c = $('#rmCode');
+  const code = c ? c.value.trim().toUpperCase() : '';
+  try{ const d = await plApi('/api/pl/room', { op:'join', code, lang: f.lang, nick: f.nick });
+       RM.invite = ''; RM.room = d.room; RM.lang = f.lang;
+       if(d.room.kind !== mode) tab(d.room.kind); else render(); }
+  catch(e){ toast(e.message); if(e.login) render(); }
+}
+function rmOpen(i){ const r = RM.list[i]; if(!r) return; RM.room = r; RM.lang = ''; render(); }
+function rmBack(){ rmStop(); RM.room = null; render(); }
+function rmRoomView(){
+  const r = RM.room;
+  $('#main').innerHTML = `
+    <div class="rmhead">
+      <div class="rmtop"><b>${mode === 'multi' ? '👪' : '💬'} ${esc(r.name)}</b><span class="chip">${esc(r.code)}</span><span class="chip" id="rmCr"></span></div>
+      <div class="rmbtns">
+        <button class="mini" onclick="rmBack()">← ${esc(LT('rmBack'))}</button>
+        <button class="mini" onclick="rmInvite()">🔗 ${esc(LT('rmInvite'))}</button>
+        <select id="rmRLang" onchange="rmSetLang()">${opts(RM.lang || rmLangPref())}</select>
+        <button class="mini" id="rmReadBtn" onclick="rmRead()">${esc(RM.read ? LT('rmReadOn') : LT('rmReadOff'))}</button>
+        <button class="mini" onclick="rmLeave()">${esc(LT('rmLeave'))}</button>
+        ${r.mine ? `<button class="mini del" onclick="rmDel()">${esc(LT('rmDel'))}</button>` : ''}
+        <button class="mini" id="rmUnb" hidden onclick="rmUnblock()"></button>
+      </div>
+      <div class="rmmem" id="rmMem"></div>
+      <div class="rmwarn">${esc(LT('rmWarn'))}</div>
+    </div>
+    <div class="rmchat" id="rmChat"></div>`;
+  rmBar(true); paintText();
+  RM.after = 0; RM.first = true;
+  rmPull(); RM.poll = setInterval(rmPull, 2500);
+}
+function rmPull(){
+  if(!RM.room || RM.pulling) return;
+  RM.pulling = true;
+  const id = RM.room.id;
+  plApi('/api/pl/room', { op:'msgs', room: id, after: RM.after }).then(d => {
+    RM.pulling = false;
+    if(!RM.room || RM.room.id !== id) return;
+    if(d.room) RM.room.mine = d.room.mine;
+    if(d.me && !RM.lang){ RM.lang = d.me.lang; const sl = $('#rmRLang'); if(sl) sl.value = d.me.lang; }
+    const cr = $('#rmCr'); if(cr) cr.textContent = LT('rmCredit') + ' ' + d.credits;
+    const mem = $('#rmMem'); if(mem && d.members) mem.textContent = '👥 ' + d.members.map(x => langName(x.lang) + ' ' + x.nick + (x.me ? LT('rmMe') : '')).join(' · ');
+    const ub = $('#rmUnb'); if(ub){ ub.hidden = !d.blocked; ub.textContent = LT('rmUnblock') + ' (' + (d.blocked || 0) + ')'; }
+    const box = $('#rmChat'); if(!box) return;
+    (d.msgs || []).forEach(x => {
+      RM.after = Math.max(RM.after, x.id);
+      const el = document.createElement('div');
+      if(x.hidden){ el.className = 'rmm you hid'; el.textContent = LT('rmHidden'); box.appendChild(el); return; }
+      el.className = 'rmm ' + (x.mine ? 'me' : 'you');
+      el.innerHTML = (x.mine ? '' : `<div class="who">${esc(langName(x.lang))} · ${esc(x.nick)}</div>`) + esc(x.text) +
+        (x.text !== x.orig ? `<small>${esc(x.orig)}</small>` : '') +
+        (x.mine ? '' : `<div class="act"><button onclick="event.stopPropagation();rmBlock(${x.id})">${esc(LT('rmBlock'))}</button><button onclick="event.stopPropagation();rmReport(${x.id})">${esc(LT('rmReport'))}</button></div>`);
+      if(!x.mine) el.onclick = () => el.classList.toggle('sel');
+      box.appendChild(el);
+      if(!x.mine && !RM.first && RM.read) rmSpeak(x.text, RM.lang || rmLangPref());
+    });
+    if(d.msgs && d.msgs.length){ const mm = $('#main'); mm.scrollTop = mm.scrollHeight; }
+    RM.first = false;
+  }, e => {
+    RM.pulling = false;
+    if(e.login){ rmStop(); RM.room = null; render(); return; }
+    if(e.status === 403 || e.status === 404){ rmStop(); RM.room = null; toast(e.message); render(); }
+  });
+}
+async function rmSend(){
+  const ta = $('#rbText'); if(!ta || RM.busy || !RM.room) return;
+  const t = ta.value.trim(); if(!t) return;
+  RM.busy = true; const btn = $('#rbSend'); if(btn) btn.disabled = true;
+  try{ await plApi('/api/pl/room', { op:'send', room: RM.room.id, text: t }); ta.value = ''; rmPull(); }
+  catch(e){ const box = $('#rmChat'); if(box){ const d = document.createElement('div'); d.innerHTML = rmErr(e); box.appendChild(d.firstChild); const mm = $('#main'); mm.scrollTop = mm.scrollHeight; } }
+  RM.busy = false; if(btn) btn.disabled = false;
+}
+function rmMic(){
+  const R = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const b = $('#rbMic');
+  if(!R){ toast(LT('rmNoMic')); return; }
+  if(RM.rec){ try{ RM.rec.stop(); }catch(e){} RM.rec = null; if(b) b.classList.remove('on'); return; }
+  const r = new R(); r.lang = bcp(RM.lang || rmLangPref()); r.interimResults = false; r.maxAlternatives = 1;
+  RM.rec = r; if(b) b.classList.add('on');
+  r.onresult = ev => { let t = ''; try{ t = ev.results[0][0].transcript; }catch(e){} if(t){ const ta = $('#rbText'); if(ta){ ta.value = t; rmSend(); } } };
+  r.onend = () => { RM.rec = null; if(b) b.classList.remove('on'); };
+  r.onerror = () => { RM.rec = null; if(b) b.classList.remove('on'); };
+  try{ r.start(); }catch(e){ RM.rec = null; if(b) b.classList.remove('on'); }
+}
+function rmSpeak(text, lang){
+  try{ if(!window.speechSynthesis || !text) return; const u = new SpeechSynthesisUtterance(text); u.lang = bcp(lang); speechSynthesis.speak(u); }catch(e){}
+}
+function rmRead(){ RM.read = !RM.read; save('podolang_rm_read', RM.read); const b = $('#rmReadBtn'); if(b) b.textContent = RM.read ? LT('rmReadOn') : LT('rmReadOff'); }
+async function rmSetLang(){
+  const v = $('#rmRLang').value;
+  try{ await plApi('/api/pl/room', { op:'lang', room: RM.room.id, lang: v }); RM.lang = v; save('podolang_rm_lang', v);
+       const box = $('#rmChat'); if(box) box.innerHTML = ''; RM.after = 0; RM.first = true; rmPull(); }
+  catch(e){ toast(e.message); }
+}
+function rmInvite(){
+  const link = 'https://podolang.kr/?room=' + RM.room.code;
+  const msg = RM.room.name + ' · ' + RM.room.code + '\n' + link;
+  if(navigator.share){ navigator.share({ title: 'podolang', text: msg, url: link }).catch(() => {}); return; }
+  try{ navigator.clipboard.writeText(link).then(() => toast(LT('rmCopied'))); }catch(e){ prompt('', link); }
+}
+async function rmLeave(){
+  if(!confirm(LT('rmLeaveQ'))) return;
+  try{ await plApi('/api/pl/room', { op:'leave', room: RM.room.id }); rmBack(); }catch(e){ toast(e.message); }
+}
+async function rmDel(){
+  if(!confirm(LT('rmDelQ'))) return;
+  try{ await plApi('/api/pl/room', { op:'delete', room: RM.room.id }); rmBack(); }catch(e){ toast(e.message); }
+}
+async function rmBlock(id){
+  if(!confirm(LT('rmBlockQ'))) return;
+  try{ await plApi('/api/pl/room', { op:'block', msg: id }); toast(LT('rmBlocked'));
+       const box = $('#rmChat'); if(box) box.innerHTML = ''; RM.after = 0; RM.first = true; rmPull(); }
+  catch(e){ toast(e.message); }
+}
+async function rmUnblock(){
+  if(!confirm(LT('rmUnblockQ'))) return;
+  try{ await plApi('/api/pl/room', { op:'unblock_all' }); const box = $('#rmChat'); if(box) box.innerHTML = ''; RM.after = 0; RM.first = true; rmPull(); }
+  catch(e){ toast(e.message); }
+}
+async function rmReport(id){
+  const why = prompt(LT('rmReportQ'), ''); if(why == null) return;
+  try{ await plApi('/api/pl/room', { op:'report', msg: id, reason: why }); toast(LT('rmReported')); }catch(e){ toast(e.message); }
+}
+
 /* ───────── 포도톡 안에서 열릴 때 쓰는 '끼워넣기' 모드 ─────────
    주소 뒤에 무엇이 붙느냐로 어느 화면을 보여줄지 정합니다.
      ?call — 전화 통역
@@ -1707,7 +2172,7 @@ if(langAuto) applyAuto();
    이 때 포도랑 자기 머리글(로고 · 이용방법), 위 탭 3개, 아래 차림표를 감춥니다.
    안쪽 스크롤도 없앱니다. 내용 길이만큼 늘어나고 바깥(포도톡) 화면이 스크롤합니다.
    주소에 아무것도 안 붙으면(그냥 podolang.kr) 지금까지와 100% 똑같습니다. */
-var _eq = location.search;
+var _eq = /[?&]room=/.test(location.search) ? '' : location.search;   // v9.0 초대 주소는 끼워넣기가 아님
 var EMBED_CALL  = _eq.indexOf('call') >= 0;
 var EMBED_PANEL = _eq.indexOf('log') >= 0 ? 'log'
                 : _eq.indexOf('set') >= 0 ? 'set'
@@ -1733,13 +2198,16 @@ if(EMBED){
        통화 기록 지우기는 통화기록 화면으로 옮겼다. */
     'body.embed [data-emb="lang"],body.embed [data-emb="clean"]{display:none!important}' +
     /* 이용권은 포도톡 크레딧으로 합쳤습니다. 코드 칸을 감춥니다. */
-    'body.embed [data-emb="lic"]{display:none!important}';
+    'body.embed [data-emb="lic"]{display:none!important}' +
+    /* v9.0 포도랑 자체 계정·통화기록 단추는 포도톡·coverfo 안에서는 감춥니다 (그쪽 지갑을 씀) */
+    'body.embed [data-emb="pl"],body.embed [data-emb="log"]{display:none!important}';
   document.head.appendChild(_est);
   document.body.classList.add('embed');
   if(EMBED_PANEL) document.body.classList.add('embed-panel');
 }
 
 tab(EMBED_CALL ? 'call' : 'talk');
+plStart();   // v9.0 결제 돌아옴 · 초대 코드 · 지갑 확인
 
 if(EMBED_PANEL){
   var _open = EMBED_PANEL === 'set' ? openSet : EMBED_PANEL === 'my' ? openMy : openPanel;

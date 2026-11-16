@@ -38,3 +38,9 @@ id = "476d9f97ec1b45aa956dc2b36e0a003a"
 [[services]]
 binding = "TALK"
 service = "podotalk-api"
+
+# v9.0 포도랑 지갑 · 로그인 · 결제 · 동시통역 방 (src/wallet.js) — 표는 schema.sql
+[[d1_databases]]
+binding = "DB"
+database_name = "podolang"
+database_id = "104bcdb4-f5e9-4105-ab67-77ae6464445d"
