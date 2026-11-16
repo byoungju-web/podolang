@@ -360,7 +360,7 @@ body .shots .btn.alb{background:linear-gradient(135deg,#E8F1FF,#DCE8FF);color:#1
 /* 말풍선 */
 .turn.me{background:linear-gradient(135deg,#FFF6DB,#FEEFC3);border:1px solid #FDE7A6}
 .turn.you{background:linear-gradient(135deg,var(--c1),var(--c2))}
-body[data-theme="talk"] .turn.you{background:linear-gradient(135deg,#E6EEFF,#D8E4FF);color:#1E3A8A;border:1px solid #BFD0FF}
+body[data-theme="talk"] .turn.you{background:#FFEDD5;color:#9A3412;border:1px solid #FED7AA}
 /* 언어 고르기 — 알약 */
 .langbar{gap:10px}
 .langbar select{height:50px;border-radius:999px;padding:0 16px;box-shadow:var(--soft-sh);font-size:15px}
@@ -374,16 +374,16 @@ footer{background:transparent;border-top:0;padding:14px 18px 8px}
 .mic svg{width:32px;height:32px}
 .micLabel{margin-top:16px;font-size:12px}
 /* 아래 5탭 — 흰 유리 막대, 고른 탭은 제 색 그라데이션 */
-#nvTalk{--nc:#5B21B6;--nc2:#8B3DFF} #nvFace{--nc:#1E40AF;--nc2:#2F6BFF} #nvCall{--nc:#312E81;--nc2:#5B4BFF}
-#nvPhoto{--nc:#0369A1;--nc2:#38B6F5} #nvMy{--nc:#C2410C;--nc2:#F97316}
-body[data-theme="multi"] #nvTalk{--nc:#065F46;--nc2:#059669}
+#nvTalk{--nc:#6D28D9;--nc2:#6D28D9;--nb:#F5F3FF} #nvFace{--nc:#EA580C;--nc2:#EA580C;--nb:#FFF7ED} #nvCall{--nc:#4338CA;--nc2:#4338CA;--nb:#EEF2FF}
+#nvPhoto{--nc:#0F766E;--nc2:#0F766E;--nb:#F0FDFA} #nvMy{--nc:#1E3A8A;--nc2:#1E3A8A;--nb:#EFF6FF}
+body[data-theme="multi"] #nvTalk{--nc:#047857;--nc2:#047857;--nb:#ECFDF5}
 .botnav{gap:4px;padding:10px 10px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.94);border-top:0;
   border-radius:26px 26px 0 0;box-shadow:0 -8px 26px rgba(76,52,170,.08);backdrop-filter:blur(14px)}
-.botnav button{height:60px;border:0;border-radius:18px;background:transparent;color:#4B5066;gap:3px;position:relative;box-shadow:none}
+.botnav button{height:60px;border:0;border-radius:18px;background:var(--nb);color:var(--nc);gap:3px;position:relative;box-shadow:none}
 .botnav .nic svg{width:23px;height:23px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .botnav .lb{font-size:11.5px;font-weight:800;letter-spacing:-.4px}
-.botnav button.on{color:#fff;background:linear-gradient(145deg,var(--nc),var(--nc2));transform:translateY(-4px);
-  box-shadow:0 10px 20px rgba(20,10,80,.30)}
+.botnav button.on{color:#fff;background:var(--nc);transform:translateY(-4px);
+  box-shadow:0 8px 18px rgba(0,0,0,.16)}
 .botnav button.on::after{content:'';position:absolute;bottom:-9px;left:50%;width:22px;height:3px;margin-left:-11px;border-radius:3px;background:var(--nc);opacity:.6}
 @media (max-width:360px){.botnav .lb{font-size:10.5px}}
 /* 올라오는 창 (마이 · 설정 · 이용방법) */
@@ -391,7 +391,7 @@ body[data-theme="multi"] #nvTalk{--nc:#065F46;--nc2:#059669}
 .card h2{background:transparent;backdrop-filter:blur(10px);background-color:rgba(248,246,255,.92)}
 .card h2::before{border-radius:12px;box-shadow:0 6px 14px rgba(80,50,200,.25)}
 .myprof{padding:18px;gap:16px;background:#fff}
-.myprof .av{width:64px;height:64px;font-size:28px;background:linear-gradient(120deg,var(--c1),var(--c2));box-shadow:0 8px 18px rgba(20,10,80,.28)}
+.myprof .av{width:64px;height:64px;font-size:28px;background:linear-gradient(135deg,#6D28D9,#A78BFA);box-shadow:0 8px 18px rgba(109,40,217,.28)}
 .myprof .bal{font-size:28px}
 .mylist{background:#fff}
 .myrow{min-height:58px}
@@ -399,13 +399,6 @@ body[data-theme="multi"] #nvTalk{--nc:#065F46;--nc2:#059669}
 .myrow.danger .ic{background:#FEECEC}
 .plbuy button{border-radius:18px;border:1px solid var(--edge);box-shadow:var(--soft-sh)}
 .bizinfo{border-radius:20px;background:rgba(255,255,255,.7)}
-/* 사진 번역(청록) — 흰 글씨로 */
-body[data-theme="photo"] header,body[data-theme="photo"] header h1,body[data-theme="photo"] .tab.on,
-body[data-theme="photo"] .btn:not(.cam):not(.alb):not(.ghost),body[data-theme="photo"] .mic{color:#fff}
-body[data-theme="photo"] .turn.you{border:1.5px solid #7DD3FC}
-body[data-theme="photo"] .turn.you .who,body[data-theme="photo"] .turn.you .src,body[data-theme="photo"] .turn.you .osrc{color:#075985}
-body[data-theme="photo"] .turn.you .kind{background:#E0F2FE;color:#075985}
-body[data-theme="photo"] .turn.you .mini{border-color:#7DD3FC;color:#075985}
 /* v9.4.4 통역톡 머리 오른쪽 로그인 단추 (로그인하면 내 동그라미) */
 .headlog{flex:0 0 auto;height:34px;padding:0 14px;border-radius:999px;border:0;background:#fff;color:var(--c1);
   font:inherit;font-size:13px;font-weight:900;white-space:nowrap;box-shadow:0 4px 12px rgba(20,10,80,.22);display:flex;align-items:center;gap:6px}
@@ -414,6 +407,13 @@ body[data-theme="photo"] .turn.you .mini{border-color:#7DD3FC;color:#075985}
 .headlog.me{width:36px;height:36px;padding:0;justify-content:center;border-radius:50%;font-size:15px;
   background:linear-gradient(135deg,#fff,#EEE9FF);border:2px solid rgba(255,255,255,.9)}
 .headlog:active{transform:scale(.96)}
+/* v9.4.6 사진 번역 = 진한 청록 — 흰 글씨 */
+body[data-theme="photo"] header,body[data-theme="photo"] header h1,body[data-theme="photo"] .tab.on,
+body[data-theme="photo"] .btn:not(.cam):not(.alb):not(.ghost),body[data-theme="photo"] .mic{color:#fff}
+body[data-theme="photo"] .turn.you{border:2px solid #5EEAD4}
+body[data-theme="photo"] .turn.you .who,body[data-theme="photo"] .turn.you .src,body[data-theme="photo"] .turn.you .osrc{color:#115E59}
+body[data-theme="photo"] .turn.you .kind{background:#CCFBF1;color:#115E59}
+body[data-theme="photo"] .turn.you .mini{border-color:#5EEAD4;color:#115E59}
 /* 다듬기 */
 .tabs{margin-bottom:0}
 #pdStrip{margin:12px 16px 12px!important}
@@ -473,7 +473,7 @@ body .shots .btn.alb{--bi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.or
   <nav class="botnav" id="botnav">
     <button id="nvTalk"  onclick="navTo('one')"><span class="nic"><svg viewBox="0 0 24 24"><path d="M20 11.5a7.5 7.5 0 0 1-10.9 6.7L4 19.5l1.3-4.4A7.5 7.5 0 1 1 20 11.5z"/><path d="M9 11.5h.01M12.5 11.5h.01M16 11.5h.01"/></svg></span><span class="lb" id="lbTalk"></span></button>
     <button id="nvFace"  onclick="navTo('talk')"><span class="nic"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="16.5" cy="9" r="2.6"/><path d="M15.5 14.2c2.6-.2 4.6 1.4 5 4.3"/></svg></span><span class="lb" id="lbFace"></span></button>
-    <button id="nvCall"  onclick="navTo('call')"><span class="nic"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></span><span class="lb" id="lbCall"></span></button>
+    <button id="nvCall"  onclick="navTo('call')"><span class="nic"><svg viewBox="0 0 24 24"><path d="M21 16.4v2.9a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 1.1 3.6 2 2 0 0 1 3.1 1.4H6a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L7 9.2a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg></span><span class="lb" id="lbCall"></span></button>
     <button id="nvPhoto" onclick="navTo('photo')"><span class="nic"><svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="M20 16l-4.5-4.5L7 20"/></svg></span><span class="lb" id="lbPhoto"></span></button>
     <button id="nvMy"    onclick="openMy()"><span class="nic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c.9-3.7 3.9-6 7.5-6s6.6 2.3 7.5 6"/></svg></span><span class="lb" id="lbMy"></span></button>
   </nav>
@@ -487,7 +487,7 @@ body .shots .btn.alb{--bi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.or
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v9.4.4';
+const VER='v9.4.6';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -706,12 +706,12 @@ function T(k){ const r = I18N[k]; if(!r) return k; return r[uiLang()] || r.EN ||
 
 /* ---------- 탭 ---------- */
 // 탭마다 색이 바뀝니다. 헤더·배경·버튼·말풍선이 한꺼번에 따라옵니다.
-const THEME = {   // v9.4.2 선명한 보석 톤 — 진한 색 → 밝은 색 그라데이션
-  one  : { c1:'#5B21B6', c2:'#8B3DFF', bg:'#F3EEFF', soft:'#E9DFFF' },   // 통역톡 = 자수정 보라
-  multi: { c1:'#065F46', c2:'#059669', bg:'#ECFAF4', soft:'#CCF3E2' },   // 다중 동시통역 = 에메랄드
-  talk : { c1:'#1E40AF', c2:'#2F6BFF', bg:'#EEF3FF', soft:'#D8E4FF' },   // 마주보고 = 사파이어
-  photo: { c1:'#0369A1', c2:'#38B6F5', bg:'#EEF7FD', soft:'#D3ECFB' },   // 사진 번역 = 소라색 (v9.4.3)
-  call : { c1:'#312E81', c2:'#5B4BFF', bg:'#F0F0FF', soft:'#DEDCFF' }    // 전화 통역 = 인디고
+const THEME = {   // v9.4.6 탭 색 (비교 그림에서 고른 색)
+  one  : { c1:'#6D28D9', c2:'#6D28D9', bg:'#F5F3FF', soft:'#EDE9FE' },   // 통역톡 = 보라
+  multi: { c1:'#047857', c2:'#047857', bg:'#ECFDF5', soft:'#D1FAE5' },   // 다중 동시통역 = 초록
+  talk : { c1:'#EA580C', c2:'#EA580C', bg:'#FFF7ED', soft:'#FFEDD5' },   // 마주보고 = 주황
+  photo: { c1:'#0F766E', c2:'#0F766E', bg:'#F0FDFA', soft:'#CCFBF1' },   // 사진 번역 = 청록
+  call : { c1:'#4338CA', c2:'#4338CA', bg:'#EEF2FF', soft:'#E0E7FF' }    // 전화 통역 = 남색(인디고)
 };
 // 화면 글씨를 지금 언어로 채웁니다
 function paintText(){
