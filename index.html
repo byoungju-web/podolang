@@ -375,7 +375,7 @@ footer{background:transparent;border-top:0;padding:14px 18px 8px}
 .micLabel{margin-top:16px;font-size:12px}
 /* 아래 5탭 — 흰 유리 막대, 고른 탭은 제 색 그라데이션 */
 #nvTalk{--nc:#5B21B6;--nc2:#8B3DFF} #nvFace{--nc:#1E40AF;--nc2:#2F6BFF} #nvCall{--nc:#312E81;--nc2:#5B4BFF}
-#nvPhoto{--nc:#0B6E68;--nc2:#0EA5B7} #nvMy{--nc:#C2410C;--nc2:#F97316}
+#nvPhoto{--nc:#0369A1;--nc2:#38B6F5} #nvMy{--nc:#C2410C;--nc2:#F97316}
 body[data-theme="multi"] #nvTalk{--nc:#065F46;--nc2:#059669}
 .botnav{gap:4px;padding:10px 10px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.94);border-top:0;
   border-radius:26px 26px 0 0;box-shadow:0 -8px 26px rgba(76,52,170,.08);backdrop-filter:blur(14px)}
@@ -402,7 +402,18 @@ body[data-theme="multi"] #nvTalk{--nc:#065F46;--nc2:#059669}
 /* 사진 번역(청록) — 흰 글씨로 */
 body[data-theme="photo"] header,body[data-theme="photo"] header h1,body[data-theme="photo"] .tab.on,
 body[data-theme="photo"] .btn:not(.cam):not(.alb):not(.ghost),body[data-theme="photo"] .mic{color:#fff}
-body[data-theme="photo"] .turn.you{border:1.5px solid #5EEAD4}
+body[data-theme="photo"] .turn.you{border:1.5px solid #7DD3FC}
+body[data-theme="photo"] .turn.you .who,body[data-theme="photo"] .turn.you .src,body[data-theme="photo"] .turn.you .osrc{color:#075985}
+body[data-theme="photo"] .turn.you .kind{background:#E0F2FE;color:#075985}
+body[data-theme="photo"] .turn.you .mini{border-color:#7DD3FC;color:#075985}
+/* v9.4.4 통역톡 머리 오른쪽 로그인 단추 (로그인하면 내 동그라미) */
+.headlog{flex:0 0 auto;height:34px;padding:0 14px;border-radius:999px;border:0;background:#fff;color:var(--c1);
+  font:inherit;font-size:13px;font-weight:900;white-space:nowrap;box-shadow:0 4px 12px rgba(20,10,80,.22);display:flex;align-items:center;gap:6px}
+.headlog[hidden]{display:none}
+.headlog .g{width:16px;height:16px;flex:0 0 auto}
+.headlog.me{width:36px;height:36px;padding:0;justify-content:center;border-radius:50%;font-size:15px;
+  background:linear-gradient(135deg,#fff,#EEE9FF);border:2px solid rgba(255,255,255,.9)}
+.headlog:active{transform:scale(.96)}
 /* 다듬기 */
 .tabs{margin-bottom:0}
 #pdStrip{margin:12px 16px 12px!important}
@@ -429,6 +440,7 @@ body .shots .btn.alb{--bi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.or
   <header>
     <h1><svg class="logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="podolang"><path d="M60 14 C 62 10, 68 8, 72 12 C 76 16, 74 24, 60 26 C 46 24, 44 16, 48 12 C 52 8, 58 10, 60 14 Z" fill="#2ECC71"/><circle cx="46" cy="70" r="26" fill="#8B5CF6" stroke="#6D28D9" stroke-width="3"/><circle cx="76" cy="70" r="26" fill="#A78BFA" stroke="#6D28D9" stroke-width="3"/></svg>podolang</h1>
     <button class="helpbtn" id="helpBtn" onclick="openHelp()"></button>
+    <button class="headlog" id="plHead" onclick="plHeadClick()" hidden></button>
   </header>
 
   <!-- v9.2 통역톡 위 칸: 1:1 동시통역 · 다중 동시통역 (마주보고 · 전화통역 · 사진번역은 아래 탭) -->
@@ -475,7 +487,7 @@ body .shots .btn.alb{--bi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.or
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v9.4.2';
+const VER='v9.4.4';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -641,7 +653,7 @@ const L = {
  rmSendBtn:'보내기', rmTextPh:'내 말로 쓰세요', rmNoMic:'이 브라우저는 말로 입력을 지원하지 않습니다. 글로 써 주세요.',
  rmCredit:'남은 크레딧', plCr:'크레딧',
  plAcc:'포도랑 계정 · 크레딧', plLoginT:'구글로 로그인', plLoginD:'1:1·다중 동시통역과 크레딧 충전은 로그인 후 쓸 수 있습니다. 처음 가입하면 크레딧을 선물로 드립니다.',
- plLoginPrep:'로그인 준비 중입니다. 잠시 뒤 다시 열어 주세요.', plHello:'로그인했습니다',
+ plLoginPrep:'로그인 준비 중입니다. 잠시 뒤 다시 열어 주세요.', plLoginBtn:'로그인', plLater:'나중에', plLoginWhere:'로그인은 <b>통역톡 화면 오른쪽 위 "로그인"</b> 단추에서 할 수 있어요.', plHello:'로그인했습니다',
  plBal:'남은 크레딧', plBuy:'크레딧 충전',
  plAppOnly:'크레딧 충전은 <b>포도랑 앱</b>(구글 플레이)에서 할 수 있습니다. 같은 구글 계정으로 로그인하면 충전한 크레딧을 여기서도 그대로 씁니다.',
  plAppOnlyT:'크레딧 충전은 포도랑 앱(구글 플레이)에서 할 수 있습니다', plGetApp:'포도랑 앱 받기',
@@ -656,7 +668,7 @@ const L = {
  myEar:'<b>전화 통역은 이어폰을 쓰세요.</b>\n스피커로 들으면 통역 음성을 마이크가 다시 주워서 말이 꼬입니다.'
 };
 
-const UIVER = '5';   // v9.3 마이 목록·탈퇴·다중 인원 글이 늘어 5로   // v9.2 탭·이용방법 글이 바뀌어 4로   // v9.0 새 글(통역톡 4칸·동시통역 방·포도랑 계정)이 늘어 2로                       // 글이 바뀌면 이 숫자를 올립니다
+const UIVER = '6';   // v9.3 마이 목록·탈퇴·다중 인원 글이 늘어 5로   // v9.2 탭·이용방법 글이 바뀌어 4로   // v9.0 새 글(통역톡 4칸·동시통역 방·포도랑 계정)이 늘어 2로                       // 글이 바뀌면 이 숫자를 올립니다
 let pack = load('podolang_pack', {});    // 옮겨둔 글 (언어별)
 let packBusy = false;
 
@@ -698,7 +710,7 @@ const THEME = {   // v9.4.2 선명한 보석 톤 — 진한 색 → 밝은 색 �
   one  : { c1:'#5B21B6', c2:'#8B3DFF', bg:'#F3EEFF', soft:'#E9DFFF' },   // 통역톡 = 자수정 보라
   multi: { c1:'#065F46', c2:'#059669', bg:'#ECFAF4', soft:'#CCF3E2' },   // 다중 동시통역 = 에메랄드
   talk : { c1:'#1E40AF', c2:'#2F6BFF', bg:'#EEF3FF', soft:'#D8E4FF' },   // 마주보고 = 사파이어
-  photo: { c1:'#0B6E68', c2:'#0EA5B7', bg:'#EAF8F8', soft:'#C9EFEF' },   // 사진 번역 = 딥 틸
+  photo: { c1:'#0369A1', c2:'#38B6F5', bg:'#EEF7FD', soft:'#D3ECFB' },   // 사진 번역 = 소라색 (v9.4.3)
   call : { c1:'#312E81', c2:'#5B4BFF', bg:'#F0F0FF', soft:'#DEDCFF' }    // 전화 통역 = 인디고
 };
 // 화면 글씨를 지금 언어로 채웁니다
@@ -758,6 +770,7 @@ function tab(m){
   $('#foot').style.display = (m==='talk') ? 'flex' : 'none';
   rmStop(); rmBar(false);
   render();
+  if(typeof plHeadPaint === 'function') plHeadPaint();   // v9.4.4
 }
 function render(){
   if(mode==='call' && (licCode || walletId()) && !licInfo) licCheck(true).then(renderCall);
@@ -2040,7 +2053,7 @@ async function plApi(path, body){
   const d = await r.json().catch(() => ({}));
   if(!r.ok || d.error){
     const e = new Error(d.error || ('오류 ' + r.status)); e.status = r.status; e.login = !!d.login; e.needCredit = !!d.needCredit || r.status === 402;
-    if(e.login && plTok){ plTok = ''; plMe = null; try{ localStorage.removeItem('podolang_pl_tk'); }catch(x){} }
+    if(e.login && plTok){ plTok = ''; plMe = null; try{ localStorage.removeItem('podolang_pl_tk'); }catch(x){} setTimeout(plHeadPaint, 0); }
     throw e;
   }
   return d;
@@ -2065,6 +2078,33 @@ async function plLoginButton(el){
   el.innerHTML = '';
   google.accounts.id.renderButton(el, { theme:'outline', size:'large', shape:'pill', text:'signin_with', locale: uiLang().toLowerCase() });
 }
+/* v9.4.4 머리 오른쪽 로그인 단추 — 통역톡(1:1 · 다중)에서만 보입니다 */
+const G_LOGO = '<svg class="g" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.6 13.2l7.9 6.2C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.6c0-1.6-.1-3.1-.4-4.6H24v9h12.4c-.5 2.9-2.2 5.3-4.6 6.9l7.4 5.8c4.3-4 6.9-9.9 6.9-17.1z"/><path fill="#FBBC05" d="M10.5 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.2C1 16.5 0 20.1 0 24s1 7.5 2.6 10.8l7.9-6.2z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.4-5.8c-2.1 1.4-4.8 2.3-8.5 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.2C6.6 42.6 14.6 48 24 48z"/></svg>';
+let plHeadBusy = false;
+function plHeadPaint(){
+  const el = document.getElementById('plHead'); if(!el) return;
+  el.hidden = EMBED || !(mode === 'one' || mode === 'multi');
+  if(!plTok){ el.className = 'headlog'; el.innerHTML = G_LOGO + esc(LT('plLoginBtn')); el.setAttribute('aria-label', LT('plLoginT')); return; }
+  el.className = 'headlog me';
+  const nm = plMe ? (plMe.name || plMe.email || '') : '';
+  el.textContent = nm ? nm.trim().charAt(0).toUpperCase() : '👤';
+  el.setAttribute('aria-label', T('navMy'));
+  if(!plMe && !plHeadBusy && !EMBED){   // 내 이름 첫 글자를 보여 주려고 한 번만 가져옵니다
+    plHeadBusy = true;
+    plApi('/api/pl/me', {}).then(d => { plMe = d.me; }, () => {}).then(() => { plHeadBusy = false; plHeadPaint(); });
+  }
+}
+function plHeadClick(){ if(plTok) openMy(); else openLogin(); }
+function openLogin(){
+  sheetGo('login');
+  $('#card').innerHTML = `
+    <h2>${esc(LT('plLoginT'))}</h2>
+    <div class="note">${LT('plLoginD')}</div>
+    <div class="gbtn" id="gbtnHead" style="margin:14px 0 8px"></div>
+    <button class="btn ghost" onclick="closeSheet()">${esc(LT('plLater'))}</button>`;
+  $('#sheet').classList.add('on');
+  plLoginButton(document.getElementById('gbtnHead'));
+}
 async function plOnGoogle(resp){
   try{
     const d = await plApi('/api/pl/login', { credential: resp && resp.credential });
@@ -2072,12 +2112,13 @@ async function plOnGoogle(resp){
     try{ localStorage.setItem('podolang_pl_tk', d.tk); }catch(e){}
     toast(LT('plHello'));
     licInfo = null; licCheck(true);
-    if(sheetOpen()) openMy();
+    plHeadPaint();
+    if(sheetOpen()){ if(sheetName === 'login') closeSheet(); else openMy(); }
     if(mode === 'one' || mode === 'multi') render();
   }catch(e){ toast(e.message); }
 }
 function plBoxHtml(){
-  if(!plTok) return `<div class="note">${LT('plLoginD')}</div><div class="gbtn" id="gbtnMy"></div>`;
+  if(!plTok) return `<div class="note">${LT('plLoginD')}<br><br>${LT('plLoginWhere')}</div>`;   // v9.4.4 로그인은 통역톡 오른쪽 위
   const me = plMe;
   const cfg = plCfg && plCfg.ok ? plCfg : null;
   const prods = cfg ? (cfg.products || []) : [];
@@ -2183,6 +2224,7 @@ async function plLogout(){
   plTok = ''; plMe = null; plOrders = null; licInfo = null;
   try{ localStorage.removeItem('podolang_pl_tk'); }catch(e){}
   try{ if(window.google && google.accounts && google.accounts.id) google.accounts.id.disableAutoSelect(); }catch(e){}
+  plHeadPaint();
   openMy(); if(mode === 'one' || mode === 'multi') render();
 }
 async function plDelete(){
@@ -2191,6 +2233,7 @@ async function plDelete(){
   try{ await plApi('/api/pl/delete', {}); }catch(e){ toast(e.message); return; }
   plTok = ''; plMe = null; plOrders = null; licInfo = null; RM.room = null;
   try{ localStorage.removeItem('podolang_pl_tk'); }catch(e){}
+  plHeadPaint();
   openMy(); if(mode === 'one' || mode === 'multi') render();
 }
 /* 처음 열 때: 결제에서 돌아왔는지 · 초대 링크인지 · 지갑 확인 */
