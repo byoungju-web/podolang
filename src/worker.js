@@ -78,6 +78,16 @@ const CD_VOICE = 0.2;  // 음성 통역 한 마디 (마주보기 통역 한 마�
 const CD_PHONE = 6;    // 전화통역 1분
 const CD_SPEAK = 0.1;  // 서버 읽어주기 한 번 (폰이 직접 읽으면 공짜)
 const CD_TR    = 0.2;  // GPT·DeepL 번역 한 줄 (포도톡 마주보기 통역 한 마디 0.2)
+/* v9.5 번역 탭 — 원가 계산 (2026-11, 1달러 ≈ 1,334원)
+   1 크레딧 = 99원에 팔면 부가세 10%·구글 수수료 30% 를 빼고 남는 돈 ≈ 59원.
+   · 텍스트 번역: DeepL(무료 한도) 또는 gpt-4o-mini. 2,000자 최악 ≈ $0.0016 ≈ 2원 → 0.1 크레딧(≈ 6원 남음)
+   · 라이브 청취: whisper-1 $0.006/분 + 번역 ≈ $0.0063/분 ≈ 8.4원 → 1분 0.5 크레딧(≈ 30원 남음)
+     지갑은 0.1 크레딧 단위라서 12초마다 0.1 크레딧씩 뺍니다 (= 1분 0.5). */
+const CD_TEXT  = 0.1;  // 텍스트 번역 한 번 (최대 2,000자)
+const TEXT_MAX = 2000;
+const LIVE_UNIT_SEC = 12;     // 이 초마다
+const CD_LIVE_UNIT  = 0.1;    //   이만큼 (= 1분 0.5 크레딧)
+const LIVE_MAX_BYTES = 900000;   // 한 조각 최대 크기 (12초 조각은 보통 0.1MB 안팎)
 const SPEAK_MAX = 500; // 한 번에 읽어줄 글자 수. 긴 글로 요금이 튀는 걸 막는다
 
 const talkApi = env => String(env.TALK_API || 'https://podotalk-api.hasin7jk.workers.dev')
@@ -313,6 +323,66 @@ export default {
 
         const r = await translate(env, text, sourceLang, targetLang);
         return json({ translated: r.translated, engine: r.engine }, 200, H);
+      }
+
+      // v9.5 번역 탭 — 텍스트 번역 (한 번 0.1 크레딧 · 최대 2,000자)
+      if (url.pathname === '/api/text' && request.method === 'POST') {
+        const b = await request.json().catch(() => ({}));
+        const text = String(b.text || '').trim();
+        if (!text) return json({ error: '번역할 글을 써 주세요.' }, 400, H);
+        if (text.length > TEXT_MAX) return json({ error: `한 번에 ${TEXT_MAX}자까지 번역할 수 있습니다.` }, 400, H);
+        const src = String(b.sourceLang || '').toUpperCase(), dst = String(b.targetLang || 'KO').toUpperCase();
+        const uid = String(b.uid || '');
+        const chk = await cdCheck(env, uid);
+        if (!chk.ok) return json({ error: chk.reason, needCredit: true }, 402, H);
+        const sp = await cdSpend(env, uid, CD_TEXT, 'text');
+        if (!sp || sp.ok === false) return json({ error: '크레딧이 모자랍니다. 마이 → 크레딧 충전에서 채워주세요.', needCredit: true }, 402, H);
+        const r = await translate(env, text, src === 'AUTO' ? '' : src, dst);
+        return json({ translated: r.translated, engine: r.engine, cost: CD_TEXT }, 200, H);
+      }
+
+      // v9.5 번역 탭 — 라이브 청취 (마이크 소리를 조각으로 받아 받아쓰고 번역)
+      //  12초마다 0.1 크레딧 (= 1분 0.5). 조각마다 남은 초를 KV 에 적어 두고 이어서 셉니다.
+      //  소리는 받아쓰기·번역에만 쓰고 저장하지 않습니다.
+      if (url.pathname === '/api/live' && request.method === 'POST') {
+        const fd = await request.formData();
+        const audio = fd.get('audio');
+        if (!audio || !audio.size) return json({ error: '소리가 없습니다.' }, 400, H);
+        if (audio.size > LIVE_MAX_BYTES) return json({ error: '소리 조각이 너무 큽니다.' }, 413, H);
+        const src = String(fd.get('sourceLang') || 'AUTO').toUpperCase(), dst = String(fd.get('targetLang') || 'KO').toUpperCase();
+        const uid = String(fd.get('uid') || '');
+        const chk = await cdCheck(env, uid);
+        if (!chk.ok) return json({ error: chk.reason, needCredit: true }, 402, H);
+
+        // 미리 낸 초(bank)가 없으면 먼저 12초어치를 뺍니다 — 먼저 깎고 부릅니다
+        const kvKey = 'live:' + (await sha1hex(uid)).slice(0, 24);
+        let bank = 0;
+        try { bank = parseFloat((env.PODOLANG_KV && await env.PODOLANG_KV.get(kvKey)) || '0') || 0; } catch (_) {}
+        let charged = 0;
+        if (bank < 1) {
+          const sp = await cdSpend(env, uid, CD_LIVE_UNIT, 'live');
+          if (!sp || sp.ok === false) return json({ error: '크레딧이 모자랍니다. 마이 → 크레딧 충전에서 채워주세요.', needCredit: true }, 402, H);
+          bank += LIVE_UNIT_SEC; charged += CD_LIVE_UNIT;
+        }
+
+        const tr = await transcribeLive(env, audio, src);
+        const dur = Math.max(0, Math.min(Number(tr.duration) || 0, 30));
+        bank -= dur;
+        let stop = false;
+        while (bank < 0) {   // 쓴 만큼 이어서 뺍니다
+          const sp = await cdSpend(env, uid, CD_LIVE_UNIT, 'live');
+          if (!sp || sp.ok === false) { stop = true; bank = 0; break; }
+          bank += LIVE_UNIT_SEC; charged += CD_LIVE_UNIT;
+        }
+        try { if (env.PODOLANG_KV) await env.PODOLANG_KV.put(kvKey, bank.toFixed(2), { expirationTtl: 60 * 60 * 3 }); } catch (_) {}
+
+        const text = tr.text;
+        let translated = '';
+        if (text) {
+          try { translated = (await translate(env, text, src === 'AUTO' ? '' : src, dst)).translated; }
+          catch (e) { translated = ''; }
+        }
+        return json({ text, translated, sec: Math.round(dur * 10) / 10, charged: Math.round(charged * 10) / 10, stop }, 200, H);
       }
 
       // 3. 텍스트 -> 음성
@@ -709,6 +779,37 @@ async function transcribe(env, audio, sourceLang) {
     if (d.error) throw new Error('음성 인식 실패: ' + d.error.message);
     return d.text;
   });
+}
+
+/* v9.5 라이브 청취용 받아쓰기 — 길이(초)도 함께 받아 요금을 셉니다.
+   조용한 구간에서 whisper 가 지어내는 말(“시청해 주셔서 감사합니다” 등)은 버립니다. */
+const LIVE_JUNK = /^(시청해\s*주셔서\s*감사합니다|구독과\s*좋아요|MBC\s*뉴스|자막\s*(제공|by)|thank you( so much)? for watching|subtitles by|ご視聴ありがとうございました|请不吝点赞|字幕)/i;
+async function transcribeLive(env, audio, sourceLang) {
+  const s = (sourceLang || '').toUpperCase();
+  return await retry(async () => {
+    const form = new FormData();
+    form.append('file', audio, 'audio.webm');
+    form.append('model', 'whisper-1');
+    form.append('response_format', 'verbose_json');
+    form.append('temperature', '0');
+    if (s && s !== 'AUTO') form.append('language', s.toLowerCase());
+    const res = await fetch(`${OPENAI_BASE}/audio/transcriptions`, {
+      method: 'POST', headers: { 'Authorization': `Bearer ${env.OPENAI_API_KEY}` }, body: form
+    });
+    const d = await res.json();
+    if (d.error) throw new Error('음성 인식 실패: ' + d.error.message);
+    const segs = Array.isArray(d.segments) ? d.segments : null;
+    let text = segs
+      ? segs.filter(g => !(g.no_speech_prob > 0.6 && g.avg_logprob < -0.8)).map(g => String(g.text || '').trim()).join(' ')
+      : String(d.text || '');
+    text = text.replace(/\s+/g, ' ').trim();
+    if (LIVE_JUNK.test(text)) text = '';
+    return { text, duration: Number(d.duration) || 0 };
+  });
+}
+async function sha1hex(v) {
+  const h = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(String(v)));
+  return [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
 /* ---------------- 사진 번역 (OCR) ---------------- */

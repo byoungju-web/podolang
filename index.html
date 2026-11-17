@@ -414,6 +414,35 @@ body[data-theme="photo"] .turn.you{border:2px solid #7DD3FC}
 body[data-theme="photo"] .turn.you .who,body[data-theme="photo"] .turn.you .src,body[data-theme="photo"] .turn.you .osrc{color:#075985}
 body[data-theme="photo"] .turn.you .kind{background:#E0F2FE;color:#075985}
 body[data-theme="photo"] .turn.you .mini{border-color:#7DD3FC;color:#075985}
+/* v9.5 번역 탭 */
+.trgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.trcard{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-height:168px;padding:16px 14px;text-align:left;
+  border:1px solid var(--edge);border-radius:22px;background:#fff;box-shadow:var(--soft-sh);font:inherit;color:var(--fg)}
+.trcard:active{transform:scale(.98)}
+.trcard .tic{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:22px;background:var(--csoft);margin-bottom:4px}
+.trcard b{font-size:16px;font-weight:900;letter-spacing:-.4px;line-height:1.25}
+.trcard .td{font-size:12.5px;color:var(--sub);line-height:1.45;flex:1}
+.trcard .tc{font-size:11.5px;font-weight:800;color:var(--c1)}
+.trcard .tc i{font-style:normal;background:#FFF4D6;color:#92400E;border-radius:999px;padding:3px 8px}
+.trhead{display:flex;align-items:center;gap:10px;margin:0 0 10px}
+.trhead b{font-size:17px;font-weight:900;letter-spacing:-.4px}
+.trback{height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--edge);background:#fff;color:var(--c1);
+  font:inherit;font-size:13px;font-weight:900;box-shadow:var(--soft-sh)}
+.trtext textarea{width:100%;min-height:130px;resize:vertical;font-size:16px;line-height:1.5}
+.trrow{display:flex;justify-content:space-between;align-items:center;margin-top:6px;color:var(--sub)}
+.lvbar{background:#fff;border:1px solid var(--edge);border-radius:22px;box-shadow:var(--soft-sh);padding:14px;margin-bottom:12px}
+.lvst{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:900;margin-bottom:12px}
+.lvst small{font-weight:700;color:var(--sub)}
+.lvdot{width:10px;height:10px;border-radius:50%;background:#CBD5E1}
+.lvdot.on{background:#EF4444;box-shadow:0 0 0 0 rgba(239,68,68,.5);animation:lvp 1.4s infinite}
+@keyframes lvp{70%{box-shadow:0 0 0 10px rgba(239,68,68,0)}100%{box-shadow:0 0 0 0 rgba(239,68,68,0)}}
+@media (prefers-reduced-motion:reduce){.lvdot.on{animation:none}}
+.lvbtns{display:flex;gap:10px}.lvbtns .btn{flex:1;margin:0}
+.btn.lvstop{background:#DC2626;box-shadow:0 8px 18px rgba(220,38,38,.25)}
+.lvseg{background:#fff;border:1px solid var(--edge);border-radius:18px;box-shadow:var(--soft-sh);padding:12px 14px;margin-bottom:10px}
+.lvseg .src{font-size:13px;color:var(--sub);line-height:1.5}
+.lvseg .dst{font-size:17px;font-weight:800;line-height:1.5;margin-top:4px}
+.lvseg.wait{text-align:center;padding:14px}
 /* 다듬기 */
 .tabs{margin-bottom:0}
 #pdStrip{margin:12px 16px 12px!important}
@@ -474,7 +503,7 @@ body .shots .btn.alb{--bi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.or
     <button id="nvTalk"  onclick="navTo('one')"><span class="nic"><svg viewBox="0 0 24 24"><path d="M20 11.5a7.5 7.5 0 0 1-10.9 6.7L4 19.5l1.3-4.4A7.5 7.5 0 1 1 20 11.5z"/><path d="M9 11.5h.01M12.5 11.5h.01M16 11.5h.01"/></svg></span><span class="lb" id="lbTalk"></span></button>
     <button id="nvFace"  onclick="navTo('talk')"><span class="nic"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="16.5" cy="9" r="2.6"/><path d="M15.5 14.2c2.6-.2 4.6 1.4 5 4.3"/></svg></span><span class="lb" id="lbFace"></span></button>
     <button id="nvCall"  onclick="navTo('call')"><span class="nic"><svg viewBox="0 0 24 24"><path d="M21 16.4v2.9a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 1.1 3.6 2 2 0 0 1 3.1 1.4H6a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L7 9.2a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg></span><span class="lb" id="lbCall"></span></button>
-    <button id="nvPhoto" onclick="navTo('photo')"><span class="nic"><svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="M20 16l-4.5-4.5L7 20"/></svg></span><span class="lb" id="lbPhoto"></span></button>
+    <button id="nvPhoto" onclick="navTo('tr')"><span class="nic"><svg viewBox="0 0 24 24"><path d="M3.5 5.5h9M8 3.5v2M5 12.5c2.6-1.6 4.6-4.2 5.5-7M5.8 8.6c1.2 2.2 3 3.8 5.2 4.8"/><path d="M12.5 20.5l4-9 4 9M13.9 17.4h5.2"/></svg></span><span class="lb" id="lbPhoto"></span></button>
     <button id="nvMy"    onclick="openMy()"><span class="nic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c.9-3.7 3.9-6 7.5-6s6.6 2.3 7.5 6"/></svg></span><span class="lb" id="lbMy"></span></button>
   </nav>
 </div>
@@ -487,7 +516,7 @@ body .shots .btn.alb{--bi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.or
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v9.4.7';
+const VER='v9.5';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -600,6 +629,7 @@ function uiLang(){ return String(from || 'KO').toUpperCase(); }
 const L = {
  helpTitle:'이용방법',
  hTalk:'마주보고 통역', hPhoto:'사진 번역', hCall:'전화 통역',
+ hTr:'번역 (텍스트 · 라이브 청취 · 오디오)', hTrBody:'아래 <b>번역</b> 탭을 누르면 네 가지가 나옵니다. 위쪽에서 고른 언어(원래 말 → 바꿀 말)를 네 기능이 함께 씁니다.\n\n<b>텍스트 번역</b> — 글을 쓰거나 붙여 넣고 <b>번역하기</b>. 한 번에 2,000자까지 · 1번 0.1 크레딧. <b>듣기</b>를 누르면 폰이 읽어 줍니다.\n\n<b>라이브 청취</b> — 강의 · 세미나 · 안내 방송을 폰 마이크로 계속 듣고, 말이 끊길 때마다 원문과 번역을 아래로 쌓아 줍니다. 1분 0.5 크레딧(12초마다 0.1). 조용한 동안은 보내지 않아 요금이 나가지 않습니다. 다른 화면으로 가면 멈춥니다.\n\n<b>사진 번역</b> — 서류 · 라벨 · 간판을 찍어 옮깁니다.\n\n<b>오디오 · 스트림 번역</b> — 유튜브 · 영상 등 폰에서 나오는 소리를 자막으로 옮기는 기능입니다. 포도랑 앱(구글 플레이) 다음 업데이트에서 열립니다.',
  hRoom:'통역톡 — 1:1 · 다중 동시통역',
  hRoomBody:'사람마다 <b>자기 폰에서 자기 말로</b> 대화하면, 상대에게는 상대 말로 번역되어 보이고 폰이 읽어 줍니다.\n\n<b>1.</b> <b>마이</b>에서 구글로 로그인합니다 (처음 가입하면 크레딧 선물)\n<b>2.</b> 내 언어와 이름을 고르고 <b>방 만들기</b>\n<b>3.</b> <b>초대</b>를 눌러 링크나 6자리 코드를 상대에게 보냅니다\n<b>4.</b> 상대는 링크를 열거나 코드를 넣어 <b>참여</b>합니다\n<b>5.</b> 글로 쓰거나 🎤 를 눌러 말하면 됩니다\n\n1:1 은 2명, 다중은 방을 만들 때 적은 인원(3~100명)까지. 번역 1개에 0.1 크레딧 (방 안의 다른 언어 수만큼 · 말한 사람만). 불쾌한 말은 눌러서 차단 · 신고할 수 있습니다.',
  myMore:'더 보기',
@@ -610,8 +640,8 @@ const L = {
  hTalkBody:'한 폰을 사이에 두고 번갈아 말하면 즉석에서 통역됩니다.\n\n<b>1.</b> 내 언어와 상대 언어를 고릅니다\n<b>2.</b> 아래 마이크를 <b>누른 채로</b> 말하고, 끝나면 손을 뗍니다\n<b>3.</b> 번역된 문장이 뜨고 상대 언어 음성이 나옵니다\n\n손님 응대나 현장 소통에 씁니다.',
  hPhotoBody:'서류·라벨·인보이스를 찍으면 글자를 읽어 옮깁니다.\n\n<b>1.</b> 자동 감지 → 내 언어로 두고 <b>사진 찍기</b>\n<b>2.</b> 찍은 뒤 <b>이 사진 번역하기</b>\n<b>3.</b> 번역이 크게, 원문은 <b>원문 보기</b>를 눌러 폅니다\n\n<b>숫자·단가·품번은 원문 그대로 옮깁니다.</b> 흐려서 안 보이는 자리는 추측하지 않고 [?] 로 표시합니다. 중요한 금액은 원문과 한 번 더 대조하세요.',
  hCallBody:'상대는 그냥 전화를 받아 평소처럼 말하면 됩니다. 앱을 깔 필요도, 버튼을 누를 필요도 없습니다.\n\n<b>1.</b> 이름(선택)과 전화번호를 넣습니다. 국가번호부터 — 미국 +1, 한국 +82(앞 0 빼고)\n<b>2.</b> <b>통역 전화 걸기</b>\n<b>3.</b> 상대가 받으면 이 화면에 대고 말합니다\n<b>4.</b> 말이 끝나면 잠시 뒤 상대에게 전달됩니다\n\n<b>이어폰을 쓰세요.</b> 스피커로 들으면 통역 음성을 마이크가 다시 주워서 말이 꼬입니다.\n\n전화 통역은 통화 1분에 <b>6 크레딧</b>입니다 (통화한 시간만큼, 분 단위 올림). 크레딧은 <b>마이</b>에서 구글로 로그인하면 쓸 수 있습니다.',
- hNavBody:'<b>통역톡</b> — 1:1 · 다중 동시통역. 누르면 늘 1:1 동시통역부터 나옵니다. 위의 칸으로 다중 동시통역으로 바꿉니다.\n\n<b>마주보고</b> — 한 폰으로 마주 보고 통역합니다.\n\n<b>전화 통역</b> — 상대에게 통역 전화를 겁니다.\n\n<b>사진 번역</b> — 서류·라벨·간판을 찍어 옮깁니다.\n\n<b>마이</b> — 구글 로그인 · 크레딧 · 언어 설정 · 통화기록 · 검색 · 설정(전화 통역 말투와 용어집)이 모두 여기 있습니다. 언어를 <b>자동</b>으로 두면 해외에 나가셨을 때 그 나라 말로 저절로 바뀝니다.',
- hKnowBody:'마주보고 · 사진 번역 · 전화 통역 기록은 <b>이 폰 안에만</b> 있습니다. 브라우저 데이터를 지우면 함께 사라지니 중요한 내용은 복사해 두세요.\n\n1:1 · 다중 동시통역 대화는 방 사람들이 함께 보도록 서버에 저장되고 <b>30일 뒤 자동으로 지워집니다</b>. 개인정보는 올리지 마세요.\n\n크레딧: 1 크레딧 = 99원 · 마주보고 한 마디 0.2 · 사진 1장 0.5 · 전화 1분 6 · 동시통역 번역 1개 0.1. 충전은 <b>포도랑 앱</b>(구글 플레이)에서 합니다.\n\n전화 통역은 <b>안드로이드 크롬</b>이나 포도랑 앱에서 열어주세요. 상대 폰이 해외번호를 스팸으로 막을 수 있습니다. 상대 연락처에 <b>+14472841160</b> 을 저장해 두면 통과합니다.',
+ hNavBody:'<b>통역톡</b> — 1:1 · 다중 동시통역. 누르면 늘 1:1 동시통역부터 나옵니다. 위의 칸으로 다중 동시통역으로 바꿉니다.\n\n<b>마주보고</b> — 한 폰으로 마주 보고 통역합니다.\n\n<b>전화 통역</b> — 상대에게 통역 전화를 겁니다.\n\n<b>번역</b> — 오디오·스트림 번역 · 텍스트 번역 · 사진 번역 · 라이브 청취 네 가지를 고릅니다. 위쪽 언어를 네 기능이 함께 씁니다.\n\n<b>마이</b> — 구글 로그인 · 크레딧 · 언어 설정 · 통화기록 · 검색 · 설정(전화 통역 말투와 용어집)이 모두 여기 있습니다. 언어를 <b>자동</b>으로 두면 해외에 나가셨을 때 그 나라 말로 저절로 바뀝니다.',
+ hKnowBody:'마주보고 · 사진 번역 · 텍스트 번역 · 라이브 청취 · 전화 통역 기록은 <b>이 폰 안에만</b> 있습니다. 브라우저 데이터를 지우면 함께 사라지니 중요한 내용은 복사해 두세요.\n\n1:1 · 다중 동시통역 대화는 방 사람들이 함께 보도록 서버에 저장되고 <b>30일 뒤 자동으로 지워집니다</b>. 개인정보는 올리지 마세요.\n\n크레딧: 1 크레딧 = 99원 · 마주보고 한 마디 0.2 · 사진 1장 0.5 · 텍스트 번역 1번 0.1 · 라이브 청취 1분 0.5 · 전화 1분 6 · 동시통역 번역 1개 0.1. 충전은 <b>포도랑 앱</b>(구글 플레이)에서 합니다.\n\n전화 통역은 <b>안드로이드 크롬</b>이나 포도랑 앱에서 열어주세요. 상대 폰이 해외번호를 스팸으로 막을 수 있습니다. 상대 연락처에 <b>+14472841160</b> 을 저장해 두면 통과합니다.',
 
  pTel:'저장된 번호', pTelNone:'아직 저장된 번호가 없습니다. 통화를 걸면 자동으로 저장됩니다.',
  pLog:'통화 기록', pLogNone:'아직 통화 기록이 없습니다.',
@@ -662,13 +692,27 @@ const L = {
  plLogout:'로그아웃', plDel:'계정 탈퇴 (계정 삭제)', plAccMng:'계정 관리', plDelNoAcc:'구글로 로그인한 계정만 탈퇴할 수 있어요. 로그인하지 않았다면 서버에 저장된 계정이 없어요. 이 기기의 기록은 마이 → 정리에서 지울 수 있어요.',
  rmCapL:'최대 인원 (나 포함 · 3~100명)', rmCapUnit:'명까지', rmCapBad:'최대 인원은 3~100 사이 숫자로 적어 주세요', rmCapD:'정한 인원이 다 차면 더는 들어올 수 없어요.', rmMore:'외 N명',
  myLegal:'약관 및 정책', myTerms:'이용약관', myPriv:'개인정보처리방침', myBiz:'사업자 정보', plDelQ:'계정을 지울까요? 남은 크레딧과 내가 만든 통역방이 함께 사라지며 되돌릴 수 없습니다.',
- plNeedLogin:'먼저 구글로 로그인해 주세요', plNeedCredit:'크레딧이 필요합니다. 마이 → 크레딧 충전에서 채워주세요.',
+ plNeedLogin:'먼저 구글로 로그인해 주세요',
+ navTr:'번역', trSwap:'언어 바꾸기', trSwapAuto:'자동 감지는 바꿀 수 없어요. 원래 말을 먼저 고르세요.',
+ trAudioT:'오디오·스트림 번역', trAudioD:'유튜브·영상·방송 소리를 자막으로', trSoon:'앱 업데이트 예정',
+ trTextT:'텍스트 번역', trTextD:'쓰거나 붙여 넣으면 번역', trTextC:'1번 0.1 크레딧 · 최대 2,000자',
+ trPhotoT:'사진 번역', trPhotoD:'서류·라벨·간판을 찍어서', trPhotoC:'1장 0.5 크레딧',
+ trLiveT:'라이브 청취', trLiveD:'강의·세미나·안내 방송을 계속 듣고 번역', trLiveC:'1분 0.5 크레딧 · 조용할 땐 요금 없음',
+ trLangNote:'위에서 고른 언어(원래 말 → 바꿀 말)를 네 기능이 함께 씁니다.',
+ trSoonT:'포도랑 앱 다음 업데이트에서 열려요',
+ trAudioBody:'폰에서 나오는 다른 앱의 소리(유튜브 · 영상 · 라이브 방송)를 받아 자막으로 번역하는 기능입니다.\n\n· 구글 플레이 포도랑 앱에서만 쓸 수 있습니다 (웹 브라우저는 다른 앱 소리를 가져올 수 없습니다)\n· 안드로이드 10 이상\n· 쓸 때마다 \'화면 녹화 · 공유 허용\' 창에서 허락해야 합니다\n· 소리를 막아 둔 앱(일부 영화 앱 등)과 통화 소리는 번역할 수 없습니다\n\n지금은 강의나 방송을 폰 스피커로 틀어 두고 <라이브 청취>를 쓰셔도 됩니다.',
+ trRecent:'최근 번역', trListen:'듣기', trTextPh:'번역할 글을 쓰거나 붙여 넣으세요', trClear:'지우기', trWorking:'번역하는 중…',
+ trTextGo:'번역하기', trTextEmpty:'번역할 글을 써 주세요', trFail:'번역하지 못했습니다. 잠시 뒤 다시 해 주세요.', trClearQ:'기록을 모두 지웁니다.',
+ trLiveIdle:'시작을 누르면 듣기 시작해요', trLiveOn:'듣는 중', trLivePaused:'잠시 멈춤',
+ trLiveEmptyT:'강의·세미나·방송을 들려주세요', trLiveEmptyD:'말이 끊길 때마다 원문과 번역이 여기 쌓입니다. 폰을 소리 나는 쪽에 두세요.',
+ trLiveStart:'듣기 시작', trLiveResume:'다시 듣기', trLivePause:'잠시 멈춤', trLiveStop:'끝내기',
+ trLiveNoMic:'마이크를 쓸 수 없습니다. 마이크 권한을 허용해 주세요.', trCopyAll:'전체 복사', plNeedCredit:'크레딧이 필요합니다. 마이 → 크레딧 충전에서 채워주세요.',
  plCallNeed:'아래 <b>마이</b> 탭에서 구글로 로그인하고 크레딧을 충전하세요.', plCharge:'충전하러 가기',
- plPriceD:'1 크레딧 = 99원 · 마주보고 한 마디 0.2 · 사진 1장 0.5 · 전화 1분 6 · 동시통역 번역 1개 0.1',
+ plPriceD:'1 크레딧 = 99원 · 마주보고 한 마디 0.2 · 사진 1장 0.5 · 텍스트 번역 1번 0.1 · 라이브 청취 1분 0.5 · 전화 1분 6 · 동시통역 번역 1개 0.1',
  myEar:'<b>전화 통역은 이어폰을 쓰세요.</b>\n스피커로 들으면 통역 음성을 마이크가 다시 주워서 말이 꼬입니다.'
 };
 
-const UIVER = '6';   // v9.3 마이 목록·탈퇴·다중 인원 글이 늘어 5로   // v9.2 탭·이용방법 글이 바뀌어 4로   // v9.0 새 글(통역톡 4칸·동시통역 방·포도랑 계정)이 늘어 2로                       // 글이 바뀌면 이 숫자를 올립니다
+const UIVER = '7';   // v9.5 번역 탭 글이 늘어 7로   // v9.3 마이 목록·탈퇴·다중 인원 글이 늘어 5로   // v9.2 탭·이용방법 글이 바뀌어 4로   // v9.0 새 글(통역톡 4칸·동시통역 방·포도랑 계정)이 늘어 2로                       // 글이 바뀌면 이 숫자를 올립니다
 let pack = load('podolang_pack', {});    // 옮겨둔 글 (언어별)
 let packBusy = false;
 
@@ -721,7 +765,7 @@ function paintText(){
   set('lbTalk',   LT('navTalk'));
   set('lbFace',   T('talk'));
   set('lbCall',   T('call'));
-  set('lbPhoto',  T('photo'));
+  set('lbPhoto',  LT('navTr'));   // v9.5 사진 번역 → 번역
   set('rbSend',   LT('rmSendBtn'));
   const rbt = $('#rbText'); if(rbt) rbt.placeholder = LT('rmTextPh');
   set('lbSearch', T('navSearch'));
@@ -733,6 +777,7 @@ function paintText(){
 }
 
 function paint(m){
+  if(['tr','text','live','audio'].includes(m)) m = 'photo';   // v9.5 번역 탭의 화면들은 모두 하늘색
   const t = THEME[m] || THEME.talk;
   const r = document.documentElement.style;
   r.setProperty('--c1', t.c1);
@@ -745,7 +790,7 @@ function paint(m){
 }
 
 /* v9.2 아래 탭 → 화면. 통역톡은 언제나 1:1 부터 (방에 들어가 있으면 그 방) */
-const NAV_OF = { one:'nvTalk', multi:'nvTalk', talk:'nvFace', call:'nvCall', photo:'nvPhoto' };
+const NAV_OF = { one:'nvTalk', multi:'nvTalk', talk:'nvFace', call:'nvCall', photo:'nvPhoto', tr:'nvPhoto', text:'nvPhoto', live:'nvPhoto', audio:'nvPhoto' };
 function navTo(m){
   const wasMy = sheetOpen() && sheetName === 'my';
   if(wasMy){ const c = $('#card'); if(c) myScroll = c.scrollTop; }
@@ -769,6 +814,7 @@ function tab(m){
   // 마주보고 통역에서만 아래 마이크(푸터)를 보여줍니다
   $('#foot').style.display = (m==='talk') ? 'flex' : 'none';
   rmStop(); rmBar(false);
+  if(m !== 'live' && typeof LV !== 'undefined' && LV.on) lvStop();   // v9.5 라이브 청취 화면을 떠나면 멈춤
   render();
   if(typeof plHeadPaint === 'function') plHeadPaint();   // v9.4.4
 }
@@ -777,6 +823,10 @@ function render(){
   if(mode==='one' || mode==='multi') renderRooms();
   else if(mode==='talk') renderTalk();
   else if(mode==='photo') renderPhoto();
+  else if(mode==='tr') renderTr();         // v9.5 번역 탭
+  else if(mode==='text') renderText();
+  else if(mode==='live') renderLive();
+  else if(mode==='audio') renderAudio();
   else renderCall();
 }
 
@@ -930,11 +980,8 @@ function renderPhoto(){
       </div>`).join('') : '';
 
   $('#main').innerHTML = `
-    <div class="langbar">
-      <select id="pFromSel" class="peerside" onchange="setPhotoLang()">${optsAuto(pFrom)}</select>
-      <div style="width:36px;text-align:center;color:var(--sub);font-weight:900">→</div>
-      <select id="pToSel" class="meside" onchange="setPhotoLang()">${opts(pTo)}</select>
-    </div>
+    ${trHead(T('photo'))}
+    ${trLangbar()}
 
     <div class="shots">
       <button class="btn cam" onclick="openCam()">${T('takePhoto')}</button>
@@ -966,6 +1013,244 @@ function setPhotoLang(){
   if(f) pFrom=f.value; if(t) pTo=t.value;
   save(K.pfrom,pFrom); save(K.pto,pTo);
 }
+/* ================= v9.5 번역 탭 =================
+   첫 화면(tr)에서 네 가지를 고릅니다: 오디오·스트림(audio) · 텍스트(text) · 사진(photo) · 라이브 청취(live)
+   네 기능은 위쪽 언어(pFrom → pTo)를 함께 씁니다. */
+const TR_MODES = ['tr', 'text', 'live', 'audio', 'photo'];
+function trLangbar(){
+  return `
+    <div class="langbar">
+      <select id="pFromSel" class="peerside" onchange="setPhotoLang()">${optsAuto(pFrom)}</select>
+      <button class="swap" onclick="trSwap()" aria-label="${esc(LT('trSwap'))}">
+        <svg viewBox="0 0 24 24"><path d="M7 16H3m0 0l3-3m-3 3l3 3M17 8h4m0 0l-3-3m3 3l-3 3"/></svg>
+      </button>
+      <select id="pToSel" class="meside" onchange="setPhotoLang()">${opts(pTo)}</select>
+    </div>`;
+}
+function trSwap(){
+  if(pFrom === 'AUTO'){ toast(LT('trSwapAuto')); return; }
+  const t = pFrom; pFrom = pTo; pTo = t; save(K.pfrom, pFrom); save(K.pto, pTo); render();
+}
+/* 기능 화면 위 "‹ 번역" 줄 */
+function trHead(title){
+  return `<div class="trhead"><button class="trback" onclick="trBack()">‹ ${esc(LT('navTr'))}</button><b>${esc(title)}</b></div>`;
+}
+function trBack(){
+  if(BK.length && BK[BK.length - 1].mode === 'tr') goHome();
+  else tab('tr');
+}
+function trGo(m){ tab(m); }
+
+function renderTr(){
+  if(mode !== 'tr') return;
+  const card = (m, ic, t, d, cost, badge) => `
+    <button class="trcard" onclick="trGo('${m}')">
+      <span class="tic">${ic}</span>
+      <b>${esc(LT(t))}</b>
+      <span class="td">${esc(LT(d))}</span>
+      <span class="tc">${badge ? `<i>${esc(LT(badge))}</i>` : esc(LT(cost))}</span>
+    </button>`;
+  $('#main').innerHTML = `
+    ${trLangbar()}
+    <div class="trgrid">
+      ${card('audio', '🎧', 'trAudioT', 'trAudioD', '', 'trSoon')}
+      ${card('text',  '⌨️', 'trTextT',  'trTextD',  'trTextC')}
+      ${card('photo', '📷', 'trPhotoT', 'trPhotoD', 'trPhotoC')}
+      ${card('live',  '🎙️', 'trLiveT',  'trLiveD',  'trLiveC')}
+    </div>
+    <div class="note" style="margin-top:12px">${esc(LT('trLangNote'))}</div>`;
+}
+
+/* ---------- 텍스트 번역 ---------- */
+let thist = load('podolang_thist', []);
+let tDraft = '', tBusy = false, tRes = null;
+function renderText(){
+  if(mode !== 'text') return;
+  const list = thist.length ? `<div class="seclabel">${esc(LT('trRecent'))}</div>` + thist.map((h, i) => `
+    <div class="turn you">
+      <div class="src">${esc(h.src)}</div>
+      <div class="dst">${esc(h.dst)}</div>
+      <div class="foot">
+        <small>${langName(h.from)} → ${langName(h.to)}</small>
+        <button class="mini" onclick="tSay(${i})">${esc(LT('trListen'))}</button>
+        <button class="mini" onclick="tCopy(${i})">${T('copy')}</button>
+        <button class="mini del" onclick="tDel(${i})">${T('del')}</button>
+      </div>
+    </div>`).join('') : '';
+  $('#main').innerHTML = `
+    ${trHead(LT('trTextT'))}
+    ${trLangbar()}
+    <div class="fld trtext">
+      <textarea id="tIn" maxlength="2000" rows="5" placeholder="${esc(LT('trTextPh'))}" oninput="tDraft=this.value;tCount()">${esc(tDraft)}</textarea>
+      <div class="trrow"><small id="tCnt">${tDraft.length} / 2000</small>
+        ${tDraft ? `<button class="mini" onclick="tClear()">${esc(LT('trClear'))}</button>` : ''}</div>
+    </div>
+    <button class="btn" onclick="tGo()" ${tBusy ? 'disabled' : ''}>${tBusy ? '<span class="spin"></span>' + esc(LT('trWorking')) : esc(LT('trTextGo'))}</button>
+    <div class="hint" style="text-align:center;margin:8px 0 14px">${esc(LT('trTextC'))}</div>
+    ${list}
+    ${thist.length ? `<button class="btn ghost" onclick="tClearAll()">${T('clearAll')}</button>` : ''}`;
+}
+function tCount(){ const c = $('#tCnt'); if(c) c.textContent = tDraft.length + ' / 2000'; }
+function tClear(){ tDraft = ''; renderText(); }
+async function tGo(){
+  const text = (tDraft || '').trim();
+  if(!text || tBusy) { if(!text) toast(LT('trTextEmpty')); return; }
+  if(!walletId()){ toast(LT('plNeedLogin')); return; }
+  tBusy = true; renderText();
+  try{
+    const r = await fetch(url('/api/text'), { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ text, sourceLang: pFrom, targetLang: pTo, uid: walletId() }) });
+    const d = await r.json().catch(() => ({}));
+    if(!r.ok || d.error) throw new Error(d.error || ('오류 ' + r.status));
+    thist.unshift({ src: text, dst: d.translated, from: pFrom, to: pTo, at: Date.now() });
+    thist = thist.slice(0, 20); save('podolang_thist', thist);
+    tDraft = ''; licInfo = null;
+  }catch(e){ toast(e.message || LT('trFail')); }
+  tBusy = false; renderText();
+}
+function tSay(i){ const h = thist[i]; if(h) rmSpeak(h.dst, h.to); }
+function tCopy(i){ const h = thist[i]; if(h) navigator.clipboard.writeText(h.dst).then(() => toast('복사했습니다')); }
+function tDel(i){ thist.splice(i, 1); save('podolang_thist', thist); renderText(); }
+function tClearAll(){ if(!confirm(LT('trClearQ'))) return; thist = []; save('podolang_thist', thist); renderText(); }
+
+/* ---------- 라이브 청취 ----------
+   마이크 소리를 말이 끊기는 곳에서 조각(최대 12초)으로 잘라 서버로 보냅니다.
+   조용한 조각은 보내지 않습니다(요금도 안 나감). 화면을 떠나면 멈춥니다. */
+const LV = { on:false, paused:false, stream:null, ctx:null, an:null, rec:null, chunks:[], segStart:0, lastVoice:0, hadVoice:false,
+             timer:null, segs:[], queue:Promise.resolve(), sec:0, charged:0, wake:null, startAt:0 };
+function renderLive(){
+  if(mode !== 'live') return;
+  const st = LV.on ? (LV.paused ? LT('trLivePaused') : LT('trLiveOn')) : LT('trLiveIdle');
+  const list = LV.segs.length ? LV.segs.map(g => `
+    <div class="lvseg${g.wait ? ' wait' : ''}">
+      ${g.wait ? `<span class="spin"></span>` : `<div class="src">${esc(g.text)}</div><div class="dst">${esc(g.tr || '')}</div>`}
+    </div>`).join('') : `<div class="empty"><b>${esc(LT('trLiveEmptyT'))}</b>${esc(LT('trLiveEmptyD'))}</div>`;
+  $('#main').innerHTML = `
+    ${trHead(LT('trLiveT'))}
+    ${trLangbar()}
+    <div class="lvbar">
+      <div class="lvst"><span class="lvdot${LV.on && !LV.paused ? ' on' : ''}"></span>${esc(st)}
+        <small id="lvMeta">${lvMeta()}</small></div>
+      <div class="lvbtns">
+        ${!LV.on ? `<button class="btn" onclick="lvStart()">🎙️ ${esc(LT('trLiveStart'))}</button>` : `
+          <button class="btn ghost" onclick="lvPause()">${esc(LV.paused ? LT('trLiveResume') : LT('trLivePause'))}</button>
+          <button class="btn lvstop" onclick="lvStop()">${esc(LT('trLiveStop'))}</button>`}
+      </div>
+    </div>
+    <div class="hint" style="text-align:center;margin:-2px 0 12px">${esc(LT('trLiveC'))}</div>
+    <div id="lvList">${list}</div>
+    ${LV.segs.length && !LV.on ? `<div class="shots" style="margin-top:12px">
+      <button class="btn ghost" onclick="lvCopy()">${esc(LT('trCopyAll'))}</button>
+      <button class="btn ghost" onclick="lvClear()">${esc(LT('trClear'))}</button></div>` : ''}`;
+  const l = $('#lvList'); if(l && LV.on) l.lastElementChild && l.lastElementChild.scrollIntoView({ block:'end', behavior:'smooth' });
+}
+function lvMeta(){
+  const m = Math.floor(LV.sec / 60), s = Math.round(LV.sec % 60);
+  return LV.sec || LV.charged ? ` · ${m}:${String(s).padStart(2, '0')} · ${LT('plCr')} ${Math.round(LV.charged * 10) / 10}` : '';
+}
+async function lvStart(){
+  if(LV.on) return;
+  if(!walletId()){ toast(LT('plNeedLogin')); return; }
+  if(!window.MediaRecorder || !navigator.mediaDevices){ toast(LT('trLiveNoMic')); return; }
+  try{
+    LV.stream = await navigator.mediaDevices.getUserMedia({ audio:{ echoCancellation:true, noiseSuppression:true, autoGainControl:true } });
+  }catch(e){ toast(LT('trLiveNoMic')); return; }
+  LV.ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const srcN = LV.ctx.createMediaStreamSource(LV.stream);
+  LV.an = LV.ctx.createAnalyser(); LV.an.fftSize = 1024; srcN.connect(LV.an);
+  LV.on = true; LV.paused = false; LV.startAt = Date.now();
+  try{ if(navigator.wakeLock) LV.wake = await navigator.wakeLock.request('screen'); }catch(e){}
+  lvNewSeg();
+  LV.timer = setInterval(lvTick, 120);
+  renderLive();
+}
+function lvLevel(){
+  const a = new Uint8Array(LV.an.fftSize); LV.an.getByteTimeDomainData(a);
+  let s = 0; for(let i = 0; i < a.length; i++){ const v = (a[i] - 128) / 128; s += v * v; }
+  return Math.sqrt(s / a.length);
+}
+function lvNewSeg(){
+  LV.chunks = []; LV.hadVoice = false; LV.segStart = Date.now(); LV.lastVoice = 0;
+  let mt = '';
+  ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4'].some(t => { if(MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)){ mt = t; return true; } return false; });
+  const rec = new MediaRecorder(LV.stream, mt ? { mimeType: mt } : undefined);
+  rec.ondataavailable = e => { if(e.data && e.data.size) LV.chunks.push(e.data); };
+  rec.onstop = () => { const voiced = rec._voiced, parts = LV.chunks; if(voiced) lvSend(new Blob(parts, { type: rec.mimeType || 'audio/webm' })); };
+  LV.rec = rec; rec.start();
+}
+function lvTick(){
+  if(!LV.on || LV.paused || !LV.rec) return;
+  const now = Date.now(), lv = lvLevel();
+  if(lv > 0.035){ LV.hadVoice = true; LV.lastVoice = now; }
+  const len = now - LV.segStart;
+  const quiet = LV.lastVoice ? now - LV.lastVoice : len;
+  // 말하다 0.7초 쉬면(4초 넘었을 때) 또는 12초가 차면 자릅니다. 계속 조용하면 6초마다 버립니다.
+  if((LV.hadVoice && len > 4000 && quiet > 700) || len >= 11800 || (!LV.hadVoice && len > 6000)) lvCut();
+}
+function lvCut(){
+  const r = LV.rec; if(!r) return;
+  r._voiced = LV.hadVoice;
+  try{ r.stop(); }catch(e){}
+  LV.rec = null;
+  if(LV.on && !LV.paused) lvNewSeg();
+}
+function lvSend(blob){
+  if(blob.size < 2000) return;
+  const seg = { wait:true, text:'', tr:'' }; LV.segs.push(seg); if(LV.segs.length > 200) LV.segs.shift();
+  renderLive();
+  const fd = new FormData();
+  fd.append('audio', blob, 'live.webm'); fd.append('sourceLang', pFrom); fd.append('targetLang', pTo); fd.append('uid', walletId());
+  const req = fetch(url('/api/live'), { method:'POST', body: fd }).then(r => r.json().then(d => ({ ok: r.ok, d })), () => ({ ok:false, d:{ error: LT('trFail') } }));
+  LV.queue = LV.queue.then(() => req).then(({ ok, d }) => {   // 보낸 순서대로 화면에 놓습니다
+    seg.wait = false;
+    if(!ok || d.error){
+      LV.segs.splice(LV.segs.indexOf(seg), 1);
+      toast(d.error || LT('trFail'));
+      if(d.needCredit) lvStop();
+    } else if(!d.text){ LV.segs.splice(LV.segs.indexOf(seg), 1); }
+    else { seg.text = d.text; seg.tr = d.translated; }
+    if(d && d.sec) LV.sec += d.sec;
+    if(d && d.charged) { LV.charged += d.charged; licInfo = null; }
+    if(d && d.stop) { toast(LT('plNeedCredit')); lvStop(); }
+    renderLive();
+  });
+}
+function lvPause(){
+  if(!LV.on) return;
+  LV.paused = !LV.paused;
+  if(LV.paused) lvCut(); else lvNewSeg();
+  renderLive();
+}
+function lvStop(){
+  if(!LV.on) return;
+  LV.on = false; LV.paused = false;
+  clearInterval(LV.timer); LV.timer = null;
+  if(LV.rec){ LV.rec._voiced = LV.hadVoice; try{ LV.rec.stop(); }catch(e){} LV.rec = null; }
+  try{ LV.stream && LV.stream.getTracks().forEach(t => t.stop()); }catch(e){}
+  try{ LV.ctx && LV.ctx.close(); }catch(e){}
+  try{ LV.wake && LV.wake.release(); }catch(e){}
+  LV.stream = LV.ctx = LV.an = LV.wake = null;
+  if(mode === 'live') renderLive();
+}
+function lvCopy(){
+  const t = LV.segs.filter(g => !g.wait).map(g => g.text + '\n' + (g.tr || '')).join('\n\n');
+  if(t) navigator.clipboard.writeText(t).then(() => toast('복사했습니다'));
+}
+function lvClear(){ if(!confirm(LT('trClearQ'))) return; LV.segs = []; LV.sec = 0; LV.charged = 0; renderLive(); }
+
+/* ---------- 오디오·스트림 번역 (2단계: 포도랑 앱 업데이트에서 열림) ---------- */
+function renderAudio(){
+  if(mode !== 'audio') return;
+  $('#main').innerHTML = `
+    ${trHead(LT('trAudioT'))}
+    ${trLangbar()}
+    <div class="empty" style="text-align:left">
+      <b style="text-align:center;display:block">🎧 ${esc(LT('trSoonT'))}</b>
+      <div style="margin-top:10px;line-height:1.7">${nlx(LT('trAudioBody'))}</div>
+    </div>`;
+}
+function nlx(x){ return esc(x).replace(/\n/g, '<br>'); }
+
 function openCam(){ $('#fileCam').click(); }
 function openAlbum(){ $('#fileAlb').click(); }
 function resetPhoto(){ photoData=null; photoResult=null; renderPhoto(); }
@@ -1825,6 +2110,8 @@ function openHelp(){
     <div class="note">${nl(LT('hRoomBody'))}</div>
     <div class="seclabel big">${esc(LT('hTalk'))}</div>
     <div class="note">${nl(LT('hTalkBody'))}</div>
+    <div class="seclabel big">${esc(LT('hTr'))}</div>
+    <div class="note">${nl(LT('hTrBody'))}</div>
     <div class="seclabel big">${esc(LT('hPhoto'))}</div>
     <div class="note">${nl(LT('hPhotoBody'))}</div>
     <div class="seclabel big">${esc(LT('hCall'))}</div>
