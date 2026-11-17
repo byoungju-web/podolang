@@ -458,13 +458,7 @@ export default {
           } catch (e) { audioError = e.message; }
         }
 
-        if (env.PODOLANG_KV) {
-          try {
-            await env.PODOLANG_KV.put(`vlog:${Date.now()}`,
-              JSON.stringify({ kind: r.kind, translated: r.translated.slice(0, 500), targetLang }),
-              { expirationTtl: 60 * 60 * 24 * 30 });
-          } catch (_) {}
-        }
+        // v9.7 사진 번역 결과를 서버에 30일 남기던 기록(vlog:)을 뺐습니다 — 개인정보처리방침대로 처리 후 바로 사라짐
 
         return json({
           ok: true,
@@ -505,11 +499,7 @@ export default {
           audioError = e.message;
         }
 
-        if (env.PODOLANG_KV) {
-          await env.PODOLANG_KV.put(`log:${Date.now()}`,
-            JSON.stringify({ original, translated: tr.translated, sourceLang, targetLang, engine: tr.engine }),
-            { expirationTtl: 60 * 60 * 24 * 30 });
-        }
+        // v9.7 마주보고 원문·번역문을 서버에 30일 남기던 기록(log:)을 뺐습니다 — 개인정보처리방침대로 처리 후 바로 사라짐
 
         return json({
           original, translated: tr.translated, audioBase64, audioError,
