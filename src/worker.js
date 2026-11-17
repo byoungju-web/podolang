@@ -788,7 +788,9 @@ async function transcribeLive(env, audio, sourceLang) {
   const s = (sourceLang || '').toUpperCase();
   return await retry(async () => {
     const form = new FormData();
-    form.append('file', audio, 'audio.webm');
+    const ty = String((audio && audio.type) || ''), nm = String((audio && audio.name) || '');
+    const ext = /wav/i.test(ty) || /\.wav$/i.test(nm) ? 'wav' : /mp4|m4a|aac/i.test(ty) ? 'm4a' : 'webm';   // v9.6 앱(오디오·스트림)은 WAV
+    form.append('file', audio, 'audio.' + ext);
     form.append('model', 'whisper-1');
     form.append('response_format', 'verbose_json');
     form.append('temperature', '0');

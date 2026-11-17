@@ -516,7 +516,7 @@ body .shots .btn.alb{--bi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.or
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v9.5';
+const VER='v9.6';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -629,7 +629,7 @@ function uiLang(){ return String(from || 'KO').toUpperCase(); }
 const L = {
  helpTitle:'이용방법',
  hTalk:'마주보고 통역', hPhoto:'사진 번역', hCall:'전화 통역',
- hTr:'번역 (텍스트 · 라이브 청취 · 오디오)', hTrBody:'아래 <b>번역</b> 탭을 누르면 네 가지가 나옵니다. 위쪽에서 고른 언어(원래 말 → 바꿀 말)를 네 기능이 함께 씁니다.\n\n<b>텍스트 번역</b> — 글을 쓰거나 붙여 넣고 <b>번역하기</b>. 한 번에 2,000자까지 · 1번 0.1 크레딧. <b>듣기</b>를 누르면 폰이 읽어 줍니다.\n\n<b>라이브 청취</b> — 강의 · 세미나 · 안내 방송을 폰 마이크로 계속 듣고, 말이 끊길 때마다 원문과 번역을 아래로 쌓아 줍니다. 1분 0.5 크레딧(12초마다 0.1). 조용한 동안은 보내지 않아 요금이 나가지 않습니다. 다른 화면으로 가면 멈춥니다.\n\n<b>사진 번역</b> — 서류 · 라벨 · 간판을 찍어 옮깁니다.\n\n<b>오디오 · 스트림 번역</b> — 유튜브 · 영상 등 폰에서 나오는 소리를 자막으로 옮기는 기능입니다. 포도랑 앱(구글 플레이) 다음 업데이트에서 열립니다.',
+ hTr:'번역 (텍스트 · 라이브 청취 · 오디오)', hTrBody:'아래 <b>번역</b> 탭을 누르면 네 가지가 나옵니다. 위쪽에서 고른 언어(원래 말 → 바꿀 말)를 네 기능이 함께 씁니다.\n\n<b>텍스트 번역</b> — 글을 쓰거나 붙여 넣고 <b>번역하기</b>. 한 번에 2,000자까지 · 1번 0.1 크레딧. <b>듣기</b>를 누르면 폰이 읽어 줍니다.\n\n<b>라이브 청취</b> — 강의 · 세미나 · 안내 방송을 폰 마이크로 계속 듣고, 말이 끊길 때마다 원문과 번역을 아래로 쌓아 줍니다. 1분 0.5 크레딧(12초마다 0.1). 조용한 동안은 보내지 않아 요금이 나가지 않습니다. 다른 화면으로 가면 멈춥니다.\n\n<b>사진 번역</b> — 서류 · 라벨 · 간판을 찍어 옮깁니다.\n\n<b>오디오 · 스트림 번역</b> — 유튜브 · 영상 등 폰에서 나오는 소리를 자막으로 옮깁니다. 구글 플레이 <b>포도랑 앱(1.0.3 이상)</b>에서 열리며, 라이브 청취와 같은 1분 0.5 크레딧입니다.',
  hRoom:'통역톡 — 1:1 · 다중 동시통역',
  hRoomBody:'사람마다 <b>자기 폰에서 자기 말로</b> 대화하면, 상대에게는 상대 말로 번역되어 보이고 폰이 읽어 줍니다.\n\n<b>1.</b> <b>마이</b>에서 구글로 로그인합니다 (처음 가입하면 크레딧 선물)\n<b>2.</b> 내 언어와 이름을 고르고 <b>방 만들기</b>\n<b>3.</b> <b>초대</b>를 눌러 링크나 6자리 코드를 상대에게 보냅니다\n<b>4.</b> 상대는 링크를 열거나 코드를 넣어 <b>참여</b>합니다\n<b>5.</b> 글로 쓰거나 🎤 를 눌러 말하면 됩니다\n\n1:1 은 2명, 다중은 방을 만들 때 적은 인원(3~100명)까지. 번역 1개에 0.1 크레딧 (방 안의 다른 언어 수만큼 · 말한 사람만). 불쾌한 말은 눌러서 차단 · 신고할 수 있습니다.',
  myMore:'더 보기',
@@ -694,13 +694,14 @@ const L = {
  myLegal:'약관 및 정책', myTerms:'이용약관', myPriv:'개인정보처리방침', myBiz:'사업자 정보', plDelQ:'계정을 지울까요? 남은 크레딧과 내가 만든 통역방이 함께 사라지며 되돌릴 수 없습니다.',
  plNeedLogin:'먼저 구글로 로그인해 주세요',
  navTr:'번역', trSwap:'언어 바꾸기', trSwapAuto:'자동 감지는 바꿀 수 없어요. 원래 말을 먼저 고르세요.',
- trAudioT:'오디오·스트림 번역', trAudioD:'유튜브·영상·방송 소리를 자막으로', trSoon:'앱 업데이트 예정',
+ trAudioT:'오디오·스트림 번역', trAudioD:'유튜브·영상·방송 소리를 자막으로', trSoon:'앱 업데이트 예정', trAppOnly:'포도랑 앱 전용',
+ trAudioGo:'포도랑 앱에서 시작', trAudioAndroid:'안드로이드 폰의 포도랑 앱에서만 쓸 수 있어요',
  trTextT:'텍스트 번역', trTextD:'쓰거나 붙여 넣으면 번역', trTextC:'1번 0.1 크레딧 · 최대 2,000자',
  trPhotoT:'사진 번역', trPhotoD:'서류·라벨·간판을 찍어서', trPhotoC:'1장 0.5 크레딧',
  trLiveT:'라이브 청취', trLiveD:'강의·세미나·안내 방송을 계속 듣고 번역', trLiveC:'1분 0.5 크레딧 · 조용할 땐 요금 없음',
  trLangNote:'위에서 고른 언어(원래 말 → 바꿀 말)를 네 기능이 함께 씁니다.',
  trSoonT:'포도랑 앱 다음 업데이트에서 열려요',
- trAudioBody:'폰에서 나오는 다른 앱의 소리(유튜브 · 영상 · 라이브 방송)를 받아 자막으로 번역하는 기능입니다.\n\n· 구글 플레이 포도랑 앱에서만 쓸 수 있습니다 (웹 브라우저는 다른 앱 소리를 가져올 수 없습니다)\n· 안드로이드 10 이상\n· 쓸 때마다 \'화면 녹화 · 공유 허용\' 창에서 허락해야 합니다\n· 소리를 막아 둔 앱(일부 영화 앱 등)과 통화 소리는 번역할 수 없습니다\n\n지금은 강의나 방송을 폰 스피커로 틀어 두고 <라이브 청취>를 쓰셔도 됩니다.',
+ trAudioBody:'폰에서 나오는 다른 앱의 소리(유튜브 · 영상 · 라이브 방송)를 받아 위에서 고른 언어로 번역합니다.\n\n<b>쓰는 순서</b>\n1. 위에서 언어를 고르고 <b>포도랑 앱에서 시작</b>\n2. 앱 화면에서 <b>번역 시작</b> → 마이크(녹음) 권한 · \'화면 녹화 · 공유\' 허락\n3. 유튜브나 영상 앱으로 가서 재생하면 번역이 쌓입니다. <b>다른 앱 위에 자막 띄우기</b>를 켜 두면 영상 위에 자막이 뜹니다\n4. 알림의 <b>끝내기</b>로 멈춥니다\n\n· 구글 플레이 포도랑 앱(1.0.3 이상) · 안드로이드 10 이상에서만 됩니다. 앱이 없거나 옛 버전이면 구글 플레이로 이동합니다\n· 포도랑은 화면은 쓰지 않고 소리만 받습니다. 소리는 번역에만 쓰고 저장하지 않습니다\n· 소리를 막아 둔 앱(일부 영화 앱 등)과 통화 소리는 번역할 수 없습니다',
  trRecent:'최근 번역', trListen:'듣기', trTextPh:'번역할 글을 쓰거나 붙여 넣으세요', trClear:'지우기', trWorking:'번역하는 중…',
  trTextGo:'번역하기', trTextEmpty:'번역할 글을 써 주세요', trFail:'번역하지 못했습니다. 잠시 뒤 다시 해 주세요.', trClearQ:'기록을 모두 지웁니다.',
  trLiveIdle:'시작을 누르면 듣기 시작해요', trLiveOn:'듣는 중', trLivePaused:'잠시 멈춤',
@@ -712,7 +713,7 @@ const L = {
  myEar:'<b>전화 통역은 이어폰을 쓰세요.</b>\n스피커로 들으면 통역 음성을 마이크가 다시 주워서 말이 꼬입니다.'
 };
 
-const UIVER = '7';   // v9.5 번역 탭 글이 늘어 7로   // v9.3 마이 목록·탈퇴·다중 인원 글이 늘어 5로   // v9.2 탭·이용방법 글이 바뀌어 4로   // v9.0 새 글(통역톡 4칸·동시통역 방·포도랑 계정)이 늘어 2로                       // 글이 바뀌면 이 숫자를 올립니다
+const UIVER = '8';   // v9.6 오디오·스트림 안내 글이 바뀌어 8로   // v9.5 번역 탭 글이 늘어 7로   // v9.3 마이 목록·탈퇴·다중 인원 글이 늘어 5로   // v9.2 탭·이용방법 글이 바뀌어 4로   // v9.0 새 글(통역톡 4칸·동시통역 방·포도랑 계정)이 늘어 2로                       // 글이 바뀌면 이 숫자를 올립니다
 let pack = load('podolang_pack', {});    // 옮겨둔 글 (언어별)
 let packBusy = false;
 
@@ -1053,7 +1054,7 @@ function renderTr(){
   $('#main').innerHTML = `
     ${trLangbar()}
     <div class="trgrid">
-      ${card('audio', '🎧', 'trAudioT', 'trAudioD', '', 'trSoon')}
+      ${card('audio', '🎧', 'trAudioT', 'trAudioD', '', 'trAppOnly')}
       ${card('text',  '⌨️', 'trTextT',  'trTextD',  'trTextC')}
       ${card('photo', '📷', 'trPhotoT', 'trPhotoD', 'trPhotoC')}
       ${card('live',  '🎙️', 'trLiveT',  'trLiveD',  'trLiveC')}
@@ -1238,16 +1239,24 @@ function lvCopy(){
 }
 function lvClear(){ if(!confirm(LT('trClearQ'))) return; LV.segs = []; LV.sec = 0; LV.charged = 0; renderLive(); }
 
-/* ---------- 오디오·스트림 번역 (2단계: 포도랑 앱 업데이트에서 열림) ---------- */
+/* ---------- 오디오·스트림 번역 (v9.6 — 포도랑 앱 1.0.3 의 안드로이드 화면을 엽니다) ----------
+   podolang://audio?from=&to=&tk= 를 intent 주소로 엽니다. 앱이 없거나 옛 버전이면 구글 플레이로 갑니다. */
+const PLAY_URL = 'https://play.google.com/store/apps/details?id=kr.podolang.app';
 function renderAudio(){
   if(mode !== 'audio') return;
   $('#main').innerHTML = `
     ${trHead(LT('trAudioT'))}
     ${trLangbar()}
-    <div class="empty" style="text-align:left">
-      <b style="text-align:center;display:block">🎧 ${esc(LT('trSoonT'))}</b>
-      <div style="margin-top:10px;line-height:1.7">${nlx(LT('trAudioBody'))}</div>
-    </div>`;
+    <button class="btn" onclick="audioOpenApp()">🎧 ${esc(LT('trAudioGo'))}</button>
+    <div class="hint" style="text-align:center;margin:8px 0 14px">${esc(LT('trLiveC'))}</div>
+    <div class="note" style="line-height:1.7">${String(LT('trAudioBody')).replace(/\n/g, '<br>')}</div>`;
+}
+function audioOpenApp(){
+  if(!/Android/i.test(navigator.userAgent)){ toast(LT('trAudioAndroid')); return; }
+  const tk = walletId();
+  if(!tk){ toast(LT('plNeedLogin')); return; }
+  const q = 'from=' + encodeURIComponent(pFrom) + '&to=' + encodeURIComponent(pTo) + '&tk=' + encodeURIComponent(tk);
+  location.href = 'intent://audio?' + q + '#Intent;scheme=podolang;package=kr.podolang.app;S.browser_fallback_url=' + encodeURIComponent(PLAY_URL) + ';end';
 }
 function nlx(x){ return esc(x).replace(/\n/g, '<br>'); }
 
