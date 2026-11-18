@@ -418,6 +418,7 @@ body[data-theme="photo"] .turn.you .mini{border-color:#7DD3FC;color:#075985}
 .trcard{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-height:168px;padding:16px 14px;text-align:left;
   border:1px solid var(--edge);border-radius:22px;background:#fff;box-shadow:var(--soft-sh);font:inherit;color:var(--fg)}
 .trcard:active{transform:scale(.98)}
+.trcard.wide{grid-column:1/-1;min-height:0}   /* v10.0 메신저 번역 카드는 가로로 길게 */
 .trcard .tic{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:22px;background:var(--csoft);margin-bottom:4px}
 .trcard b{font-size:16px;font-weight:900;letter-spacing:-.4px;line-height:1.25}
 .trcard .td{font-size:12.5px;color:var(--sub);line-height:1.45;flex:1}
@@ -637,7 +638,7 @@ body .shots .btn.alb{--bi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.or
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v9.9';
+const VER='v10.0';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -750,7 +751,7 @@ function uiLang(){ return String(from || 'KO').toUpperCase(); }
 const L = {
  helpTitle:'이용방법',
  hTalk:'마주보고 통역', hPhoto:'사진 번역', hCall:'전화 통역',
- hTr:'번역 (텍스트 · 라이브 청취 · 오디오)', hTrBody:'아래 <b>번역</b> 탭을 누르면 네 가지가 나옵니다. 위쪽에서 고른 언어(원래 말 → 바꿀 말)를 네 기능이 함께 씁니다.\n\n<b>텍스트 번역</b> — 글을 쓰거나 붙여 넣고 <b>번역하기</b>. 한 번에 2,000자까지 · 1번 0.1 크레딧. <b>듣기</b>를 누르면 폰이 읽어 줍니다.\n\n<b>라이브 청취</b> — 강의 · 세미나 · 안내 방송을 폰 마이크로 계속 듣고, 말이 끊길 때마다 원문과 번역을 아래로 쌓아 줍니다. 1분 0.5 크레딧(12초마다 0.1). 조용한 동안은 보내지 않아 요금이 나가지 않습니다. 다른 화면으로 가면 멈춥니다.\n\n<b>사진 번역</b> — 서류 · 라벨 · 간판을 찍어 옮깁니다.\n\n<b>오디오 · 스트림 번역</b> — 유튜브 · 영상 등 폰에서 나오는 소리를 자막으로 옮깁니다. 구글 플레이 <b>포도랑 앱(1.0.3 이상)</b>에서 열리며, 라이브 청취와 같은 1분 0.5 크레딧입니다.',
+ hTr:'번역 (텍스트 · 라이브 청취 · 오디오 · 메신저)', hTrBody:'아래 <b>번역</b> 탭을 누르면 다섯 가지가 나옵니다. 위쪽에서 고른 언어(원래 말 → 바꿀 말)를 메신저 번역을 뺀 네 기능이 함께 씁니다.\n\n<b>텍스트 번역</b> — 글을 쓰거나 붙여 넣고 <b>번역하기</b>. 한 번에 2,000자까지 · 1번 0.1 크레딧. <b>듣기</b>를 누르면 폰이 읽어 줍니다.\n\n<b>라이브 청취</b> — 강의 · 세미나 · 안내 방송을 폰 마이크로 계속 듣고, 말이 끊길 때마다 원문과 번역을 아래로 쌓아 줍니다. 1분 0.5 크레딧(12초마다 0.1). 조용한 동안은 보내지 않아 요금이 나가지 않습니다. 다른 화면으로 가면 멈춥니다.\n\n<b>사진 번역</b> — 서류 · 라벨 · 간판을 찍어 옮깁니다.\n\n<b>오디오 · 스트림 번역</b> — 유튜브 · 영상 등 폰에서 나오는 소리를 자막으로 옮깁니다. 구글 플레이 <b>포도랑 앱(1.0.3 이상)</b>에서 열리며, 라이브 청취와 같은 1분 0.5 크레딧입니다.\n\n<b>메신저 번역</b> — 포도랑 앱(1.0.6 이상)과 한 번 연결하면, WhatsApp · Instagram · LINE · 문자 등 어느 앱에서든 글자를 길게 눌러 <b>포도랑 번역</b>을 고를 수 있습니다. 받은 글은 내 언어로 보여 주고, 내가 쓴 글은 상대 언어로 바꿔 넣습니다. 한 번 0.1 크레딧.',
  hRoom:'1:1 동시통역 · 다중통역',
  hRoomBody:'사람마다 <b>자기 폰에서 자기 말로</b> 대화하면, 상대에게는 상대 말로 번역되어 보이고 폰이 읽어 줍니다.\n\n<b>1.</b> <b>마이</b>에서 구글로 로그인합니다 (처음 가입하면 크레딧 선물)\n<b>2.</b> 내 언어와 이름을 고르고 <b>방 만들기</b>\n<b>3.</b> <b>초대</b>를 눌러 링크나 6자리 코드를 상대에게 보냅니다\n<b>4.</b> 상대는 링크를 열거나 코드를 넣어 <b>참여</b>합니다\n<b>5.</b> 글로 쓰거나 🎤 를 눌러 말하면 됩니다\n\n1:1 은 2명, 다중은 방을 만들 때 적은 인원(3~100명)까지. 번역 1개에 0.1 크레딧 (방 안의 다른 언어 수만큼 · 말한 사람만). 불쾌한 말은 눌러서 차단 · 신고할 수 있습니다.',
  myMore:'더 보기',
@@ -761,7 +762,7 @@ const L = {
  hTalkBody:'폰 한 대를 가운데 두고 마주 보며 통역합니다. 위쪽 칸은 상대, 아래쪽 칸은 나.\n\n<b>1.</b> 위쪽에 상대 언어, 아래쪽에 내 언어를 고릅니다\n<b>2.</b> 말할 사람 쪽의 🎤 를 누르고 말합니다 (말이 끝나면 저절로 멈춥니다)\n<b>3.</b> 반대쪽 칸에 번역된 문장이 크게 뜨고 폰이 읽어 줍니다\n<b>4.</b> 아래 칸에서 글로 써서 <b>번역</b>해도 됩니다\n\n마주 앉았다면 <b>위쪽 화면 뒤집기</b>를 켜 두세요. 한 마디 0.1 크레딧.',
  hPhotoBody:'서류·라벨·인보이스를 찍으면 글자를 읽어 옮깁니다.\n\n<b>1.</b> 자동 감지 → 내 언어로 두고 <b>사진 찍기</b>\n<b>2.</b> 찍은 뒤 <b>이 사진 번역하기</b>\n<b>3.</b> 번역이 크게, 원문은 <b>원문 보기</b>를 눌러 폅니다\n\n<b>숫자·단가·품번은 원문 그대로 옮깁니다.</b> 흐려서 안 보이는 자리는 추측하지 않고 [?] 로 표시합니다. 중요한 금액은 원문과 한 번 더 대조하세요.',
  hCallBody:'상대는 그냥 전화를 받아 평소처럼 말하면 됩니다. 앱을 깔 필요도, 버튼을 누를 필요도 없습니다.\n\n<b>1.</b> 이름(선택)과 전화번호를 넣습니다. 국가번호부터 — 미국 +1, 한국 +82(앞 0 빼고)\n<b>2.</b> <b>통역 전화 걸기</b>\n<b>3.</b> 상대가 받으면 이 화면에 대고 말합니다\n<b>4.</b> 말이 끝나면 잠시 뒤 상대에게 전달됩니다\n\n<b>이어폰을 쓰세요.</b> 스피커로 들으면 통역 음성을 마이크가 다시 주워서 말이 꼬입니다.\n\n전화 통역은 통화 1분에 <b>6 크레딧</b>입니다 (통화한 시간만큼, 분 단위 올림). 크레딧은 <b>마이</b>에서 구글로 로그인하면 쓸 수 있습니다.',
- hNavBody:'<b>통역톡</b> — 위의 칸으로 <b>1:1 동시통역</b>과 <b>마주보고 통역</b>을 바꿉니다. 누르면 마지막에 보던 칸이 나옵니다.\n\n<b>다중통역</b> — 여러 사람(3~100명)이 한 방에서 각자 자기 말로 대화합니다.\n\n<b>통화</b> — <b>영상 통화 번역</b> · <b>음성 통화 번역</b>(메신저로 초대) · <b>전화 통역</b>(일반 전화번호)을 고릅니다.\n\n<b>번역</b> — 오디오·스트림 번역 · 텍스트 번역 · 사진 번역 · 라이브 청취 네 가지를 고릅니다. 위쪽 언어를 네 기능이 함께 씁니다.\n\n<b>마이</b> — 구글 로그인 · 크레딧 · 언어 설정 · 통화기록 · 검색 · 설정(전화 통역 말투와 용어집) · 약관과 안내가 모두 여기 있습니다. 언어를 <b>자동</b>으로 두면 해외에 나가셨을 때 그 나라 말로 저절로 바뀝니다.',
+ hNavBody:'<b>통역톡</b> — 위의 칸으로 <b>1:1 동시통역</b>과 <b>마주보고 통역</b>을 바꿉니다. 누르면 마지막에 보던 칸이 나옵니다.\n\n<b>다중통역</b> — 여러 사람(3~100명)이 한 방에서 각자 자기 말로 대화합니다.\n\n<b>통화</b> — <b>영상 통화 번역</b> · <b>음성 통화 번역</b>(메신저로 초대) · <b>전화 통역</b>(일반 전화번호)을 고릅니다.\n\n<b>번역</b> — 오디오·스트림 번역 · 텍스트 번역 · 사진 번역 · 라이브 청취 · 메신저 번역을 고릅니다.\n\n<b>마이</b> — 구글 로그인 · 크레딧 · 언어 설정 · 통화기록 · 검색 · 설정(전화 통역 말투와 용어집) · 약관과 안내가 모두 여기 있습니다. 언어를 <b>자동</b>으로 두면 해외에 나가셨을 때 그 나라 말로 저절로 바뀝니다.',
  hKnowBody:'마주보고 · 사진 번역 · 텍스트 번역 · 라이브 청취 · 전화 통역 기록은 <b>이 폰 안에만</b> 있습니다. 브라우저 데이터를 지우면 함께 사라지니 중요한 내용은 복사해 두세요.\n\n1:1 · 다중 동시통역 대화는 방 사람들이 함께 보도록 서버에 저장되고 <b>30일 뒤 자동으로 지워집니다</b>. 개인정보는 올리지 마세요.\n\n크레딧: 1 크레딧 = 99원 · 마주보고 한 마디 0.1 · 사진 1장 0.5 · 텍스트 번역 1번 0.1 · 라이브 청취 1분 0.5 · 영상·음성 통화 번역 말한 시간 1분 0.5 · 전화 1분 6 · 동시통역 번역 1개 0.1. 충전은 <b>포도랑 앱</b>(구글 플레이)에서 합니다.\n\n전화 통역은 <b>안드로이드 크롬</b>이나 포도랑 앱에서 열어주세요. 상대 폰이 해외번호를 스팸으로 막을 수 있습니다. 상대 연락처에 <b>+14472841160</b> 을 저장해 두면 통과합니다.',
 
  pTel:'저장된 번호', pTelNone:'아직 저장된 번호가 없습니다. 통화를 걸면 자동으로 저장됩니다.',
@@ -829,6 +830,10 @@ const L = {
  pyOneNotes:'⏳ <b>유효기간 · 마지막 충전일로부터 {d}일</b> (다시 충전하면 남은 크레딧도 함께 {d}일 연장)<br>🔢 구독 크레딧을 먼저 쓰고, 그다음 한 번 충전 크레딧을 씁니다<br>💸 환불 · 구글 플레이 환불 정책과 이용약관을 따름 (7일 안 · 미사용이면 전액)<br>💳 결제 · 구글 플레이',
  navTr:'번역', trSwap:'언어 바꾸기', trSwapAuto:'자동 감지는 바꿀 수 없어요. 원래 말을 먼저 고르세요.',
  trAudioT:'오디오·스트림 번역', trAudioD:'유튜브·영상·방송 소리를 자막으로', trSoon:'앱 업데이트 예정', trAppOnly:'포도랑 앱 전용',
+ trMsgT:'메신저 번역', trMsgD:'WhatsApp · Instagram · LINE · 문자에서 글자를 길게 눌러 바로 번역',
+ trMsgMine:'내 언어 (받은 메시지를 이 언어로)', trMsgPeer:'상대 언어 (내가 쓴 글을 이 언어로)',
+ trMsgGo:'포도랑 앱에 연결하기', trMsgC:'한 번 번역에 0.1 크레딧 · 한 번만 연결하면 돼요',
+ trMsgBody:'<b>쓰는 순서</b>\n1. 위에서 내 언어와 상대 언어를 고르고 <b>포도랑 앱에 연결하기</b>를 한 번 누릅니다 (포도랑 앱 1.0.6 이상)\n2. WhatsApp · Instagram · LINE · 텔레그램 · 문자 등 아무 앱에서 <b>글자를 길게 눌러</b> 고릅니다\n3. 뜨는 메뉴에서 <b>포도랑 번역</b>을 누릅니다 (안 보이면 메뉴의 ⋮ 를 누르세요)\n\n<b>받은 메시지</b>를 고르면 → 내 언어로 번역해 작은 창에 보여 줍니다.\n<b>입력칸에 쓴 내 글</b>을 고르면 → 상대 언어로 번역하고, <b>바꿔 넣기</b>를 누르면 그 자리 글이 번역문으로 바뀝니다. 그대로 보내면 됩니다.\n\n· 작은 창에서 언어를 바꾸면 다음에도 그 언어로 번역합니다.\n· 글은 번역에만 쓰고 저장하지 않습니다. 접근성 권한은 쓰지 않습니다.\n· 언어를 바꾸거나 다른 계정으로 로그인했다면 여기서 다시 연결하세요.',
  trAudioGo:'포도랑 앱에서 시작', trAudioAndroid:'안드로이드 폰의 포도랑 앱에서만 쓸 수 있어요',
  trTextT:'텍스트 번역', trTextD:'쓰거나 붙여 넣으면 번역', trTextC:'1번 0.1 크레딧 · 최대 2,000자',
  trPhotoT:'사진 번역', trPhotoD:'서류·라벨·간판을 찍어서', trPhotoC:'1장 0.5 크레딧',
@@ -878,7 +883,7 @@ const L = {
  hVcBody:'아래 <b>통화</b> 탭에서 <b>영상 통화 번역</b>이나 <b>음성 통화 번역</b>을 고릅니다.\n\n<b>1.</b> 내 언어를 고르고 <b>통화방 만들고 초대하기</b> (구글 로그인 필요)\n<b>2.</b> WhatsApp · Telegram · LINE · 카카오톡 · 문자로 초대 링크를 보냅니다\n<b>3.</b> 상대가 링크를 열고 자기 언어를 고르면 바로 연결됩니다 (상대는 앱 설치 · 로그인 · 결제 필요 없음)\n<b>4.</b> 각자 자기 말로 말하면, 말이 끊길 때마다 상대 화면에 번역 자막이 뜹니다. <b>읽어주기</b>를 켜면 폰이 번역을 소리로 읽어 줍니다\n\n요금은 말한 시간 1분에 <b>0.5 크레딧</b>(12초마다 0.1)이고, 두 사람이 말한 시간 모두 <b>초대한 사람</b>이 냅니다. 영상 · 목소리 · 자막은 저장하지 않습니다. 이어폰을 쓰면 소리가 울리지 않습니다.'
 };
 
-const UIVER = '11';   // v9.9 통화 탭 · 영상 · 음성 통화 번역 글이 늘어 11로   // v9.6 오디오·스트림 안내 글이 바뀌어 8로   // v9.5 번역 탭 글이 늘어 7로   // v9.3 마이 목록·탈퇴·다중 인원 글이 늘어 5로   // v9.2 탭·이용방법 글이 바뀌어 4로   // v9.0 새 글(통역톡 4칸·동시통역 방·포도랑 계정)이 늘어 2로                       // 글이 바뀌면 이 숫자를 올립니다
+const UIVER = '12';   // v10.0 메신저 번역 글이 늘어 12로 ·   // v9.9 통화 탭 · 영상 · 음성 통화 번역 글이 늘어 11로   // v9.6 오디오·스트림 안내 글이 바뀌어 8로   // v9.5 번역 탭 글이 늘어 7로   // v9.3 마이 목록·탈퇴·다중 인원 글이 늘어 5로   // v9.2 탭·이용방법 글이 바뀌어 4로   // v9.0 새 글(통역톡 4칸·동시통역 방·포도랑 계정)이 늘어 2로                       // 글이 바뀌면 이 숫자를 올립니다
 let pack = load('podolang_pack', {});    // 옮겨둔 글 (언어별)
 let packBusy = false;
 
@@ -943,7 +948,7 @@ function paintText(){
 }
 
 function paint(m){
-  if(['tr','text','live','audio'].includes(m)) m = 'photo';   // v9.5 번역 탭의 화면들은 모두 하늘색
+  if(['tr','text','live','audio','msg'].includes(m)) m = 'photo';   // v9.5 번역 탭의 화면들은 모두 하늘색
   if(m === 'callhub' || m === 'vc') m = 'call';                // v9.9 통화 탭의 화면들은 모두 남색
   const t = THEME[m] || THEME.talk;
   const r = document.documentElement.style;
@@ -957,7 +962,7 @@ function paint(m){
 }
 
 /* v9.2 아래 탭 → 화면. 통역톡은 언제나 1:1 부터 (방에 들어가 있으면 그 방) */
-const NAV_OF = { one:'nvTalk', talk:'nvTalk', multi:'nvMulti', call:'nvCall', callhub:'nvCall', vc:'nvCall', photo:'nvPhoto', tr:'nvPhoto', text:'nvPhoto', live:'nvPhoto', audio:'nvPhoto' };
+const NAV_OF = { one:'nvTalk', talk:'nvTalk', multi:'nvMulti', call:'nvCall', callhub:'nvCall', vc:'nvCall', photo:'nvPhoto', tr:'nvPhoto', text:'nvPhoto', live:'nvPhoto', audio:'nvPhoto', msg:'nvPhoto' };
 let talkSub = 'one';   // v9.9 통역톡 탭을 누르면 마지막에 보던 칸(1:1 · 마주보고)으로
 function navTo(m){
   if(typeof vcBusy === 'function' && vcBusy()){ toast(LT('vcBusyNav')); return; }   // v9.9 통화 중에는 다른 화면으로 가지 않음
@@ -1000,6 +1005,7 @@ function render(){
   else if(mode==='text') renderText();
   else if(mode==='live') renderLive();
   else if(mode==='audio') renderAudio();
+  else if(mode==='msg') renderMsg();           // v10.0 메신저 번역 (앱 연결)
   else if(mode==='callhub') renderCallHub();   // v9.9 통화 탭 첫 화면
   else if(mode==='vc') renderVc();             // v9.9 영상 · 음성 통화 번역
   else renderCall();
@@ -1236,7 +1242,7 @@ function setPhotoLang(){
 /* ================= v9.5 번역 탭 =================
    첫 화면(tr)에서 네 가지를 고릅니다: 오디오·스트림(audio) · 텍스트(text) · 사진(photo) · 라이브 청취(live)
    네 기능은 위쪽 언어(pFrom → pTo)를 함께 씁니다. */
-const TR_MODES = ['tr', 'text', 'live', 'audio', 'photo'];
+const TR_MODES = ['tr', 'text', 'live', 'audio', 'photo', 'msg'];   // v10.0 메신저 번역
 function trLangbar(){
   return `
     <div class="langbar">
@@ -1263,8 +1269,8 @@ function trGo(m){ tab(m); }
 
 function renderTr(){
   if(mode !== 'tr') return;
-  const card = (m, ic, t, d, cost, badge) => `
-    <button class="trcard" onclick="trGo('${m}')">
+  const card = (m, ic, t, d, cost, badge, wide) => `
+    <button class="trcard${wide ? ' wide' : ''}" onclick="trGo('${m}')">
       <span class="tic">${ic}</span>
       <b>${esc(LT(t))}</b>
       <span class="td">${esc(LT(d))}</span>
@@ -1277,6 +1283,7 @@ function renderTr(){
       ${card('text',  '⌨️', 'trTextT',  'trTextD',  'trTextC')}
       ${card('photo', '📷', 'trPhotoT', 'trPhotoD', 'trPhotoC')}
       ${card('live',  '🎙️', 'trLiveT',  'trLiveD',  'trLiveC')}
+      ${card('msg',   '💬', 'trMsgT',   'trMsgD',   '', 'trAppOnly', true)}
     </div>
     <div class="note" style="margin-top:12px">${esc(LT('trLangNote'))}</div>`;
 }
@@ -1457,6 +1464,32 @@ function lvCopy(){
   if(t) navigator.clipboard.writeText(t).then(() => toast('복사했습니다'));
 }
 function lvClear(){ if(!confirm(LT('trClearQ'))) return; LV.segs = []; LV.sec = 0; LV.charged = 0; renderLive(); }
+
+/* ---------- v10.0 메신저 번역 — 포도랑 앱(1.0.6 이상)의 '포도랑 번역' 글자 메뉴를 연결합니다 ----------
+   WhatsApp · Instagram · LINE · 문자 등 어느 앱에서든 글자를 길게 눌러 고르면 메뉴에 '포도랑 번역'이 나옵니다 (안드로이드 공식 기능).
+   여기서는 로그인 키와 내 언어 · 상대 언어를 podolang://link 로 앱에 넘겨 주기만 합니다. 번역은 텍스트 번역과 같은 한 번 0.1 크레딧. */
+function renderMsg(){
+  if(mode !== 'msg') return;
+  const mine = load('podolang_msg_mine', from), peer = load('podolang_msg_peer', to);
+  $('#main').innerHTML = `
+    ${trHead(LT('trMsgT'))}
+    <div class="fld">
+      <label>${esc(LT('trMsgMine'))}</label><select id="msgMine">${opts(mine)}</select>
+      <label style="margin-top:12px">${esc(LT('trMsgPeer'))}</label><select id="msgPeer">${opts(peer)}</select>
+      <button class="btn" style="margin-top:12px" onclick="msgLink()">🔗 ${esc(LT('trMsgGo'))}</button>
+      <div class="hint" style="text-align:center;margin-top:8px">${esc(LT('trMsgC'))}</div>
+    </div>
+    <div class="note" style="line-height:1.7">${String(LT('trMsgBody')).replace(/\n/g, '<br>')}</div>`;
+}
+function msgLink(){
+  if(!/Android/i.test(navigator.userAgent)){ toast(LT('trAudioAndroid')); return; }
+  const tk = walletId();
+  if(!tk){ toast(LT('plNeedLogin')); return; }
+  const mine = $('#msgMine') ? $('#msgMine').value : from, peer = $('#msgPeer') ? $('#msgPeer').value : to;
+  save('podolang_msg_mine', mine); save('podolang_msg_peer', peer);
+  const q = 'tk=' + encodeURIComponent(tk) + '&mine=' + encodeURIComponent(mine) + '&peer=' + encodeURIComponent(peer);
+  location.href = 'intent://link?' + q + '#Intent;scheme=podolang;package=kr.podolang.app;S.browser_fallback_url=' + encodeURIComponent(PLAY_URL) + ';end';
+}
 
 /* ---------- 오디오·스트림 번역 (v9.6 — 포도랑 앱 1.0.3 의 안드로이드 화면을 엽니다) ----------
    podolang://audio?from=&to=&tk= 를 intent 주소로 엽니다. 앱이 없거나 옛 버전이면 구글 플레이로 갑니다. */
