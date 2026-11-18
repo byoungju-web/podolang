@@ -101,3 +101,14 @@ CREATE TABLE IF NOT EXISTS pl_reports (
 -- v9.3 다중 동시통역 최대 인원(3~100명) 칸 — 이미 만든 DB 에는 아래 한 줄만 따로 한 번 실행하세요.
 -- (안 해도 앱은 동작하며, 그때는 모든 다중 방이 100명으로 정해집니다)
 -- ALTER TABLE pl_rooms ADD COLUMN cap INTEGER;
+
+-- v9.8 👑 구독 크레딧 · 한 번 충전 유효기간 — 이미 만든 DB 에는 아래 8줄을 D1 Console 에 한 줄씩(또는 한꺼번에) 한 번만 실행하세요.
+-- (실행 전에도 앱은 예전처럼 동작합니다. 구독 결제만 "설정이 아직 끝나지 않았습니다"로 막힙니다)
+-- ALTER TABLE pl_users ADD COLUMN sub_tenths INTEGER NOT NULL DEFAULT 0;
+-- ALTER TABLE pl_users ADD COLUMN sub_until INTEGER;
+-- ALTER TABLE pl_users ADD COLUMN sub_plan TEXT;
+-- ALTER TABLE pl_users ADD COLUMN sub_token TEXT;
+-- ALTER TABLE pl_users ADD COLUMN sub_order TEXT;
+-- ALTER TABLE pl_users ADD COLUMN sub_auto INTEGER NOT NULL DEFAULT 0;
+-- ALTER TABLE pl_users ADD COLUMN sub_checked INTEGER;
+-- ALTER TABLE pl_users ADD COLUMN paid_until INTEGER;

@@ -31,6 +31,18 @@ const PRODUCTS = [                  // 충전 상품 (1 크레딧 = 99원) — P
   { id: 'c300', credits: 300, amount: 29700, name: '포도랑 300 크레딧' },
   { id: 'c1000', credits: 1000, amount: 99000, name: '포도랑 1000 크레딧' },
 ];
+/* v9.8 👑 구독 크레딧 (구글 플레이 정기 결제) — Play Console '정기 결제' 상품 ID 와 같아야 합니다 (s100 · s300 · s550 · s1200, 기본 요금제 = 매월 자동 갱신)
+   · 매달 받은 구독 크레딧은 다음 결제일 전까지 쓰고, 남으면 사라집니다 (이월 없음)
+   · 쓰는 순서: 구독 크레딧 → 한 번 충전 크레딧
+   · 해지는 구글 플레이 → 정기 결제에서. 해지해도 결제한 기간 끝날 때까지 씁니다 */
+const PLANS = [
+  { id: 's100',  credits: 100,  amount: 9900,  name: '베이직' },
+  { id: 's300',  credits: 300,  amount: 29000, name: '스탠다드' },
+  { id: 's550',  credits: 550,  amount: 49000, name: '플러스' },
+  { id: 's1200', credits: 1200, amount: 99000, name: '프로' },
+];
+const ONE_DAYS = 90;                 // v9.8 한 번 충전 크레딧 유효기간 — 마지막 충전일로부터 (일)
+const DAY = 86400000;
 const ROOM_STEP = 1;                // 방 번역 1개 = 0.1 크레딧
 const MAX_TEXT = 500;
 const KEEP_DAYS = 30;
@@ -66,18 +78,57 @@ async function run(env, sql, ...args) { return await db(env).prepare(sql).bind(.
 async function userOf(env, tk, need = true) {
   if (!isPl(tk)) { if (need) throw httpErr(401, '로그인이 필요합니다', { login: true }); return null; }
   const s = await one(env, 'SELECT user_id FROM pl_sessions WHERE token_hash = ?', await sha(tk));
-  const u = s ? await one(env, 'SELECT * FROM pl_users WHERE id = ?', s.user_id) : null;
-  if (!u) { if (need) throw httpErr(401, '다시 로그인해 주세요', { login: true }); return null; }
-  return u;
+  const u0 = s ? await one(env, 'SELECT * FROM pl_users WHERE id = ?', s.user_id) : null;
+  if (!u0) { if (need) throw httpErr(401, '다시 로그인해 주세요', { login: true }); return null; }
+  return await settle(env, u0);   // v9.8 기간 지난 크레딧 정리 · 구독 갱신 확인
 }
-const meView = (u) => ({ id: u.id, email: u.email, name: u.name, credits: cr(u.tenths), tenths: u.tenths });
+/* v9.8 새 칸(구독·유효기간)이 D1 에 만들어졌는지 — 없으면 예전처럼만 동작합니다 */
+let subColsOk = null;
+async function hasSubCols(env) {
+  if (subColsOk !== null) return subColsOk;
+  try { const c = (await all(env, 'PRAGMA table_info(pl_users)')).map((x) => x.name); subColsOk = ['sub_tenths', 'sub_until', 'sub_plan', 'sub_token', 'sub_order', 'sub_auto', 'sub_checked', 'paid_until'].every((n) => c.includes(n)); }
+  catch (e) { subColsOk = false; }
+  return subColsOk;
+}
+const subLive = (u) => !!(u && u.sub_until && u.sub_until > now() && (u.sub_tenths || 0) > 0);
+const subAvail = (u) => (subLive(u) ? u.sub_tenths : 0);
+const oneAvail = (u) => (u && u.paid_until && u.paid_until <= now() ? 0 : (u && u.tenths) || 0);
+const totalTenths = (u) => subAvail(u) + oneAvail(u);
+const planOf = (id) => PLANS.find((x) => x.id === id) || null;
+const meView = (u) => ({
+  id: u.id, email: u.email, name: u.name, credits: cr(totalTenths(u)), tenths: totalTenths(u),
+  one: { credits: cr(oneAvail(u)), until: u.paid_until || null },
+  sub: u.sub_plan ? { plan: u.sub_plan, name: (planOf(u.sub_plan) || {}).name || u.sub_plan, credits: cr(subAvail(u)),
+                      monthly: (planOf(u.sub_plan) || {}).credits || 0, amount: (planOf(u.sub_plan) || {}).amount || 0,
+                      until: u.sub_until || null, auto: u.sub_auto === 1, active: !!(u.sub_until && u.sub_until > now()) } : null,
+});
+/** v9.8 크레딧 정리 — 기간 지난 구독·한 번 충전 크레딧을 0 으로, 구독 결제일이 지났으면 구글에 갱신을 물어 새 달 크레딧을 넣습니다 */
+async function settle(env, u) {
+  if (!u || !(await hasSubCols(env))) return u;
+  let changed = false;
+  if (u.sub_token && u.sub_until && u.sub_until <= now() + 60000 && !(u.sub_checked > now() - 30 * 60000)) {
+    try { await subRefresh(env, u); changed = true; } catch (e) {}
+  }
+  const v = changed ? await one(env, 'SELECT * FROM pl_users WHERE id = ?', u.id) : u;
+  const st = [];
+  if (v.sub_until && v.sub_until <= now() && (v.sub_tenths || 0) > 0) {
+    st.push(db(env).prepare('UPDATE pl_users SET sub_tenths = 0 WHERE id = ?').bind(v.id));
+    st.push(db(env).prepare('INSERT INTO pl_ledger (user_id, delta, kind, memo, created_at) VALUES (?, ?, ?, ?, ?)').bind(v.id, -v.sub_tenths, 'sub_expire', '구독 기간 끝 · 남은 구독 크레딧 소멸', now()));
+  }
+  if (v.paid_until && v.paid_until <= now() && (v.tenths || 0) > 0) {
+    st.push(db(env).prepare('UPDATE pl_users SET tenths = 0 WHERE id = ?').bind(v.id));
+    st.push(db(env).prepare('INSERT INTO pl_ledger (user_id, delta, kind, memo, created_at) VALUES (?, ?, ?, ?, ?)').bind(v.id, -v.tenths, 'expire', `한 번 충전 유효기간(${ONE_DAYS}일) 끝`, now()));
+  }
+  if (st.length) { await db(env).batch(st); changed = true; }
+  return changed ? await one(env, 'SELECT * FROM pl_users WHERE id = ?', v.id) : v;
+}
 
 /* ───────────── 지갑 ───────────── */
 /** 남은 양 (크레딧) */
 export async function plBalance(env, tk) {
   const u = await userOf(env, tk, false);
   if (!u) return { ok: false, reason: '포도랑에 다시 로그인해 주세요.' };
-  return { ok: true, balance: cr(u.tenths), uid: u.id };
+  return { ok: true, balance: cr(totalTenths(u)), uid: u.id };
 }
 /** 깎기. partial=true 면 모자랄 때 남은 만큼만 깎는다 (전화통역 통화 끝 정산). 돌려줌 { ok, took(크레딧) } */
 export async function plSpend(env, tk, amount, kind, partial) {
@@ -87,6 +138,7 @@ export async function plSpend(env, tk, amount, kind, partial) {
 }
 async function spendUser(env, uid, tenths, kind, partial) {
   if (!(tenths > 0)) return { ok: true, took: 0 };
+  if (await hasSubCols(env)) return await spendUser2(env, uid, tenths, kind, partial);   // v9.8
   let r = await run(env, 'UPDATE pl_users SET tenths = tenths - ?, last_at = ? WHERE id = ? AND tenths >= ?', tenths, now(), uid, tenths);
   let took = tenths;
   if (!(r.meta && r.meta.changes)) {
@@ -100,7 +152,25 @@ async function spendUser(env, uid, tenths, kind, partial) {
   await run(env, 'INSERT INTO pl_ledger (user_id, delta, kind, memo, created_at) VALUES (?, ?, ?, ?, ?)', uid, -took, String(kind || 'use').slice(0, 20), '', now()).catch(() => {});
   return { ok: took === tenths, took: took / 10 };
 }
+/* v9.8 구독 크레딧부터 빼고, 모자라면 한 번 충전 크레딧에서 뺍니다 (기간 지난 것은 0) */
+async function spendUser2(env, uid, tenths, kind, partial) {
+  for (let i = 0; i < 3; i++) {
+    const u = await one(env, 'SELECT * FROM pl_users WHERE id = ?', uid);
+    if (!u) return { ok: false, took: 0 };
+    const sa = subAvail(u), oa = oneAvail(u);
+    let want = tenths;
+    if (sa + oa < want) { if (!partial) return { ok: false, took: 0 }; want = sa + oa; if (!want) return { ok: false, took: 0 }; }
+    const fromSub = Math.min(sa, want), fromOne = want - fromSub;
+    const r = await run(env, 'UPDATE pl_users SET sub_tenths = sub_tenths - ?, tenths = tenths - ?, last_at = ? WHERE id = ? AND sub_tenths >= ? AND tenths >= ?',
+      fromSub, fromOne, now(), uid, fromSub, fromOne);
+    if (!(r.meta && r.meta.changes)) continue;   // 동시에 다른 차감이 있었으면 다시
+    await run(env, 'INSERT INTO pl_ledger (user_id, delta, kind, memo, created_at) VALUES (?, ?, ?, ?, ?)', uid, -want, String(kind || 'use').slice(0, 20), fromSub ? `구독 ${fromSub / 10}` : '', now()).catch(() => {});
+    return { ok: want === tenths, took: want / 10 };
+  }
+  return { ok: false, took: 0 };
+}
 async function addUser(env, uid, tenths, kind, memo) {
+  if (await hasSubCols(env)) await run(env, 'UPDATE pl_users SET paid_until = NULL WHERE id = ? AND paid_until <= ?', uid, now()).catch(() => {});   // v9.8 기간 지난 뒤 돌려준 크레딧은 남김
   await db(env).batch([
     db(env).prepare('UPDATE pl_users SET tenths = tenths + ?, last_at = ? WHERE id = ?').bind(tenths, now(), uid),
     db(env).prepare('INSERT INTO pl_ledger (user_id, delta, kind, memo, created_at) VALUES (?, ?, ?, ?, ?)').bind(uid, tenths, kind, String(memo || '').slice(0, 100), now()),
@@ -189,6 +259,7 @@ async function play(env, b) {
         .bind(orderId, u.id, p.id, p.amount, p.credits * 10, 'paid', clean(g.orderId, 64), 'Google Play', now(), now(), JSON.stringify({ orderId: g.orderId, regionCode: g.regionCode, purchaseTimeMillis: g.purchaseTimeMillis }).slice(0, 500)),
       db(env).prepare('UPDATE pl_users SET tenths = tenths + ?, last_at = ? WHERE id = ?').bind(p.credits * 10, now(), u.id),
       db(env).prepare('INSERT INTO pl_ledger (user_id, delta, kind, memo, created_at) VALUES (?, ?, ?, ?, ?)').bind(u.id, p.credits * 10, 'charge', 'play ' + clean(g.orderId, 60), now()),
+      ...((await hasSubCols(env)) ? [db(env).prepare('UPDATE pl_users SET paid_until = ? WHERE id = ?').bind(now() + ONE_DAYS * DAY, u.id)] : []),   // v9.8 유효기간 = 마지막 충전일 + 90일
     ]);
   } catch (e) {
     const again = await one(env, 'SELECT user_id FROM pl_orders WHERE order_id = ?', orderId);
@@ -198,6 +269,68 @@ async function play(env, b) {
   /* 소비 처리 — 같은 상품을 다시 살 수 있게. 실패해도 크레딧은 이미 들어갔고, 다음에 다시 보내면 already 로 끝난 뒤 다시 소비한다 */
   if (g.consumptionState !== 1) await fetch(base + ':consume', { method: 'POST', headers: { Authorization: 'Bearer ' + at } }).catch(() => {});
   return { ok: true, me: meView(await one(env, 'SELECT * FROM pl_users WHERE id = ?', u.id)) };
+}
+
+/* ───────────── v9.8 👑 구독 (구글 플레이 정기 결제) ───────────── */
+const subBase = (env) => 'https://androidpublisher.googleapis.com/androidpublisher/v3/applications/' + encodeURIComponent(env.PLAY_PACKAGE || PLAY_PKG_DEFAULT) + '/purchases/subscriptions';
+async function subGet(env, token) {
+  const at = await playAccess(env);
+  const r = await fetch(subBase(env) + 'v2/tokens/' + encodeURIComponent(token), { headers: { Authorization: 'Bearer ' + at } });
+  const g = await r.json().catch(() => ({}));
+  if (!r.ok) throw httpErr(r.status === 404 || r.status === 400 ? 400 : 502, '구글에서 구독을 확인하지 못했습니다' + (g.error && g.error.message ? ' (' + clean(g.error.message, 120) + ')' : ''));
+  const li = (Array.isArray(g.lineItems) && g.lineItems[0]) || {};
+  return { g, at, productId: li.productId || '', expiry: Date.parse(li.expiryTime || '') || 0,
+           auto: !!(li.autoRenewingPlan && li.autoRenewingPlan.autoRenewEnabled),
+           live: g.subscriptionState === 'SUBSCRIPTION_STATE_ACTIVE' || g.subscriptionState === 'SUBSCRIPTION_STATE_IN_GRACE_PERIOD' ||
+                 (g.subscriptionState === 'SUBSCRIPTION_STATE_CANCELED' && (Date.parse(li.expiryTime || '') || 0) > now()),
+           order: String(g.latestOrderId || ''), acked: g.acknowledgementState === 'ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED' };
+}
+/* 이번 결제 기간의 크레딧을 넣습니다 (같은 주문번호는 한 번만). 남아 있던 구독 크레딧은 새 달 크레딧으로 바뀝니다(이월 없음). */
+async function subGrant(env, u, sku, token, s) {
+  const plan = planOf(sku); if (!plan) throw httpErr(400, '구독 상품을 찾지 못했습니다');
+  const orderId = 'GS' + (await sha(s.order || token + ':' + s.expiry)).slice(0, 40);
+  const done = await one(env, 'SELECT user_id FROM pl_orders WHERE order_id = ?', orderId);
+  if (done) {
+    if (done.user_id !== u.id) throw httpErr(409, '이미 다른 계정에 들어간 구독입니다');
+    await run(env, 'UPDATE pl_users SET sub_token = ?, sub_plan = ?, sub_until = ?, sub_auto = ?, sub_checked = ? WHERE id = ?', token, sku, s.expiry, s.auto ? 1 : 0, now(), u.id);
+    return false;
+  }
+  const left = subAvail(u);
+  const st = [
+    db(env).prepare('INSERT INTO pl_orders (order_id, user_id, product, amount, tenths, status, payment_key, method, created_at, paid_at, raw) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+      .bind(orderId, u.id, sku, plan.amount, plan.credits * 10, 'paid', clean(s.order, 64), 'Google Play 구독', now(), now(), JSON.stringify({ orderId: s.order, expiry: s.expiry }).slice(0, 500)),
+    db(env).prepare('UPDATE pl_users SET sub_tenths = ?, sub_until = ?, sub_plan = ?, sub_token = ?, sub_order = ?, sub_auto = ?, sub_checked = ?, last_at = ? WHERE id = ?')
+      .bind(plan.credits * 10, s.expiry, sku, token, s.order, s.auto ? 1 : 0, now(), now(), u.id),
+  ];
+  if (left > 0) st.push(db(env).prepare('INSERT INTO pl_ledger (user_id, delta, kind, memo, created_at) VALUES (?, ?, ?, ?, ?)').bind(u.id, -left, 'sub_expire', '새 결제 기간 · 지난달 구독 크레딧 소멸', now()));
+  st.push(db(env).prepare('INSERT INTO pl_ledger (user_id, delta, kind, memo, created_at) VALUES (?, ?, ?, ?, ?)').bind(u.id, plan.credits * 10, 'sub', plan.name + ' ' + clean(s.order, 50), now()));
+  await db(env).batch(st);
+  return true;
+}
+/* 앱에서 구독 결제를 마쳤을 때 */
+async function subBuy(env, b) {
+  if (!(await hasSubCols(env))) throw httpErr(503, '구독 설정이 아직 끝나지 않았습니다 (D1 새 칸). 잠시 뒤 다시 해 주세요');
+  const u = await userOf(env, b.tk);
+  const sku = String(b.sku || ''), token = String(b.token || '');
+  if (!planOf(sku)) throw httpErr(400, '구독 상품을 찾지 못했습니다');
+  if (token.length < 20 || token.length > 1000 || /[^A-Za-z0-9._\-]/.test(token)) throw httpErr(400, '구매 정보가 없습니다');
+  const other = await one(env, 'SELECT id FROM pl_users WHERE sub_token = ? AND id != ?', token, u.id);
+  if (other) throw httpErr(409, '이미 다른 계정에 들어간 구독입니다');
+  const s = await subGet(env, token);
+  if (s.productId && s.productId !== sku) throw httpErr(400, '구독한 상품이 맞지 않습니다');
+  if (!s.live || !(s.expiry > now())) throw httpErr(402, '구독 결제가 아직 끝나지 않았거나 끝난 구독입니다');
+  const fresh = await subGrant(env, u, sku, token, s);
+  /* 구글은 3일 안에 '확인(acknowledge)'하지 않으면 결제를 자동 환불합니다 */
+  if (!s.acked) await fetch(subBase(env) + '/' + encodeURIComponent(sku) + '/tokens/' + encodeURIComponent(token) + ':acknowledge', { method: 'POST', headers: { Authorization: 'Bearer ' + s.at } }).catch(() => {});
+  return { ok: true, already: !fresh, me: meView(await one(env, 'SELECT * FROM pl_users WHERE id = ?', u.id)) };
+}
+/* 결제일이 지났을 때 — 자동 갱신됐으면 새 달 크레딧, 끝났으면 구독 정보 정리 */
+async function subRefresh(env, u) {
+  await run(env, 'UPDATE pl_users SET sub_checked = ? WHERE id = ?', now(), u.id);
+  const s = await subGet(env, u.sub_token);
+  const sku = s.productId || u.sub_plan;
+  if (s.live && s.expiry > now() && planOf(sku)) { await subGrant(env, u, sku, u.sub_token, s); return; }
+  await run(env, 'UPDATE pl_users SET sub_token = NULL, sub_auto = 0 WHERE id = ?', u.id);   // 끝난 구독 (기간 지난 크레딧은 settle 이 0 으로)
 }
 
 /* ───────────── 동시통역 방 ───────────── */
@@ -385,6 +518,7 @@ export async function plRoute(request, env, url, H, ctx) {
     if (p === '/api/pl/config') {
       return J({ ok: true, google: env.GOOGLE_CLIENT_ID || '', play: !!env.PLAY_SA_JSON, pkg: env.PLAY_PACKAGE || PLAY_PKG_DEFAULT, wallet: !!env.DB,
         products: PRODUCTS.map((x) => ({ id: x.id, credits: x.credits, amount: x.amount, name: x.name })),
+        plans: PLANS.map((x) => ({ id: x.id, credits: x.credits, amount: x.amount, name: x.name })), oneDays: ONE_DAYS, sub: await hasSubCols(env),
         welcome: env.PL_WELCOME != null ? Number(env.PL_WELCOME) : WELCOME_DEFAULT });
     }
     if (p === '/api/pl/login') return J(await login(env, b));
@@ -407,6 +541,7 @@ export async function plRoute(request, env, url, H, ctx) {
       return J({ ok: true });
     }
     if (p === '/api/pl/play') return J(await play(env, b));
+    if (p === '/api/pl/sub') return J(await subBuy(env, b));   // v9.8 구독
     if (p === '/api/pl/room') return J(await roomOp(env, ctx, b));
     return J({ error: '없는 경로입니다' }, 404);
   } catch (e) {

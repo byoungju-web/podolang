@@ -466,6 +466,28 @@ body[data-theme="multi"] .mylist .ch,body[data-theme="multi"] .trcard .tc{color:
 .fside.bot .frow input{flex:1;min-width:0;height:48px;border-radius:14px;border:1px solid var(--line);background:#F6F5FB;padding:0 14px;font:inherit;font-size:15px}
 .btn.fsend{flex:0 0 auto;width:auto;margin:0;height:48px;padding:0 18px;border-radius:14px}
 .fflip{display:flex;justify-content:center;align-items:center;gap:6px;font-size:12.5px;color:var(--sub);font-weight:700}
+/* v9.8 충전 화면 (coverfo 모양) */
+.ptabs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.ptabs button{height:52px;border-radius:16px;border:1.5px solid var(--line);background:#fff;font:inherit;font-size:15px;font-weight:900;color:var(--sub)}
+.ptabs button.on{background:#4338CA;border-color:#4338CA;color:#fff;box-shadow:0 8px 18px rgba(67,56,202,.25)}
+.pmine{background:#fff;border:1px solid var(--edge);border-radius:20px;box-shadow:var(--soft-sh);padding:16px;margin-bottom:12px}
+.pmine>b{display:block;font-size:16px;margin-bottom:8px}
+.prow{display:flex;justify-content:space-between;gap:12px;padding:7px 0;font-size:14px;border-top:1px solid #F1F1F5}
+.prow span{color:var(--sub);font-weight:700}.prow b{text-align:right}
+.pmanage{display:block;margin-top:10px;font-size:13px;font-weight:900;color:#4338CA;text-decoration:none}
+.pcard{display:flex;flex-direction:column;align-items:flex-start;gap:4px;width:100%;text-align:left;padding:16px 18px;margin-bottom:10px;
+  border-radius:20px;border:1.5px solid var(--line);background:#F7F7FA;font:inherit;color:var(--fg)}
+.pcard.on{background:#fff;border-color:#4338CA;box-shadow:0 0 0 3px rgba(67,56,202,.12)}
+.pcard .pname{font-size:13px;font-weight:900;color:#4338CA}
+.pcard .pprice{font-size:26px;font-weight:900;letter-spacing:-.6px}.pcard .pprice small{font-size:14px;color:var(--sub)}
+.pcard .pcr{font-size:15px;font-weight:900}
+.pcard .pper{font-size:12.5px;color:var(--sub);font-weight:700}
+.pnotes{background:#F7F7FA;border-radius:18px;padding:14px 16px;font-size:13.5px;line-height:1.8;margin:4px 0 12px}
+.pagree{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;line-height:1.6;margin:0 2px 12px}
+.pagree input{width:20px;height:20px;flex:0 0 auto;margin-top:2px}
+a.btn{display:block;text-align:center;text-decoration:none}
+.btn.dis,.btn:disabled{opacity:.45}
+.balsplit{font-size:12.5px;font-weight:800;color:var(--sub);margin:2px 0}
 /* 다듬기 */
 .tabs{margin-bottom:0}
 #pdStrip{margin:12px 16px 12px!important}
@@ -539,7 +561,7 @@ body .shots .btn.alb{--bi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.or
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v9.7.1';
+const VER='v9.8';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -719,6 +741,16 @@ const L = {
  faceLead:'폰 한 대를 <b>가운데 두고 마주 보며</b> 통역해요. 위쪽은 상대, 아래쪽은 나. 🎤 를 누르고 말하면 상대 말로 바꿔 보여 주고 읽어 줘요.<br>💳 한 마디 0.1 크레딧 · 대화는 이 폰에만 남아요.',
  faceFlip:'위쪽 화면 뒤집기 (마주 앉았을 때)', faceMic:'말하기', faceTextPh:'글로 써도 돼요 (내 말)', faceGo:'번역',
  faceNoStt:'이 브라우저는 말로 입력을 지원하지 않아요. 글로 써 주세요.',
+ pyOneTab:'한 번 충전', pySubTab:'구독 크레딧', pySubShort:'구독', pyOneShort:'충전', pyMine:'내 멤버십', pyState:'상태', pyStOn:'이용 중 · 자동 갱신', pyStCancel:'해지됨 (이용 기간까지 사용)', pyStEnd:'끝남',
+ pyPlan:'요금제', pyMonth:'월', pyLeft:'남은 구독 크레딧', pyUntil:'이용 기간', pyNext:'다음 결제일', pyNone:'없음', pyManage:'구글 플레이에서 구독 관리 · 해지', pyBest:'추천',
+ pyEvery:'매달', pyAuto:'1개월마다 자동 갱신',
+ pySubNotes:'📅 <b>매월 같은 날 자동 결제</b> · 1개월 단위<br>⏳ <b>구독 크레딧은 다음 결제일 전까지</b> · 남으면 소멸 (이월 없음)<br>🔢 쓰는 순서 · 구독 크레딧 → 한 번 충전 크레딧<br>✋ 해지 · 언제든 <b>구글 플레이 → 정기 결제</b>에서 · 결제한 기간까지 이용<br>💸 환불 · 구글 플레이 환불 정책과 이용약관을 따름 (7일 안 · 미사용이면 전액)<br>💳 결제 · 구글 플레이',
+ pyAgree:'위 내용과 <b>매월 자동 결제</b>, <b>구독 크레딧 이월 불가(다음 결제일 소멸)</b>에 동의합니다. (해지 전까지 매월 같은 날 선택한 금액이 결제됩니다)',
+ pyAgreeNeed:'위 내용에 동의해 주세요', pySubGo:'구글 플레이로 {p}/월 구독 시작', pyInApp:'포도랑 앱(구글 플레이)에서 결제하기',
+ pyChange:'지금 구독 중이에요. 요금제를 바꾸려면 구글 플레이 → 정기 결제에서 지금 구독을 해지하고, 이용 기간이 끝난 뒤 새 요금제를 고르세요.',
+ pySubDone:'구독했습니다 · 이번 달 크레딧이 들어왔어요',
+ pyOneValid:'마지막 충전일로부터 {d}일', pyOneGo:'{p} 결제하기 ({c} 크레딧)',
+ pyOneNotes:'⏳ <b>유효기간 · 마지막 충전일로부터 {d}일</b> (다시 충전하면 남은 크레딧도 함께 {d}일 연장)<br>🔢 구독 크레딧을 먼저 쓰고, 그다음 한 번 충전 크레딧을 씁니다<br>💸 환불 · 구글 플레이 환불 정책과 이용약관을 따름 (7일 안 · 미사용이면 전액)<br>💳 결제 · 구글 플레이',
  navTr:'번역', trSwap:'언어 바꾸기', trSwapAuto:'자동 감지는 바꿀 수 없어요. 원래 말을 먼저 고르세요.',
  trAudioT:'오디오·스트림 번역', trAudioD:'유튜브·영상·방송 소리를 자막으로', trSoon:'앱 업데이트 예정', trAppOnly:'포도랑 앱 전용',
  trAudioGo:'포도랑 앱에서 시작', trAudioAndroid:'안드로이드 폰의 포도랑 앱에서만 쓸 수 있어요',
@@ -739,7 +771,7 @@ const L = {
  myEar:'<b>전화 통역은 이어폰을 쓰세요.</b>\n스피커로 들으면 통역 음성을 마이크가 다시 주워서 말이 꼬입니다.'
 };
 
-const UIVER = '9';   // v9.6 오디오·스트림 안내 글이 바뀌어 8로   // v9.5 번역 탭 글이 늘어 7로   // v9.3 마이 목록·탈퇴·다중 인원 글이 늘어 5로   // v9.2 탭·이용방법 글이 바뀌어 4로   // v9.0 새 글(통역톡 4칸·동시통역 방·포도랑 계정)이 늘어 2로                       // 글이 바뀌면 이 숫자를 올립니다
+const UIVER = '10';   // v9.6 오디오·스트림 안내 글이 바뀌어 8로   // v9.5 번역 탭 글이 늘어 7로   // v9.3 마이 목록·탈퇴·다중 인원 글이 늘어 5로   // v9.2 탭·이용방법 글이 바뀌어 4로   // v9.0 새 글(통역톡 4칸·동시통역 방·포도랑 계정)이 늘어 2로                       // 글이 바뀌면 이 숫자를 올립니다
 let pack = load('podolang_pack', {});    // 옮겨둔 글 (언어별)
 let packBusy = false;
 
@@ -2487,7 +2519,8 @@ async function plOnGoogle(resp){
   }catch(e){ toast(e.message); }
 }
 function plBoxHtml(){
-  if(!plTok) return `<div class="note">${LT('plLoginD')}<br><br>${LT('plLoginWhere')}</div>`;   // v9.4.4 로그인은 통역톡 오른쪽 위
+  if(!plTok) return `<div class="note">${LT('plLoginD')}<br><br>${LT('plLoginWhere')}</div>
+    <div class="seclabel" data-ic="💳">${esc(LT('plBuy'))}</div>${payHtml(plCfg && plCfg.ok ? plCfg : null, null)}`;   // v9.4.4 로그인은 통역톡 오른쪽 위 · v9.8 요금표는 누구나
   const me = plMe;
   const cfg = plCfg && plCfg.ok ? plCfg : null;
   const prods = cfg ? (cfg.products || []) : [];
@@ -2497,17 +2530,97 @@ function plBoxHtml(){
       <div class="who">
         <div class="em">${esc(me ? (me.email || me.name || '') : '…')}</div>
         <div class="bal">${me ? esc(String(me.credits)) : '…'} <small>${esc(LT('plBal'))}</small></div>
+        ${me && (me.sub || me.one) ? `<div class="balsplit">👑 ${esc(LT('pySubShort'))} ${esc(String(me.sub ? me.sub.credits : 0))} · ⚡ ${esc(LT('pyOneShort'))} ${esc(String(me.one ? me.one.credits : me.credits))}</div>` : ''}
         <div style="font-size:12px;color:var(--sub);font-weight:700">${esc(LT('plPriceD'))}</div>
       </div>
     </div>
     <div class="seclabel" data-ic="💳">${esc(LT('plBuy'))}</div>
-    ${PLAY.on ? `<div class="plbuy">${prods.map(p => `<button onclick="plBuy('${esc(p.id)}')">${esc(String(p.credits))} ${esc(LT('plCr'))}<span>${esc(PLAY.price[p.id] || ('₩' + Number(p.amount).toLocaleString('ko-KR')))}</span></button>`).join('') || `<div class="note">…</div>`}</div>
-       <div class="note" style="font-size:12px">${esc(LT('plPlayD'))}</div>`
-    : `<div class="note">${LT('plAppOnly')}</div>
-       ${cfg && cfg.pkg ? `<a class="btn" style="display:block;text-align:center;text-decoration:none;margin-bottom:10px" href="https://play.google.com/store/apps/details?id=${encodeURIComponent(cfg.pkg)}" target="_blank" rel="noopener">📲 ${esc(LT('plGetApp'))}</a>` : ''}`}
+    ${payHtml(cfg, me)}
     <div class="seclabel" data-ic="🧾">${esc(LT('plOrders'))}</div>
     ${plOrders ? (plOrders.length ? plOrders.map(o => `<div class="note" style="padding:11px 14px">+${esc(String(o.credits))} · ₩${Number(o.amount).toLocaleString('ko-KR')} · ${esc(o.method || '')} · ${new Date(o.at).toLocaleDateString()}</div>`).join('') : `<div class="note">${esc(LT('plNoOrders'))}</div>`) : `<div class="note">…</div>`}
 `;
+}
+/* ───── v9.8 💳 충전 화면 — [⚡ 한 번 충전] [👑 구독 크레딧] (coverfo 와 같은 모양) ─────
+   웹에서는 요금표만 보이고 결제는 포도랑 앱(구글 플레이)에서 합니다. */
+let payTab = 'sub', paySel = { sub: 's300', one: 'c300' }, payAgree = false;
+const won = n => Number(n || 0).toLocaleString('ko-KR') + '원';
+const dday = t => t ? new Date(t).toLocaleDateString('ko-KR') : '';
+function payPrice(p){ return PLAY.price[p.id] || won(p.amount); }
+function payHtml(cfg, me){
+  const plans = (cfg && cfg.plans) || [], prods = (cfg && cfg.products) || [];
+  const sub = me && me.sub, subOn = !!(sub && sub.active && sub.auto);
+  const pkg = (cfg && cfg.pkg) || 'kr.podolang.app';
+  const tabs = `<div class="ptabs">
+      <button class="${payTab === 'one' ? 'on' : ''}" onclick="payTabSet('one')">⚡ ${esc(LT('pyOneTab'))}</button>
+      <button class="${payTab === 'sub' ? 'on' : ''}" onclick="payTabSet('sub')">👑 ${esc(LT('pySubTab'))}</button></div>`;
+  if(payTab === 'sub'){
+    const mine = sub ? `<div class="pmine"><b>👑 ${esc(LT('pyMine'))}</b>
+        <div class="prow"><span>${esc(LT('pyState'))}</span><b>${esc(sub.active ? (sub.auto ? LT('pyStOn') : LT('pyStCancel')) : LT('pyStEnd'))}</b></div>
+        <div class="prow"><span>${esc(LT('pyPlan'))}</span><b>${esc(sub.name)} · ${won(sub.amount)}/${esc(LT('pyMonth'))} · ${esc(String(sub.monthly))} ${esc(LT('plCr'))}</b></div>
+        <div class="prow"><span>${esc(LT('pyLeft'))}</span><b>${esc(String(sub.credits))} ${esc(LT('plCr'))}</b></div>
+        <div class="prow"><span>${esc(LT('pyUntil'))}</span><b>~ ${esc(dday(sub.until))}</b></div>
+        <div class="prow"><span>${esc(LT('pyNext'))}</span><b>${esc(sub.active && sub.auto ? dday(sub.until) : LT('pyNone'))}</b></div>
+        <a class="pmanage" href="https://play.google.com/store/account/subscriptions?sku=${encodeURIComponent(sub.plan)}&package=${encodeURIComponent(pkg)}" target="_blank" rel="noopener">${esc(LT('pyManage'))} ›</a>
+      </div>` : '';
+    const cards = plans.map(p => `
+      <button class="pcard${paySel.sub === p.id ? ' on' : ''}" onclick="paySelect('sub','${esc(p.id)}')">
+        <span class="pname">${esc(p.name)}${p.id === 's300' ? ' · ' + esc(LT('pyBest')) : ''}</span>
+        <span class="pprice">${esc(payPrice(p))} <small>/${esc(LT('pyMonth'))}</small></span>
+        <span class="pcr">${esc(LT('pyEvery'))} ${esc(String(p.credits))} ${esc(LT('plCr'))}</span>
+        <span class="pper">1${esc(LT('plCr'))}당 ${Math.round(p.amount / p.credits)}원 · ${esc(LT('pyAuto'))}</span>
+      </button>`).join('');
+    const sel = plans.find(p => p.id === paySel.sub) || plans[0];
+    return tabs + mine + cards + `
+      <div class="pnotes">${LT('pySubNotes')}</div>
+      ${subOn ? `<div class="note">${esc(LT('pyChange'))}</div>` : `
+      <label class="pagree"><input type="checkbox" ${payAgree ? 'checked' : ''} onchange="payAgree=this.checked;payBtn()"> ${LT('pyAgree')}</label>
+      ${PLAY.on ? `<button class="btn" id="payGo" ${payAgree ? '' : 'disabled'} onclick="plSub('${esc(sel ? sel.id : '')}')">${esc(LT('pySubGo').replace('{p}', sel ? payPrice(sel) : ''))}</button>`
+               : `<a class="btn${payAgree ? '' : ' dis'}" id="payGo" href="https://play.google.com/store/apps/details?id=${encodeURIComponent(pkg)}" target="_blank" rel="noopener" onclick="if(!payAgree){event.preventDefault();toast(LT('pyAgreeNeed'))}">📲 ${esc(LT('pyInApp'))}</a>`}`}`;
+  }
+  const cards1 = prods.map(p => `
+    <button class="pcard${paySel.one === p.id ? ' on' : ''}" onclick="paySelect('one','${esc(p.id)}')">
+      <span class="pname">${esc(String(p.credits))} ${esc(LT('plCr'))}</span>
+      <span class="pprice">${esc(payPrice(p))}</span>
+      <span class="pper">1${esc(LT('plCr'))}당 ${Math.round(p.amount / p.credits)}원 · ${esc(LT('pyOneValid').replace('{d}', String((cfg && cfg.oneDays) || 90)))}</span>
+    </button>`).join('');
+  const sel1 = prods.find(p => p.id === paySel.one) || prods[0];
+  return tabs + cards1 + `
+    <div class="pnotes">${LT('pyOneNotes').replace('{d}', String((cfg && cfg.oneDays) || 90))}</div>
+    ${PLAY.on ? `<button class="btn" onclick="plBuy('${esc(sel1 ? sel1.id : '')}')">${esc(LT('pyOneGo').replace('{p}', sel1 ? payPrice(sel1) : '').replace('{c}', sel1 ? String(sel1.credits) : ''))}</button>
+       <div class="note" style="font-size:12px">${esc(LT('plPlayD'))}</div>`
+      : `<a class="btn" href="https://play.google.com/store/apps/details?id=${encodeURIComponent(pkg)}" target="_blank" rel="noopener">📲 ${esc(LT('pyInApp'))}</a>`}`;
+}
+function payTabSet(t){ payTab = t; payRepaint(); }
+function paySelect(t, id){ paySel[t] = id; payRepaint(); }
+function payBtn(){ const b = $('#payGo'); if(!b) return; if(b.tagName === 'BUTTON') b.disabled = !payAgree; else b.classList.toggle('dis', !payAgree); }
+function payRepaint(){ const box = document.getElementById('plBox'); if(box) box.innerHTML = plBoxHtml(); }
+/* 구독 결제 (포도랑 앱 = 구글 플레이) */
+async function plSub(pid){
+  if(!plTok){ toast(LT('plNeedLogin')); return; }
+  if(!payAgree){ toast(LT('pyAgreeNeed')); return; }
+  if(!(await playInit())){ toast(LT('plAppOnlyT')); return; }
+  if(PLAY.busy) return;
+  PLAY.busy = true;
+  try{
+    const req = new PaymentRequest([{ supportedMethods: PLAY_METHOD, data: { sku: pid } }],
+                                   { total: { label: 'Total', amount: { currency: 'KRW', value: '0' } } });
+    const res = await req.show();
+    const token = res && res.details && res.details.purchaseToken;
+    if(!token){ try{ await res.complete('fail'); }catch(e){} throw new Error(LT('plPayFail')); }
+    try{
+      const d = await plApi('/api/pl/sub', { sku: pid, token });
+      try{ await res.complete('success'); }catch(e){}
+      plMe = d.me; plOrders = null; licInfo = null; licCheck(true);
+      toast(LT('pySubDone'));
+    }catch(e){
+      try{ await res.complete('fail'); }catch(x){}
+      toast(e.message + ' · ' + LT('plRetryD'));
+    }
+  }catch(e){
+    if(!(e && (e.name === 'AbortError'))) toast((e && e.message) || LT('plPayFail'));
+  }
+  PLAY.busy = false;
+  if(sheetOpen()) openMy();
 }
 /* v9.3 계정 관리 — 약관 및 정책 아래 (로그인 안 했으면 탈퇴 줄만) */
 function plAccHtml(){
@@ -2544,7 +2657,7 @@ async function playInit(){
     PLAY.svc = await window.getDigitalGoodsService(PLAY_METHOD);
     PLAY.on = !!PLAY.svc;
     const cfg = await plConfig();
-    const ids = ((cfg && cfg.products) || []).map(p => p.id);
+    const ids = ((cfg && cfg.products) || []).map(p => p.id).concat(((cfg && cfg.plans) || []).map(p => p.id));   // v9.8 구독 상품 값도
     if(PLAY.on && ids.length){
       const det = await PLAY.svc.getDetails(ids);
       (det || []).forEach(d => { try{ PLAY.price[d.itemId] = new Intl.NumberFormat(undefined, { style:'currency', currency: d.price.currency }).format(Number(d.price.value)); }catch(e){} });
@@ -2558,7 +2671,8 @@ async function playRecover(){
   try{
     const list = await PLAY.svc.listPurchases();
     for(const pu of (list || [])){
-      try{ const d = await plApi('/api/pl/play', { sku: pu.itemId, token: pu.purchaseToken }); plMe = d.me; plOrders = null; if(!d.already) toast(LT('plPaid')); }catch(e){}
+      const isSub = /^s\d+$/.test(String(pu.itemId || ''));   // v9.8 구독은 구독 확인으로
+      try{ const d = await plApi(isSub ? '/api/pl/sub' : '/api/pl/play', { sku: pu.itemId, token: pu.purchaseToken }); plMe = d.me; plOrders = null; if(!d.already) toast(LT(isSub ? 'pySubDone' : 'plPaid')); }catch(e){}
     }
   }catch(e){}
 }
