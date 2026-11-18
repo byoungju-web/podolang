@@ -26,10 +26,12 @@
 
 const WELCOME_DEFAULT = 3;          // 처음 가입 선물 (크레딧) — 워커 변수 PL_WELCOME 으로 바꿈
 const PLAY_PKG_DEFAULT = 'kr.podolang.app';
-const PRODUCTS = [                  // 충전 상품 (1 크레딧 = 99원) — Play Console 인앱 상품 ID 와 같아야 합니다 (c100 · c300 · c1000)
-  { id: 'c100', credits: 100, amount: 9900, name: '포도랑 100 크레딧' },
-  { id: 'c300', credits: 300, amount: 29700, name: '포도랑 300 크레딧' },
-  { id: 'c1000', credits: 1000, amount: 99000, name: '포도랑 1000 크레딧' },
+const PRODUCTS = [                  // 한 번 충전 상품 — v9.8.1 coverfo 와 같은 표. Play Console 인앱 상품 ID 와 같아야 합니다 (c100 · c300 · c550 · c1200)
+  { id: 'c100',  credits: 100,  amount: 9900,  name: '포도랑 100 크레딧' },
+  { id: 'c300',  credits: 300,  amount: 29000, name: '포도랑 300 크레딧' },
+  { id: 'c550',  credits: 550,  amount: 49000, name: '포도랑 550 크레딧' },
+  { id: 'c1200', credits: 1200, amount: 99000, name: '포도랑 1200 크레딧' },
+  { id: 'c1000', credits: 1000, amount: 99000, name: '포도랑 1000 크레딧', old: true },   // 예전 상품 — 판매 화면엔 안 보이고, 이미 산 결제만 확인해 줍니다
 ];
 /* v9.8 👑 구독 크레딧 (구글 플레이 정기 결제) — Play Console '정기 결제' 상품 ID 와 같아야 합니다 (s100 · s300 · s550 · s1200, 기본 요금제 = 매월 자동 갱신)
    · 매달 받은 구독 크레딧은 다음 결제일 전까지 쓰고, 남으면 사라집니다 (이월 없음)
@@ -517,7 +519,7 @@ export async function plRoute(request, env, url, H, ctx) {
     }
     if (p === '/api/pl/config') {
       return J({ ok: true, google: env.GOOGLE_CLIENT_ID || '', play: !!env.PLAY_SA_JSON, pkg: env.PLAY_PACKAGE || PLAY_PKG_DEFAULT, wallet: !!env.DB,
-        products: PRODUCTS.map((x) => ({ id: x.id, credits: x.credits, amount: x.amount, name: x.name })),
+        products: PRODUCTS.filter((x) => !x.old).map((x) => ({ id: x.id, credits: x.credits, amount: x.amount, name: x.name })),
         plans: PLANS.map((x) => ({ id: x.id, credits: x.credits, amount: x.amount, name: x.name })), oneDays: ONE_DAYS, sub: await hasSubCols(env),
         welcome: env.PL_WELCOME != null ? Number(env.PL_WELCOME) : WELCOME_DEFAULT });
     }
