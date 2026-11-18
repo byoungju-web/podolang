@@ -217,7 +217,7 @@ footer{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:10px 18px 
   box-shadow:0 8px 20px rgba(0,0,0,0.18);transform:translateY(-2px)}
 .botnav button.on .dot{background:#fff}
 /* v9.3 아래 5탭 — 탭마다 제 색 (검정 대신). 안 고른 탭은 글씨·점이 그 색, 고른 탭은 그 색으로 채움 */
-#nvTalk{--nc:#6D28D9;--nb:#F5F3FF} #nvMulti{--nc:#00D8FF;--nb:#ECFBFF} #nvCall{--nc:#1D4ED8;--nb:#EFF6FF}
+#nvTalk{--nc:#6D28D9;--nb:#F5F3FF} #nvMulti{--nc:#0033FF;--nb:#EEF1FF} #nvCall{--nc:#1D4ED8;--nb:#EFF6FF}
 #nvPhoto{--nc:#0E7490;--nb:#ECFEFF} #nvMy{--nc:#C2410C;--nb:#FFF7ED}
 .botnav button{color:var(--nc);background:var(--nb);border-color:transparent}
 .botnav button .dot{background:var(--nc);opacity:.55}
@@ -373,7 +373,7 @@ footer{background:transparent;border-top:0;padding:14px 18px 8px}
 .mic svg{width:32px;height:32px}
 .micLabel{margin-top:16px;font-size:12px}
 /* 아래 5탭 — 흰 유리 막대, 고른 탭은 제 색 그라데이션 */
-#nvTalk{--nc:#6D28D9;--nc2:#6D28D9;--nb:#F5F3FF} #nvMulti{--nc:#00D8FF;--nc2:#00D8FF;--nb:#ECFBFF} #nvCall{--nc:#4338CA;--nc2:#4338CA;--nb:#EEF2FF}
+#nvTalk{--nc:#6D28D9;--nc2:#6D28D9;--nb:#F5F3FF} #nvMulti{--nc:#0033FF;--nc2:#0033FF;--nb:#EEF1FF} #nvCall{--nc:#4338CA;--nc2:#4338CA;--nb:#EEF2FF}
 #nvPhoto{--nc:#0284C7;--nc2:#0284C7;--nb:#F0F9FF} #nvMy{--nc:#1E3A8A;--nc2:#1E3A8A;--nb:#EFF6FF}
 body[data-theme="talk"] #nvTalk{--nc:#14A898;--nc2:#14A898;--nb:#EFFCF9}   /* v9.9 마주보고는 통역톡 안 — 민트 */
 .botnav{gap:4px;padding:10px 10px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.94);border-top:0;
@@ -443,14 +443,14 @@ body[data-theme="photo"] .turn.you .mini{border-color:#7DD3FC;color:#075985}
 .lvseg .src{font-size:13px;color:var(--sub);line-height:1.5}
 .lvseg .dst{font-size:17px;font-weight:800;line-height:1.5;margin-top:4px}
 .lvseg.wait{text-align:center;padding:14px}
-/* v10.0.1 다중통역 = 하늘색 #00D8FF — 흰 글씨 대신 진한 남청 */
+/* v10.0.2 다중통역 = 파랑 #0033FF — 글씨는 흰색 */
 body[data-theme="multi"] header,body[data-theme="multi"] header h1,body[data-theme="multi"] .tab.on,
 body[data-theme="multi"] .btn:not(.ghost),body[data-theme="multi"] .rmm.me,body[data-theme="multi"] .roombar .rbs,
-#nvMulti.on{color:#00313D}
-body[data-theme="multi"] .helpbtn{color:#00313D;background:rgba(255,255,255,.45);border-color:rgba(0,49,61,.18)}
-body[data-theme="multi"] .headlog{color:#006A80}
+#nvMulti.on{color:#FFFFFF}
+body[data-theme="multi"] .helpbtn{color:#FFFFFF;background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.35)}
+body[data-theme="multi"] .headlog{color:#0033FF}
 body[data-theme="multi"] .rmm.me *{color:inherit}
-body[data-theme="multi"] .mylist .ch,body[data-theme="multi"] .trcard .tc{color:#006A80}
+body[data-theme="multi"] .mylist .ch,body[data-theme="multi"] .trcard .tc{color:#0033FF}
 /* v9.7 마주보고 (coverfo 마주보기 방식) */
 .facelead{margin-bottom:12px}
 .face{display:flex;flex-direction:column;gap:10px}
@@ -638,7 +638,7 @@ body .shots .btn.alb{--bi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.or
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v10.0.1';
+const VER='v10.0.2';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -923,7 +923,7 @@ function T(k){ const r = I18N[k]; if(!r) return k; return r[uiLang()] || r.EN ||
 // 탭마다 색이 바뀝니다. 헤더·배경·버튼·말풍선이 한꺼번에 따라옵니다.
 const THEME = {   // v9.4.6 탭 색 (비교 그림에서 고른 색)
   one  : { c1:'#6D28D9', c2:'#6D28D9', bg:'#F5F3FF', soft:'#EDE9FE' },   // 통역톡 = 보라
-  multi: { c1:'#00D8FF', c2:'#00D8FF', bg:'#ECFBFF', soft:'#CCF5FF' },   // 다중통역 = 하늘색 #00D8FF v10.0.1 (글씨는 진한 남청)
+  multi: { c1:'#0033FF', c2:'#0033FF', bg:'#EEF1FF', soft:'#D6DEFF' },   // 다중통역 = 파랑 #0033FF v10.0.2 (글씨는 흰색)
   talk : { c1:'#14A898', c2:'#14A898', bg:'#EFFCF9', soft:'#D2F5EE' },   // 마주보고 = 민트 (너무 진하지 않게) v9.6.1
   photo: { c1:'#0284C7', c2:'#0284C7', bg:'#F0F9FF', soft:'#E0F2FE' },   // 사진 번역 = 하늘색 (v9.4.7)
   call : { c1:'#4338CA', c2:'#4338CA', bg:'#EEF2FF', soft:'#E0E7FF' }    // 전화 통역 = 남색(인디고)
