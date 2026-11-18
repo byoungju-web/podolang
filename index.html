@@ -217,9 +217,8 @@ footer{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:10px 18px 
   box-shadow:0 8px 20px rgba(0,0,0,0.18);transform:translateY(-2px)}
 .botnav button.on .dot{background:#fff}
 /* v9.3 아래 5탭 — 탭마다 제 색 (검정 대신). 안 고른 탭은 글씨·점이 그 색, 고른 탭은 그 색으로 채움 */
-#nvTalk{--nc:#6D28D9;--nb:#F5F3FF} #nvFace{--nc:#4338CA;--nb:#EEF2FF} #nvCall{--nc:#1D4ED8;--nb:#EFF6FF}
+#nvTalk{--nc:#6D28D9;--nb:#F5F3FF} #nvMulti{--nc:#F2B705;--nb:#FFFBEA} #nvCall{--nc:#1D4ED8;--nb:#EFF6FF}
 #nvPhoto{--nc:#0E7490;--nb:#ECFEFF} #nvMy{--nc:#C2410C;--nb:#FFF7ED}
-body[data-theme="multi"] #nvTalk{--nc:#047857;--nb:#ECFDF5}
 .botnav button{color:var(--nc);background:var(--nb);border-color:transparent}
 .botnav button .dot{background:var(--nc);opacity:.55}
 .botnav button.on{background:var(--nc);color:#fff;box-shadow:0 8px 18px rgba(0,0,0,0.16)}
@@ -338,7 +337,7 @@ header h1 .logo{width:40px;height:40px;border-radius:13px;padding:5px;box-shadow
 .tab::before{content:'';width:22px;height:22px;flex:0 0 auto;background:currentColor;
   -webkit-mask:var(--ti) center/contain no-repeat;mask:var(--ti) center/contain no-repeat}
 #tabOne{--ti:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3.5c-4.7 0-8.5 3.3-8.5 7.5 0 2.1 1 4 2.6 5.4L5.4 20l4-1.9c.8.2 1.7.4 2.6.4 4.7 0 8.5-3.3 8.5-7.5S16.7 3.5 12 3.5zM8 12.3a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6zm4 0a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6zm4 0a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6z'/%3E%3C/svg%3E")}
-#tabMulti{--ti:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='9' cy='8' r='3.4'/%3E%3Ccircle cx='17' cy='9' r='2.7'/%3E%3Cpath d='M2.5 19.5c.5-3.6 3.1-5.6 6.5-5.6s6 2 6.5 5.6zM15.6 14.1c3.1-.3 5.4 1.5 5.9 5.4h-4.3c-.2-2.1-.7-3.8-1.6-5.4z'/%3E%3C/svg%3E")}
+#tabFace{--ti:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='9' cy='8' r='3.4'/%3E%3Ccircle cx='17' cy='9' r='2.7'/%3E%3Cpath d='M2.5 19.5c.5-3.6 3.1-5.6 6.5-5.6s6 2 6.5 5.6zM15.6 14.1c3.1-.3 5.4 1.5 5.9 5.4h-4.3c-.2-2.1-.7-3.8-1.6-5.4z'/%3E%3C/svg%3E")}
 .tab.on{background:linear-gradient(120deg,var(--c1),var(--c2));color:#fff;box-shadow:0 8px 18px rgba(20,10,80,.30)}
 /* 오역 고지 줄 — 알약 모양 */
 #pdStrip{border-radius:999px!important;border:0!important;background:linear-gradient(180deg,#FFF8E8,#FFF1D9)!important;
@@ -374,9 +373,9 @@ footer{background:transparent;border-top:0;padding:14px 18px 8px}
 .mic svg{width:32px;height:32px}
 .micLabel{margin-top:16px;font-size:12px}
 /* 아래 5탭 — 흰 유리 막대, 고른 탭은 제 색 그라데이션 */
-#nvTalk{--nc:#6D28D9;--nc2:#6D28D9;--nb:#F5F3FF} #nvFace{--nc:#14A898;--nc2:#14A898;--nb:#EFFCF9} #nvCall{--nc:#4338CA;--nc2:#4338CA;--nb:#EEF2FF}
+#nvTalk{--nc:#6D28D9;--nc2:#6D28D9;--nb:#F5F3FF} #nvMulti{--nc:#F2B705;--nc2:#F2B705;--nb:#FFFBEA} #nvCall{--nc:#4338CA;--nc2:#4338CA;--nb:#EEF2FF}
 #nvPhoto{--nc:#0284C7;--nc2:#0284C7;--nb:#F0F9FF} #nvMy{--nc:#1E3A8A;--nc2:#1E3A8A;--nb:#EFF6FF}
-body[data-theme="multi"] #nvTalk{--nc:#F2B705;--nc2:#F2B705;--nb:#FFFBEA}
+body[data-theme="talk"] #nvTalk{--nc:#14A898;--nc2:#14A898;--nb:#EFFCF9}   /* v9.9 마주보고는 통역톡 안 — 민트 */
 .botnav{gap:4px;padding:10px 10px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.94);border-top:0;
   border-radius:26px 26px 0 0;box-shadow:0 -8px 26px rgba(76,52,170,.08);backdrop-filter:blur(14px)}
 .botnav button{height:60px;border:0;border-radius:18px;background:var(--nb);color:var(--nc);gap:3px;position:relative;box-shadow:none}
@@ -446,7 +445,7 @@ body[data-theme="photo"] .turn.you .mini{border-color:#7DD3FC;color:#075985}
 /* v9.7 다중 동시통역 = 진노랑 — 노랑 위에서는 흰 글씨 대신 진한 갈색 */
 body[data-theme="multi"] header,body[data-theme="multi"] header h1,body[data-theme="multi"] .tab.on,
 body[data-theme="multi"] .btn:not(.ghost),body[data-theme="multi"] .rmm.me,body[data-theme="multi"] .roombar .rbs,
-body[data-theme="multi"] #nvTalk.on{color:#3D2B00}
+#nvMulti.on{color:#3D2B00}
 body[data-theme="multi"] .helpbtn{color:#3D2B00;background:rgba(255,255,255,.45);border-color:rgba(61,43,0,.18)}
 body[data-theme="multi"] .headlog{color:#8A5A00}
 body[data-theme="multi"] .rmm.me *{color:inherit}
@@ -505,6 +504,83 @@ body .shots .btn.alb{--bi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.or
 .roombar textarea{border-radius:999px;background:#F6F5FB;padding:12px 16px}
 .roombar .rbs{border-radius:999px;background:linear-gradient(135deg,var(--c1),var(--c2));box-shadow:0 8px 16px rgba(80,50,200,.22)}
 .roombar .rbm{background:#F1EEFF}
+/* ===== v9.9 통화 탭 · 영상 · 음성 통화 번역 ===== */
+.vchero{border-radius:24px;padding:18px 18px 16px;margin-bottom:14px;color:#fff;
+  background:radial-gradient(120% 90% at 100% 0%,#6366F1 0%,transparent 60%),linear-gradient(150deg,#312E81,#4338CA);
+  box-shadow:0 14px 30px rgba(49,46,129,.28)}
+.vchero b{display:block;font-size:18px;font-weight:900;letter-spacing:-.5px}
+.vchero p{margin:6px 0 12px;font-size:13px;line-height:1.55;opacity:.9}
+.vcapps{display:flex;gap:8px;flex-wrap:wrap}
+.vcapps span{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;padding:6px 10px 6px 6px;border-radius:999px;background:rgba(255,255,255,.14)}
+.vcapps i{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:900;color:#fff}
+.vcdemo{margin-top:14px;display:flex;flex-direction:column;gap:8px}
+.vcdemo div{max-width:82%;border-radius:16px;padding:9px 12px;font-size:13px;line-height:1.45;background:rgba(255,255,255,.12)}
+.vcdemo div small{display:block;opacity:.75;font-size:11.5px;margin-top:3px;padding-top:3px;border-top:1px solid rgba(255,255,255,.18)}
+.vcdemo .r{align-self:flex-end;background:rgba(255,255,255,.95);color:#1E1B4B}
+.vcdemo .r small{border-top-color:rgba(30,27,75,.12)}
+.vcrow{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:16px 14px;margin-bottom:10px;border:1px solid var(--edge);
+  border-radius:20px;background:#fff;box-shadow:var(--soft-sh);font:inherit;color:inherit}
+.vcrow:active{transform:scale(.985)}
+.vcrow .vic{width:46px;height:46px;flex:0 0 auto;border-radius:15px;display:grid;place-items:center;background:var(--csoft);color:var(--c1)}
+.vcrow .vic svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.vcrow .vt{flex:1;min-width:0}
+.vcrow .vt b{display:block;font-size:16px;font-weight:900;letter-spacing:-.4px}
+.vcrow .vt span{display:block;font-size:12.5px;color:var(--sub);line-height:1.45;margin-top:2px}
+.vcrow .vt em{display:inline-block;font-style:normal;font-size:11.5px;font-weight:800;color:var(--c1);margin-top:5px}
+.vcrow .chev{color:var(--sub2);font-size:22px;font-weight:300}
+.vcseg{display:flex;gap:6px;padding:5px;border-radius:16px;background:#EEF0FB;margin-bottom:12px}
+.vcseg button{flex:1;height:42px;border:0;border-radius:12px;background:transparent;font:inherit;font-weight:800;color:#5B5F72}
+.vcseg button.on{background:#fff;color:var(--c1);box-shadow:0 4px 10px rgba(49,46,129,.12)}
+.vcinv{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.vcinv button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border:1px solid var(--edge);border-radius:16px;
+  background:#fff;font:inherit;font-size:12px;font-weight:800;color:var(--ink,#111)}
+.vcinv button i{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:15px;font-weight:900;color:#fff}
+.vccode{text-align:center;font-size:30px;font-weight:900;letter-spacing:.22em;color:var(--c1);margin:4px 0}
+.vcwait{display:flex;align-items:center;justify-content:center;gap:10px;font-weight:800;margin:6px 0 2px}
+.vcwait .dots{display:inline-flex;gap:4px}
+.vcwait .dots i{width:7px;height:7px;border-radius:50%;background:var(--c1);animation:vcdot 1.2s infinite ease-in-out}
+.vcwait .dots i:nth-child(2){animation-delay:.15s}.vcwait .dots i:nth-child(3){animation-delay:.3s}
+@keyframes vcdot{0%,80%,100%{opacity:.25;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+#vcPrev{width:100%;max-height:260px;object-fit:cover;border-radius:20px;background:#111;transform:scaleX(-1);margin-bottom:12px}
+.vcsum{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 12px}
+.vcsum div{background:#fff;border:1px solid var(--edge);border-radius:16px;padding:12px;text-align:center}
+.vcsum b{display:block;font-size:20px;font-weight:900}.vcsum small{color:var(--sub);font-size:12px;font-weight:700}
+/* 통화 화면 (전체 화면 덮개) */
+#vcStage{position:fixed;inset:0;z-index:900;background:#0B1026;color:#fff;display:flex;flex-direction:column;overflow:hidden;
+  font-family:inherit}
+#vcStage.voice{background:radial-gradient(110% 70% at 50% 0%,#4338CA 0%,#1E1B4B 55%,#0B1026 100%)}
+#vcStage video.rv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000}
+#vcStage video.lv{position:absolute;top:calc(64px + env(safe-area-inset-top));right:14px;width:96px;height:132px;object-fit:cover;border-radius:16px;
+  border:2px solid rgba(255,255,255,.7);box-shadow:0 8px 20px rgba(0,0,0,.4);z-index:3;background:#222;transform:scaleX(-1)}
+#vcStage video.lv.back{transform:none}
+#vcStage .vtop{position:relative;z-index:2;display:flex;align-items:center;gap:10px;padding:calc(12px + env(safe-area-inset-top)) 16px 10px;
+  background:linear-gradient(180deg,rgba(0,0,0,.55),transparent)}
+#vcStage .vtop b{font-size:16px;font-weight:900}
+#vcStage .vtop small{display:block;font-size:12px;opacity:.8;font-weight:700}
+#vcStage .vtop .st{margin-left:auto;text-align:right;font-size:12px;font-weight:800;opacity:.9}
+#vcStage .vavatar{position:relative;z-index:1;margin:28px auto 8px;width:112px;height:112px;border-radius:50%;display:grid;place-items:center;
+  font-size:44px;font-weight:900;background:linear-gradient(135deg,#818CF8,#4338CA);box-shadow:0 0 0 10px rgba(129,140,248,.18),0 0 0 22px rgba(129,140,248,.08)}
+#vcStage .vstat{position:relative;z-index:2;text-align:center;font-size:13px;font-weight:800;opacity:.85;min-height:18px}
+#vcStage .vcaps{position:relative;z-index:2;margin-top:auto;padding:10px 14px 6px;display:flex;flex-direction:column;gap:8px;
+  max-height:46vh;overflow-y:auto;background:linear-gradient(0deg,rgba(0,0,0,.6) 40%,transparent)}
+#vcStage.voice .vcaps{flex:1;max-height:none;background:none;margin-top:12px}
+#vcStage .cap{max-width:88%;border-radius:18px;padding:10px 13px;background:rgba(17,24,39,.72);backdrop-filter:blur(6px);line-height:1.45}
+#vcStage .cap .tr{font-size:18px;font-weight:800}
+#vcStage .cap .og{font-size:12.5px;opacity:.72;margin-top:3px}
+#vcStage .cap.me{align-self:flex-end;background:rgba(99,102,241,.55)}
+#vcStage .cap.me .tr{font-size:14px;font-weight:700}
+#vcStage .cap.wait{opacity:.7;font-size:13px}
+#vcStage .vctl{position:relative;z-index:2;display:flex;justify-content:center;gap:12px;padding:12px 12px calc(16px + env(safe-area-inset-bottom));
+  background:rgba(0,0,0,.35)}
+#vcStage .vctl button{width:58px;display:flex;flex-direction:column;align-items:center;gap:5px;border:0;background:none;color:#fff;font:inherit;font-size:11px;font-weight:800}
+#vcStage .vctl button i{width:50px;height:50px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.16);font-style:normal}
+#vcStage .vctl button i svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#vcStage .vctl button.off i{background:#fff;color:#111}
+#vcStage .vctl button.hang i{background:#DC2626}
+#vcStage .vnote{position:relative;z-index:2;text-align:center;font-size:12px;font-weight:800;padding:6px 12px;margin:0 16px;border-radius:12px;background:rgba(220,38,38,.85)}
+#vcStage .vnote:empty{display:none}
+.pdnote{font-size:13px;line-height:1.7}
+#toast{z-index:9000}
 </style>
 </head>
 <body>
@@ -517,10 +593,10 @@ body .shots .btn.alb{--bi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.or
     <button class="headlog" id="plHead" onclick="plHeadClick()" hidden></button>
   </header>
 
-  <!-- v9.2 통역톡 위 칸: 1:1 동시통역 · 다중 동시통역 (마주보고 · 전화통역 · 사진번역은 아래 탭) -->
+  <!-- v9.9 통역톡 위 칸: 1:1 동시통역 · 마주보고 통역 (다중통역 · 통화 · 번역은 아래 탭) -->
   <div class="tabs">
     <button class="tab on" id="tabOne" onclick="tab('one')"></button>
-    <button class="tab" id="tabMulti" onclick="tab('multi')"></button>
+    <button class="tab" id="tabFace" onclick="tab('talk')"></button>
   </div>
 
   <main id="main"></main>
@@ -543,11 +619,11 @@ body .shots .btn.alb{--bi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.or
     <button class="rbs" id="rbSend" onclick="rmSend()"></button>
   </div>
 
-  <!-- v9.2 하단 5탭: 통역톡(1:1·다중) · 마주보고 · 전화통역 · 사진번역 · 마이 (설정·검색·통화기록은 마이 안) -->
+  <!-- v9.9 하단 5탭: 통역톡(1:1·마주보고) · 다중통역 · 통화(영상·음성·전화) · 번역 · 마이 (설정·검색·통화기록은 마이 안) -->
   <nav class="botnav" id="botnav">
     <button id="nvTalk"  onclick="navTo('one')"><span class="nic"><svg viewBox="0 0 24 24"><path d="M20 11.5a7.5 7.5 0 0 1-10.9 6.7L4 19.5l1.3-4.4A7.5 7.5 0 1 1 20 11.5z"/><path d="M9 11.5h.01M12.5 11.5h.01M16 11.5h.01"/></svg></span><span class="lb" id="lbTalk"></span></button>
-    <button id="nvFace"  onclick="navTo('talk')"><span class="nic"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="16.5" cy="9" r="2.6"/><path d="M15.5 14.2c2.6-.2 4.6 1.4 5 4.3"/></svg></span><span class="lb" id="lbFace"></span></button>
-    <button id="nvCall"  onclick="navTo('call')"><span class="nic"><svg viewBox="0 0 24 24"><path d="M21 16.4v2.9a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 1.1 3.6 2 2 0 0 1 3.1 1.4H6a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L7 9.2a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg></span><span class="lb" id="lbCall"></span></button>
+    <button id="nvMulti" onclick="navTo('multi')"><span class="nic"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="16.5" cy="9" r="2.6"/><path d="M15.5 14.2c2.6-.2 4.6 1.4 5 4.3"/></svg></span><span class="lb" id="lbMulti"></span></button>
+    <button id="nvCall"  onclick="navTo('callhub')"><span class="nic"><svg viewBox="0 0 24 24"><path d="M21 16.4v2.9a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 1.1 3.6 2 2 0 0 1 3.1 1.4H6a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L7 9.2a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg></span><span class="lb" id="lbCall"></span></button>
     <button id="nvPhoto" onclick="navTo('tr')"><span class="nic"><svg viewBox="0 0 24 24"><path d="M3.5 5.5h9M8 3.5v2M5 12.5c2.6-1.6 4.6-4.2 5.5-7M5.8 8.6c1.2 2.2 3 3.8 5.2 4.8"/><path d="M12.5 20.5l4-9 4 9M13.9 17.4h5.2"/></svg></span><span class="lb" id="lbPhoto"></span></button>
     <button id="nvMy"    onclick="openMy()"><span class="nic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c.9-3.7 3.9-6 7.5-6s6.6 2.3 7.5 6"/></svg></span><span class="lb" id="lbMy"></span></button>
   </nav>
@@ -561,7 +637,7 @@ body .shots .btn.alb{--bi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.or
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v9.8.1';
+const VER='v9.9';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -675,7 +751,7 @@ const L = {
  helpTitle:'이용방법',
  hTalk:'마주보고 통역', hPhoto:'사진 번역', hCall:'전화 통역',
  hTr:'번역 (텍스트 · 라이브 청취 · 오디오)', hTrBody:'아래 <b>번역</b> 탭을 누르면 네 가지가 나옵니다. 위쪽에서 고른 언어(원래 말 → 바꿀 말)를 네 기능이 함께 씁니다.\n\n<b>텍스트 번역</b> — 글을 쓰거나 붙여 넣고 <b>번역하기</b>. 한 번에 2,000자까지 · 1번 0.1 크레딧. <b>듣기</b>를 누르면 폰이 읽어 줍니다.\n\n<b>라이브 청취</b> — 강의 · 세미나 · 안내 방송을 폰 마이크로 계속 듣고, 말이 끊길 때마다 원문과 번역을 아래로 쌓아 줍니다. 1분 0.5 크레딧(12초마다 0.1). 조용한 동안은 보내지 않아 요금이 나가지 않습니다. 다른 화면으로 가면 멈춥니다.\n\n<b>사진 번역</b> — 서류 · 라벨 · 간판을 찍어 옮깁니다.\n\n<b>오디오 · 스트림 번역</b> — 유튜브 · 영상 등 폰에서 나오는 소리를 자막으로 옮깁니다. 구글 플레이 <b>포도랑 앱(1.0.3 이상)</b>에서 열리며, 라이브 청취와 같은 1분 0.5 크레딧입니다.',
- hRoom:'통역톡 — 1:1 · 다중 동시통역',
+ hRoom:'1:1 동시통역 · 다중통역',
  hRoomBody:'사람마다 <b>자기 폰에서 자기 말로</b> 대화하면, 상대에게는 상대 말로 번역되어 보이고 폰이 읽어 줍니다.\n\n<b>1.</b> <b>마이</b>에서 구글로 로그인합니다 (처음 가입하면 크레딧 선물)\n<b>2.</b> 내 언어와 이름을 고르고 <b>방 만들기</b>\n<b>3.</b> <b>초대</b>를 눌러 링크나 6자리 코드를 상대에게 보냅니다\n<b>4.</b> 상대는 링크를 열거나 코드를 넣어 <b>참여</b>합니다\n<b>5.</b> 글로 쓰거나 🎤 를 눌러 말하면 됩니다\n\n1:1 은 2명, 다중은 방을 만들 때 적은 인원(3~100명)까지. 번역 1개에 0.1 크레딧 (방 안의 다른 언어 수만큼 · 말한 사람만). 불쾌한 말은 눌러서 차단 · 신고할 수 있습니다.',
  myMore:'더 보기',
  licNone:'마이에서 구글로 로그인하면 크레딧으로 통화할 수 있습니다', licChecking:'크레딧 확인 중…', licBad:'크레딧을 확인하지 못했습니다',
@@ -685,8 +761,8 @@ const L = {
  hTalkBody:'폰 한 대를 가운데 두고 마주 보며 통역합니다. 위쪽 칸은 상대, 아래쪽 칸은 나.\n\n<b>1.</b> 위쪽에 상대 언어, 아래쪽에 내 언어를 고릅니다\n<b>2.</b> 말할 사람 쪽의 🎤 를 누르고 말합니다 (말이 끝나면 저절로 멈춥니다)\n<b>3.</b> 반대쪽 칸에 번역된 문장이 크게 뜨고 폰이 읽어 줍니다\n<b>4.</b> 아래 칸에서 글로 써서 <b>번역</b>해도 됩니다\n\n마주 앉았다면 <b>위쪽 화면 뒤집기</b>를 켜 두세요. 한 마디 0.1 크레딧.',
  hPhotoBody:'서류·라벨·인보이스를 찍으면 글자를 읽어 옮깁니다.\n\n<b>1.</b> 자동 감지 → 내 언어로 두고 <b>사진 찍기</b>\n<b>2.</b> 찍은 뒤 <b>이 사진 번역하기</b>\n<b>3.</b> 번역이 크게, 원문은 <b>원문 보기</b>를 눌러 폅니다\n\n<b>숫자·단가·품번은 원문 그대로 옮깁니다.</b> 흐려서 안 보이는 자리는 추측하지 않고 [?] 로 표시합니다. 중요한 금액은 원문과 한 번 더 대조하세요.',
  hCallBody:'상대는 그냥 전화를 받아 평소처럼 말하면 됩니다. 앱을 깔 필요도, 버튼을 누를 필요도 없습니다.\n\n<b>1.</b> 이름(선택)과 전화번호를 넣습니다. 국가번호부터 — 미국 +1, 한국 +82(앞 0 빼고)\n<b>2.</b> <b>통역 전화 걸기</b>\n<b>3.</b> 상대가 받으면 이 화면에 대고 말합니다\n<b>4.</b> 말이 끝나면 잠시 뒤 상대에게 전달됩니다\n\n<b>이어폰을 쓰세요.</b> 스피커로 들으면 통역 음성을 마이크가 다시 주워서 말이 꼬입니다.\n\n전화 통역은 통화 1분에 <b>6 크레딧</b>입니다 (통화한 시간만큼, 분 단위 올림). 크레딧은 <b>마이</b>에서 구글로 로그인하면 쓸 수 있습니다.',
- hNavBody:'<b>통역톡</b> — 1:1 · 다중 동시통역. 누르면 늘 1:1 동시통역부터 나옵니다. 위의 칸으로 다중 동시통역으로 바꿉니다.\n\n<b>마주보고</b> — 한 폰으로 마주 보고 통역합니다.\n\n<b>전화 통역</b> — 상대에게 통역 전화를 겁니다.\n\n<b>번역</b> — 오디오·스트림 번역 · 텍스트 번역 · 사진 번역 · 라이브 청취 네 가지를 고릅니다. 위쪽 언어를 네 기능이 함께 씁니다.\n\n<b>마이</b> — 구글 로그인 · 크레딧 · 언어 설정 · 통화기록 · 검색 · 설정(전화 통역 말투와 용어집)이 모두 여기 있습니다. 언어를 <b>자동</b>으로 두면 해외에 나가셨을 때 그 나라 말로 저절로 바뀝니다.',
- hKnowBody:'마주보고 · 사진 번역 · 텍스트 번역 · 라이브 청취 · 전화 통역 기록은 <b>이 폰 안에만</b> 있습니다. 브라우저 데이터를 지우면 함께 사라지니 중요한 내용은 복사해 두세요.\n\n1:1 · 다중 동시통역 대화는 방 사람들이 함께 보도록 서버에 저장되고 <b>30일 뒤 자동으로 지워집니다</b>. 개인정보는 올리지 마세요.\n\n크레딧: 1 크레딧 = 99원 · 마주보고 한 마디 0.1 · 사진 1장 0.5 · 텍스트 번역 1번 0.1 · 라이브 청취 1분 0.5 · 전화 1분 6 · 동시통역 번역 1개 0.1. 충전은 <b>포도랑 앱</b>(구글 플레이)에서 합니다.\n\n전화 통역은 <b>안드로이드 크롬</b>이나 포도랑 앱에서 열어주세요. 상대 폰이 해외번호를 스팸으로 막을 수 있습니다. 상대 연락처에 <b>+14472841160</b> 을 저장해 두면 통과합니다.',
+ hNavBody:'<b>통역톡</b> — 위의 칸으로 <b>1:1 동시통역</b>과 <b>마주보고 통역</b>을 바꿉니다. 누르면 마지막에 보던 칸이 나옵니다.\n\n<b>다중통역</b> — 여러 사람(3~100명)이 한 방에서 각자 자기 말로 대화합니다.\n\n<b>통화</b> — <b>영상 통화 번역</b> · <b>음성 통화 번역</b>(메신저로 초대) · <b>전화 통역</b>(일반 전화번호)을 고릅니다.\n\n<b>번역</b> — 오디오·스트림 번역 · 텍스트 번역 · 사진 번역 · 라이브 청취 네 가지를 고릅니다. 위쪽 언어를 네 기능이 함께 씁니다.\n\n<b>마이</b> — 구글 로그인 · 크레딧 · 언어 설정 · 통화기록 · 검색 · 설정(전화 통역 말투와 용어집) · 약관과 안내가 모두 여기 있습니다. 언어를 <b>자동</b>으로 두면 해외에 나가셨을 때 그 나라 말로 저절로 바뀝니다.',
+ hKnowBody:'마주보고 · 사진 번역 · 텍스트 번역 · 라이브 청취 · 전화 통역 기록은 <b>이 폰 안에만</b> 있습니다. 브라우저 데이터를 지우면 함께 사라지니 중요한 내용은 복사해 두세요.\n\n1:1 · 다중 동시통역 대화는 방 사람들이 함께 보도록 서버에 저장되고 <b>30일 뒤 자동으로 지워집니다</b>. 개인정보는 올리지 마세요.\n\n크레딧: 1 크레딧 = 99원 · 마주보고 한 마디 0.1 · 사진 1장 0.5 · 텍스트 번역 1번 0.1 · 라이브 청취 1분 0.5 · 영상·음성 통화 번역 말한 시간 1분 0.5 · 전화 1분 6 · 동시통역 번역 1개 0.1. 충전은 <b>포도랑 앱</b>(구글 플레이)에서 합니다.\n\n전화 통역은 <b>안드로이드 크롬</b>이나 포도랑 앱에서 열어주세요. 상대 폰이 해외번호를 스팸으로 막을 수 있습니다. 상대 연락처에 <b>+14472841160</b> 을 저장해 두면 통과합니다.',
 
  pTel:'저장된 번호', pTelNone:'아직 저장된 번호가 없습니다. 통화를 걸면 자동으로 저장됩니다.',
  pLog:'통화 기록', pLogNone:'아직 통화 기록이 없습니다.',
@@ -710,7 +786,7 @@ const L = {
  myStore:'저장 현황', myClean:'정리',
  myClrTalk:'마주보고 통역 기록 지우기', myClrPhoto:'사진 번역 기록 지우기', myClrLog:'통화 기록 지우기',
  myOnPhone:'<b>이 기기에만 저장됩니다.</b>\n번호와 기록은 이 폰 안에만 있습니다. 서버로 보내지 않습니다. 브라우저 데이터를 지우면 함께 사라지니, 중요한 내용은 복사해 두세요.',
- tabOne:'1:1\n동시통역', tabMulti:'다중\n동시통역', navTalk:'통역톡',
+ tabOne:'1:1\n동시통역', tabMulti:'다중\n동시통역', navTalk:'통역톡', tabFace:'마주보고\n통역', navMulti:'다중통역', navCall:'통화',
  rmOneD:'두 사람이 <b>각자 자기 폰에서 자기 말로</b> 대화합니다. 상대에게는 상대 언어로 보이고, 폰이 읽어 줍니다.',
  rmMultiD:'여러 나라 사람이 <b>한 방에서 각자 자기 말로</b> 대화합니다 (방을 만들 때 최대 인원을 3~100명 사이 숫자로 적습니다). 말한 사람의 글이 방 안의 다른 언어로 번역됩니다.',
  rmPrice:'💳 번역 1개 0.1 크레딧 (방 안의 다른 언어 수만큼 · 같은 언어끼리는 무료) · 말한 사람만 차감',
@@ -767,11 +843,42 @@ const L = {
  trLiveStart:'듣기 시작', trLiveResume:'다시 듣기', trLivePause:'잠시 멈춤', trLiveStop:'끝내기',
  trLiveNoMic:'마이크를 쓸 수 없습니다. 마이크 권한을 허용해 주세요.', trCopyAll:'전체 복사', plNeedCredit:'크레딧이 필요합니다. 마이 → 크레딧 충전에서 채워주세요.',
  plCallNeed:'아래 <b>마이</b> 탭에서 구글로 로그인하고 크레딧을 충전하세요.', plCharge:'충전하러 가기',
- plPriceD:'1 크레딧 = 99원 · 마주보고 한 마디 0.1 · 사진 1장 0.5 · 텍스트 번역 1번 0.1 · 라이브 청취 1분 0.5 · 전화 1분 6 · 동시통역 번역 1개 0.1',
- myEar:'<b>전화 통역은 이어폰을 쓰세요.</b>\n스피커로 들으면 통역 음성을 마이크가 다시 주워서 말이 꼬입니다.'
+ plPriceD:'1 크레딧 = 99원 · 마주보고 한 마디 0.1 · 사진 1장 0.5 · 텍스트 번역 1번 0.1 · 라이브 청취 1분 0.5 · 영상·음성 통화 번역 1분 0.5 · 전화 1분 6 · 동시통역 번역 1개 0.1',
+ myEar:'<b>전화 통역은 이어폰을 쓰세요.</b>\n스피커로 들으면 통역 음성을 마이크가 다시 주워서 말이 꼬입니다.',
+ /* v9.9 통화 탭 · 영상 · 음성 통화 번역 */
+ vcHubT:'메신저로 초대하고 번역 통화하기',
+ vcHubD:'WhatsApp · Telegram · LINE · 카카오톡 · 문자로 링크를 보내면, 상대는 앱 설치 없이 링크로 들어와요. 서로 자기 말로 말하면 번역 자막이 떠요.',
+ vcVideoT:'영상 통화 번역', vcVideoD:'얼굴을 보며 통화하고 번역 자막을 봐요',
+ vcVoiceT:'음성 통화 번역', vcVoiceD:'목소리로 통화하고 번역 자막을 봐요',
+ vcPhoneT:'전화 통역', vcPhoneD:'일반 전화번호로 통역 전화를 걸어요',
+ vcPrice:'말한 시간 1분 0.5 크레딧 · 초대한 사람이 내요', vcPhonePrice:'통화 1분 6 크레딧',
+ vcKindV:'영상 통화', vcKindA:'음성 통화', vcTrWord:'번역',
+ vcMyLang:'내 언어', vcNick:'내 이름 (상대에게 보여요)', vcNickPh:'예: 민지',
+ vcCreate:'통화방 만들고 초대하기',
+ vcHow:'<b>쓰는 순서</b>\n1. 내 언어를 고르고 <b>통화방 만들고 초대하기</b>\n2. WhatsApp · Telegram · LINE · 카카오톡 · 문자로 링크를 보내요\n3. 상대가 링크를 열고 자기 언어를 고르면 바로 연결돼요\n4. 각자 자기 말로 말하면 상대 화면에 번역 자막이 떠요',
+ vcPriceD:'<b>요금</b> — 말한 시간 1분에 0.5 크레딧 (12초마다 0.1). 나와 상대가 말한 시간 모두 <b>초대한 사람</b>의 크레딧에서 나가요. 조용한 동안은 나가지 않아요. 초대받은 사람은 로그인 · 결제가 필요 없어요.',
+ vcNeedLogin:'통화방을 만들려면 구글로 로그인하세요. 초대받은 사람은 로그인이 필요 없어요.',
+ vcWaitT:'상대를 기다리는 중', vcWaitD:'아래에서 초대 링크를 보내세요. 상대가 링크를 열면 자동으로 연결돼요.',
+ vcCode:'통화 코드', vcCopy:'링크 복사', vcCopied:'초대 글과 링크를 복사했어요', vcMore:'카카오톡 · 다른 앱', vcSms:'문자', vcCancel:'통화방 닫기',
+ vcInviteMsg:'{n}님이 포도랑 {k}에 초대했어요. 서로 자기 말로 말하면 번역 자막이 떠요.',
+ vcGuestT:'{n}님이 {k}에 초대했어요',
+ vcGuestD:'내 언어를 고르고 참여하세요. 상대의 말이 이 언어로 번역돼요. 로그인 · 결제는 필요 없어요.',
+ vcJoin:'통화 참여하기', vcEndedT:'이미 끝난 통화예요', vcBusyT:'이미 다른 사람이 참여한 통화예요',
+ vcConnecting:'연결하는 중…', vcReconnect:'연결이 불안정해요. 다시 잇는 중…', vcPeerAway:'상대의 연결이 잠시 끊겼어요',
+ vcInCall:'통화 중이에요',
+ vcMute:'마이크', vcCam:'카메라', vcFlip:'전환', vcTts:'읽어주기', vcHang:'끊기', vcHangQ:'통화를 끊을까요?',
+ vcEndT:'통화가 끝났어요', vcDur:'통화 시간', vcUsed:'쓴 크레딧', vcFree:'요금은 초대한 사람이 내요',
+ vcAgain:'다시 통화하기', vcHome:'통화 첫 화면으로', vcCapsT:'번역 자막', vcCopyAll:'자막 전체 복사', vcNoCaps:'번역된 자막이 없어요',
+ vcMeLabel:'나', vcPeerLabel:'상대', vcCapWait:'번역하는 중…', vcPeerLeft:'상대가 통화를 끊었어요',
+ vcNoMedia:'카메라 · 마이크를 쓸 수 없어요. 권한을 허용해 주세요.', vcNoSupport:'이 브라우저는 통화를 지원하지 않아요. 크롬에서 열어 주세요.',
+ vcCredStop:'초대한 사람의 크레딧이 떨어져 번역이 멈췄어요. 통화는 계속돼요.', vcBusyNav:'통화 중이에요. 끊기(또는 통화방 닫기)를 누른 뒤 이동하세요.',
+ vcEarphone:'이어폰을 쓰면 소리가 울리지 않고 번역이 더 정확해요',
+ vcFail:'연결하지 못했어요. 두 사람 모두 와이파이나 데이터가 켜져 있는지 확인하고 다시 해 주세요.',
+ hVc:'통화 — 영상 · 음성 통화 번역',
+ hVcBody:'아래 <b>통화</b> 탭에서 <b>영상 통화 번역</b>이나 <b>음성 통화 번역</b>을 고릅니다.\n\n<b>1.</b> 내 언어를 고르고 <b>통화방 만들고 초대하기</b> (구글 로그인 필요)\n<b>2.</b> WhatsApp · Telegram · LINE · 카카오톡 · 문자로 초대 링크를 보냅니다\n<b>3.</b> 상대가 링크를 열고 자기 언어를 고르면 바로 연결됩니다 (상대는 앱 설치 · 로그인 · 결제 필요 없음)\n<b>4.</b> 각자 자기 말로 말하면, 말이 끊길 때마다 상대 화면에 번역 자막이 뜹니다. <b>읽어주기</b>를 켜면 폰이 번역을 소리로 읽어 줍니다\n\n요금은 말한 시간 1분에 <b>0.5 크레딧</b>(12초마다 0.1)이고, 두 사람이 말한 시간 모두 <b>초대한 사람</b>이 냅니다. 영상 · 목소리 · 자막은 저장하지 않습니다. 이어폰을 쓰면 소리가 울리지 않습니다.'
 };
 
-const UIVER = '10';   // v9.6 오디오·스트림 안내 글이 바뀌어 8로   // v9.5 번역 탭 글이 늘어 7로   // v9.3 마이 목록·탈퇴·다중 인원 글이 늘어 5로   // v9.2 탭·이용방법 글이 바뀌어 4로   // v9.0 새 글(통역톡 4칸·동시통역 방·포도랑 계정)이 늘어 2로                       // 글이 바뀌면 이 숫자를 올립니다
+const UIVER = '11';   // v9.9 통화 탭 · 영상 · 음성 통화 번역 글이 늘어 11로   // v9.6 오디오·스트림 안내 글이 바뀌어 8로   // v9.5 번역 탭 글이 늘어 7로   // v9.3 마이 목록·탈퇴·다중 인원 글이 늘어 5로   // v9.2 탭·이용방법 글이 바뀌어 4로   // v9.0 새 글(통역톡 4칸·동시통역 방·포도랑 계정)이 늘어 2로                       // 글이 바뀌면 이 숫자를 올립니다
 let pack = load('podolang_pack', {});    // 옮겨둔 글 (언어별)
 let packBusy = false;
 
@@ -820,10 +927,10 @@ const THEME = {   // v9.4.6 탭 색 (비교 그림에서 고른 색)
 function paintText(){
   const set = (id, v) => { const e=$('#'+id); if(e) e.textContent = v; };
   set('tabOne',   LT('tabOne'));
-  set('tabMulti', LT('tabMulti'));
+  set('tabFace',  LT('tabFace'));    // v9.9 통역톡 위 칸 = 1:1 · 마주보고
   set('lbTalk',   LT('navTalk'));
-  set('lbFace',   T('talk'));
-  set('lbCall',   T('call'));
+  set('lbMulti',  LT('navMulti'));   // v9.9 다중통역은 아래 탭으로
+  set('lbCall',   LT('navCall'));    // v9.9 통화 (영상 · 음성 · 전화)
   set('lbPhoto',  LT('navTr'));   // v9.5 사진 번역 → 번역
   set('rbSend',   LT('rmSendBtn'));
   const rbt = $('#rbText'); if(rbt) rbt.placeholder = LT('rmTextPh');
@@ -837,6 +944,7 @@ function paintText(){
 
 function paint(m){
   if(['tr','text','live','audio'].includes(m)) m = 'photo';   // v9.5 번역 탭의 화면들은 모두 하늘색
+  if(m === 'callhub' || m === 'vc') m = 'call';                // v9.9 통화 탭의 화면들은 모두 남색
   const t = THEME[m] || THEME.talk;
   const r = document.documentElement.style;
   r.setProperty('--c1', t.c1);
@@ -849,13 +957,17 @@ function paint(m){
 }
 
 /* v9.2 아래 탭 → 화면. 통역톡은 언제나 1:1 부터 (방에 들어가 있으면 그 방) */
-const NAV_OF = { one:'nvTalk', multi:'nvTalk', talk:'nvFace', call:'nvCall', photo:'nvPhoto', tr:'nvPhoto', text:'nvPhoto', live:'nvPhoto', audio:'nvPhoto' };
+const NAV_OF = { one:'nvTalk', talk:'nvTalk', multi:'nvMulti', call:'nvCall', callhub:'nvCall', vc:'nvCall', photo:'nvPhoto', tr:'nvPhoto', text:'nvPhoto', live:'nvPhoto', audio:'nvPhoto' };
+let talkSub = 'one';   // v9.9 통역톡 탭을 누르면 마지막에 보던 칸(1:1 · 마주보고)으로
 function navTo(m){
+  if(typeof vcBusy === 'function' && vcBusy()){ toast(LT('vcBusyNav')); return; }   // v9.9 통화 중에는 다른 화면으로 가지 않음
+  if(m === 'one') m = talkSub;
   const wasMy = sheetOpen() && sheetName === 'my';
   if(wasMy){ const c = $('#card'); if(c) myScroll = c.scrollTop; }
   if(sheetOpen()) closeSheet();
   bkMy = wasMy;
-  if(m === 'one' && typeof RM !== 'undefined' && RM.room) m = RM.room.kind === 'multi' ? 'multi' : 'one';
+  // v9.9 1:1 · 다중이 다른 탭이 됐으므로, 다른 종류의 방에 들어가 있었다면 그 방은 목록으로 돌려 둡니다 (방에서 나가는 것은 아님)
+  if((m === 'one' || m === 'multi') && typeof RM !== 'undefined' && RM.room && (RM.room.kind === 'multi' ? 'multi' : 'one') !== m){ rmStop(); RM.room = null; }
   tab(m);
 }
 /* v9.4 화면 발자취 — 뒤로가기 하면 바로 전 화면으로 */
@@ -866,9 +978,10 @@ function tab(m){
   mode=m;
   paint(m);
   $('#tabOne').classList.toggle('on',m==='one');
-  $('#tabMulti').classList.toggle('on',m==='multi');
-  // 위 칸(1:1 · 다중)은 통역톡에서만
-  $('.tabs').style.display = (m==='one' || m==='multi') ? '' : 'none';
+  $('#tabFace').classList.toggle('on',m==='talk');
+  if(m === 'one' || m === 'talk') talkSub = m;
+  // 위 칸(1:1 · 마주보고)은 통역톡에서만
+  $('.tabs').style.display = (!EMBED && (m==='one' || m==='talk')) ? '' : 'none';
   if(!sheetOpen()) markNav(NAV_OF[m] || 'nvTalk');
   // 마주보고 통역에서만 아래 마이크(푸터)를 보여줍니다
   $('#foot').style.display = 'none';   // v9.7 마주보고는 위·아래 칸의 🎤 를 씁니다
@@ -887,6 +1000,8 @@ function render(){
   else if(mode==='text') renderText();
   else if(mode==='live') renderLive();
   else if(mode==='audio') renderAudio();
+  else if(mode==='callhub') renderCallHub();   // v9.9 통화 탭 첫 화면
+  else if(mode==='vc') renderVc();             // v9.9 영상 · 음성 통화 번역
   else renderCall();
 }
 
@@ -1751,6 +1866,7 @@ function renderCall(){
 
   const noSR = !canRec;
   $('#main').innerHTML = `
+    ${EMBED ? '' : vcHead(T('call'))}
     <div class="fld">
       <label>상대 이름 (선택)</label>
       <input id="cName" type="text" placeholder="예: 스미스 사장님"
@@ -2064,6 +2180,7 @@ function goHome(){
     closeSheet(); return;
   }
   if(rt && rt.active){ toast('통화 중입니다. 종료 버튼을 눌러주세요'); return; }
+  if(typeof vcBusy === 'function' && vcBusy()){ toast(LT('vcBusyNav')); return; }   // v9.9 영상 · 음성 통화 중
   if(RM.room && (mode === 'one' || mode === 'multi')){ rmBack(); return; }   // v9.0 방 → 방 목록
   if(!EMBED && BK.length){   // v9.4 바로 전 화면으로 (마이에서 왔으면 마이도 다시 열기)
     const prev = BK.pop();
@@ -2227,6 +2344,8 @@ function openHelp(){
     <div class="note">${nl(LT('hTrBody'))}</div>
     <div class="seclabel big">${esc(LT('hPhoto'))}</div>
     <div class="note">${nl(LT('hPhotoBody'))}</div>
+    <div class="seclabel big">${esc(LT('hVc'))}</div>
+    <div class="note">${nl(LT('hVcBody'))}</div>
     <div class="seclabel big">${esc(LT('hCall'))}</div>
     <div class="note">${nl(LT('hCallBody'))}</div>
     <div class="seclabel big">${esc(LT('hNav'))}</div>
@@ -2240,7 +2359,7 @@ function openHelp(){
 
 function markNav(id){
   if(id === 'nvTel' || id === 'nvSearch' || id === 'nvSet') id = 'nvMy';   // v9.2 통화기록 · 검색 · 설정은 마이 안에 있음
-  ['nvTalk','nvFace','nvCall','nvPhoto','nvMy'].forEach(x => { const b=$('#'+x); if(b) b.classList.toggle('on', x===id); });
+  ['nvTalk','nvMulti','nvCall','nvPhoto','nvMy'].forEach(x => { const b=$('#'+x); if(b) b.classList.toggle('on', x===id); });
 }
 
 /* ---------- 검색 ---------- */
@@ -2391,6 +2510,7 @@ function openMy(){
 
     <div id="pdLegal">
       <div class="seclabel" data-ic="📜">${esc(LT('myLegal'))}</div>
+      ${window.pdNotice ? `<div class="note pdnote">📣 ${esc(pdNotice().talk)}<br>📞 ${esc(pdNotice().call)}</div>` : ''}
       <div class="mylist">
         ${myLink('📄', LT('myTerms'), '/terms.html')}
         ${myLink('🔒', LT('myPriv'), '/privacy.html')}
@@ -2515,7 +2635,7 @@ async function plOnGoogle(resp){
     licInfo = null; licCheck(true);
     plHeadPaint();
     if(sheetOpen()){ if(sheetName === 'login') closeSheet(); else openMy(); }
-    if(mode === 'one' || mode === 'multi') render();
+    if(mode === 'one' || mode === 'multi' || (mode === 'vc' && VC.state === 'setup')) render();   // v9.9 통화방 만들기 화면도
   }catch(e){ toast(e.message); }
 }
 function plBoxHtml(){
@@ -2726,6 +2846,8 @@ function plStart(){
   const room = (p.get('room') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
   if(room){ try{ history.replaceState(history.state, '', location.pathname); }catch(e){} }
   if(room){ RM.invite = room; tab('one'); }
+  const vcc = (p.get('vc') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);   // v9.9 영상 · 음성 통화 초대 링크
+  if(vcc.length === 6){ try{ history.replaceState(history.state, '', location.pathname); }catch(e){} vcGuestOpen(vcc); }
   playInit().then(on => { if(on) playRecover(); });   // 앱이면 못 끝낸 결제부터 정리
   if(walletId() && !licInfo) licCheck(true);
 }
@@ -2953,6 +3075,569 @@ async function rmReport(id){
   try{ await plApi('/api/pl/room', { op:'report', msg: id, reason: why }); toast(LT('rmReported')); }catch(e){ toast(e.message); }
 }
 
+/* ───────── v9.9 통화 탭 · 영상 · 음성 통화 번역 ─────────
+   초대한 사람(로그인)이 통화방을 만들고 링크(podolang.kr/?vc=ABC123)를 메신저로 보냅니다.
+   받은 사람은 로그인 없이 링크로 들어옵니다. 영상 · 소리는 두 폰이 직접 주고받고(WebRTC),
+   각자 자기 목소리를 조각으로 /api/vc/live 에 보내 받아쓰고 상대 언어로 옮긴 뒤, 그 자막을 상대에게 보냅니다.
+   요금은 말한 시간 1분 0.5 크레딧(12초마다 0.1) · 양쪽 모두 초대한 사람이 냅니다. 목소리 · 영상 · 자막은 저장하지 않습니다. */
+const VC = { role:'', state:'', code:'', video:true, gk:'', ver:0, pc:null, dc:null, stream:null, remote:null, ice:null,
+             peer:null, info:null, poll:null, caps:[], mic:true, cam:true, facing:'user', tts:false, startAt:0, endAt:0,
+             spent:0, secs:0, tries:0, answered:0, offering:false, gotOffer:false, credStop:false, note:'', msg:'',
+             ctx:null, an:null, timer:null, rec:null, chunks:[], hadVoice:false, segStart:0, lastVoice:0, q:Promise.resolve(), clock:null };
+const VC_IC = {
+  video:'<svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="13" height="12" rx="2.5"/><path d="M15.5 10.5l6-3.5v10l-6-3.5z"/></svg>',
+  voice:'<svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M19 11a7 7 0 0 1-14 0M12 18v3"/></svg>',
+  phone:'<svg viewBox="0 0 24 24"><path d="M21 16.4v2.9a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 1.1 3.6 2 2 0 0 1 3.1 1.4H6a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L7 9.2a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>',
+  micOff:'<svg viewBox="0 0 24 24"><path d="M3 3l18 18M9 9v3a3 3 0 0 0 5.1 2.1M15 9.3V6a3 3 0 0 0-5.9-.8"/><path d="M19 11a7 7 0 0 1-1.2 3.9M5 11a7 7 0 0 0 10.6 6M12 18v3"/></svg>',
+  camOff:'<svg viewBox="0 0 24 24"><path d="M3 3l18 18M15.5 15.5V18H5a2.5 2.5 0 0 1-2.5-2.5V8.5A2.5 2.5 0 0 1 5 6h1.5M10 6h3a2.5 2.5 0 0 1 2.5 2.5v2l6-3.5v10"/></svg>',
+  flip:'<svg viewBox="0 0 24 24"><path d="M4 9a8 8 0 0 1 14.3-3.3L20 8M20 4v4h-4M20 15a8 8 0 0 1-14.3 3.3L4 16M4 20v-4h4"/></svg>',
+  tts:'<svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>',
+  hang:'<svg viewBox="0 0 24 24"><path d="M3 14.5c5-4.6 13-4.6 18 0l-2.2 2.6-3.6-1.4-.4-2.6a10 10 0 0 0-5.6 0l-.4 2.6-3.6 1.4z"/></svg>'
+};
+const vcLive = () => VC.state === 'talk' || VC.state === 'connecting';
+function vcBusy(){ return vcLive() || VC.state === 'wait'; }
+function vcHead(title){
+  return `<div class="trhead"><button class="trback" onclick="vcHubBack()">‹ ${esc(LT('navCall'))}</button><b>${esc(title)}</b></div>`;
+}
+function vcHubBack(){
+  if(vcBusy()){ toast(LT('vcBusyNav')); return; }
+  if(BK.length && BK[BK.length - 1].mode === 'callhub') goHome(); else tab('callhub');
+}
+function vcKind(v){ return LT(v ? 'vcKindV' : 'vcKindA'); }
+
+/* 통화 탭 첫 화면 */
+function renderCallHub(){
+  if(mode !== 'callhub') return;
+  const app = (c, l, n) => `<span><i style="background:${c}">${l}</i>${n}</span>`;
+  const row = (on, ic, t, d, p) => `
+    <button class="vcrow" onclick="${on}">
+      <span class="vic">${VC_IC[ic]}</span>
+      <span class="vt"><b>${esc(LT(t))}</b><span>${esc(LT(d))}</span><em>${esc(LT(p))}</em></span>
+      <span class="chev">›</span>
+    </button>`;
+  $('#main').innerHTML = `
+    <div class="vchero">
+      <b>${esc(LT('vcHubT'))}</b>
+      <p>${esc(LT('vcHubD'))}</p>
+      <div class="vcapps">
+        ${app('#25D366', 'W', 'WhatsApp')}${app('#229ED9', 'T', 'Telegram')}${app('#06C755', 'L', 'LINE')}${app('#E5B800', 'K', '카카오톡')}${app('#64748B', '✉', LT('vcSms'))}
+      </div>
+      <div class="vcdemo">
+        <div>Can you hear me clearly?<small>제 말이 잘 들리세요?</small></div>
+        <div class="r">네, 아주 잘 들려요<small>Yes, very clearly</small></div>
+      </div>
+    </div>
+    ${row("vcSetup(true)", 'video', 'vcVideoT', 'vcVideoD', 'vcPrice')}
+    ${row("vcSetup(false)", 'voice', 'vcVoiceT', 'vcVoiceD', 'vcPrice')}
+    ${row("tab('call')", 'phone', 'vcPhoneT', 'vcPhoneD', 'vcPhonePrice')}`;
+}
+
+function vcReset(){
+  vcCleanup();
+  Object.assign(VC, { role:'', state:'', code:'', gk:'', ver:0, peer:null, info:null, caps:[], mic:true, cam:true, facing:'user',
+    startAt:0, endAt:0, spent:0, secs:0, tries:0, answered:0, offering:false, gotOffer:false, credStop:false, note:'', msg:'', ice:null });
+}
+function vcSetup(video){
+  if(vcBusy()) return;
+  vcReset(); VC.role = 'host'; VC.state = 'setup'; VC.video = !!video;
+  tab('vc');
+}
+function vcSetKind(v){ VC.video = !!v; renderVc(); }
+
+/* 받은 사람 — 초대 링크로 들어옴 */
+async function vcGuestOpen(code){
+  vcReset(); VC.role = 'guest'; VC.code = code; VC.state = 'loading';
+  tab('vc');
+  try{
+    const d = await vcApi({ op:'info' });
+    VC.info = d; VC.video = !!d.video;
+    VC.state = d.state === 'end' ? 'gone' : 'guest';
+  }catch(e){ VC.state = 'gone'; VC.msg = e.message; }
+  renderVc();
+}
+
+async function vcApi(body){
+  body = Object.assign({ code: VC.code }, body);
+  if(VC.role === 'host') body.tk = plTok; else body.gk = VC.gk;
+  const r = await fetch(url('/api/vc'), { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(body) });
+  const d = await r.json().catch(() => ({ error: LT('trFail') }));
+  if(!r.ok || d.error){ const e = new Error(d.error || LT('trFail')); Object.assign(e, d, { status: r.status }); throw e; }
+  return d;
+}
+
+function renderVc(){
+  if(mode !== 'vc') return;
+  const m = $('#main');
+  const title = vcKind(VC.video) + ' ' + LT('vcTrWord');
+  if(VC.state === 'setup'){
+    if(!plTok){
+      m.innerHTML = `${vcHead(title)}
+        <div class="note">${esc(LT('vcNeedLogin'))}</div>
+        <div class="fld"><label>${esc(LT('plLoginT'))}</label><div class="gbtn" id="gbtnVc"></div></div>
+        <div class="note">${LT('vcPriceD')}</div>`;
+      plLoginButton(document.getElementById('gbtnVc'));
+      return;
+    }
+    m.innerHTML = `${vcHead(title)}
+      <div class="vcseg">
+        <button class="${VC.video ? 'on' : ''}" onclick="vcSetKind(true)">🎥 ${esc(LT('vcKindV'))}</button>
+        <button class="${VC.video ? '' : 'on'}" onclick="vcSetKind(false)">🎙️ ${esc(LT('vcKindA'))}</button>
+      </div>
+      <div class="fld">
+        <label>${esc(LT('vcMyLang'))}</label><select id="vcLang">${opts(load('podolang_vc_lang', from))}</select>
+        <label style="margin-top:12px">${esc(LT('vcNick'))}</label>
+        <input id="vcNick" maxlength="20" value="${esc(load('podolang_rm_nick', ''))}" placeholder="${esc(LT('vcNickPh'))}">
+        <button class="btn" id="vcGo" style="margin-top:12px" onclick="vcCreate()">${esc(LT('vcCreate'))}</button>
+      </div>
+      <div class="note">${nlb(LT('vcHow'))}</div>
+      <div class="note">${LT('vcPriceD')}</div>
+      <div class="hint" style="text-align:center">🎧 ${esc(LT('vcEarphone'))}</div>`;
+    return;
+  }
+  if(VC.state === 'loading'){ m.innerHTML = `${vcHead(title)}<div class="vcwait">${esc(LT('vcConnecting'))}<span class="dots"><i></i><i></i><i></i></span></div>`; return; }
+  if(VC.state === 'gone'){
+    m.innerHTML = `${vcHead(LT('navCall'))}<div class="note"><b>${esc(VC.msg || LT('vcEndedT'))}</b></div>
+      <button class="btn ghost" onclick="tab('callhub')">${esc(LT('vcHome'))}</button>`;
+    return;
+  }
+  if(VC.state === 'guest'){
+    const h = VC.info && VC.info.host || {};
+    const busy = VC.info && VC.info.busy && !load('podolang_vc_gk_' + VC.code, '');
+    m.innerHTML = `${vcHead(title)}
+      <div class="vchero" style="margin-bottom:12px">
+        <b>${esc(LT('vcGuestT').replace('{n}', h.nick || '포도랑').replace('{k}', vcKind(VC.video)))}</b>
+        <p style="margin-bottom:0">${esc(LT('vcGuestD'))}<br>${esc(langName(h.lang))} ↔ ?</p>
+      </div>
+      ${busy ? `<div class="note"><b>${esc(LT('vcBusyT'))}</b></div>` : ''}
+      <div class="fld">
+        <label>${esc(LT('vcMyLang'))}</label><select id="vcLang">${opts(load('podolang_vc_lang', from))}</select>
+        <label style="margin-top:12px">${esc(LT('vcNick'))}</label>
+        <input id="vcNick" maxlength="20" value="${esc(load('podolang_rm_nick', ''))}" placeholder="${esc(LT('vcNickPh'))}">
+        <button class="btn" id="vcGo" style="margin-top:12px" onclick="vcJoin()">${VC.video ? '🎥' : '🎙️'} ${esc(LT('vcJoin'))}</button>
+      </div>
+      <div class="hint" style="text-align:center">🎧 ${esc(LT('vcEarphone'))}</div>`;
+    return;
+  }
+  if(VC.state === 'wait'){
+    m.innerHTML = `${vcHead(title)}
+      ${VC.video ? `<video id="vcPrev" autoplay playsinline muted></video>` : ''}
+      <div class="fld" style="text-align:center">
+        <div class="vcwait">${esc(LT('vcWaitT'))}<span class="dots"><i></i><i></i><i></i></span></div>
+        <div class="hint" style="margin:4px 0 8px">${esc(LT('vcWaitD'))}</div>
+        <div class="vcinv">
+          <button onclick="vcShare('wa')"><i style="background:#25D366">W</i>WhatsApp</button>
+          <button onclick="vcShare('tg')"><i style="background:#229ED9">T</i>Telegram</button>
+          <button onclick="vcShare('line')"><i style="background:#06C755">L</i>LINE</button>
+          <button onclick="vcShare('more')"><i style="background:#E5B800">K</i>${esc(LT('vcMore'))}</button>
+          <button onclick="vcShare('sms')"><i style="background:#64748B">✉</i>${esc(LT('vcSms'))}</button>
+          <button onclick="vcShare('copy')"><i style="background:#4338CA">🔗</i>${esc(LT('vcCopy'))}</button>
+        </div>
+        <label>${esc(LT('vcCode'))}</label>
+        <div class="vccode">${esc(VC.code)}</div>
+      </div>
+      <button class="btn ghost" onclick="vcCancel()">${esc(LT('vcCancel'))}</button>`;
+    const pv = $('#vcPrev'); if(pv && VC.stream) pv.srcObject = VC.stream;
+    return;
+  }
+  if(vcLive()){
+    m.innerHTML = `${vcHead(title)}<div class="vcwait">${esc(LT('vcInCall'))}</div>`;
+    vcStage();
+    return;
+  }
+  if(VC.state === 'end'){
+    const dur = VC.startAt ? Math.max(0, Math.round(((VC.endAt || Date.now()) - VC.startAt) / 1000)) : 0;
+    const mm = Math.floor(dur / 60), ss = dur % 60;
+    const caps = VC.caps.filter(c => !c.wait);
+    m.innerHTML = `${vcHead(title)}
+      <div class="vchero"><b>${esc(LT('vcEndT'))}</b>${VC.msg ? `<p style="margin-bottom:0">${esc(VC.msg)}</p>` : ''}</div>
+      <div class="vcsum">
+        <div><b>${mm}:${String(ss).padStart(2, '0')}</b><small>${esc(LT('vcDur'))}</small></div>
+        <div><b>${VC.role === 'host' ? Math.round(VC.spent * 10) / 10 : '—'}</b><small>${esc(LT(VC.role === 'host' ? 'vcUsed' : 'vcFree'))}</small></div>
+      </div>
+      ${caps.length ? `<div class="seclabel">${esc(LT('vcCapsT'))}</div>
+        <div class="note" style="max-height:260px;overflow:auto">${caps.map(c => `<div style="margin-bottom:8px"><b>${esc(c.me ? LT('vcMeLabel') : (VC.peer && VC.peer.nick) || LT('vcPeerLabel'))}</b> · ${esc(c.t)}<br><span style="color:var(--sub)">${esc(c.tr || '')}</span></div>`).join('')}</div>
+        <button class="btn ghost" onclick="vcCopyAll()">${esc(LT('vcCopyAll'))}</button>` : `<div class="note">${esc(LT('vcNoCaps'))}</div>`}
+      ${VC.role === 'host' ? `<button class="btn" onclick="vcSetup(${VC.video})">${esc(LT('vcAgain'))}</button>` : ''}
+      <button class="btn ghost" onclick="tab('callhub')">${esc(LT('vcHome'))}</button>`;
+    return;
+  }
+  tab('callhub');
+}
+const nlb = x => String(x).replace(/\n/g, '<br>');
+
+/* ── 카메라 · 마이크 ── */
+async function vcMedia(){
+  if(!window.RTCPeerConnection || !navigator.mediaDevices || !window.MediaRecorder){ toast(LT('vcNoSupport')); return false; }
+  try{
+    VC.stream = await navigator.mediaDevices.getUserMedia({
+      audio:{ echoCancellation:true, noiseSuppression:true, autoGainControl:true },
+      video: VC.video ? { facingMode:'user', width:{ ideal:640 }, height:{ ideal:480 }, frameRate:{ ideal:20, max:24 } } : false
+    });
+    return true;
+  }catch(e){ toast(LT('vcNoMedia')); return false; }
+}
+function vcForm(){
+  const l = $('#vcLang'), n = $('#vcNick');
+  const lang = l ? l.value : from, nick = n ? n.value.trim() : '';
+  save('podolang_vc_lang', lang); save('podolang_rm_nick', nick);
+  return { lang, nick };
+}
+
+/* 초대한 사람: 통화방 만들기 */
+async function vcCreate(){
+  const f = vcForm(), b = $('#vcGo'); if(b) b.disabled = true;
+  if(!(await vcMedia())){ if(b) b.disabled = false; return; }
+  try{
+    VC.role = 'host';
+    const d = await vcApi({ op:'create', video: VC.video, lang: f.lang, nick: f.nick, code: '' });
+    VC.code = d.code; VC.ice = d.ice; VC.myLang = f.lang; VC.state = 'wait';
+    renderVc(); vcPollStart();
+  }catch(e){
+    vcCleanup(); if(b) b.disabled = false;
+    toast(e.message);
+    if(e.login){ plTok = ''; renderVc(); }
+  }
+}
+function vcLink(){ return 'https://podolang.kr/?vc=' + VC.code; }
+function vcShare(how){
+  const nick = load('podolang_rm_nick', '') || '';
+  const ko = LT('vcInviteMsg').replace('{n}', nick || '포도랑').replace('{k}', vcKind(VC.video));
+  const en = (nick ? nick + ' invited you to a ' : 'You are invited to a ') + (VC.video ? 'video' : 'voice') + ' call with live translation on Podolang.';
+  const text = ko + '\n' + en + '\n' + vcLink();
+  const enc = encodeURIComponent;
+  const go = u => { try{ window.open(u, '_blank', 'noopener'); }catch(e){ location.href = u; } };
+  if(how === 'wa') return go('https://wa.me/?text=' + enc(text));
+  if(how === 'tg') return go('https://t.me/share/url?url=' + enc(vcLink()) + '&text=' + enc(ko + '\n' + en));
+  if(how === 'line') return go('https://line.me/R/share?text=' + enc(text));
+  if(how === 'sms') return go('sms:?body=' + enc(text));
+  if(how === 'more' && navigator.share){ navigator.share({ title:'podolang', text: ko + '\n' + en, url: vcLink() }).catch(() => {}); return; }
+  try{ navigator.clipboard.writeText(text).then(() => toast(LT('vcCopied')), () => prompt('', vcLink())); }catch(e){ prompt('', vcLink()); }
+}
+async function vcCancel(){
+  try{ await vcApi({ op:'end' }); }catch(e){}
+  vcCleanup(); VC.state = ''; tab('callhub');
+}
+
+/* 받은 사람: 참여 */
+async function vcJoin(){
+  const f = vcForm(), b = $('#vcGo'); if(b) b.disabled = true;
+  if(!(await vcMedia())){ if(b) b.disabled = false; return; }
+  try{
+    VC.gk = load('podolang_vc_gk_' + VC.code, '');
+    const d = await vcApi({ op:'join', lang: f.lang, nick: f.nick });
+    VC.gk = d.gk; save('podolang_vc_gk_' + VC.code, d.gk);
+    VC.ice = d.ice; VC.peer = d.peer; VC.myLang = f.lang; VC.ver = 0; VC.gotOffer = false;
+    VC.state = 'connecting'; renderVc(); vcPollStart();
+  }catch(e){
+    vcCleanup(); if(b) b.disabled = false;
+    toast(e.message);
+    if(e.status === 409 || e.status === 410 || e.status === 404){ VC.state = 'gone'; VC.msg = e.message; renderVc(); }
+  }
+}
+
+/* ── 서버에 상태 묻기 ── */
+function vcPollStart(){ vcPollStop(); vcPollOnce(); }
+function vcPollStop(){ if(VC.poll){ clearTimeout(VC.poll); VC.poll = null; } }
+async function vcPollOnce(){
+  VC.poll = null;
+  if(!VC.code || !(VC.state === 'wait' || vcLive())) return;
+  try{
+    const d = await vcApi({ op:'poll' });
+    if(d.state === 'end'){ vcFinish(LT('vcPeerLeft'), true); return; }
+    if(d.peer) VC.peer = d.peer;
+    if(VC.role === 'host'){
+      if(d.spent != null) VC.spent = d.spent;
+      if(d.needOffer && !VC.offering){
+        VC.offering = true;
+        try{ if(VC.state === 'wait'){ VC.state = 'connecting'; renderVc(); } vcStatus(LT('vcConnecting')); await vcOffer(false); }
+        catch(e){ toast(e.message); }
+        VC.offering = false;
+      }
+      if(d.answer && d.ver === VC.ver && VC.answered !== VC.ver && VC.pc && VC.pc.signalingState === 'have-local-offer'){
+        VC.answered = VC.ver;
+        try{ await VC.pc.setRemoteDescription({ type:'answer', sdp: d.answer }); }catch(e){}
+      }
+    } else if(d.offer && d.ver > VC.ver){
+      VC.ver = d.ver;
+      try{ await vcAnswer(d.offer, d.ver); }catch(e){ VC.ver = 0; }
+    }
+    VC.note = d.peerAway && VC.state === 'talk' ? LT('vcPeerAway') : (VC.credStop ? LT('vcCredStop') : '');
+    vcPaintTop();
+  }catch(e){
+    if(e.status === 403 || e.status === 404 || e.status === 410){ vcFinish(e.message, true); return; }
+  }
+  if(VC.state === 'wait' || vcLive()) VC.poll = setTimeout(vcPollOnce, VC.state === 'talk' ? 4000 : 2000);
+}
+
+/* ── 두 폰 잇기 (WebRTC) ── */
+function vcPc(){
+  if(VC.pc){ try{ VC.pc.close(); }catch(e){} }
+  const pc = new RTCPeerConnection({ iceServers: VC.ice || [{ urls:'stun:stun.cloudflare.com:3478' }] });
+  VC.stream.getTracks().forEach(t => pc.addTrack(t, VC.stream));
+  const dc = pc.createDataChannel('cap', { negotiated:true, id:0 });
+  dc.onmessage = e => vcOnMsg(e.data);
+  pc.ontrack = e => { VC.remote = (e.streams && e.streams[0]) || VC.remote || new MediaStream(); if(!e.streams || !e.streams[0]) VC.remote.addTrack(e.track); vcAttach(); };
+  pc.onconnectionstatechange = () => { if(pc === VC.pc) vcConn(pc.connectionState); };
+  VC.pc = pc; VC.dc = dc;
+  return pc;
+}
+function vcGather(pc){
+  return new Promise(res => {
+    if(pc.iceGatheringState === 'complete') return res();
+    const t = setTimeout(res, 4500);
+    pc.addEventListener('icegatheringstatechange', () => { if(pc.iceGatheringState === 'complete'){ clearTimeout(t); res(); } });
+  });
+}
+async function vcOffer(restart){
+  const pc = restart && VC.pc ? VC.pc : vcPc();
+  const o = await pc.createOffer(restart ? { iceRestart:true } : undefined);
+  await pc.setLocalDescription(o);
+  await vcGather(pc);
+  const d = await vcApi({ op:'offer', sdp: pc.localDescription.sdp });
+  VC.ver = d.ver;
+}
+async function vcAnswer(sdp, ver){
+  let pc = VC.pc;
+  if(!VC.gotOffer || !pc || pc.connectionState === 'closed' || pc.signalingState === 'closed') pc = vcPc();
+  VC.gotOffer = true;
+  await pc.setRemoteDescription({ type:'offer', sdp });
+  const a = await pc.createAnswer();
+  await pc.setLocalDescription(a);
+  await vcGather(pc);
+  await vcApi({ op:'answer', sdp: pc.localDescription.sdp, ver });
+}
+function vcConn(st){
+  if(st === 'connected'){
+    VC.tries = 0;
+    if(VC.state !== 'talk'){ VC.state = 'talk'; if(!VC.startAt) VC.startAt = Date.now(); renderVc(); }
+    vcStatus(''); vcRecStart(); vcBitrate();
+  } else if(st === 'disconnected'){
+    vcStatus(LT('vcReconnect'));
+  } else if(st === 'failed'){
+    vcStatus(LT('vcReconnect'));
+    if(VC.role === 'host'){
+      if(VC.tries++ < 3) vcOffer(true).catch(() => {});
+      else vcFinish(LT('vcFail'));
+    }
+  }
+}
+async function vcBitrate(){   // 영상 데이터를 아끼도록 최대 0.5Mbps
+  try{
+    const s = VC.pc.getSenders().find(x => x.track && x.track.kind === 'video'); if(!s) return;
+    const p = s.getParameters(); if(!p.encodings || !p.encodings.length) p.encodings = [{}];
+    p.encodings[0].maxBitrate = 500000; await s.setParameters(p);
+  }catch(e){}
+}
+
+/* ── 통화 화면 (전체 화면) ── */
+function vcStage(){
+  let st = $('#vcStage');
+  if(!st){
+    st = document.createElement('div'); st.id = 'vcStage';
+    document.body.appendChild(st);
+    const peerNick = (VC.peer && VC.peer.nick) || LT('vcPeerLabel');
+    st.className = VC.video ? 'video' : 'voice';
+    st.innerHTML = `
+      ${VC.video ? `<video class="rv" id="vcRv" autoplay playsinline></video><video class="lv" id="vcLv" autoplay playsinline muted></video>`
+                 : `<audio id="vcRa" autoplay></audio>`}
+      <div class="vtop"><div><b id="vcPn">${esc(peerNick)}</b><small id="vcPl"></small></div><div class="st" id="vcClock"></div></div>
+      ${VC.video ? '' : `<div class="vavatar" id="vcAv">${esc(peerNick.slice(0, 1).toUpperCase())}</div>`}
+      <div class="vstat" id="vcSt"></div>
+      <div class="vnote" id="vcNote"></div>
+      <div class="vcaps" id="vcCaps"></div>
+      <div class="vctl">
+        <button id="vcBMic" onclick="vcToggleMic()"><i>${VC_IC.voice}</i>${esc(LT('vcMute'))}</button>
+        ${VC.video ? `<button id="vcBCam" onclick="vcToggleCam()"><i>${VC_IC.video}</i>${esc(LT('vcCam'))}</button>
+                      <button onclick="vcFlip()"><i>${VC_IC.flip}</i>${esc(LT('vcFlip'))}</button>` : ''}
+        <button id="vcBTts" onclick="vcToggleTts()"><i>${VC_IC.tts}</i>${esc(LT('vcTts'))}</button>
+        <button class="hang" onclick="vcHang()"><i>${VC_IC.hang}</i>${esc(LT('vcHang'))}</button>
+      </div>`;
+    const lv = $('#vcLv'); if(lv && VC.stream) lv.srcObject = VC.stream;
+    if(VC.clock) clearInterval(VC.clock);
+    VC.clock = setInterval(vcPaintTop, 1000);
+  }
+  vcAttach(); vcPaintTop(); vcPaintCaps(); vcPaintBtns();
+  if(VC.state === 'connecting') vcStatus(LT('vcConnecting'));
+}
+function vcAttach(){
+  const el = $('#vcRv') || $('#vcRa');
+  if(el && VC.remote && el.srcObject !== VC.remote){ el.srcObject = VC.remote; const p = el.play && el.play(); if(p && p.catch) p.catch(() => {}); }
+}
+function vcStatus(t){ const e = $('#vcSt'); if(e) e.textContent = t || ''; }
+function vcPaintTop(){
+  const pn = $('#vcPn'), pl = $('#vcPl'), ck = $('#vcClock'), nt = $('#vcNote'), av = $('#vcAv');
+  const nick = (VC.peer && VC.peer.nick) || LT('vcPeerLabel');
+  if(pn) pn.textContent = nick;
+  if(av) av.textContent = nick.slice(0, 1).toUpperCase();
+  if(pl) pl.textContent = langName(VC.myLang || from) + ' ↔ ' + (VC.peer ? langName(VC.peer.lang) : '…');
+  if(ck){
+    const sec = VC.startAt ? Math.round((Date.now() - VC.startAt) / 1000) : 0;
+    ck.textContent = (VC.startAt ? `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}` : '') +
+      (VC.role === 'host' && VC.spent ? ` · ${LT('plCr')} ${Math.round(VC.spent * 10) / 10}` : '');
+  }
+  if(nt) nt.textContent = VC.note || '';
+}
+function vcPaintBtns(){
+  const m = $('#vcBMic'), c = $('#vcBCam'), t = $('#vcBTts');
+  if(m){ m.classList.toggle('off', !VC.mic); m.querySelector('i').innerHTML = VC.mic ? VC_IC.voice : VC_IC.micOff; }
+  if(c){ c.classList.toggle('off', !VC.cam); c.querySelector('i').innerHTML = VC.cam ? VC_IC.video : VC_IC.camOff; }
+  if(t) t.classList.toggle('off', VC.tts);
+}
+function vcPaintCaps(){
+  const box = $('#vcCaps'); if(!box) return;
+  const list = VC.video ? VC.caps.slice(-4) : VC.caps.slice(-40);
+  box.innerHTML = list.map(c => c.wait
+    ? `<div class="cap me wait">${esc(LT('vcCapWait'))}</div>`
+    : c.me ? `<div class="cap me"><div class="tr">${esc(c.t)}</div><div class="og">→ ${esc(c.tr || '')}</div></div>`
+           : `<div class="cap"><div class="tr">${esc(c.tr || c.t)}</div><div class="og">${esc(c.t)}</div></div>`).join('');
+  box.scrollTop = box.scrollHeight;
+}
+function vcToggleMic(){
+  VC.mic = !VC.mic;
+  if(VC.stream) VC.stream.getAudioTracks().forEach(t => t.enabled = VC.mic);
+  if(!VC.mic) vcCut();
+  vcPaintBtns();
+}
+function vcToggleCam(){
+  VC.cam = !VC.cam;
+  if(VC.stream) VC.stream.getVideoTracks().forEach(t => t.enabled = VC.cam);
+  vcPaintBtns();
+}
+async function vcFlip(){
+  if(!VC.stream || !VC.pc) return;
+  const want = VC.facing === 'user' ? 'environment' : 'user';
+  try{
+    const ns = await navigator.mediaDevices.getUserMedia({ video:{ facingMode: want, width:{ ideal:640 }, height:{ ideal:480 }, frameRate:{ ideal:20, max:24 } } });
+    const nt = ns.getVideoTracks()[0];
+    const s = VC.pc.getSenders().find(x => x.track && x.track.kind === 'video');
+    if(s) await s.replaceTrack(nt);
+    VC.stream.getVideoTracks().forEach(t => { VC.stream.removeTrack(t); t.stop(); });
+    VC.stream.addTrack(nt); nt.enabled = VC.cam;
+    VC.facing = want;
+    const lv = $('#vcLv'); if(lv){ lv.srcObject = VC.stream; lv.classList.toggle('back', want !== 'user'); }
+  }catch(e){ toast(LT('vcNoMedia')); }
+}
+function vcToggleTts(){
+  VC.tts = !VC.tts;
+  if(!VC.tts) try{ speechSynthesis.cancel(); }catch(e){}
+  else try{ speechSynthesis.speak(new SpeechSynthesisUtterance(' ')); }catch(e){}
+  vcPaintBtns();
+}
+function vcHang(){ if(confirm(LT('vcHangQ'))) vcFinish(''); }
+
+/* ── 자막 주고받기 ── */
+function vcOnMsg(raw){
+  let d; try{ d = JSON.parse(raw); }catch(e){ return; }
+  if(d.k === 'cap' && (d.t || d.tr)){
+    VC.caps.push({ me:false, t: String(d.t || '').slice(0, 2000), tr: String(d.tr || '').slice(0, 2000) });
+    if(VC.caps.length > 300) VC.caps.shift();
+    vcPaintCaps();
+    if(VC.tts && d.tr){ try{ const u = new SpeechSynthesisUtterance(String(d.tr)); u.lang = bcp(VC.myLang || from); speechSynthesis.speak(u); }catch(e){} }
+  } else if(d.k === 'end'){ vcFinish(LT('vcPeerLeft'), true); }
+}
+function vcSendMsg(o){ try{ if(VC.dc && VC.dc.readyState === 'open') VC.dc.send(JSON.stringify(o)); }catch(e){} }
+
+/* ── 내 목소리를 조각으로 잘라 번역 (라이브 청취와 같은 방식) ── */
+function vcRecStart(){
+  if(VC.ctx || !VC.stream) return;
+  try{
+    VC.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if(VC.ctx.state === 'suspended') VC.ctx.resume().catch(() => {});
+    const src = VC.ctx.createMediaStreamSource(new MediaStream(VC.stream.getAudioTracks()));
+    VC.an = VC.ctx.createAnalyser(); VC.an.fftSize = 1024; src.connect(VC.an);
+  }catch(e){ VC.ctx = null; return; }
+  try{ if(navigator.wakeLock) navigator.wakeLock.request('screen').then(w => VC.wake = w, () => {}); }catch(e){}
+  vcNewSeg();
+  VC.timer = setInterval(vcTick, 120);
+}
+function vcLevel(){
+  const a = new Uint8Array(VC.an.fftSize); VC.an.getByteTimeDomainData(a);
+  let s = 0; for(let i = 0; i < a.length; i++){ const v = (a[i] - 128) / 128; s += v * v; }
+  return Math.sqrt(s / a.length);
+}
+function vcNewSeg(){
+  if(!VC.stream || VC.state !== 'talk') return;
+  VC.chunks = []; VC.hadVoice = false; VC.segStart = Date.now(); VC.lastVoice = 0;
+  let mt = '';
+  ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4'].some(t => { if(MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)){ mt = t; return true; } return false; });
+  let rec;
+  try{ rec = new MediaRecorder(new MediaStream(VC.stream.getAudioTracks()), mt ? { mimeType: mt } : undefined); }catch(e){ return; }
+  const parts = VC.chunks;
+  rec.ondataavailable = e => { if(e.data && e.data.size) parts.push(e.data); };
+  rec.onstop = () => { if(rec._voiced) vcSend(new Blob(parts, { type: rec.mimeType || 'audio/webm' })); };
+  VC.rec = rec; rec.start();
+}
+function vcTick(){
+  if(!VC.rec || !VC.an) return;
+  const now = Date.now(), lv = VC.mic ? vcLevel() : 0;
+  if(lv > 0.035){ VC.hadVoice = true; VC.lastVoice = now; }
+  const len = now - VC.segStart, quiet = VC.lastVoice ? now - VC.lastVoice : len;
+  // 말하다 0.7초 쉬면(2.5초 넘었을 때) 또는 12초가 차면 자릅니다. 계속 조용하면 6초마다 버립니다.
+  if((VC.hadVoice && len > 2500 && quiet > 700) || len >= 11800 || (!VC.hadVoice && len > 6000)) vcCut();
+}
+function vcCut(){
+  const r = VC.rec; if(!r) return;
+  r._voiced = VC.hadVoice && !VC.credStop;
+  try{ r.stop(); }catch(e){}
+  VC.rec = null;
+  if(VC.state === 'talk') vcNewSeg();
+}
+function vcSend(blob){
+  if(blob.size < 2000 || !VC.code) return;
+  const seg = { me:true, wait:true, t:'', tr:'' }; VC.caps.push(seg); vcPaintCaps();
+  const fd = new FormData();
+  fd.append('audio', blob, 'vc.webm'); fd.append('code', VC.code);
+  if(VC.role === 'host') fd.append('tk', plTok); else fd.append('gk', VC.gk);
+  const req = fetch(url('/api/vc/live'), { method:'POST', body: fd })
+    .then(r => r.json().then(d => ({ ok: r.ok, d })), () => ({ ok:false, d:{ error: LT('trFail') } }));
+  VC.q = VC.q.then(() => req).then(({ ok, d }) => {   // 보낸 순서대로
+    seg.wait = false;
+    const drop = () => { const i = VC.caps.indexOf(seg); if(i >= 0) VC.caps.splice(i, 1); };
+    if(!ok || d.error){
+      drop();
+      if(d.needCredit || d.stop){ VC.credStop = true; VC.note = LT('vcCredStop'); vcPaintTop(); }
+      else if(VC.state === 'talk') toast(d.error || LT('trFail'));
+    } else if(!d.text){ drop(); }
+    else {
+      seg.t = d.text; seg.tr = d.translated || '';
+      vcSendMsg({ k:'cap', t: seg.t, tr: seg.tr });
+    }
+    if(d && d.charged && VC.role === 'host'){ VC.spent += d.charged; licInfo = null; }
+    if(d && d.stop){ VC.credStop = true; VC.note = LT('vcCredStop'); }
+    vcPaintCaps(); vcPaintTop();
+  });
+}
+
+/* ── 끝내기 ── */
+function vcCleanup(){
+  vcPollStop();
+  if(VC.timer){ clearInterval(VC.timer); VC.timer = null; }
+  if(VC.clock){ clearInterval(VC.clock); VC.clock = null; }
+  if(VC.rec){ VC.rec._voiced = false; try{ VC.rec.stop(); }catch(e){} VC.rec = null; }
+  try{ VC.ctx && VC.ctx.close(); }catch(e){}
+  try{ VC.wake && VC.wake.release(); }catch(e){}
+  try{ VC.pc && VC.pc.close(); }catch(e){}
+  try{ VC.stream && VC.stream.getTracks().forEach(t => t.stop()); }catch(e){}
+  try{ speechSynthesis.cancel(); }catch(e){}
+  VC.ctx = VC.an = VC.wake = VC.pc = VC.dc = VC.stream = VC.remote = null;
+  const st = $('#vcStage'); if(st) st.remove();
+}
+async function vcFinish(msg, byPeer){
+  if(VC.state === 'end') return;
+  if(!byPeer) vcSendMsg({ k:'end' });
+  VC.endAt = Date.now();
+  VC.state = 'end'; VC.msg = msg || '';
+  vcCleanup();
+  try{ const d = await vcApi({ op:'end' }); if(VC.role === 'host' && d.spent != null) VC.spent = d.spent; }catch(e){}   // 여러 번 불러도 괜찮음
+  if(VC.role === 'guest') try{ localStorage.removeItem('podolang_vc_gk_' + VC.code); }catch(e){}
+  if(mode !== 'vc') tab('vc'); else renderVc();
+}
+function vcCopyAll(){
+  const t = VC.caps.filter(c => !c.wait).map(c => (c.me ? LT('vcMeLabel') : ((VC.peer && VC.peer.nick) || LT('vcPeerLabel'))) + ': ' + c.t + '\n' + (c.tr || '')).join('\n\n');
+  if(t) navigator.clipboard.writeText(t).then(() => toast('복사했습니다'));
+}
+window.addEventListener('pagehide', () => { if(vcLive()){ vcSendMsg({ k:'end' }); try{ navigator.sendBeacon && navigator.sendBeacon(url('/api/vc'), new Blob([JSON.stringify({ op:'end', code: VC.code, tk: VC.role === 'host' ? plTok : undefined, gk: VC.role === 'guest' ? VC.gk : undefined })], { type:'text/plain' })); }catch(e){} } });
+
 /* ───────── 포도톡 안에서 열릴 때 쓰는 '끼워넣기' 모드 ─────────
    주소 뒤에 무엇이 붙느냐로 어느 화면을 보여줄지 정합니다.
      ?call — 전화 통역
@@ -2962,7 +3647,7 @@ async function rmReport(id){
    이 때 포도랑 자기 머리글(로고 · 이용방법), 위 탭 3개, 아래 차림표를 감춥니다.
    안쪽 스크롤도 없앱니다. 내용 길이만큼 늘어나고 바깥(포도톡) 화면이 스크롤합니다.
    주소에 아무것도 안 붙으면(그냥 podolang.kr) 지금까지와 100% 똑같습니다. */
-var _eq = /[?&]room=/.test(location.search) ? '' : location.search;   // v9.0 초대 주소는 끼워넣기가 아님
+var _eq = /[?&](room|vc)=/.test(location.search) ? '' : location.search;   // v9.0 초대 주소는 끼워넣기가 아님 · v9.9 통화 초대(?vc=)도
 var EMBED_CALL  = _eq.indexOf('call') >= 0;
 var EMBED_PANEL = _eq.indexOf('log') >= 0 ? 'log'
                 : _eq.indexOf('set') >= 0 ? 'set'
@@ -3135,39 +3820,10 @@ if(EMBED){
     }catch(e){ return false; }
   }
 
-  /* ---- 항상 보이는 얇은 안내줄 ---- */
-  var strip = null;
-  function makeStrip(){
-    var app = document.getElementById('app');
-    var mainEl = document.getElementById('main');
-    if(!app || !mainEl || strip) return;
-    strip = document.createElement('div');
-    strip.id = 'pdStrip';
-    strip.style.cssText = 'flex:0 0 auto;display:flex;align-items:center;justify-content:center;' +
-      'gap:8px;margin:0 16px 10px;padding:8px 12px;border-radius:12px;' +
-      'background:#FFFBEB;border:1px solid #FDE68A;color:#B45309;' +
-      'font-size:11.5px;font-weight:800;letter-spacing:-.2px;line-height:1.4;text-align:center';
-    var txt = document.createElement('span'); txt.id = 'pdStripTxt';
-    var a = document.createElement('a');
-    a.href = TERMS; a.target = '_blank'; a.rel = 'noopener';
-    a.style.cssText = 'color:#92400E;font-weight:900;text-decoration:underline;flex:0 0 auto';
-    a.id = 'pdStripLink';
-    strip.appendChild(txt); strip.appendChild(a);
-    app.insertBefore(strip, mainEl);
-    paintStrip();
-    // 탭이 바뀌면 문구도 바뀝니다 (기존 코드를 고치지 않고 지켜봅니다)
-    try{
-      new MutationObserver(paintStrip).observe(document.body, {attributes:true, attributeFilter:['data-theme']});
-    }catch(e){}
-  }
-  function paintStrip(){
-    var x = t();
-    var call = document.body.getAttribute('data-theme') === 'call';
-    var e1 = document.getElementById('pdStripTxt');
-    var e2 = document.getElementById('pdStripLink');
-    if(e1) e1.textContent = call ? x.sCall : x.sTalk;
-    if(e2) e2.textContent = x.more;
-  }
+  /* ---- 오역 · 전화 안내 문구 ----
+     v9.9 예전에는 모든 탭 맨 위에 얇은 줄로 띄웠습니다. 이제 마이 → 약관 칸에 보입니다 (window.pdNotice 로 꺼내 씀). */
+  window.pdNotice = function(){ var x = t(); return { talk: x.sTalk, call: x.sCall, more: x.more }; };
+  function makeStrip(){ /* v9.9 탭 위 안내줄은 쓰지 않습니다 */ }
 
   /* ---- 첫 실행 동의 화면 ---- */
   function gate(){

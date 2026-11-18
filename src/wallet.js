@@ -138,6 +138,14 @@ export async function plSpend(env, tk, amount, kind, partial) {
   if (!u) return { ok: false, took: 0 };
   return await spendUser(env, u.id, Math.round(Number(amount) * 10), kind, partial);
 }
+/* v9.9 영상·음성 통화 번역 — 초대한 사람(회원 번호)의 지갑을 씁니다. 위의 지갑 함수를 그대로 부르기만 합니다 */
+export async function plUserId(env, tk) { const u = await userOf(env, tk, false); return u ? u.id : null; }
+export async function plBalanceId(env, id) {
+  const u0 = await one(env, 'SELECT * FROM pl_users WHERE id = ?', id);
+  const u = u0 ? await settle(env, u0) : null;
+  return u ? cr(totalTenths(u)) : 0;
+}
+export async function plSpendId(env, id, amount, kind) { return await spendUser(env, id, Math.round(Number(amount) * 10), kind, false); }
 async function spendUser(env, uid, tenths, kind, partial) {
   if (!(tenths > 0)) return { ok: true, took: 0 };
   if (await hasSubCols(env)) return await spendUser2(env, uid, tenths, kind, partial);   // v9.8

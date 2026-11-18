@@ -26,6 +26,7 @@
  */
 
 import { plRoute, isPl, plBalance, plSpend } from './wallet.js';
+import { vcRoute } from './vcall.js';   // v9.9 영상·음성 통화 번역
 
 // ===== Cloudflare AI Gateway (OpenAI 지역차단 우회) =====
 const CF_ACCOUNT_ID = '8e3361d320715cc98e7b66cb3127ca76';
@@ -193,6 +194,10 @@ export default {
     /* v9.0 포도랑 지갑 · 로그인 · 결제 · 동시통역 방 */
     const plr = await plRoute(request, env, url, H, { OPENAI_BASE });
     if (plr) return plr;
+
+    /* v9.9 영상·음성 통화 번역 (src/vcall.js) — 받아쓰기·번역은 라이브 청취와 같은 함수를 씁니다 */
+    const vcr = await vcRoute(request, env, url, H, { transcribeLive, translate });
+    if (vcr) return vcr;
 
     try {
 

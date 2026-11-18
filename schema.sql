@@ -112,3 +112,23 @@ CREATE TABLE IF NOT EXISTS pl_reports (
 -- ALTER TABLE pl_users ADD COLUMN sub_auto INTEGER NOT NULL DEFAULT 0;
 -- ALTER TABLE pl_users ADD COLUMN sub_checked INTEGER;
 -- ALTER TABLE pl_users ADD COLUMN paid_until INTEGER;
+
+-- v9.9 🎥 영상·음성 통화 번역 — 이미 만든 DB 에는 아래 표 하나만 D1 Console 에 한 번 실행하세요 (여러 번 실행해도 괜찮습니다).
+-- 통화 연결 정보(접속 주소 SDP)는 통화를 잇는 데만 쓰고 2일 뒤 지웁니다. 목소리·영상은 저장하지 않습니다.
+CREATE TABLE IF NOT EXISTS pl_calls (
+  id TEXT PRIMARY KEY,
+  code TEXT UNIQUE,                       -- 초대 링크의 6자리
+  host TEXT,                              -- 초대한 사람(pl_users.id) — 양쪽 말한 시간을 이 사람이 냄
+  video INTEGER NOT NULL DEFAULT 0,       -- 1 영상 · 0 음성
+  host_lang TEXT, host_nick TEXT,
+  guest_lang TEXT, guest_nick TEXT, guest_key TEXT,   -- guest_key = 참여 키의 SHA-256
+  ver INTEGER NOT NULL DEFAULT 0,         -- 연결 제안(offer) 차례 번호
+  offer TEXT, answer TEXT, answer_ver INTEGER NOT NULL DEFAULT 0,
+  state TEXT,                             -- wait · join · talk · end
+  bank REAL NOT NULL DEFAULT 0,           -- 미리 낸 초 (12초 = 0.1 크레딧)
+  spent INTEGER NOT NULL DEFAULT 0,       -- 이 통화에 쓴 크레딧 × 10
+  secs REAL NOT NULL DEFAULT 0,           -- 번역한 말의 길이(초)
+  host_seen INTEGER, guest_seen INTEGER,
+  created_at INTEGER, talk_at INTEGER, ended_at INTEGER
+);
+CREATE INDEX IF NOT EXISTS pl_calls_host ON pl_calls(host, created_at);
