@@ -638,7 +638,7 @@ body .shots .btn.alb{--bi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.or
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v10.1.1';
+const VER='v10.1.2';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -840,6 +840,8 @@ const L = {
  trLiveT:'라이브 청취', trLiveD:'강의·세미나·안내 방송을 계속 듣고 번역', trLiveC:'1분 0.5 크레딧 · 조용할 땐 요금 없음',
  trLangNote:'위에서 고른 언어(원래 말 → 바꿀 말)를 네 기능이 함께 씁니다.',
  trSoonT:'포도랑 앱 다음 업데이트에서 열려요',
+ trAudioGoSori:'소리 앱에서 시작',
+ trAudioBodySori:'폰에서 나오는 다른 앱의 소리(유튜브 · 영상 · 라이브 방송)를 받아 위에서 고른 언어로 번역합니다.\n\n<b>쓰는 순서</b>\n1. 위에서 언어를 고르고 <b>소리 앱에서 시작</b>\n2. 소리 앱 화면에서 <b>번역 시작</b> → 마이크(녹음) 권한 · \'화면 녹화 · 공유\' 허락\n3. 유튜브나 영상 앱으로 가서 재생하면 번역이 쌓입니다. <b>다른 앱 위에 자막 띄우기</b>를 켜 두면 영상 위에 자막이 뜹니다\n4. 알림의 <b>끝내기</b>로 멈춥니다\n\n· coverfo 소리 앱(APK판 1.0 최신) · 안드로이드 10 이상에서 됩니다. 요금은 coverfo 크레딧에서 나갑니다\n· 화면은 쓰지 않고 소리만 받습니다. 소리는 번역에만 쓰고 저장하지 않습니다\n· 소리를 막아 둔 앱(일부 영화 앱 등)과 통화 소리는 번역할 수 없습니다',
  trAudioBody:'폰에서 나오는 다른 앱의 소리(유튜브 · 영상 · 라이브 방송)를 받아 위에서 고른 언어로 번역합니다.\n\n<b>쓰는 순서</b>\n1. 위에서 언어를 고르고 <b>포도랑 앱에서 시작</b>\n2. 앱 화면에서 <b>번역 시작</b> → 마이크(녹음) 권한 · \'화면 녹화 · 공유\' 허락\n3. 유튜브나 영상 앱으로 가서 재생하면 번역이 쌓입니다. <b>다른 앱 위에 자막 띄우기</b>를 켜 두면 영상 위에 자막이 뜹니다\n4. 알림의 <b>끝내기</b>로 멈춥니다\n\n· 구글 플레이 포도랑 앱(1.0.3 이상) · 안드로이드 10 이상에서만 됩니다. 앱이 없거나 옛 버전이면 구글 플레이로 이동합니다\n· 포도랑은 화면은 쓰지 않고 소리만 받습니다. 소리는 번역에만 쓰고 저장하지 않습니다\n· 소리를 막아 둔 앱(일부 영화 앱 등)과 통화 소리는 번역할 수 없습니다',
  trRecent:'최근 번역', trListen:'듣기', trTextPh:'번역할 글을 쓰거나 붙여 넣으세요', trClear:'지우기', trWorking:'번역하는 중…',
  trTextGo:'번역하기', trTextEmpty:'번역할 글을 써 주세요', trFail:'번역하지 못했습니다. 잠시 뒤 다시 해 주세요.', trClearQ:'기록을 모두 지웁니다.',
@@ -883,7 +885,7 @@ const L = {
  hVcBody:'아래 <b>통화</b> 탭에서 <b>영상 통화 번역</b>이나 <b>음성 통화 번역</b>을 고릅니다.\n\n<b>1.</b> 내 언어를 고르고 <b>통화방 만들고 초대하기</b> (구글 로그인 필요)\n<b>2.</b> WhatsApp · Telegram · LINE · 카카오톡 · 문자로 초대 링크를 보냅니다\n<b>3.</b> 상대가 링크를 열고 자기 언어를 고르면 바로 연결됩니다 (상대는 앱 설치 · 로그인 · 결제 필요 없음)\n<b>4.</b> 각자 자기 말로 말하면, 말이 끊길 때마다 상대 화면에 번역 자막이 뜹니다. <b>읽어주기</b>를 켜면 폰이 번역을 소리로 읽어 줍니다\n\n요금은 말한 시간 1분에 <b>0.5 크레딧</b>(12초마다 0.1)이고, 두 사람이 말한 시간 모두 <b>초대한 사람</b>이 냅니다. 영상 · 목소리 · 자막은 저장하지 않습니다. 이어폰을 쓰면 소리가 울리지 않습니다.'
 };
 
-const UIVER = '12';   // v10.0 메신저 번역 글이 늘어 12로 ·   // v9.9 통화 탭 · 영상 · 음성 통화 번역 글이 늘어 11로   // v9.6 오디오·스트림 안내 글이 바뀌어 8로   // v9.5 번역 탭 글이 늘어 7로   // v9.3 마이 목록·탈퇴·다중 인원 글이 늘어 5로   // v9.2 탭·이용방법 글이 바뀌어 4로   // v9.0 새 글(통역톡 4칸·동시통역 방·포도랑 계정)이 늘어 2로                       // 글이 바뀌면 이 숫자를 올립니다
+const UIVER = '13';   // v10.0 메신저 번역 글이 늘어 12로 ·   // v9.9 통화 탭 · 영상 · 음성 통화 번역 글이 늘어 11로   // v9.6 오디오·스트림 안내 글이 바뀌어 8로   // v9.5 번역 탭 글이 늘어 7로   // v9.3 마이 목록·탈퇴·다중 인원 글이 늘어 5로   // v9.2 탭·이용방법 글이 바뀌어 4로   // v9.0 새 글(통역톡 4칸·동시통역 방·포도랑 계정)이 늘어 2로                       // 글이 바뀌면 이 숫자를 올립니다
 let pack = load('podolang_pack', {});    // 옮겨둔 글 (언어별)
 let packBusy = false;
 
@@ -1494,19 +1496,26 @@ function msgLink(){
 /* ---------- 오디오·스트림 번역 (v9.6 — 포도랑 앱 1.0.3 의 안드로이드 화면을 엽니다) ----------
    podolang://audio?from=&to=&tk= 를 intent 주소로 엽니다. 앱이 없거나 옛 버전이면 구글 플레이로 갑니다. */
 const PLAY_URL = 'https://play.google.com/store/apps/details?id=kr.podolang.app';
+/* v10.1.2 coverfo 소리 앱(APK판) 안의 coverfo 화면에서 열렸으면 '소리 앱에서 시작' — 소리 앱이 같은 기능을 갖고 있음 (구글 플레이판 ' store' 는 제외) */
+const inSori = () => EMBED && / CoverfoSori\//.test(navigator.userAgent) && !/ CoverfoSori\/\d+ store/.test(navigator.userAgent);
 function renderAudio(){
   if(mode !== 'audio') return;
+  const sori = inSori();
   $('#main').innerHTML = `
     ${trHead(LT('trAudioT'))}
     ${trLangbar()}
-    <button class="btn" onclick="audioOpenApp()">🎧 ${esc(LT('trAudioGo'))}</button>
+    <button class="btn" onclick="audioOpenApp()">🎧 ${esc(LT(sori ? 'trAudioGoSori' : 'trAudioGo'))}</button>
     <div class="hint" style="text-align:center;margin:8px 0 14px">${esc(LT('trLiveC'))}</div>
-    <div class="note" style="line-height:1.7">${String(LT('trAudioBody')).replace(/\n/g, '<br>')}</div>`;
+    <div class="note" style="line-height:1.7">${String(LT(sori ? 'trAudioBodySori' : 'trAudioBody')).replace(/\n/g, '<br>')}</div>`;
 }
 function audioOpenApp(){
   if(!/Android/i.test(navigator.userAgent)){ toast(LT('trAudioAndroid')); return; }
   const tk = walletId();
   if(!tk){ toast(LT('plNeedLogin')); return; }
+  if(inSori()){   // v10.1.2 바깥 coverfo 화면에 알리면 coverfo 가 coverfosori://audio 로 소리 앱 화면을 엽니다
+    try{ parent.postMessage({ podolang:'audio', from: pFrom, to: pTo }, '*'); }catch(e){}   // 언어만 보냄 (표는 coverfo 가 이미 갖고 있음)
+    return;
+  }
   const q = 'from=' + encodeURIComponent(pFrom) + '&to=' + encodeURIComponent(pTo) + '&tk=' + encodeURIComponent(tk);
   location.href = 'intent://audio?' + q + '#Intent;scheme=podolang;package=kr.podolang.app;S.browser_fallback_url=' + encodeURIComponent(PLAY_URL) + ';end';
 }
