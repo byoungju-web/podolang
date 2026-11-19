@@ -638,7 +638,7 @@ body .shots .btn.alb{--bi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.or
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v10.2';
+const VER='v10.2.1';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -2313,6 +2313,9 @@ function clearLic(){
   try{ localStorage.removeItem(K.lic); }catch(e){}
   openMy(); renderCall();
 }
+/* v10.2.1 크레딧 확인이 실패했을 때 서버가 준 이유를 그대로 글로 — 예전부터 이 함수가 빠져 있어서,
+   확인이 실패한 상태로 마이를 열면 'reasonText is not defined' 오류로 마이가 안 열렸습니다 */
+function reasonText(r){ return String(r || '').trim().slice(0, 200); }
 const licLine = () => {
   if(!licCode && !walletId()) return LT('licNone');
   if(licInfo && licInfo.ok && !licInfo['만료일']) return `${LT('plCr')} ${licInfo['남은크레딧']} · ${LT('licLeft')} ${licInfo['남은분']}${LT('licMin')}`;
