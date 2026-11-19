@@ -638,7 +638,7 @@ body .shots .btn.alb{--bi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.or
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v10.1';
+const VER='v10.1.1';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -2224,7 +2224,9 @@ function goHome(){
   if(EMBED){ if(mode !== 'talk') tab('talk'); return; }
   if(mode !== 'one') tab('one');   // v9.2 첫 화면은 1:1 동시통역
 }
-try{
+/* v10.1.1 coverfo 'AI에게 물어보기'에서 연 한 화면(?embed=)은 폰 뒤로가기를 잡지 않습니다 — 그래야 뒤로가기가 coverfo 창 닫기로 갑니다
+   (예전에는 여기서 받아 goHome → 마주보고 화면이 나왔습니다) */
+if(!/[?&]embed=(text|live|audio|video|voice)(&|$)/.test(location.search)) try{
   history.replaceState({ podo:'home' }, '');
   history.pushState({ podo:'page' }, '');
   window.addEventListener('popstate', () => {
