@@ -361,6 +361,54 @@ export default {
       }
 
       // v9.5 번역 탭 — 텍스트 번역 (한 번 0.1 크레딧 · 최대 2,000자)
+      // v10.2 화면 글 옮기기 (작은 묶음 · 여러 개를 한꺼번에) — 예전 podolang-realtime /api/ui/translate 는 한 번에 60줄만 옮겨 느리고 나머지는 한국어로 남았습니다.
+      //  폰이 짧은 글부터 30~40줄씩 나눠 동시에 보내면, 묶음마다 바로 화면에 바뀌어 보입니다. 같은 묶음은 KV 에 30일 저장해 다음 사람은 바로 받습니다.
+      //  돈이 들지 않는 화면 글이라 크레딧은 빼지 않습니다.
+      if (url.pathname === '/api/ui/tr' && request.method === 'POST') {
+        const b = await request.json().catch(() => ({}));
+        const UI_NAMES = { EN:'English', TH:'Thai', JA:'Japanese', ZH:'Simplified Chinese', VI:'Vietnamese', ES:'Spanish', ID:'Indonesian', DE:'German',
+          FR:'French', AR:'Arabic', IT:'Italian', RU:'Russian', PT:'Portuguese', HI:'Hindi', NL:'Dutch', MS:'Malay', TR:'Turkish', FIL:'Filipino', TL:'Filipino',
+          MN:'Mongolian', KM:'Khmer', MY:'Burmese', LO:'Lao', NE:'Nepali', UZ:'Uzbek', UK:'Ukrainian', PL:'Polish', BN:'Bengali', UR:'Urdu', FA:'Persian', SV:'Swedish' };
+        const to = String(b.to || '').toUpperCase();
+        if (!UI_NAMES[to]) return json({ ok: true, texts: {} }, 200, H);
+        const items = (Array.isArray(b.items) ? b.items : []).slice(0, 45)
+          .map(x => ({ k: String(x.k || '').slice(0, 60), ko: String(x.ko || '').slice(0, 3000) })).filter(x => x.k && x.ko);
+        if (!items.length) return json({ ok: true, texts: {} }, 200, H);
+        if (!env.OPENAI_API_KEY) return json({ error: '서버 설정이 끝나지 않았습니다.' }, 500, H);
+        const ck = 'ui2:' + to + ':' + (await sha1hex(items.map(x => x.k + '\u0001' + x.ko).join('\u0002'))).slice(0, 32);
+        try { const hit = env.PODOLANG_KV && await env.PODOLANG_KV.get(ck, 'json'); if (hit) return json({ ok: true, cached: true, texts: hit }, 200, H); } catch (_) {}
+        const numbered = items.map((x, i) => `${i + 1}. ${x.ko.replace(/\n/g, ' ⏎ ')}`).join('\n');
+        const sys = [
+          `Translate each numbered line from Korean into ${UI_NAMES[to]}.`,
+          `These are user-interface strings for a live interpreting app.`,
+          `Keep the same numbering and the same number of lines. One line per number.`,
+          `Keep HTML tags such as <b> and <br> exactly where they are. Keep the symbol ⏎ exactly where it is — it marks a line break.`,
+          `Keep product names (podolang, WhatsApp, Telegram, LINE, Google Play), numbers, phone numbers and codes unchanged.`,
+          `Sound natural and short, the way an app speaks to its user. Output only the numbered lines.`
+        ].join(' ');
+        const res = await fetch(`${OPENAI_BASE}/chat/completions`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ model: 'gpt-4o-mini', temperature: 0.2, max_tokens: 4000,
+            messages: [{ role: 'system', content: sys }, { role: 'user', content: numbered }] })
+        });
+        const d = await res.json().catch(() => ({}));
+        const out = String((d.choices && d.choices[0] && d.choices[0].message && d.choices[0].message.content) || '').trim();
+        if (!out) return json({ error: '옮기지 못했습니다.' }, 502, H);
+        const map = {};
+        for (const line of out.split(/\n+/)) {
+          const m = /^\s*(\d+)[.)]\s*(.+)$/.exec(line);
+          if (!m) continue;
+          const it = items[parseInt(m[1], 10) - 1];
+          if (it) map[it.k] = m[2].trim().replace(/ ?⏎ ?/g, '\n');
+        }
+        const got = Object.keys(map).length;
+        if (got >= Math.ceil(items.length * 0.8)) {   // 거의 다 옮겼을 때만 저장 (빠진 줄은 폰이 다음에 다시 물음)
+          try { if (env.PODOLANG_KV) await env.PODOLANG_KV.put(ck, JSON.stringify(map), { expirationTtl: 60 * 60 * 24 * 30 }); } catch (_) {}
+        }
+        return json({ ok: true, texts: map }, 200, H);
+      }
+
       if (url.pathname === '/api/text' && request.method === 'POST') {
         const b = await request.json().catch(() => ({}));
         const text = String(b.text || '').trim();

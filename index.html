@@ -638,7 +638,7 @@ body .shots .btn.alb{--bi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.or
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v10.1.2';
+const VER='v10.2';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -885,7 +885,7 @@ const L = {
  hVcBody:'아래 <b>통화</b> 탭에서 <b>영상 통화 번역</b>이나 <b>음성 통화 번역</b>을 고릅니다.\n\n<b>1.</b> 내 언어를 고르고 <b>통화방 만들고 초대하기</b> (구글 로그인 필요)\n<b>2.</b> WhatsApp · Telegram · LINE · 카카오톡 · 문자로 초대 링크를 보냅니다\n<b>3.</b> 상대가 링크를 열고 자기 언어를 고르면 바로 연결됩니다 (상대는 앱 설치 · 로그인 · 결제 필요 없음)\n<b>4.</b> 각자 자기 말로 말하면, 말이 끊길 때마다 상대 화면에 번역 자막이 뜹니다. <b>읽어주기</b>를 켜면 폰이 번역을 소리로 읽어 줍니다\n\n요금은 말한 시간 1분에 <b>0.5 크레딧</b>(12초마다 0.1)이고, 두 사람이 말한 시간 모두 <b>초대한 사람</b>이 냅니다. 영상 · 목소리 · 자막은 저장하지 않습니다. 이어폰을 쓰면 소리가 울리지 않습니다.'
 };
 
-const UIVER = '13';   // v10.0 메신저 번역 글이 늘어 12로 ·   // v9.9 통화 탭 · 영상 · 음성 통화 번역 글이 늘어 11로   // v9.6 오디오·스트림 안내 글이 바뀌어 8로   // v9.5 번역 탭 글이 늘어 7로   // v9.3 마이 목록·탈퇴·다중 인원 글이 늘어 5로   // v9.2 탭·이용방법 글이 바뀌어 4로   // v9.0 새 글(통역톡 4칸·동시통역 방·포도랑 계정)이 늘어 2로                       // 글이 바뀌면 이 숫자를 올립니다
+const UIVER = '14';   // v10.2 새 방식(묶음 옮기기)으로 처음부터 다시 옮김 ·   // v10.0 메신저 번역 글이 늘어 12로 ·   // v9.9 통화 탭 · 영상 · 음성 통화 번역 글이 늘어 11로   // v9.6 오디오·스트림 안내 글이 바뀌어 8로   // v9.5 번역 탭 글이 늘어 7로   // v9.3 마이 목록·탈퇴·다중 인원 글이 늘어 5로   // v9.2 탭·이용방법 글이 바뀌어 4로   // v9.0 새 글(통역톡 4칸·동시통역 방·포도랑 계정)이 늘어 2로                       // 글이 바뀌면 이 숫자를 올립니다
 let pack = load('podolang_pack', {});    // 옮겨둔 글 (언어별)
 let packBusy = false;
 
@@ -896,25 +896,67 @@ function LT(k){
   const p = pack[lg + ':' + UIVER];
   return (p && p[k]) || L[k] || k;
 }
-// 아직 안 옮겼으면 한 번 옮겨서 폰에 저장합니다
+// 아직 안 옮겼으면 옮겨서 폰에 저장합니다
+/* v10.2 빠르게: 짧은 글(탭·단추)부터 30~40줄씩 묶어 6개를 동시에 보내고, 묶음이 올 때마다 바로 화면에 바꿔 보여 줍니다.
+   (예전에는 모든 글을 한 번에 보내 오래 걸렸고, 서버가 앞의 60줄만 옮겨 나머지는 한국어로 남았습니다)
+   옮긴 글은 언어별로 폰에 저장 · 같은 묶음은 서버(KV)에도 저장되어 다음 사람은 바로 받습니다. */
+let packFailAt = {};
+function packMissing(lg){
+  const p = pack[lg + ':' + UIVER] || {};
+  return Object.keys(L).filter(k => typeof p[k] !== 'string');
+}
 async function ensurePack(after){
   const lg = uiLang();
   if(lg === 'KO' || packBusy) return;
-  if(pack[lg + ':' + UIVER]) return;
+  const key = lg + ':' + UIVER;
+  const miss = packMissing(lg);
+  if(!miss.length) return;
+  if(packFailAt[lg] && Date.now() - packFailAt[lg] < 60000) return;   // 방금 실패했으면 1분 쉼 (계속 다시 부르지 않게)
   packBusy = true;
+  const sn = sheetOpen() ? sheetName : '';   // 이 창(마이 · 이용방법 …)이 아직 열려 있을 때만 다시 그림 (닫았는데 다시 열리지 않게)
+  const saveP = () => { try{ localStorage.setItem('podolang_pack', JSON.stringify(pack)); }catch(e){} };
+  let last = 0, timer = null;
+  const repaint = (final) => {
+    if(uiLang() !== lg) return;
+    const go = () => {
+      last = Date.now(); timer = null;
+      try{ paintText(); }catch(e){}
+      try{ if(typeof after === 'function' && sn && sheetOpen() && sheetName === sn) after(); }catch(e){}
+      if(final){ try{ if(!(typeof vcBusy === 'function' && vcBusy()) && !(typeof LV !== 'undefined' && LV.on) && !sheetOpen()) render(); }catch(e){} }
+    };
+    if(final){ if(timer) clearTimeout(timer); go(); return; }
+    if(!timer) timer = setTimeout(go, Math.max(0, 500 - (Date.now() - last)));
+  };
   try{
-    const items = Object.keys(L).map(k => ({ k, ko: L[k] }));
-    const r = await fetch(RT_API + '/api/ui/translate', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ to: lg, ver: UIVER, items })
-    });
-    const d = await r.json();
-    if(d && d.ok && d.texts){
-      pack[lg + ':' + UIVER] = d.texts;
-      try{ localStorage.setItem('podolang_pack', JSON.stringify(pack)); }catch(e){}
-      if(typeof after === 'function') after();
+    // 짧은 글부터 (화면에 바로 보이는 탭 · 단추 이름) · 묶음 = 40줄 또는 글자 1,500자
+    const items = miss.map(k => ({ k, ko: L[k] })).sort((a, b) => a.ko.length - b.ko.length);
+    const groups = []; let g = [], n = 0;
+    for(const it of items){
+      if(g.length && (g.length >= 40 || n + it.ko.length > 1500)){ groups.push(g); g = []; n = 0; }
+      g.push(it); n += it.ko.length;
     }
-  }catch(e){ /* 못 옮기면 한국어로 나옵니다 */ }
+    if(g.length) groups.push(g);
+    let next = 0, failed = 0;
+    const worker = async () => {
+      while(next < groups.length){
+        const grp = groups[next++];
+        try{
+          const r = await fetch(API + '/api/ui/tr', {
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ to: lg, items: grp })
+          });
+          const d = await r.json();
+          if(d && d.ok && d.texts){
+            pack[key] = Object.assign(pack[key] || {}, d.texts);
+            saveP(); repaint(false);
+          } else failed++;
+        }catch(e){ failed++; }
+      }
+    };
+    await Promise.all(Array.from({ length: Math.min(6, groups.length) }, worker));
+    if(failed) packFailAt[lg] = Date.now();
+    repaint(true);
+  }catch(e){ packFailAt[lg] = Date.now(); /* 못 옮기면 한국어로 나옵니다 */ }
   finally{ packBusy = false; }
 }
 
@@ -2461,14 +2503,14 @@ function setAuto(v){
   langAuto = !!v;
   save(K.auto, langAuto);
   if(langAuto) applyAuto();
-  paintText(); openMy(); render();
+  paintText(); openMy(); render();   // openMy 가 화면 글 옮기기를 시작합니다
   toast(langAuto ? '지금 계신 곳에 맞췄습니다' : '직접 고르시면 됩니다');
 }
 function setMyLang(){
   const f=$('#myFrom'), t=$('#myTo');
   if(f) from=f.value; if(t) to=t.value;
   save(K.from,from); save(K.to,to);
-  paintText(); render(); openMy();
+  paintText(); render(); openMy();   // openMy 가 화면 글 옮기기(ensurePack)를 시작합니다
 }
 
 /* ---------- 마이 ---------- */
@@ -2493,6 +2535,14 @@ const BIZ_HTML = `<dl>
 function openMy(){
   sheetGo('my');
   markNav('nvMy');
+  /* v10.2 마이가 안 열리는 일이 없게: 화면을 만드는 중 오류가 나도 창은 열고, 오류 내용을 맨 위에 보여 줍니다 (원인 확인용) */
+  try{ openMyBody(); }
+  catch(e){
+    try{ $('#card').innerHTML = `<h2>마이</h2><div class="note" style="color:#B42318">마이 화면을 그리다 오류가 났어요. 이 화면을 캡처해 보내 주세요.<br><small>${esc(String((e && e.stack) || e).slice(0, 400))}</small></div>`; }catch(_){}
+    $('#sheet').classList.add('on');
+  }
+}
+function openMyBody(){
   const nl = x => String(x).replace(/\n/g,'<br>');
   $('#card').innerHTML = `
     <h2>${esc(LT('myTitle'))}</h2>
@@ -3738,6 +3788,7 @@ else if(EMBED_MODE) tab(EMBED_MODE);                                            
 else tab(EMBED_CALL ? 'call' : (EMBED ? 'talk' : 'one'));   // v9.2 첫 화면 = 1:1 동시통역
 BK.length = 0;   // v9.4 첫 화면은 발자취에 넣지 않음
 plStart();   // v9.0 결제 돌아옴 · 초대 코드 · 지갑 확인
+setTimeout(() => { try{ ensurePack(); }catch(e){} }, 300);   // v10.2 한국어가 아니면 화면 글을 미리 옮겨 둠 (이미 다 있으면 바로 끝)
 
 if(EMBED_PANEL){
   var _open = EMBED_PANEL === 'set' ? openSet : EMBED_PANEL === 'my' ? openMy : openPanel;
