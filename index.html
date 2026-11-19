@@ -638,7 +638,7 @@ body .shots .btn.alb{--bi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.or
 <div class="toast" id="toast"></div>
 
 <script>
-const VER='v10.0.3';
+const VER='v10.1';
 // 서버 주소는 코드에 고정 (설정에서 변경 불가 — 실수 방지)
 const API='https://podolang.hasin7jk.workers.dev';
 // 실시간 전화 통역은 별도 워커입니다 (Durable Object 가 필요해서 분리했습니다)
@@ -3128,6 +3128,7 @@ const VC_IC = {
   hang:'<svg viewBox="0 0 24 24"><path d="M3 14.5c5-4.6 13-4.6 18 0l-2.2 2.6-3.6-1.4-.4-2.6a10 10 0 0 0-5.6 0l-.4 2.6-3.6 1.4z"/></svg>'
 };
 const vcLive = () => VC.state === 'talk' || VC.state === 'connecting';
+const vcTk = () => EMBED ? ptUid : plTok;   // v10.1 coverfo 에서 열면 coverfo 표(uid)로 통화방을 만듦
 function vcBusy(){ return vcLive() || VC.state === 'wait'; }
 function vcHead(title){
   return `<div class="trhead"><button class="trback" onclick="vcHubBack()">‹ ${esc(LT('navCall'))}</button><b>${esc(title)}</b></div>`;
@@ -3191,7 +3192,7 @@ async function vcGuestOpen(code){
 
 async function vcApi(body){
   body = Object.assign({ code: VC.code }, body);
-  if(VC.role === 'host') body.tk = plTok; else body.gk = VC.gk;
+  if(VC.role === 'host') body.tk = vcTk(); else body.gk = VC.gk;
   const r = await fetch(url('/api/vc'), { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(body) });
   const d = await r.json().catch(() => ({ error: LT('trFail') }));
   if(!r.ok || d.error){ const e = new Error(d.error || LT('trFail')); Object.assign(e, d, { status: r.status }); throw e; }
@@ -3203,7 +3204,7 @@ function renderVc(){
   const m = $('#main');
   const title = vcKind(VC.video) + ' ' + LT('vcTrWord');
   if(VC.state === 'setup'){
-    if(!plTok){
+    if(!vcTk()){
       m.innerHTML = `${vcHead(title)}
         <div class="note">${esc(LT('vcNeedLogin'))}</div>
         <div class="fld"><label>${esc(LT('plLoginT'))}</label><div class="gbtn" id="gbtnVc"></div></div>
@@ -3230,7 +3231,7 @@ function renderVc(){
   if(VC.state === 'loading'){ m.innerHTML = `${vcHead(title)}<div class="vcwait">${esc(LT('vcConnecting'))}<span class="dots"><i></i><i></i><i></i></span></div>`; return; }
   if(VC.state === 'gone'){
     m.innerHTML = `${vcHead(LT('navCall'))}<div class="note"><b>${esc(VC.msg || LT('vcEndedT'))}</b></div>
-      <button class="btn ghost" onclick="tab('callhub')">${esc(LT('vcHome'))}</button>`;
+      ${EMBED ? '' : `<button class="btn ghost" onclick="tab('callhub')">${esc(LT('vcHome'))}</button>`}`;
     return;
   }
   if(VC.state === 'guest'){
@@ -3252,6 +3253,7 @@ function renderVc(){
     return;
   }
   if(VC.state === 'wait'){
+    /* (v10.1 coverfo 안에서 열려도 초대 링크는 podolang.kr/?vc= — 받은 사람은 포도랑에서 무료로 참여) */
     m.innerHTML = `${vcHead(title)}
       ${VC.video ? `<video id="vcPrev" autoplay playsinline muted></video>` : ''}
       <div class="fld" style="text-align:center">
@@ -3291,7 +3293,7 @@ function renderVc(){
         <div class="note" style="max-height:260px;overflow:auto">${caps.map(c => `<div style="margin-bottom:8px"><b>${esc(c.me ? LT('vcMeLabel') : (VC.peer && VC.peer.nick) || LT('vcPeerLabel'))}</b> · ${esc(c.t)}<br><span style="color:var(--sub)">${esc(c.tr || '')}</span></div>`).join('')}</div>
         <button class="btn ghost" onclick="vcCopyAll()">${esc(LT('vcCopyAll'))}</button>` : `<div class="note">${esc(LT('vcNoCaps'))}</div>`}
       ${VC.role === 'host' ? `<button class="btn" onclick="vcSetup(${VC.video})">${esc(LT('vcAgain'))}</button>` : ''}
-      <button class="btn ghost" onclick="tab('callhub')">${esc(LT('vcHome'))}</button>`;
+      ${EMBED ? '' : `<button class="btn ghost" onclick="tab('callhub')">${esc(LT('vcHome'))}</button>`}`;
     return;
   }
   tab('callhub');
@@ -3328,7 +3330,7 @@ async function vcCreate(){
   }catch(e){
     vcCleanup(); if(b) b.disabled = false;
     toast(e.message);
-    if(e.login){ plTok = ''; renderVc(); }
+    if(e.login && !EMBED){ plTok = ''; renderVc(); }
   }
 }
 function vcLink(){ return 'https://podolang.kr/?vc=' + VC.code; }
@@ -3620,7 +3622,7 @@ function vcSend(blob){
   const seg = { me:true, wait:true, t:'', tr:'' }; VC.caps.push(seg); vcPaintCaps();
   const fd = new FormData();
   fd.append('audio', blob, 'vc.webm'); fd.append('code', VC.code);
-  if(VC.role === 'host') fd.append('tk', plTok); else fd.append('gk', VC.gk);
+  if(VC.role === 'host') fd.append('tk', vcTk()); else fd.append('gk', VC.gk);
   const req = fetch(url('/api/vc/live'), { method:'POST', body: fd })
     .then(r => r.json().then(d => ({ ok: r.ok, d })), () => ({ ok:false, d:{ error: LT('trFail') } }));
   VC.q = VC.q.then(() => req).then(({ ok, d }) => {   // 보낸 순서대로
@@ -3669,7 +3671,7 @@ function vcCopyAll(){
   const t = VC.caps.filter(c => !c.wait).map(c => (c.me ? LT('vcMeLabel') : ((VC.peer && VC.peer.nick) || LT('vcPeerLabel'))) + ': ' + c.t + '\n' + (c.tr || '')).join('\n\n');
   if(t) navigator.clipboard.writeText(t).then(() => toast('복사했습니다'));
 }
-window.addEventListener('pagehide', () => { if(vcLive()){ vcSendMsg({ k:'end' }); try{ navigator.sendBeacon && navigator.sendBeacon(url('/api/vc'), new Blob([JSON.stringify({ op:'end', code: VC.code, tk: VC.role === 'host' ? plTok : undefined, gk: VC.role === 'guest' ? VC.gk : undefined })], { type:'text/plain' })); }catch(e){} } });
+window.addEventListener('pagehide', () => { if(vcLive()){ vcSendMsg({ k:'end' }); try{ navigator.sendBeacon && navigator.sendBeacon(url('/api/vc'), new Blob([JSON.stringify({ op:'end', code: VC.code, tk: VC.role === 'host' ? vcTk() : undefined, gk: VC.role === 'guest' ? VC.gk : undefined })], { type:'text/plain' })); }catch(e){} } });
 
 /* ───────── 포도톡 안에서 열릴 때 쓰는 '끼워넣기' 모드 ─────────
    주소 뒤에 무엇이 붙느냐로 어느 화면을 보여줄지 정합니다.
@@ -3680,12 +3682,16 @@ window.addEventListener('pagehide', () => { if(vcLive()){ vcSendMsg({ k:'end' })
    이 때 포도랑 자기 머리글(로고 · 이용방법), 위 탭 3개, 아래 차림표를 감춥니다.
    안쪽 스크롤도 없앱니다. 내용 길이만큼 늘어나고 바깥(포도톡) 화면이 스크롤합니다.
    주소에 아무것도 안 붙으면(그냥 podolang.kr) 지금까지와 100% 똑같습니다. */
-var _eq = /[?&](room|vc)=/.test(location.search) ? '' : location.search;   // v9.0 초대 주소는 끼워넣기가 아님 · v9.9 통화 초대(?vc=)도
-var EMBED_CALL  = _eq.indexOf('call') >= 0;
-var EMBED_PANEL = _eq.indexOf('log') >= 0 ? 'log'
+/* v10.1 이름(키)만 봅니다 — 예전에는 주소 전체에서 글자를 찾아, uid 값(coverfo 표 등) 안에 우연히 'my'·'log'·'set' 이 들어 있으면 다른 화면이 열릴 수 있었습니다 */
+var _eqKeys = (function(){ try{ return Array.from(new URLSearchParams(location.search).keys()).join('&'); }catch(e){ return location.search; } })();
+var _eq = /(^|&)(room|vc)(&|$)/.test(_eqKeys) ? '' : _eqKeys;   // v9.0 초대 주소는 끼워넣기가 아님 · v9.9 통화 초대(?vc=)도
+/* v10.1 coverfo 'AI에게 물어보기'에서 여는 화면: ?embed=text|live|audio|video|voice&uid=(coverfo 표) */
+var EMBED_MODE = (function(){ try{ var m = new URLSearchParams(location.search).get('embed') || ''; return /^(text|live|audio|video|voice)$/.test(m) ? m : ''; }catch(e){ return ''; } })();
+var EMBED_CALL  = !EMBED_MODE && _eq.indexOf('call') >= 0;
+var EMBED_PANEL = EMBED_MODE ? '' : _eq.indexOf('log') >= 0 ? 'log'
                 : _eq.indexOf('set') >= 0 ? 'set'
                 : _eq.indexOf('my')  >= 0 ? 'my'  : '';
-var EMBED = EMBED_CALL || !!EMBED_PANEL;
+var EMBED = EMBED_CALL || !!EMBED_PANEL || !!EMBED_MODE;
 
 if(EMBED){
   var _est = document.createElement('style');
@@ -3708,13 +3714,17 @@ if(EMBED){
     /* 이용권은 포도톡 크레딧으로 합쳤습니다. 코드 칸을 감춥니다. */
     'body.embed [data-emb="lic"]{display:none!important}' +
     /* v9.0 포도랑 자체 계정·통화기록 단추는 포도톡·coverfo 안에서는 감춥니다 (그쪽 지갑을 씀) */
-    'body.embed [data-emb="pl"],body.embed [data-emb="log"]{display:none!important}';
+    'body.embed [data-emb="pl"],body.embed [data-emb="log"]{display:none!important}' +
+    /* v10.1 coverfo 에서 연 한 화면에서는 '‹ 번역 · ‹ 통화' 돌아가기 단추를 감춥니다 (coverfo 의 닫기를 씀) */
+    'body.embed .trback{display:none!important}';
   document.head.appendChild(_est);
   document.body.classList.add('embed');
   if(EMBED_PANEL) document.body.classList.add('embed-panel');
 }
 
-tab(EMBED_CALL ? 'call' : (EMBED ? 'talk' : 'one'));   // v9.2 첫 화면 = 1:1 동시통역
+if(EMBED_MODE === 'video' || EMBED_MODE === 'voice') vcSetup(EMBED_MODE === 'video');   // v10.1 coverfo 에서 연 영상 · 음성 통화 번역
+else if(EMBED_MODE) tab(EMBED_MODE);                                                       // v10.1 텍스트 · 라이브 청취 · 오디오
+else tab(EMBED_CALL ? 'call' : (EMBED ? 'talk' : 'one'));   // v9.2 첫 화면 = 1:1 동시통역
 BK.length = 0;   // v9.4 첫 화면은 발자취에 넣지 않음
 plStart();   // v9.0 결제 돌아옴 · 초대 코드 · 지갑 확인
 

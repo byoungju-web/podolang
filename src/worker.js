@@ -108,7 +108,33 @@ async function talkFetch(env, path, init) {
   return await fetch(req);
 }
 
+/* v10.1 coverfo 지갑 — coverfo 'AI에게 물어보기'에서 포도랑 화면을 열면 uid 자리에 'cf.' 로 시작하는 coverfo 표(12시간)가 옵니다.
+   그 표는 coverfo 지갑(coverfo.com/api/trans · link_balance / link_spend)에서 확인 · 차감합니다.
+   전화통역 서버(podolang-realtime v7.1)와 같은 방식 · 같은 LINK_KEY (coverfo 의 PODO_LINK_KEY 와 같은 값). */
+const COVERFO_API = 'https://coverfo.com/api/trans';
+function isCf(v) { return /^cf\.[A-Za-z0-9_-]{10,600}\.[A-Za-z0-9_-]{20,100}$/.test(String(v || '')); }
+async function cfLink(env, body) {
+  const r = await fetch(COVERFO_API, {
+    method: 'POST',
+    headers: { 'X-Link-Key': env.LINK_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  return await r.json();
+}
+const CF_SHORT = '크레딧이 모자랍니다. coverfo 이용료 · 요금제에서 충전해 주세요.';
+const shortMsg = (uid) => isCf(uid) ? CF_SHORT : '크레딧이 모자랍니다. 마이 → 크레딧 충전에서 채워주세요.';
+
 async function cdCheck(env, uid) {
+  /* v10.1 coverfo 표 (cf.…) */
+  if (isCf(uid)) {
+    if (!env.LINK_KEY) return { ok: false, reason: '서버 설정이 끝나지 않았습니다. (LINK_KEY)' };
+    try {
+      const d = await cfLink(env, { op: 'link_balance', t: uid });
+      if (!d || !d.ok) return { ok: false, reason: (d && d.error) || 'coverfo 크레딧을 확인하지 못했습니다. coverfo 에서 다시 열어 주세요.' };
+      if ((d.balance || 0) <= 0) return { ok: false, reason: '크레딧이 없습니다. coverfo 이용료 · 요금제에서 충전해 주세요.' };
+      return { ok: true, balance: d.balance };
+    } catch (e) { return { ok: false, reason: 'coverfo 크레딧 서버에 닿지 못했습니다.' }; }
+  }
   /* v9.0 포도랑 지갑 (로그인 키 pl.…) */
   if (isPl(uid)) {
     try {
@@ -139,6 +165,10 @@ async function cdCheck(env, uid) {
 async function cdSpend(env, uid, amount, kind) {
   if (isPl(uid)) { try { return await plSpend(env, uid, amount, kind, true); } catch (_) { return { ok: false, took: 0 }; } }
   if (!env.LINK_KEY || !uid || !amount) return { ok: false, took: 0 };
+  if (isCf(uid)) {   // v10.1 coverfo 지갑
+    try { return await cfLink(env, { op: 'link_spend', t: uid, amount, kind: kind || 'podolang' }); }
+    catch (_) { return { ok: false, took: 0 }; }
+  }
   try {
     const r = await talkFetch(env, `/link/credits`, {
       method: 'POST',
@@ -196,7 +226,7 @@ export default {
     if (plr) return plr;
 
     /* v9.9 영상·음성 통화 번역 (src/vcall.js) — 받아쓰기·번역은 라이브 청취와 같은 함수를 씁니다 */
-    const vcr = await vcRoute(request, env, url, H, { transcribeLive, translate });
+    const vcr = await vcRoute(request, env, url, H, { transcribeLive, translate, isCf, cdCheck, cdSpend });   // v10.1 coverfo 표로도 통화방을 만듦
     if (vcr) return vcr;
 
     try {
@@ -341,7 +371,7 @@ export default {
         const chk = await cdCheck(env, uid);
         if (!chk.ok) return json({ error: chk.reason, needCredit: true }, 402, H);
         const sp = await cdSpend(env, uid, CD_TEXT, 'text');
-        if (!sp || sp.ok === false) return json({ error: '크레딧이 모자랍니다. 마이 → 크레딧 충전에서 채워주세요.', needCredit: true }, 402, H);
+        if (!sp || sp.ok === false) return json({ error: shortMsg(uid), needCredit: true }, 402, H);
         const r = await translate(env, text, src === 'AUTO' ? '' : src, dst);
         return json({ translated: r.translated, engine: r.engine, cost: CD_TEXT }, 200, H);
       }
@@ -366,7 +396,7 @@ export default {
         let charged = 0;
         if (bank < 1) {
           const sp = await cdSpend(env, uid, CD_LIVE_UNIT, 'live');
-          if (!sp || sp.ok === false) return json({ error: '크레딧이 모자랍니다. 마이 → 크레딧 충전에서 채워주세요.', needCredit: true }, 402, H);
+          if (!sp || sp.ok === false) return json({ error: shortMsg(uid), needCredit: true }, 402, H);
           bank += LIVE_UNIT_SEC; charged += CD_LIVE_UNIT;
         }
 

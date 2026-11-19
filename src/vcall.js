@@ -56,10 +56,22 @@ async function iceServers(env) {
   } catch (e) { return base; }
 }
 
+/* v10.1 coverfo 'AI에게 물어보기'에서 열면 tk 자리에 coverfo 표(cf.…, 12시간)가 옵니다.
+   그때 초대한 사람 = 'cf:' + 표 이고, 요금은 coverfo 지갑(worker.js 의 cdCheck · cdSpend)에서 나갑니다.
+   통화가 끝나면 표를 지웁니다 (host = 'cf:end'). */
+let CX = {};
+async function hostKey(env, tk) {
+  if (!tk) return null;
+  if (isPl(tk)) return await plUserId(env, tk);
+  if (CX.isCf && CX.isCf(tk)) return 'cf:' + tk;
+  return null;
+}
+const isCfHost = (h) => String(h || '').startsWith('cf:');
+
 /* ── 누가 부르는지: 초대한 사람(tk) 또는 참여한 사람(gk) ── */
 async function who(env, call, b) {
-  if (b.tk && isPl(b.tk)) {
-    const id = await plUserId(env, b.tk);
+  if (b.tk) {
+    const id = await hostKey(env, b.tk);
     if (id && id === call.host) return 'host';
   }
   if (b.gk && call.guest_key && (await sha(b.gk)) === call.guest_key) return 'guest';
@@ -82,9 +94,12 @@ async function vcOp(env, b) {
 
   /* 초대한 사람: 통화방 만들기 */
   if (op === 'create') {
-    const host = isPl(b.tk) ? await plUserId(env, b.tk) : null;
+    const host = await hostKey(env, b.tk);
     if (!host) throw err(401, '마이에서 구글로 로그인해 주세요.', { login: true });
-    if ((await plBalanceId(env, host)) <= 0) throw err(402, '크레딧이 없습니다. 마이 → 크레딧 충전에서 채워주세요.', { needCredit: true });
+    if (isCfHost(host)) {   // v10.1 coverfo 지갑
+      const chk = await CX.cdCheck(env, b.tk);
+      if (!chk || !chk.ok) throw err(402, (chk && chk.reason) || '크레딧이 없습니다.', { needCredit: true });
+    } else if ((await plBalanceId(env, host)) <= 0) throw err(402, '크레딧이 없습니다. 마이 → 크레딧 충전에서 채워주세요.', { needCredit: true });
     const lang = String(b.lang || '').toUpperCase();
     if (!langOk(lang)) throw err(400, '내 언어를 골라 주세요.');
     // 오래된 통화 정리 · 내가 열어 둔 통화는 끝냄
@@ -169,6 +184,7 @@ async function vcOp(env, b) {
   /* 둘 다: 끊기 */
   if (op === 'end') {
     await run(env, "UPDATE pl_calls SET state = 'end', ended_at = COALESCE(ended_at, ?), offer = NULL, answer = NULL WHERE id = ?", now(), call.id);
+    if (isCfHost(call.host) && role === 'host') await run(env, "UPDATE pl_calls SET host = 'cf:end' WHERE id = ?", call.id).catch(() => {});   // v10.1 coverfo 표는 끝나면 지움
     return { ok: true, spent: Math.round(call.spent) / 10, secs: Math.round(call.secs) };
   }
 
@@ -192,7 +208,9 @@ async function vcLive(env, request, ctx) {
   const dst = role === 'host' ? call.guest_lang : call.host_lang;
 
   const spend = async () => {
-    const sp = await plSpendId(env, call.host, UNIT_CR, 'vcall');
+    const sp = isCfHost(call.host)
+      ? await CX.cdSpend(env, call.host.slice(3), UNIT_CR, 'vcall')   // v10.1 coverfo 지갑
+      : await plSpendId(env, call.host, UNIT_CR, 'vcall');
     if (!sp || sp.ok === false) return false;
     await run(env, 'UPDATE pl_calls SET bank = bank + ?, spent = spent + ? WHERE id = ?', UNIT_SEC, Math.round(UNIT_CR * 10), call.id);
     return true;
@@ -222,6 +240,7 @@ async function vcLive(env, request, ctx) {
 export async function vcRoute(request, env, url, H, ctx) {
   const p = url.pathname;
   if (p !== '/api/vc' && p !== '/api/vc/live') return null;
+  CX = ctx || {};
   const J = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { 'Content-Type': 'application/json', ...H } });
   if (request.method !== 'POST') return J({ error: 'POST 로 불러 주세요' }, 405);
   try {
